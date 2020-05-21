@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">ivy2testing</string>
+
+    <!--Authentication-->
+    <string name="log_in">Log in</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+
 </resources>
