@@ -1,57 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_margin="16dp"
-    android:layout_gravity="center">
+    android:layout_height="match_parent"
+    android:layout_margin="16dp">
 
-    <EditText
-        android:id="@+id/login_email"
+    <ImageView
+        android:id="@+id/login_gradient"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textEmailAddress"
-        android:layout_gravity="center"
-        android:layout_margin="16dp"
-        android:hint="@string/email"
-        android:autofillHints="" />
+        app:srcCompat="@drawable/bg_gradient_green_white"
 
-    <EditText
-        android:id="@+id/login_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPassword"
-        android:layout_gravity="center"
-        android:layout_margin="16dp"
-        android:hint="@string/password"
-        android:autofillHints="" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/login_logInButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/login"
-        android:layout_gravity="center"
-        android:layout_margin="16dp"
-        android:onClick="login"
-        android:enabled="false"/>
-
-    <TextView
-        android:id="@+id/login_studentSignUp"
+    <ImageView
+        android:id="@+id/login_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/sign_up"
-        android:layout_gravity="center"
-        android:onClick="studentSignUp"/>
+        app:srcCompat="@drawable/ic_ivy_logo_white"
 
-    <TextView
-        android:id="@+id/login_orgSignUp"
-        android:layout_width="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp"/>
+
+    <LinearLayout
+        android:id="@+id/login_fieldsLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/sign_up"
-        android:layout_gravity="center"
-        android:onClick="orgSignUp"/>
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/login_gradient">
 
-</LinearLayout>
+        <EditText
+            android:id="@+id/login_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="16dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/login_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="16dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="@string/password"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/login_logInButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="16dp"
+            android:enabled="false"
+            android:onClick="login"
+            android:text="@string/login" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+
+        app:layout_constraintTop_toBottomOf="@id/login_fieldsLayout">
+
+        <TextView
+            android:id="@+id/login_studentSignUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="studentSignUp"
+            android:text="@string/student_sign_up" />
+
+        <TextView
+            android:id="@+id/login_orgSignUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="orgSignUp"
+            android:text="@string/org_sign_up" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

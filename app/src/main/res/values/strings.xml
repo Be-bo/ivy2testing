@@ -3,7 +3,8 @@
 
     <!--Authentication-->
     <string name="login">Log In</string>
-    <string name="sign_up">Sign Up</string>
+    <string name="student_sign_up">Student Sign Up</string>
+    <string name="org_sign_up">Organization Sign Up</string>
     <string name="password">Password</string>
     <string name="email">Email</string>
 
