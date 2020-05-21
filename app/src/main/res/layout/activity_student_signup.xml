@@ -41,7 +41,7 @@
         android:ems="10"
         android:hint="Confirm Password"
         android:inputType="textPassword"
-        app:layout_constraintBottom_toTopOf="@id/student_picture_select_text"
+        app:layout_constraintBottom_toTopOf="@id/student_signup_degree"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/student_signup_pass" />
@@ -54,6 +54,19 @@
         android:text="Select a profile picture"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@id/studen_picture_select"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/student_signup_degree" />
+
+    <EditText
+        android:id="@+id/student_signup_degree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:ems="10"
+        android:hint="Select Degree"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/student_picture_select_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/student_signup_pass_confirm" />
