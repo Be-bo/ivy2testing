@@ -62,7 +62,7 @@ public class StudentSignUpActivity extends AppCompatActivity {
 
     private Map<String, Object> user_info = new HashMap<String, Object>();
 
-    //Clyde
+    //Made By ClydeB on 5/21/2020
 
     //TODO: input checking, no design just basic elements for now -> connect with the activity, pushing the data into Firestore
     @Override
