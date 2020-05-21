@@ -10,7 +10,7 @@
         android:id="@+id/login_gradient"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/bg_gradient_green_white"
+        app:srcCompat="@drawable/gradient_greenwhite"
 
         app:layout_constraintTop_toTopOf="parent" />
 
