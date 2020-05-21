@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "679752248399",
+    "firebase_url": "https://ivy2testing.firebaseio.com",
+    "project_id": "ivy2testing",
+    "storage_bucket": "ivy2testing.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:679752248399:android:f0e9965e7e92180b7f8e3a",
+        "android_client_info": {
+          "package_name": "com.ivy2testing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "679752248399-3s4iknuajpag16np8citv90c9n3bfjq7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-U6Ykh0sSwpGUNCr6gBTk1SeSkN4Mh7A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "679752248399-3s4iknuajpag16np8citv90c9n3bfjq7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
