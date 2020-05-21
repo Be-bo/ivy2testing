@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="interaction">#2b9721</color>
+    <color name="hint">#802b9721</color>
+    <color name="disabled">#b3b3b3</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="accent">#FF8C00</color>
+    <color name="notification">#FE3C00</color>
 </resources>
