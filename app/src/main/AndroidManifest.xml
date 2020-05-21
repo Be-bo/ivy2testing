@@ -16,6 +16,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- perhaps screen orientation should be changed-->
+        <activity android:name=".StudentSignUpActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
