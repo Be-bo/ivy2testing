@@ -32,17 +32,26 @@
         android:id="@+id/login_logInButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/log_in"
+        android:text="@string/login"
         android:layout_gravity="center"
         android:layout_margin="16dp"
-        android:onClick="login"/>
+        android:onClick="login"
+        android:enabled="false"/>
 
     <TextView
-        android:id="@+id/login_signUp"
+        android:id="@+id/login_studentSignUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/sign_up"
         android:layout_gravity="center"
-        android:onClick="signup"/>
+        android:onClick="studentSignUp"/>
+
+    <TextView
+        android:id="@+id/login_orgSignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_up"
+        android:layout_gravity="center"
+        android:onClick="orgSignUp"/>
 
 </LinearLayout>

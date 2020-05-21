@@ -2,9 +2,15 @@
     <string name="app_name">ivy2testing</string>
 
     <!--Authentication-->
-    <string name="log_in">Log in</string>
+    <string name="login">Log In</string>
     <string name="sign_up">Sign Up</string>
     <string name="password">Password</string>
     <string name="email">Email</string>
+
+    <string name="error_invalidDomain">This domain is not recognizable.</string>
+    <string name="error_invalidEmailFormat">Please enter a valid email.</string>
+    <string name="error_invalidPasswordLength">Your password must be at least six characters long.</string>
+    <string name="error_loginInvalid">Login failed, invalid email or password.</string>
+
 
 </resources>
