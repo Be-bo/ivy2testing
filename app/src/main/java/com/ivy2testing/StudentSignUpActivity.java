@@ -21,6 +21,7 @@ public class StudentSignUpActivity extends AppCompatActivity {
     //Strings for registration
     private String email;
     private String password;
+    private String password_confirm;
     private String domain;
     private String degree;
 
@@ -62,6 +63,8 @@ public class StudentSignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 emailCheck();
+                passCheck();
+                passConfirmCheck();
             }
         });
 
@@ -125,7 +128,35 @@ public class StudentSignUpActivity extends AppCompatActivity {
             email_editText.setError("Please choose a Valid University Domain.");
             return false;
         }
-
-
     }
+
+
+    // PassCheck will check if the password is at least 6 characters long, before calling pass confirm check
+    // Variables: password is set here
+    private boolean passCheck(){
+        // Pass text not trimmed in original app?
+        password = pass_editText.getText().toString();
+        if(password.length() > 6){
+            pass_editText.setError(null);
+            return passConfirmCheck();
+        }
+        else{
+            pass_editText.setError("Please choose a password over 6 characters.");
+            return false;
+        }
+    }
+    // PassConfirmCheck will check if the password confirm field matches password
+    // Variables: passwordConfirm is set here
+    private boolean passConfirmCheck(){
+        password_confirm = pass_confirm_editText.getText().toString().trim();
+        if(password_confirm.equals(password)){
+            pass_confirm_editText.setError(null);
+            return true;
+        }
+        else{
+            pass_confirm_editText.setError("Passwords do not match.");
+            return false;
+        }
+    }
+
 }
