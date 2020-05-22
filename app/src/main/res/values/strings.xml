@@ -4,11 +4,13 @@
     <!--Authentication-->
     <string name="login">Log In</string>
     <string name="sign_up">Sign Up</string>
+    <string name="sign_up_org">Organization Sign Up</string>
     <string name="student_sign_up">Student Sign Up</string>
     <string name="org_sign_up">Organization Sign Up</string>
     <string name="password">Password</string>
     <string name="email">Email</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="switch_sign_up">We are a club</string>
 
     <string name="error_invalidDomain">This domain is not recognizable.</string>
     <string name="error_invalidEmailFormat">Please enter a valid email.</string>
@@ -17,6 +19,7 @@
 
     <string name="login_gradient_desc">Green to white gradient</string>
     <string name="logo_desc">Ivy Logo</string>
+
 
 
     <!-- There is a space before and after each item... -->
