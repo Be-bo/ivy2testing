@@ -44,6 +44,8 @@ import java.util.Objects;
 import java.util.Scanner;
 import java.util.UUID;
 
+import static  com.ivy2testing.StaticDomainList.domain_list;
+
 public class StudentSignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private EditText email_editText;
     private EditText pass_editText;
@@ -64,7 +66,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     //
     private ArrayAdapter<CharSequence> degree_adapter;
 
-    private ArrayList<String> domain_list;
+
     private Map<String,String> domain_hash_map= new HashMap<>();
 
 
@@ -93,7 +95,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_signup);
-        createCheckableDomainList();
+       // createCheckableDomainList();
         setHandlers();
         setListeners();
     }
@@ -182,20 +184,23 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         }
     }
 
-    // Domain check will split the string from emailcheck and check if the domain is equiavlent to ucalgary. Otherwise set an error.
+    // Domain check will split the string from emailcheck and check if the domain is equiavlent to a domain imported from StaticDomainListArray. Otherwise set an error.
     // Variables: domain is set here
+    // This method currently uses a for each loop and is decently fast, but If domain_list was converted to an ArrayList and used.contains the thing might be faster.
     private boolean domainCheck(String email) {
         String[] email_array = email.split("@");
-        if (email_array[1].equals("ucalgary.ca")) {
+        for(String item: domain_list) {
+            if (item.equals(email_array[1])){
 
-            email_editText.setError(null);
-            domain = email_array[1];
-            return true;
+                email_editText.setError(null);
+                domain = email_array[1];
+                return true;
 
-        } else {
-            email_editText.setError("Please choose a Valid University Domain.");
-            return false;
+            }
         }
+        email_editText.setError("Please choose a Valid University Domain.");
+        return false;
+
     }
 
 
