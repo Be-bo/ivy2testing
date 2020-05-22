@@ -1,6 +1,7 @@
 package com.ivy2testing;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,10 +31,17 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Scanner;
 import java.util.UUID;
 
 public class StudentSignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -55,6 +63,9 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
 
     //
     private ArrayAdapter<CharSequence> degree_adapter;
+
+    private ArrayList<String> domain_list;
+    private Map<String,String> domain_hash_map= new HashMap<>();
 
 
 
@@ -82,6 +93,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_signup);
+        createCheckableDomainList();
         setHandlers();
         setListeners();
     }
@@ -268,6 +280,40 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
                     Toast.makeText(getApplicationContext(), "profile creation failed", Toast.LENGTH_LONG).show();
                 }
             });
+        }
+    }
+
+
+    // JSon Files
+    public void createCheckableDomainList() {
+        try {
+            Resources res = getResources();
+            InputStream is = res.openRawResource(R.raw.uni);
+            Scanner scanner = new Scanner(is);
+            StringBuilder builder = new StringBuilder();
+            while (scanner.hasNextLine()) {
+                builder.append(scanner.nextLine());
+            }
+
+            String unis = builder.toString();
+
+            JSONArray arr = new JSONArray(unis);
+
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject singleObject = arr.getJSONObject(i);
+                //Log.d("IvyProtopye", singleObject.getString("name"));
+                String nameValue = singleObject.getString("name");
+
+                JSONArray domains = singleObject.getJSONArray("domains");
+                for (int j = 0; j < domains.length(); j++) {
+                    String domain = domains.getString(j);
+                    domain_hash_map.put(domain, nameValue);
+                    //domain_list.add(domain);
+                }
+            }
+
+        } catch (JSONException b) {
+            b.printStackTrace();
         }
     }
 
