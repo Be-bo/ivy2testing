@@ -1,4 +1,6 @@
 package com.ivy2testing;
 
-public class OrganizationSignUpActivity {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class OrganizationSignUpActivity extends AppCompatActivity {
 }
