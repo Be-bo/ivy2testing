@@ -130,7 +130,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
                     Toast.makeText(getApplicationContext(), "all input is acceptable", Toast.LENGTH_LONG).show();
                     register_button.setEnabled(false);
                     createNewUser();
-                    returnToLogin();
+                  //  returnToLogin();
                 } else {
                     Toast.makeText(getApplicationContext(), "One or more fields are incorrect", Toast.LENGTH_LONG).show();
                     register_button.setEnabled(false);
@@ -283,6 +283,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
                 @Override
                 public void onSuccess(Void aVoid) {
                     Toast.makeText(getApplicationContext(), "profile creation succesful", Toast.LENGTH_LONG).show();
+                    returnToLogin();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -295,6 +296,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
 
     private void returnToLogin() {
         auth.signOut();
+       // wait(10000);
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         // what do these flags do
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
