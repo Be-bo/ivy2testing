@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style='"@style/Base.Widget.AppCompat.Spinner.Underlined"'
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -71,15 +72,14 @@
             android:hint="Confirm Password"
             android:inputType="textPassword" />
 
-        <EditText
+        <Spinner
             android:id="@+id/student_signup_degree"
-            style="@style/StandardEditText"
+            style="@style/Widget.AppCompat.Spinner.Underlined"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginBottom="16dp"
-            android:ems="10"
-            android:hint="Degree"
-            android:inputType="textPersonName" />
+            android:backgroundTint="@color/hint"
+            android:prompt="@string/app_name" />
 
         <Button
             android:id="@+id/student_register_button"

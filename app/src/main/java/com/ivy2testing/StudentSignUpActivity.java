@@ -7,9 +7,12 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,11 +36,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-public class StudentSignUpActivity extends AppCompatActivity {
+public class StudentSignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private EditText email_editText;
     private EditText pass_editText;
     private EditText pass_confirm_editText;
-    private EditText degree_editText;
+    private Spinner degree_spinner;
     //    private TextView pic_select_text;
 //    private ImageView pic_select;
     private Button register_button;
@@ -49,6 +52,11 @@ public class StudentSignUpActivity extends AppCompatActivity {
     private String domain;
     private String degree;
     private String id;
+
+    //
+    private ArrayAdapter<CharSequence> degree_adapter;
+
+
 
     // Variables for picture selection
 //    private StorageReference db_storage = FirebaseStorage.getInstance().getReference();
@@ -74,10 +82,7 @@ public class StudentSignUpActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_signup);
-
-
         setHandlers();
-
         setListeners();
     }
 
@@ -87,22 +92,28 @@ public class StudentSignUpActivity extends AppCompatActivity {
         email_editText = findViewById(R.id.student_signup_email);
         pass_editText = findViewById(R.id.student_signup_pass);
         pass_confirm_editText = findViewById(R.id.student_signup_pass_confirm);
-        degree_editText = findViewById(R.id.student_signup_degree);
+        degree_spinner = findViewById(R.id.student_signup_degree);
         register_button = findViewById(R.id.student_register_button);
         register_button.setEnabled(false);
+
+        // creating and applying adapter to the spinner class
+        degree_adapter = ArrayAdapter.createFromResource(this, R.array.degree_list, android.R.layout.simple_spinner_item);
+        degree_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        degree_spinner.setAdapter(degree_adapter);
     }
 
     private void setListeners() {
         email_editText.addTextChangedListener(tw);
         pass_editText.addTextChangedListener(tw);
         pass_confirm_editText.addTextChangedListener(tw);
-        degree_editText.addTextChangedListener(tw);
+
+        degree_spinner.setOnItemSelectedListener(this); // set listeners @ onItemSelected & onNothingSelected
 
         register_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Objects.requireNonNull(getCurrentFocus()).clearFocus();
-                if (emailCheck() && passCheck() && degreeCheck() && passConfirmCheck()) {
+                if (emailCheck() && passCheck()  && passConfirmCheck()) {
                     Toast.makeText(getApplicationContext(), "all input is acceptable", Toast.LENGTH_LONG).show();
                     register_button.setEnabled(false);
                     createNewUser();
@@ -115,33 +126,35 @@ public class StudentSignUpActivity extends AppCompatActivity {
 
     }
 
+    // These methods decide what happens on spinner item selection
+    // Variables: degree is set here
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        degree = parent.getItemAtPosition(position).toString();
+    }
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
     // This text watcher will be placed on all edit texts to only enable the button after all has been entered
     private TextWatcher tw = new TextWatcher() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             String email_input = email_editText.getText().toString().trim();
             String pass_input = pass_editText.getText().toString().trim();
             String pass_confirm_input = pass_confirm_editText.getText().toString().trim();
-            String degree_input = degree_editText.getText().toString().trim();
 
             // as long as the fields all have input the button will be enabled
             register_button.setEnabled(!email_input.isEmpty() &&
                     !pass_input.isEmpty() &&
-                    !pass_confirm_input.isEmpty() &&
-                    !degree_input.isEmpty());
-
-
+                    !pass_confirm_input.isEmpty()&&
+                    degree != null);
         }
-
         @Override
-        public void afterTextChanged(Editable s) {
-
-        }
+        public void afterTextChanged(Editable s) { }
     };
 
     // EmailCheck will confirm that the necessary characters are contained then calls Domain check, otherwise sets an error.
@@ -201,18 +214,6 @@ public class StudentSignUpActivity extends AppCompatActivity {
         }
     }
 
-    // degreeCheck currently just checks that degree is set to test
-    // Variables: degree is set here
-    private boolean degreeCheck() {
-        degree = degree_editText.getText().toString().trim();
-        if (!degree.equals("test")) {
-            degree_editText.setError("type test");
-            return false;
-        } else {
-            return true;
-        }
-    }
-
 
     // Firebase Methods
     private void createNewUser() {
@@ -269,6 +270,7 @@ public class StudentSignUpActivity extends AppCompatActivity {
             });
         }
     }
+
 }
 
     //These methods check if a picture is selected and prompt a user to go into their phone to choose (only) a picture
