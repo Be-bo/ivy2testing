@@ -3,91 +3,132 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="16dp">
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/login_gradient"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/gradient_greenwhite"
-
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/login_logo"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/login_guidelineHorizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_ivy_logo_white"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.30" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/login_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.85" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/login_guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/login_images"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
 
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp"/>
+        app:layout_constraintBottom_toBottomOf="@id/login_guidelineHorizontal">
+
+        <ImageView
+            android:id="@+id/login_gradient"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:srcCompat="@drawable/gradient_greenwhite"
+            android:contentDescription="@string/login_gradient_desc"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <ImageView
+            android:id="@+id/login_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="130dp"
+            app:srcCompat="@drawable/ic_ivy_logo_white"
+            android:contentDescription="@string/login_logo_desc"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.25"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/login_fieldsLayout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/login_gradient">
+        app:layout_constraintTop_toBottomOf="@id/login_images"
+        app:layout_constraintBottom_toTopOf="@id/login_singUps"
+        app:layout_constraintStart_toStartOf="@id/login_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/login_guideline2">
 
         <EditText
             android:id="@+id/login_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="16dp"
             android:autofillHints=""
             android:ems="10"
             android:hint="@string/email"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            style="@style/StandardEditText"
+            android:layout_marginBottom="16dp"/>
 
         <EditText
             android:id="@+id/login_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="16dp"
             android:autofillHints=""
             android:ems="10"
             android:hint="@string/password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            style="@style/StandardEditText"
+            android:layout_marginBottom="16dp"/>
 
         <Button
             android:id="@+id/login_logInButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="16dp"
             android:enabled="false"
             android:onClick="login"
-            android:text="@string/login" />
+            android:text="@string/login"
+            style="@style/StandardButton"/>
     </LinearLayout>
 
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/login_singUps"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
 
-        app:layout_constraintTop_toBottomOf="@id/login_fieldsLayout">
+        app:layout_constraintTop_toBottomOf="@id/login_fieldsLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/login_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/login_guideline2">
 
         <TextView
             android:id="@+id/login_studentSignUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:onClick="studentSignUp"
-            android:text="@string/student_sign_up" />
+            android:text="@string/student_sign_up"
+            android:layout_gravity="end"
+            android:layout_marginBottom="16dp"/>
 
         <TextView
             android:id="@+id/login_orgSignUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:onClick="orgSignUp"
-            android:text="@string/org_sign_up" />
+            android:text="@string/org_sign_up"
+            android:layout_gravity="end"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

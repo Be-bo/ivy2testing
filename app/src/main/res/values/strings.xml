@@ -13,5 +13,8 @@
     <string name="error_invalidPasswordLength">Your password must be at least six characters long.</string>
     <string name="error_loginInvalid">Login failed, invalid email or password.</string>
 
+    <string name="login_gradient_desc">Green to white gradient</string>
+    <string name="login_logo_desc">White Ivy Logo</string>
+
 
 </resources>
