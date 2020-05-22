@@ -67,8 +67,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     private ArrayAdapter<CharSequence> degree_adapter;
 
 
-    private Map<String,String> domain_hash_map= new HashMap<>();
-
+    private Map<String, String> domain_hash_map = new HashMap<>();
 
 
     // Variables for picture selection
@@ -95,7 +94,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_signup);
-       // createCheckableDomainList();
+
         setHandlers();
         setListeners();
     }
@@ -127,10 +126,11 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
             @Override
             public void onClick(View v) {
                 Objects.requireNonNull(getCurrentFocus()).clearFocus();
-                if (emailCheck() && passCheck()  && passConfirmCheck()) {
+                if (emailCheck() && passCheck() && passConfirmCheck()) {
                     Toast.makeText(getApplicationContext(), "all input is acceptable", Toast.LENGTH_LONG).show();
                     register_button.setEnabled(false);
                     createNewUser();
+                    returnToLogin();
                 } else {
                     Toast.makeText(getApplicationContext(), "One or more fields are incorrect", Toast.LENGTH_LONG).show();
                     register_button.setEnabled(false);
@@ -146,6 +146,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         degree = parent.getItemAtPosition(position).toString();
     }
+
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
@@ -154,7 +155,9 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     // This text watcher will be placed on all edit texts to only enable the button after all has been entered
     private TextWatcher tw = new TextWatcher() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             String email_input = email_editText.getText().toString().trim();
@@ -164,11 +167,13 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
             // as long as the fields all have input the button will be enabled
             register_button.setEnabled(!email_input.isEmpty() &&
                     !pass_input.isEmpty() &&
-                    !pass_confirm_input.isEmpty()&&
+                    !pass_confirm_input.isEmpty() &&
                     degree != null);
         }
+
         @Override
-        public void afterTextChanged(Editable s) { }
+        public void afterTextChanged(Editable s) {
+        }
     };
 
     // EmailCheck will confirm that the necessary characters are contained then calls Domain check, otherwise sets an error.
@@ -189,8 +194,8 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     // This method currently uses a for each loop and is decently fast, but If domain_list was converted to an ArrayList and used.contains the thing might be faster.
     private boolean domainCheck(String email) {
         String[] email_array = email.split("@");
-        for(String item: domain_list) {
-            if (item.equals(email_array[1])){
+        for (String item : domain_list) {
+            if (item.equals(email_array[1])) {
 
                 email_editText.setError(null);
                 domain = email_array[1];
@@ -272,7 +277,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         id = auth.getUid();
         if (id != null) {
             initializeProfile();
-           // if (picture_selected) storePictureInDB();
+            // if (picture_selected) storePictureInDB();
 
             db_reference.collection("universities").document(domain).collection("users").document(id).set(user_info).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
@@ -288,41 +293,19 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         }
     }
 
+    private void returnToLogin() {
+        auth.signOut();
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        // what do these flags do
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-    // JSon Files
-    public void createCheckableDomainList() {
-        try {
-            Resources res = getResources();
-            InputStream is = res.openRawResource(R.raw.uni);
-            Scanner scanner = new Scanner(is);
-            StringBuilder builder = new StringBuilder();
-            while (scanner.hasNextLine()) {
-                builder.append(scanner.nextLine());
-            }
+        finish();
+        startActivity(intent);
 
-            String unis = builder.toString();
-
-            JSONArray arr = new JSONArray(unis);
-
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject singleObject = arr.getJSONObject(i);
-                //Log.d("IvyProtopye", singleObject.getString("name"));
-                String nameValue = singleObject.getString("name");
-
-                JSONArray domains = singleObject.getJSONArray("domains");
-                for (int j = 0; j < domains.length(); j++) {
-                    String domain = domains.getString(j);
-                    domain_hash_map.put(domain, nameValue);
-                    //domain_list.add(domain);
-                }
-            }
-
-        } catch (JSONException b) {
-            b.printStackTrace();
-        }
     }
-
 }
+
+
 
     //These methods check if a picture is selected and prompt a user to go into their phone to choose (only) a picture
     // StorePictureInDB does exactly what its name says lol
