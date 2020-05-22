@@ -273,7 +273,7 @@ public class LoginActivity extends AppCompatActivity {
         };
 
         Handler handler = new Handler();
-        handler.postDelayed(runnable, 100); //delayMillis = timeout for splash
+        handler.postDelayed(runnable, 1000); //delayMillis = timeout for splash
     }
 
 }
