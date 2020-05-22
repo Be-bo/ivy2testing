@@ -117,6 +117,7 @@
             android:layout_height="wrap_content"
             android:onClick="studentSignUp"
             android:text="@string/student_sign_up"
+            style="@style/StandardClickableText"
             android:layout_gravity="end"
             android:layout_marginBottom="16dp"/>
 
@@ -126,6 +127,7 @@
             android:layout_height="wrap_content"
             android:onClick="orgSignUp"
             android:text="@string/org_sign_up"
+            style="@style/StandardClickableText"
             android:layout_gravity="end"/>
     </LinearLayout>
 

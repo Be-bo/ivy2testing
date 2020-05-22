@@ -24,4 +24,11 @@
         <item name="android:textCursorDrawable">@null</item>
     </style>
 
+    <style name="StandardClickableText" parent="android:Widget.TextView">
+        <item name="android:textSize">16dp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textColor">@color/interaction</item>
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
+
 </resources>
