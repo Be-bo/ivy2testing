@@ -2,6 +2,7 @@ package com.ivy2testing;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -26,6 +27,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -53,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // Other variables
     private ArrayList<String> domains = new ArrayList<>();
+    private String currentDomain = "";
 
 
 /* Override Methods
@@ -63,6 +66,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         declareViews();
+        attemptAutoLogin();
         getDomains();
     }
 
@@ -97,8 +101,21 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView.addTextChangedListener(generalTextWatcher);
     }
 
+    // Check to see if we still have user's Firebase Auth token if we do, attempt login
+    private void attemptAutoLogin() {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null && auth.getUid() != null && user.isEmailVerified()) {
+            loadPreferences();
+            if (!currentDomain.equals("")) {
+                transToMain();
+            } else {
+                toastError("Couldn't perform auto-login, please log in manually.");
+            }
+        }
+    }
 
-    /* OnClick Methods
+
+/* OnClick Methods
 ***************************************************************************************************/
 
     // mLoginButton onClick method
@@ -136,15 +153,16 @@ public class LoginActivity extends AppCompatActivity {
         // Check domain if email format is fine
         if (email.length() > 5 && email.contains("@") && !email.contains(" ") && email.contains(".")) {
             mEmailView.setError(null);
-            return domainOk(email.substring(email.indexOf("@") + 1).trim());
+            currentDomain = email.substring(email.indexOf("@") + 1).trim();
+            return domainOk();
         }
         else mEmailView.setError(getString(R.string.error_invalidEmailFormat));
         return false;
     }
 
     // Check to see if email domain exists in database
-    private boolean domainOk(String domain){
-        if (domains.contains(domain)){
+    private boolean domainOk(){
+        if (domains.contains(currentDomain)){
             mEmailView.setError(null);
             return true;
         }
@@ -168,16 +186,9 @@ public class LoginActivity extends AppCompatActivity {
 /* Firebase related Methods
 ***************************************************************************************************/
 
-    //TODO
+    // Get list of users' domains
     private void getDomains(){
 
-        // Continue with rest of sign up process (delete later)
-        domains.add("ucalgary.ca");
-        splashAnimation();
-        allowInteraction();
-        setTextWatcher();
-
-        /* Not set up yet:
         dbRef.collection("universities").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -196,13 +207,9 @@ public class LoginActivity extends AppCompatActivity {
                             allowInteraction();
                             setTextWatcher();
                         }
-                        else {
-                            String error_msg = "Failed in connecting to collection";
-                            Toast.makeText(LoginActivity.this, error_msg, Toast.LENGTH_SHORT).show();
-                            Log.e(TAG, error_msg);
-                        }
+                        else toastError("Failed in connecting to collection");
                     }
-                });*/
+                });
 
     }
 
@@ -216,6 +223,13 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
+                    FirebaseUser user = auth.getCurrentUser();
+                    if(user!=null && user.isEmailVerified()){
+                        // Save uni domain for autologins and send off to MainActivity
+                        barInteraction();
+                        savePreferences();
+                        transToMain();
+                    }
                     //TODO
                 } else {
                     mLoginButton.setError(getString(R.string.error_loginInvalid));
@@ -226,7 +240,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-/* UI related Methods
+/* Transition Methods
 ***************************************************************************************************/
 
     private void allowInteraction(){
@@ -247,6 +261,34 @@ public class LoginActivity extends AppCompatActivity {
             if(imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
+    // Save preferences for auto-login
+    private void savePreferences(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("domain", currentDomain);
+        editor.apply();
+    }
+
+    // Load the university domain for auto login
+    private void loadPreferences() {
+        SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
+        currentDomain = sharedPreferences.getString("domain", "");
+    }
+
+    // Go back to main activity
+    private void transToMain(){
+        final Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.putExtra("this_user_id", auth.getUid());
+        intent.putExtra("this_uni_domain", currentDomain);
+        finish();
+        startActivity(intent);
+        allowInteraction();
+    }
+
+
+/* UI related Methods
+***************************************************************************************************/
 
     // Loading screen to Login page Animation
     private void splashAnimation(){
@@ -274,6 +316,14 @@ public class LoginActivity extends AppCompatActivity {
 
         Handler handler = new Handler();
         handler.postDelayed(runnable, 1000); //delayMillis = timeout for splash
+    }
+
+/* Utility Methods
+***************************************************************************************************/
+
+    private void toastError(String msg){
+        Log.w(TAG, msg);
+        Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 
 }
