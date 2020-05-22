@@ -17,4 +17,95 @@
     <string name="login_logo_desc">White Ivy Logo</string>
 
 
+    <!-- There is a space before and after each item... -->
+    <string-array name="select_prompt">
+        <item>Degree</item>
+    </string-array>
+
+
+    <string-array name="degree_list">
+        <item> Accounting </item>
+        <item> Actuarial Science </item>
+        <item> Ancient and Medieval History </item>
+        <item> Anthropology </item>
+        <item> Applied Science </item>
+        <item> Archeology </item>
+        <item> Art History </item>
+        <item> Astrophysics </item>
+        <item> Biochemistry </item>
+        <item> Bioinformatics </item>
+        <item> Biology </item>
+        <item> Biomechanics </item>
+        <item> Biomedical Science </item>
+        <item> Business Administration </item>
+        <item> Business Analytics </item>
+        <item> Business Strategy </item>
+        <item> Business Technology Management </item>
+        <item> Canadian Studies </item>
+        <item> Cellular, Molecular, and Microbial Biology </item>
+        <item> Chemical Engineering </item>
+        <item> Chemistry </item>
+        <item> Civil Engineering </item>
+        <item> Commerce </item>
+        <item> Communication and Media Studies </item>
+        <item> Community Rehabilitation </item>
+        <item> Computer Science </item>
+        <item> Dance </item>
+        <item> Dentistry </item>
+        <item> Development Studies </item>
+        <item> Drama </item>
+        <item> Earth Sciences </item>
+        <item> East Asian Studies </item>
+        <item> Ecology </item>
+        <item> Economics </item>
+        <item> Education </item>
+        <item> Electrical Engineering </item>
+        <item> Energy </item>
+        <item> English </item>
+        <item> Entrepreneurship and Innovation </item>
+        <item> Environment </item>
+        <item> Film </item>
+        <item> Finance </item>
+        <item> French </item>
+        <item> Geography </item>
+        <item> Geology </item>
+        <item> Geophysics </item>
+        <item> German </item>
+        <item> Greek and Roman </item>
+        <item> Health </item>
+        <item> History </item>
+        <item> Indigenous </item>
+        <item> International Relations </item>
+        <item> Italian </item>
+        <item> Kinesiology </item>
+        <item> Latin American </item>
+        <item> Law </item>
+        <item> Law and Society </item>
+        <item> Leadership </item>
+        <item> Linguistics </item>
+        <item> Marketing </item>
+        <item> Masters Degree </item>
+        <item> Math </item>
+        <item> Medicine </item>
+        <item> Neuroscience </item>
+        <item> Nursing </item>
+        <item> Philosophy </item>
+        <item> Physics </item>
+        <item> Physiology </item>
+        <item> Political Science </item>
+        <item> Psychology </item>
+        <item> Plant Biology </item>
+        <item> Real Estate </item>
+        <item> Religious Studies </item>
+        <item> Risk Management and Insurance </item>
+        <item> Russian </item>
+        <item> Social Work </item>
+        <item> Sociology </item>
+        <item> Software Engineering </item>
+        <item> Spanish </item>
+        <item> Urban Studies </item>
+        <item> Veterinary Medicine </item>
+        <item> Womens Studies </item>
+        <item> Zoology </item>
+    </string-array>
 </resources>
