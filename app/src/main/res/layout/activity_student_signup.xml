@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     style='"@style/Base.Widget.AppCompat.Spinner.Underlined"'
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -24,10 +23,12 @@
         android:id="@+id/student_signup_logo"
         android:layout_width="0dp"
         android:layout_height="130dp"
+        android:contentDescription="@string/logo_desc"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.38"
         app:srcCompat="@drawable/ivy_logo" />
 
     <LinearLayout
@@ -37,10 +38,8 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.451">
+        app:layout_constraintTop_toTopOf="parent">
 
         <EditText
             android:id="@+id/student_signup_email"
@@ -49,8 +48,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:ems="10"
-            android:hint="Email"
-            android:inputType="textEmailAddress" />
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:autofillHints="" />
 
         <EditText
             android:id="@+id/student_signup_pass"
@@ -59,8 +59,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:ems="10"
-            android:hint="Password"
-            android:inputType="textPassword" />
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:autofillHints="" />
 
         <EditText
             android:id="@+id/student_signup_pass_confirm"
@@ -69,8 +70,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:ems="10"
-            android:hint="Confirm Password"
-            android:inputType="textPassword" />
+            android:hint="@string/confirm_password"
+            android:inputType="textPassword"
+            android:autofillHints="" />
 
         <Spinner
             android:id="@+id/student_signup_degree"
@@ -84,21 +86,11 @@
         <Button
             android:id="@+id/student_register_button"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
+            style ="@style/StandardButton"
             android:background="@drawable/button_shape"
-            android:text="Sign Up"
-            android:textColor="#FFFFFF"
-            tools:layout_constraintBottom_toBottomOf="@id/imageView"
-            tools:layout_editor_absoluteX="-87dp"
-            tools:layout_editor_absoluteY="374dp" />
+            android:text="@string/sign_up"/>
     </LinearLayout>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.24" />
 
     <ImageView
         android:id="@+id/student_signup_gradient"
@@ -110,6 +102,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:layout_constraintVertical_bias="0.506"
-        app:srcCompat="@drawable/gradient_greenwhite_reverse" />
+        app:srcCompat="@drawable/gradient_greenwhite_reverse"
+        android:contentDescription="@string/login_gradient_desc" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
