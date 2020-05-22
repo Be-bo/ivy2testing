@@ -120,7 +120,6 @@ public class LoginActivity extends AppCompatActivity {
 
     // mLoginButton onClick method
     public void login(View view) {
-        //TODO
         barInteraction();
         loginToFirebaseAuth();
     }
@@ -230,7 +229,6 @@ public class LoginActivity extends AppCompatActivity {
                         savePreferences();
                         transToMain();
                     }
-                    //TODO
                 } else {
                     mLoginButton.setError(getString(R.string.error_loginInvalid));
                     allowInteraction();
