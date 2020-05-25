@@ -1,6 +1,7 @@
 package com.ivy2testing;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,11 +31,20 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Scanner;
 import java.util.UUID;
+
+import static  com.ivy2testing.StaticDomainList.domain_list;
 
 public class StudentSignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private EditText email_editText;
@@ -56,6 +66,8 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     //
     private ArrayAdapter<CharSequence> degree_adapter;
 
+
+    private Map<String, String> domain_hash_map = new HashMap<>();
 
 
     // Variables for picture selection
@@ -82,6 +94,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_signup);
+
         setHandlers();
         setListeners();
     }
@@ -113,10 +126,11 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
             @Override
             public void onClick(View v) {
                 Objects.requireNonNull(getCurrentFocus()).clearFocus();
-                if (emailCheck() && passCheck()  && passConfirmCheck()) {
+                if (emailCheck() && passCheck() && passConfirmCheck()) {
                     Toast.makeText(getApplicationContext(), "all input is acceptable", Toast.LENGTH_LONG).show();
                     register_button.setEnabled(false);
                     createNewUser();
+                  //  returnToLogin();
                 } else {
                     Toast.makeText(getApplicationContext(), "One or more fields are incorrect", Toast.LENGTH_LONG).show();
                     register_button.setEnabled(false);
@@ -132,6 +146,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         degree = parent.getItemAtPosition(position).toString();
     }
+
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
@@ -140,7 +155,9 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     // This text watcher will be placed on all edit texts to only enable the button after all has been entered
     private TextWatcher tw = new TextWatcher() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             String email_input = email_editText.getText().toString().trim();
@@ -150,11 +167,13 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
             // as long as the fields all have input the button will be enabled
             register_button.setEnabled(!email_input.isEmpty() &&
                     !pass_input.isEmpty() &&
-                    !pass_confirm_input.isEmpty()&&
+                    !pass_confirm_input.isEmpty() &&
                     degree != null);
         }
+
         @Override
-        public void afterTextChanged(Editable s) { }
+        public void afterTextChanged(Editable s) {
+        }
     };
 
     // EmailCheck will confirm that the necessary characters are contained then calls Domain check, otherwise sets an error.
@@ -170,20 +189,23 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         }
     }
 
-    // Domain check will split the string from emailcheck and check if the domain is equiavlent to ucalgary. Otherwise set an error.
+    // Domain check will split the string from emailcheck and check if the domain is equiavlent to a domain imported from StaticDomainListArray. Otherwise set an error.
     // Variables: domain is set here
+    // This method currently uses a for each loop and is decently fast, but If domain_list was converted to an ArrayList and used.contains the thing might be faster.
     private boolean domainCheck(String email) {
         String[] email_array = email.split("@");
-        if (email_array[1].equals("ucalgary.ca")) {
+        for (String item : domain_list) {
+            if (item.equals(email_array[1])) {
 
-            email_editText.setError(null);
-            domain = email_array[1];
-            return true;
+                email_editText.setError(null);
+                domain = email_array[1];
+                return true;
 
-        } else {
-            email_editText.setError("Please choose a Valid University Domain.");
-            return false;
+            }
         }
+        email_editText.setError("Please choose a Valid University Domain.");
+        return false;
+
     }
 
 
@@ -255,12 +277,13 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         id = auth.getUid();
         if (id != null) {
             initializeProfile();
-           // if (picture_selected) storePictureInDB();
+            // if (picture_selected) storePictureInDB();
 
             db_reference.collection("universities").document(domain).collection("users").document(id).set(user_info).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Toast.makeText(getApplicationContext(), "profile creation succesful", Toast.LENGTH_LONG).show();
+                    returnToLogin();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -271,7 +294,20 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         }
     }
 
+    private void returnToLogin() {
+        auth.signOut();
+       // wait(10000);
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        // what do these flags do
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        finish();
+        startActivity(intent);
+
+    }
 }
+
+
 
     //These methods check if a picture is selected and prompt a user to go into their phone to choose (only) a picture
     // StorePictureInDB does exactly what its name says lol

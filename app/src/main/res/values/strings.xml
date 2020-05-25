@@ -29,6 +29,7 @@
 
 
     <string-array name="degree_list">
+        <item> Degree </item>
         <item> Accounting </item>
         <item> Actuarial Science </item>
         <item> Ancient and Medieval History </item>
