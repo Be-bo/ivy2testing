@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    tools:context="com.ivy2testing.LoginActivity">
+    tools:context="com.ivy2testing.LoginActivity"
+    android:background="@drawable/gradient_greenwhite">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/login_guideline1"
@@ -30,15 +31,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/login_fieldsLayout">
 
-        <ImageView
-            android:id="@+id/login_gradient"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:srcCompat="@drawable/gradient_greenwhite"
-            android:contentDescription="@string/login_gradient_desc"
 
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
 
         <ImageView
             android:id="@+id/login_logo"

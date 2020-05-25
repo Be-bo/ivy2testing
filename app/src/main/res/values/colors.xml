@@ -3,6 +3,7 @@
     <color name="interaction">#2b9721</color>
     <color name="hint">#802b9721</color>
     <color name="disabled">#b3b3b3</color>
+    <color name="lightGreen">#ecf7eb</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="accent">#FF8C00</color>

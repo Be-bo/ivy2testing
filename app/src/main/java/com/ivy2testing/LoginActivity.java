@@ -3,6 +3,7 @@ package com.ivy2testing;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -10,6 +11,7 @@ import android.text.TextWatcher;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -68,6 +70,13 @@ public class LoginActivity extends AppCompatActivity {
         declareViews();
         attemptAutoLogin();
         getDomains();
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        Window window = getWindow();
+        window.setFormat(PixelFormat.RGBA_8888);
     }
 
 
