@@ -89,7 +89,8 @@
             android:layout_height="wrap_content"
             style ="@style/StandardButton"
             android:background="@drawable/button_shape"
-            android:text="@string/sign_up_org"/>
+            android:text="@string/sign_up_org"
+            android:onClick="signUp"/>
     </LinearLayout>
 
 

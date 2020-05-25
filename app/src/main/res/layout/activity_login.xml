@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    tools:context="com.ivy2testing.LoginActivity"
+    tools:context="com.ivy2testing.authentication.LoginActivity"
     android:background="@drawable/gradient_greenwhite">
 
     <androidx.constraintlayout.widget.Guideline

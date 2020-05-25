@@ -15,6 +15,7 @@
     <string name="error_invalidDomain">This domain is not recognizable.</string>
     <string name="error_invalidEmailFormat">Please enter a valid email.</string>
     <string name="error_invalidPasswordLength">Your password must be at least six characters long.</string>
+    <string name="error_invalidPasswordMatch">Passwords do not match.</string>
     <string name="error_loginInvalid">Login failed, invalid email or password.</string>
 
     <string name="login_gradient_desc">Green to white gradient</string>

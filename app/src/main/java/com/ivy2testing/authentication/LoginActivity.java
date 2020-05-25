@@ -1,9 +1,8 @@
-package com.ivy2testing;
+package com.ivy2testing.authentication;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -11,7 +10,6 @@ import android.text.TextWatcher;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -33,6 +31,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.ivy2testing.MainActivity;
+import com.ivy2testing.R;
 
 import java.util.ArrayList;
 import java.util.Objects;

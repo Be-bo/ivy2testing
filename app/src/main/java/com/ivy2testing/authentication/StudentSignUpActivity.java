@@ -1,9 +1,6 @@
-package com.ivy2testing;
+package com.ivy2testing.authentication;
 
 import android.content.Intent;
-import android.content.res.Resources;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,9 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,22 +22,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.ivy2testing.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Scanner;
-import java.util.UUID;
 
 import static  com.ivy2testing.StaticDomainList.domain_list;
 
@@ -82,7 +66,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     private FirebaseAuth auth = FirebaseAuth.getInstance();
 
 
-    private Map<String, Object> user_info = new HashMap<String, Object>();
+    private Map<String, Object> user_info = new HashMap<>();
 
     //Made By ClydeB on 5/21/2020
 
@@ -189,7 +173,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         }
     }
 
-    // Domain check will split the string from emailcheck and check if the domain is equiavlent to a domain imported from StaticDomainListArray. Otherwise set an error.
+    // Domain check will split the string from emailCheck and check if the domain is equivalent to a domain imported from StaticDomainListArray. Otherwise set an error.
     // Variables: domain is set here
     // This method currently uses a for each loop and is decently fast, but If domain_list was converted to an ArrayList and used.contains the thing might be faster.
     private boolean domainCheck(String email) {
