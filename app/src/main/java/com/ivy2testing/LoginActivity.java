@@ -290,7 +290,7 @@ public class LoginActivity extends AppCompatActivity {
 /* UI related Methods
 ***************************************************************************************************/
 
-    // Loading screen to Login page Animation
+    // Loading screen to Login page Animation TODO
     private void splashAnimation(){
 
         // Get hidden layouts
@@ -304,7 +304,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Change image constraints
                 ConstraintSet constraintSet = new ConstraintSet();
                 constraintSet.clone(rootLayout);
-                constraintSet.connect(R.id.login_images, ConstraintSet.BOTTOM, R.id.login_fieldsLayout, ConstraintSet.TOP,0);
+                //constraintSet.connect(R.id.login_images, ConstraintSet.BOTTOM, R.id.login_fieldsLayout, ConstraintSet.TOP,0);
                 TransitionManager.beginDelayedTransition(rootLayout);
                 constraintSet.applyTo(rootLayout);
 

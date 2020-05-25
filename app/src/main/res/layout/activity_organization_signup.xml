@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_greenwhite_reverse">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/org_signup_guideline2"
@@ -27,7 +28,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.38"
+        app:layout_constraintVertical_bias="0.36"
         app:srcCompat="@drawable/ivy_logo" />
 
     <LinearLayout
@@ -79,6 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:layout_marginStart="5dp"
             android:text="@string/switch_sign_up" />
 
         <Button
@@ -90,17 +92,5 @@
             android:text="@string/sign_up_org"/>
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/org_signup_gradient"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/org_signup_linearLayout"
-        app:layout_constraintVertical_bias="0.506"
-        app:srcCompat="@drawable/gradient_greenwhite_reverse"
-        android:contentDescription="@string/login_gradient_desc" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
