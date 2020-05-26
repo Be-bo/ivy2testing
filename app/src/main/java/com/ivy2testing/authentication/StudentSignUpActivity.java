@@ -1,15 +1,18 @@
-package com.ivy2testing.authentication;
+package com.ivy2testing;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,7 +25,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.ivy2testing.R;
+import com.ivy2testing.authentication.LoginActivity;
+import com.ivy2testing.authentication.StudentSignupDialog;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,6 +58,11 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     private Map<String, String> domain_hash_map = new HashMap<>();
 
 
+    //Progress bar
+    private ProgressBar signup_progress_bar;
+    private int mProgress;
+    private TextView signup_progress_text;
+
     // Variables for picture selection
 //    private StorageReference db_storage = FirebaseStorage.getInstance().getReference();
 //    private final int PICK_IMAGE_INTERNAL = 450;
@@ -66,7 +75,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     private FirebaseAuth auth = FirebaseAuth.getInstance();
 
 
-    private Map<String, Object> user_info = new HashMap<>();
+    private Map<String, Object> user_info = new HashMap<String, Object>();
 
     //Made By ClydeB on 5/21/2020
 
@@ -92,6 +101,8 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         degree_spinner = findViewById(R.id.student_signup_degree);
         register_button = findViewById(R.id.student_register_button);
         register_button.setEnabled(false);
+        signup_progress_bar = findViewById(R.id.student_signup_progressbar);
+        signup_progress_text = findViewById(R.id.student_signup_progress_text);
 
         // creating and applying adapter to the spinner class
         degree_adapter = ArrayAdapter.createFromResource(this, R.array.degree_list, android.R.layout.simple_spinner_item);
@@ -106,16 +117,44 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
 
         degree_spinner.setOnItemSelectedListener(this); // set listeners @ onItemSelected & onNothingSelected
 
+        email_editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus) {
+                    emailCheck();
+                }
+            }
+        });
+
+        pass_editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!(hasFocus)){
+                    passCheck();
+                }
+            }
+        });
+
+        pass_confirm_editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!(hasFocus)){
+                    passConfirmCheck();
+                }
+            }
+        });
+
+
         register_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Objects.requireNonNull(getCurrentFocus()).clearFocus();
                 if (emailCheck() && passCheck() && passConfirmCheck()) {
-                    Toast.makeText(getApplicationContext(), "all input is acceptable", Toast.LENGTH_LONG).show();
-                    register_button.setEnabled(false);
+                    barInteraction();
                     createNewUser();
-                  //  returnToLogin();
+
                 } else {
+                    //TODO
                     Toast.makeText(getApplicationContext(), "One or more fields are incorrect", Toast.LENGTH_LONG).show();
                     register_button.setEnabled(false);
                 }
@@ -128,7 +167,8 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     // Variables: degree is set here
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        degree = parent.getItemAtPosition(position).toString();
+            degree = parent.getItemAtPosition(position).toString().trim();
+
     }
 
     @Override
@@ -149,10 +189,11 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
             String pass_confirm_input = pass_confirm_editText.getText().toString().trim();
 
             // as long as the fields all have input the button will be enabled
-            register_button.setEnabled(!email_input.isEmpty() &&
-                    !pass_input.isEmpty() &&
-                    !pass_confirm_input.isEmpty() &&
-                    degree != null);
+//            register_button.setEnabled(!email_input.isEmpty() &&
+//                    !pass_input.isEmpty() &&
+//                    !pass_confirm_input.isEmpty());
+            //TODO this is constantly firing
+            register_button.setEnabled(emailCheck() && passCheck() && passConfirmCheck());
         }
 
         @Override
@@ -173,7 +214,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         }
     }
 
-    // Domain check will split the string from emailCheck and check if the domain is equivalent to a domain imported from StaticDomainListArray. Otherwise set an error.
+    // Domain check will split the string from emailcheck and check if the domain is equiavlent to a domain imported from StaticDomainListArray. Otherwise set an error.
     // Variables: domain is set here
     // This method currently uses a for each loop and is decently fast, but If domain_list was converted to an ArrayList and used.contains the thing might be faster.
     private boolean domainCheck(String email) {
@@ -200,7 +241,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         password = pass_editText.getText().toString();
         if (password.length() > 6) {
             pass_editText.setError(null);
-            return passConfirmCheck();
+            return true;
         } else {
             pass_editText.setError("Please choose a password over 6 characters.");
             return false;
@@ -228,19 +269,23 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            incrementProgressBar();
                             if (auth.getCurrentUser() != null) {
                                 auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        Toast.makeText(getApplicationContext(), "Registration Successful! Please check your email", Toast.LENGTH_LONG).show();
+                                        incrementProgressBar();
                                         registerInDB();
                                     }
                                 });
                             } else {
-                                Toast.makeText(getApplicationContext(), "Registration Failed! We could not authenticate you", Toast.LENGTH_LONG).show();
+                                allowInteraction();
+                                Toast.makeText(getApplicationContext(), "Registration Failed! We could not authenticate you.", Toast.LENGTH_LONG).show();
                             }
                         } else {
-                            Toast.makeText(getApplicationContext(), "Registration Failed! The email is already registered", Toast.LENGTH_LONG).show();
+                            allowInteraction();
+                            email_editText.setError("Email already registered");
+                            Toast.makeText(getApplicationContext(), "Registration Failed! The email is already registered.", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -262,33 +307,61 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         if (id != null) {
             initializeProfile();
             // if (picture_selected) storePictureInDB();
-
             db_reference.collection("universities").document(domain).collection("users").document(id).set(user_info).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    Toast.makeText(getApplicationContext(), "profile creation succesful", Toast.LENGTH_LONG).show();
-                    returnToLogin();
+                    incrementProgressBar();
+                    openDialogComplete();
+
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getApplicationContext(), "profile creation failed", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Profile creation failed. Please try again later.", Toast.LENGTH_LONG).show();
                 }
             });
         }
     }
 
+    private void incrementProgressBar(){
+//        ObjectAnimator animation = ObjectAnimator.ofInt(signup_progress_bar, "progress", 100);
+//        animation.setDuration(1000);
+//        animation.start();
+        signup_progress_bar.incrementProgressBy(33);
+    }
+
     private void returnToLogin() {
         auth.signOut();
-       // wait(10000);
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        // what do these flags do
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 
         finish();
         startActivity(intent);
 
     }
+    private void openDialogComplete() {
+        StudentSignupDialog ssd = new StudentSignupDialog();
+        ssd.show(getSupportFragmentManager(),"example dialog");
+      //  returnToLogin();
+    }
+    private void barInteraction(){
+     //   progress_bar.setVisibility(View.VISIBLE);
+        signup_progress_bar.setVisibility(View.VISIBLE);
+        signup_progress_text.setVisibility(View.VISIBLE);
+        register_button.setVisibility(View.GONE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
+    // if the progress bar is disappearing and reappearing the signup is probably starting all over
+
+    private void allowInteraction(){
+     //   progress_bar.setVisibility(View.GONE);
+        signup_progress_bar.setVisibility(View.INVISIBLE);
+        signup_progress_text.setVisibility(View.INVISIBLE);
+        signup_progress_bar.setProgress(0);
+        register_button.setVisibility(View.VISIBLE);
+        this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
+
 }
 
 

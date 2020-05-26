@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     style='"@style/Base.Widget.AppCompat.Spinner.Underlined"'
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -24,12 +25,10 @@
         android:id="@+id/student_signup_logo"
         android:layout_width="0dp"
         android:layout_height="130dp"
-        android:contentDescription="@string/logo_desc"
-        app:layout_constraintBottom_toTopOf="@id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.40"
         app:srcCompat="@drawable/ivy_logo" />
 
     <LinearLayout
@@ -38,9 +37,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/guideline3"
-        app:layout_constraintStart_toStartOf="@id/guideline2"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.451">
 
         <EditText
             android:id="@+id/student_signup_email"
@@ -49,9 +50,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:ems="10"
-            android:hint="@string/email"
-            android:inputType="textEmailAddress"
-            android:autofillHints="" />
+            android:hint="Email"
+            android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/student_signup_pass"
@@ -60,9 +60,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:ems="10"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:autofillHints="" />
+            android:hint="Password"
+            android:inputType="textPassword" />
 
         <EditText
             android:id="@+id/student_signup_pass_confirm"
@@ -71,9 +70,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:ems="10"
-            android:hint="@string/confirm_password"
-            android:inputType="textPassword"
-            android:autofillHints="" />
+            android:hint="Confirm Password"
+            android:inputType="textPassword" />
 
         <Spinner
             android:id="@+id/student_signup_degree"
@@ -87,11 +85,46 @@
         <Button
             android:id="@+id/student_register_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style ="@style/StandardButton"
+            android:layout_height="30dp"
             android:background="@drawable/button_shape"
-            android:text="@string/sign_up"/>
+            android:text="Sign Up"
+            android:textColor="#FFFFFF"
+            tools:layout_constraintBottom_toBottomOf="@id/imageView"
+            tools:layout_editor_absoluteX="-87dp"
+            tools:layout_editor_absoluteY="374dp" />
+
     </LinearLayout>
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.24" />
+
+    <ProgressBar
+        android:id="@+id/student_signup_progressbar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:progress="0"
+        android:progressDrawable="@drawable/custom_progress_bar_registration"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+    <TextView
+        android:id="@+id/student_signup_progress_text"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="SIGNING UP"
+        android:textColor="#FFFFFF"
+        android:translationY="-30dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/student_signup_progressbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
