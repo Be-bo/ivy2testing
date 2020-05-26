@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -49,6 +50,9 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
 
+    // Other Variables
+    private boolean isClub = false;
+
 
 /* Override Methods
 ***************************************************************************************************/
@@ -59,6 +63,8 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_organization_signup);
         declareViews();
         setTextWatcher();
+        setFocusListener();
+        setSwitchListener();
     }
 
 
@@ -74,6 +80,7 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         register_button = findViewById(R.id.org_signup_register_button);
     }
 
+
     // Set up textWatchers for real time error checking
     private void setTextWatcher() {
         // Set up a general textWatcher
@@ -82,7 +89,7 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                register_button.setEnabled(allOk());
+                register_button.setEnabled(emailOk() && passwordOk() && passConfirmOk());
             }
             @Override
             public void afterTextChanged(Editable s) {}
@@ -94,6 +101,53 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         pass_confirm_editText.addTextChangedListener(generalTextWatcher);
     }
 
+    // Set up focus listener for for real time error checking
+    private void setFocusListener(){
+        // Check if email is correct after focus has changed
+        email_editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus)
+                    setInputErrors(
+                            email_editText,
+                            getString(R.string.error_invalidEmailFormat),
+                            emailOk());
+            }
+        });
+        // Check if password is correct after focus change
+        pass_editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus)
+                    setInputErrors(
+                            pass_editText,
+                            getString(R.string.error_invalidPasswordLength),
+                            passwordOk());
+            }
+        });
+        // Check if password confirmation matches after focus change
+        pass_confirm_editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus)
+                    setInputErrors(
+                            pass_confirm_editText,
+                            getString(R.string.error_invalidPasswordMatch),
+                            passConfirmOk());
+            }
+        });
+    }
+
+    // Set up switch listener
+    private void setSwitchListener(){
+        isClub_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                isClub = isChecked;
+            }
+        });
+    }
+
 
 /* OnClick Methods
 ***************************************************************************************************/
@@ -103,62 +157,47 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         barInteraction();
         Objects.requireNonNull(getCurrentFocus()).clearFocus();
 
-        if (allOk()) createNewUser();
-        else allowInteraction();
+        // Set errors if any of the inputs is invalid
+        setInputErrors(email_editText, getString(R.string.error_invalidEmailFormat), emailOk());
+        setInputErrors(pass_editText, getString(R.string.error_invalidPasswordLength), passwordOk());
+        setInputErrors(pass_confirm_editText, getString(R.string.error_invalidPasswordMatch), passConfirmOk());
+
+        // Create user if input is valid
+        if (emailOk() && passwordOk() && passConfirmOk()) createNewUser();
+        else {
+            toastError("Registration failed. Please check your input.");
+            allowInteraction();
+        }
     }
 
 
 /* Input Checking Methods
 ***************************************************************************************************/
 
-    // Check conditions one by one so ALL errors are set/cleared
-    private boolean allOk(){
-        boolean checkEmail = emailOk();
-        boolean checkPassword = passwordOk();
-        boolean checkConfirm = passConfirmOk();
-        return checkEmail && checkPassword && checkConfirm;
+    // Set error on an editText view based on a condition
+    private void setInputErrors(EditText editText, String error_msg, boolean check){
+        if (check) editText.setError(null);
+        else editText.setError(error_msg);
     }
 
     // Make sure email has a correct format and is not empty
     private boolean emailOk() {
         String email = email_editText.getText().toString().trim();
-
-        // Check domain if email format is fine
-        if (email.length() > 5 && email.contains("@") && !email.contains(" ") && email.contains(".")) {
-            email_editText.setError(null);
-            return true;
-        }
-        else email_editText.setError(getString(R.string.error_invalidEmailFormat));
-        return false;
+        return email.length() > 5 && email.contains("@") && !email.contains(" ") && email.contains(".");
     }
 
     // Make sure password field is at lest 6 characters long
     private boolean passwordOk() {
         String password = pass_editText.getText().toString();
-
-        if (password.length() > 5) {
-            pass_editText.setError(null);
-            return true;
-        }
-        else pass_editText.setError(getString(R.string.error_invalidPasswordLength));
-        return false;
+        return password.length() > 5;
     }
 
     // PassConfirmCheck will check if the password confirm field matches password
     private boolean passConfirmOk() {
         String password = pass_editText.getText().toString();
         String password_confirm = pass_confirm_editText.getText().toString();
-
-        if (password_confirm.equals(password)) {
-            pass_confirm_editText.setError(null);
-            return true;
-        } else {
-            pass_confirm_editText.setError(getString(R.string.error_invalidPasswordMatch));
-            return false;
-        }
+        return password_confirm.equals(password);
     }
-
-
 
 
 /* Firebase related Methods
@@ -209,7 +248,7 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         Map<String, Object> user_info = new HashMap<>();
         user_info.put("id", id);
         user_info.put("email", email_editText.getText().toString().trim());
-        user_info.put("isClub", isClub_switch.isActivated());
+        user_info.put("isClub", isClub);
         user_info.put("registration_millis", System.currentTimeMillis());
         return user_info;
     }

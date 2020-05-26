@@ -40,6 +40,7 @@ import java.util.Objects;
 /** @author = Zahra Ghavasieh
  * Overview: First activity user encounters when launching app
  * Features: realtime fields check, using Firebase auth for authentication
+ * Note: domain check is based on domains currently existing under Firebase.Database/universities
 */
 public class LoginActivity extends AppCompatActivity {
 
@@ -91,8 +92,7 @@ public class LoginActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (allOk())  mLoginButton.setEnabled(true);
-                else  mLoginButton.setEnabled(false);
+                mLoginButton.setEnabled(emailOk() && passwordOk() && domainOk());
             }
             @Override
             public void afterTextChanged(Editable s) {}
@@ -101,6 +101,38 @@ public class LoginActivity extends AppCompatActivity {
         // Add textWatcher to fields
         mEmailView.addTextChangedListener(generalTextWatcher);
         mPasswordView.addTextChangedListener(generalTextWatcher);
+    }
+
+    // Set up focus listener for for real time error checking
+    private void setFocusListener(){
+        // Check if email is correct after focus has changed (if format is good, check domain)
+        mEmailView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    setInputErrors(
+                            mEmailView,
+                            getString(R.string.error_invalidEmailFormat),
+                            emailOk());
+                    if (emailOk())
+                        setInputErrors(
+                                mEmailView,
+                                getString(R.string.error_invalidDomain),
+                                domainOk());
+                }
+            }
+        });
+        // Check if password is correct after focus change
+        mPasswordView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus)
+                    setInputErrors(
+                            mPasswordView,
+                            getString(R.string.error_invalidPasswordLength),
+                            passwordOk());
+            }
+        });
     }
 
     // Check to see if we still have user's Firebase Auth token if we do, attempt login
@@ -123,6 +155,7 @@ public class LoginActivity extends AppCompatActivity {
     // mLoginButton onClick method
     public void login(View view) {
         barInteraction();
+        Objects.requireNonNull(getCurrentFocus()).clearFocus();
         loginToFirebaseAuth();
     }
 
@@ -140,25 +173,23 @@ public class LoginActivity extends AppCompatActivity {
 /* Input Checking Methods
 ***************************************************************************************************/
 
-    // Check conditions one by one so ALL errors are set/cleared
-    private boolean allOk(){
-        boolean checkEmail = emailOk();
-        boolean checkPassword = passwordOk();
-        return checkEmail && checkPassword;
+    // Set error on an editText view based on a condition
+    private void setInputErrors(EditText editText, String error_msg, boolean check){
+        if (check) editText.setError(null);
+        else editText.setError(error_msg);
     }
 
     // Make sure email has a correct format and is not empty
     private boolean emailOk() {
         String email = mEmailView.getText().toString().trim();
+        currentDomain = email.substring(email.indexOf("@") + 1).trim();
+        return email.length() > 5 && email.contains("@") && !email.contains(" ") && email.contains(".");
+    }
 
-        // Check domain if email format is fine
-        if (email.length() > 5 && email.contains("@") && !email.contains(" ") && email.contains(".")) {
-            mEmailView.setError(null);
-            currentDomain = email.substring(email.indexOf("@") + 1).trim();
-            return domainOk();
-        }
-        else mEmailView.setError(getString(R.string.error_invalidEmailFormat));
-        return false;
+    // Make sure password field is at lest 6 characters long
+    private boolean passwordOk() {
+        String password = mPasswordView.getText().toString();
+        return password.length() > 5;
     }
 
     // Check to see if email domain exists in database
@@ -168,18 +199,6 @@ public class LoginActivity extends AppCompatActivity {
             return true;
         }
         else mEmailView.setError(getString(R.string.error_invalidDomain));
-        return false;
-    }
-
-    // Make sure password field is at lest 6 characters long
-    private boolean passwordOk() {
-        String password = mPasswordView.getText().toString();
-
-        if (password.length() > 5) {
-            mPasswordView.setError(null);
-            return true;
-        }
-        else mPasswordView.setError(getString(R.string.error_invalidPasswordLength));
         return false;
     }
 
@@ -207,6 +226,7 @@ public class LoginActivity extends AppCompatActivity {
                             splashAnimation();
                             allowInteraction();
                             setTextWatcher();
+                            setFocusListener();
                         }
                         else toastError("Failed in connecting to collection");
                     }
