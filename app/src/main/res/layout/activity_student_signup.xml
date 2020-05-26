@@ -91,6 +91,7 @@
             tools:layout_constraintBottom_toBottomOf="@id/imageView"
             tools:layout_editor_absoluteX="-87dp"
             tools:layout_editor_absoluteY="374dp" />
+
     </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline
@@ -107,9 +108,35 @@
         android:layout_marginTop="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.506"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/gradient_greenwhite_reverse" />
+
+    <ProgressBar
+        android:id="@+id/student_signup_progressbar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:progress="0"
+        android:progressDrawable="@drawable/custom_progress_bar_registration"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+    <TextView
+        android:id="@+id/student_signup_progress_text"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="SIGNING UP"
+        android:textColor="#FFFFFF"
+        android:translationY="-30dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/student_signup_progressbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,32 @@
 [
   {
     "web_pages": [
+      "http://www.marywood.edu"
+    ],
+    "name": "Marywood University",
+    "alpha_two_code": "PA",
+    "state-province": null,
+    "domains": [
+      "marywood.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "https://www.cstj.qc.ca",
+      "https://ccmt.cstj.qc.ca",
+      "https://ccml.cstj.qc.ca"
+    ],
+    "name": "Cégep de Saint-Jérôme",
+    "alpha_two_code": "CA",
+    "state-province": null,
+    "domains": [
+      "cstj.qc.ca"
+    ],
+    "country": "Canada"
+  },
+  {
+    "web_pages": [
       "http://www.lindenwood.edu/"
     ],
     "name": "Lindenwood University",
@@ -10,6 +36,30 @@
       "lindenwood.edu"
     ],
     "country": "United States"
+  },
+  {
+    "web_pages": [
+      "http://www.davietjal.org/"
+    ],
+    "name": "DAV Institute of Engineering & Technology",
+    "alpha_two_code": "IN",
+    "state-province": "Punjab",
+    "domains": [
+      "davietjal.org"
+    ],
+    "country": "India"
+  },
+  {
+    "web_pages": [
+      "http://www.lpu.in/"
+    ],
+    "name": "Lovely Professional University",
+    "alpha_two_code": "IN",
+    "state-province": "Punjab",
+    "domains": [
+      "lpu.in"
+    ],
+    "country": "India"
   },
   {
     "web_pages": [
@@ -703,7 +753,7 @@
     ],
     "name": "NorthCap University",
     "alpha_two_code": "IN",
-    "state-province": null,
+    "state-province": "Haryana",
     "domains": [
       "ncuindia.edu"
     ],
@@ -2445,18 +2495,6 @@
     "alpha_two_code": "US",
     "state-province": null,
     "domains": [
-      "idbsu.edu"
-    ],
-    "country": "United States"
-  },
-  {
-    "web_pages": [
-      "http://www.boisestate.edu/"
-    ],
-    "name": "Boise State University",
-    "alpha_two_code": "US",
-    "state-province": null,
-    "domains": [
       "boisestate.edu"
     ],
     "country": "United States"
@@ -2929,18 +2967,6 @@
     "state-province": null,
     "domains": [
       "csusb.edu"
-    ],
-    "country": "United States"
-  },
-  {
-    "web_pages": [
-      "http://www.sjsu.edu/"
-    ],
-    "name": "California State University, San Jose",
-    "alpha_two_code": "US",
-    "state-province": null,
-    "domains": [
-      "sjsu.edu"
     ],
     "country": "United States"
   },
@@ -3438,18 +3464,6 @@
   },
   {
     "web_pages": [
-      "http://www.cityu.edu/"
-    ],
-    "name": "City University",
-    "alpha_two_code": "US",
-    "state-province": null,
-    "domains": [
-      "cityuniversity.edu"
-    ],
-    "country": "United States"
-  },
-  {
-    "web_pages": [
       "http://www.cuny.edu/"
     ],
     "name": "City University of New York",
@@ -3474,13 +3488,13 @@
   },
   {
     "web_pages": [
-      "http://www.mckenna.edu/"
+      "http://www.cmc.edu/"
     ],
     "name": "Claremont McKenna College",
     "alpha_two_code": "US",
     "state-province": null,
     "domains": [
-      "mckenna.edu"
+      "claremontmckenna.edu"
     ],
     "country": "United States"
   },
@@ -4301,6 +4315,18 @@
       "devry.edu"
     ],
     "country": "United States"
+  },
+  {
+    "web_pages": [
+      "http://www.ddu.ac.in/"
+    ],
+    "name": "Dharamsinh Desai University",
+    "alpha_two_code": "IN",
+    "state-province": "Gujarat",
+    "domains": [
+      "ddu.ac.in"
+    ],
+    "country": "India"
   },
   {
     "web_pages": [
@@ -5870,18 +5896,7 @@
     "alpha_two_code": "US",
     "state-province": null,
     "domains": [
-      "illinoisstate.edu"
-    ],
-    "country": "United States"
-  },
-  {
-    "web_pages": [
-      "http://www.illinoisstate.edu/"
-    ],
-    "name": "Illinois State University",
-    "alpha_two_code": "US",
-    "state-province": null,
-    "domains": [
+      "illinoisstate.edu",
       "ilstu.edu"
     ],
     "country": "United States"
@@ -6499,6 +6514,19 @@
       "lamar.edu"
     ],
     "country": "United States"
+  },
+  {
+    "web_pages": [
+      "https://www.lambtoncollege.ca"
+    ],
+    "name": "Lambton College",
+    "alpha_two_code": "CA",
+    "state-province": "Sarnia",
+    "domains": [
+      "lambtoncollege.ca",
+      "mylambton.ca"
+    ],
+    "country": "Canada"
   },
   {
     "web_pages": [
@@ -8214,18 +8242,7 @@
     "alpha_two_code": "US",
     "state-province": null,
     "domains": [
-      "neu.edu"
-    ],
-    "country": "United States"
-  },
-  {
-    "web_pages": [
-      "http://www.northeastern.edu/"
-    ],
-    "name": "Northeastern University",
-    "alpha_two_code": "US",
-    "state-province": null,
-    "domains": [
+      "neu.edu",
       "northeastern.edu"
     ],
     "country": "United States"
@@ -8491,18 +8508,6 @@
     "state-province": null,
     "domains": [
       "ohio.edu"
-    ],
-    "country": "United States"
-  },
-  {
-    "web_pages": [
-      "http://www.ohiou.edu/"
-    ],
-    "name": "Ohio University",
-    "alpha_two_code": "US",
-    "state-province": null,
-    "domains": [
-      "ohiou.edu"
     ],
     "country": "United States"
   },
@@ -11224,7 +11229,7 @@
     "web_pages": [
       "http://www.towson.edu/"
     ],
-    "name": "Towson State University",
+    "name": "Towson University",
     "alpha_two_code": "US",
     "state-province": null,
     "domains": [
@@ -11625,6 +11630,18 @@
     "state-province": null,
     "domains": [
       "uark.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "http://www.uafs.edu/"
+    ],
+    "name": "University of Arkansas - Fort Smith",
+    "alpha_two_code": "US",
+    "state-province": null,
+    "domains": [
+      "uafs.edu"
     ],
     "country": "United States"
   },
@@ -12465,7 +12482,8 @@
     "alpha_two_code": "US",
     "state-province": null,
     "domains": [
-      "uml.edu"
+      "uml.edu",
+      "student.uml.edu"
     ],
     "country": "United States"
   },
@@ -12801,7 +12819,8 @@
     "alpha_two_code": "US",
     "state-province": null,
     "domains": [
-      "unc.edu"
+      "unc.edu",
+      "ad.unc.edu"
     ],
     "country": "United States"
   },
@@ -12909,7 +12928,8 @@
     "alpha_two_code": "US",
     "state-province": null,
     "domains": [
-      "hsc.unt.edu"
+      "hsc.unt.edu",
+      "unthsc.edu"
     ],
     "country": "United States"
   },
@@ -13453,6 +13473,18 @@
     "domains": [
       "swmed.edu",
       "utsouthwestern.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "http://www.utpb.edu/"
+    ],
+    "name": "University of Texas Permian Basin",
+    "alpha_two_code": "US",
+    "state-province": null,
+    "domains": [
+      "utpb.edu"
     ],
     "country": "United States"
   },
@@ -14075,13 +14107,13 @@
   },
   {
     "web_pages": [
-      "http://www.wwc.edu/"
+      "http://www.wallawalla.edu/"
     ],
-    "name": "Walla Walla College",
+    "name": "Walla Walla University",
     "alpha_two_code": "US",
-    "state-province": null,
+    "state-province": "Washington",
     "domains": [
-      "wwc.edu"
+      "wallawalla.edu"
     ],
     "country": "United States"
   },
@@ -14867,13 +14899,13 @@
   },
   {
     "web_pages": [
-      "http://www.winona.msus.edu/"
+      "https://www.winona.edu/"
     ],
     "name": "Winona State University",
     "alpha_two_code": "US",
     "state-province": null,
     "domains": [
-      "winona.msus.edu"
+      "winona.edu"
     ],
     "country": "United States"
   },
@@ -15553,7 +15585,7 @@
     "web_pages": [
       "http://www.ubt.edu.al/"
     ],
-    "name": "Agricultural University of Tirane",
+    "name": "Agricultural University of Tirana",
     "alpha_two_code": "AL",
     "state-province": null,
     "domains": [
@@ -15661,11 +15693,23 @@
     "web_pages": [
       "http://www.upt.al/"
     ],
-    "name": "Polytechnic University of Tirane",
+    "name": "Polytechnic University of Tirana",
     "alpha_two_code": "AL",
     "state-province": null,
     "domains": [
       "upt.al"
+    ],
+    "country": "Albania"
+  },
+  {
+    "web_pages": [
+      "http://www.epitech.al/"
+    ],
+    "name": "Ecole pour l'Informatique et les nouvelles Technologies - Albania",
+    "alpha_two_code": "AL",
+    "state-province": null,
+    "domains": [
+      "epitech.al"
     ],
     "country": "Albania"
   },
@@ -18407,13 +18451,13 @@
   },
   {
     "web_pages": [
-      "http://www.uni-linz.ac.at/"
+      "https://www.jku.at/"
     ],
-    "name": "Universität Linz",
+    "name": "Johannes Kepler Universität Linz",
     "alpha_two_code": "AT",
     "state-province": null,
     "domains": [
-      "uni-linz.ac.at"
+      "jku.at"
     ],
     "country": "Austria"
   },
@@ -25259,13 +25303,13 @@
   },
   {
     "web_pages": [
-      "http://www.durhamc.on.ca/"
+      "https://durhamcollege.ca/"
     ],
     "name": "Durham College",
     "alpha_two_code": "CA",
-    "state-province": null,
+    "state-province": "Ontario",
     "domains": [
-      "durhamc.on.ca"
+      "dcmail.ca"
     ],
     "country": "Canada"
   },
@@ -25349,7 +25393,8 @@
     "alpha_two_code": "CA",
     "state-province": null,
     "domains": [
-      "humber.ca"
+      "humber.ca",
+      "humbermail.ca"
     ],
     "country": "Canada"
   },
@@ -25547,13 +25592,13 @@
   },
   {
     "web_pages": [
-      "http://www.mtroyal.ab.ca/"
+      "http://www.mtroyal.ca/"
     ],
-    "name": "Mount Royal College",
+    "name": "Mount Royal University",
     "alpha_two_code": "CA",
     "state-province": null,
     "domains": [
-      "mtroyal.ab.ca"
+      "mtroyal.ca"
     ],
     "country": "Canada"
   },
@@ -25902,7 +25947,9 @@
     "alpha_two_code": "CA",
     "state-province": null,
     "domains": [
-      "stclairc.on.ca"
+      "stclairc.on.ca",
+      "stclairconnect.ca",
+      "myscc.ca"
     ],
     "country": "Canada"
   },
@@ -25920,13 +25967,15 @@
   },
   {
     "web_pages": [
-      "http://www.stmarys.ca/"
+      "http://www.stmarys.ca/",
+      "https://smu.ca/"
     ],
     "name": "St. Mary's University",
     "alpha_two_code": "CA",
     "state-province": null,
     "domains": [
-      "stmarys.ca"
+      "stmarys.ca",
+      "smu.ca"
     ],
     "country": "Canada"
   },
@@ -26052,7 +26101,7 @@
   },
   {
     "web_pages": [
-      "http://www.uccb.ns.ca/"F
+      "http://www.uccb.ns.ca/"
     ],
     "name": "University College of Cape Breton",
     "alpha_two_code": "CA",
@@ -26532,9 +26581,9 @@
   },
   {
     "web_pages": [
-      "http://www.uwo.ca/brescia/"
+      "http://brescia.uwo.ca/"
     ],
-    "name": "Brescia College",
+    "name": "Brescia University College",
     "alpha_two_code": "CA",
     "state-province": null,
     "domains": [
@@ -26598,7 +26647,8 @@
     "alpha_two_code": "CA",
     "state-province": null,
     "domains": [
-      "wlu.ca"
+      "wlu.ca",
+      "mylaurier.ca"
     ],
     "country": "Canada"
   },
@@ -33876,7 +33926,7 @@
   },
   {
     "web_pages": [
-      "http://www.tabari.ac.ir/ "
+      "http://www.tabari.ac.ir/"
     ],
     "name": "Tabari Institute of Higher Education",
     "alpha_two_code": "IR",
@@ -33884,11 +33934,11 @@
     "domains": [
       "tabari.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
-      " http://www.zut.edu.pl/"
+      "http://www.zut.edu.pl/"
     ],
     "name": "Zachodniopomorska School of Science and Engineering",
     "alpha_two_code": "PL",
@@ -33991,6 +34041,54 @@
     "state-province": null,
     "domains": [
       "zsem.hr"
+    ],
+    "country": "Croatia"
+  },
+  {
+    "web_pages": [
+      "http://www.vern.hr/"
+    ],
+    "name": "VERN' University of Applied Sciences",
+    "alpha_two_code": "HR",
+    "state-province": null,
+    "domains": [
+      "vern.hr"
+    ],
+    "country": "Croatia"
+  },
+  {
+    "web_pages": [
+      "http://www.tvz.hr/"
+    ],
+    "name": "Zagreb University of Applied Sciences",
+    "alpha_two_code": "HR",
+    "state-province": null,
+    "domains": [
+      "tvz.hr"
+    ],
+    "country": "Croatia"
+  },
+  {
+    "web_pages": [
+      "http://www.algebra.hr/"
+    ],
+    "name": "Algebra University College",
+    "alpha_two_code": "HR",
+    "state-province": null,
+    "domains": [
+      "algebra.hr"
+    ],
+    "country": "Croatia"
+  },
+  {
+    "web_pages": [
+      "http://www.unin.hr/"
+    ],
+    "name": "University North",
+    "alpha_two_code": "HR",
+    "state-province": null,
+    "domains": [
+      "unin.hr"
     ],
     "country": "Croatia"
   },
@@ -34722,7 +34820,8 @@
     "alpha_two_code": "DK",
     "state-province": null,
     "domains": [
-      "auc.dk"
+      "auc.dk",
+      "aau.dk"
     ],
     "country": "Denmark"
   },
@@ -35018,7 +35117,7 @@
     "web_pages": [
       "http://www.sdu.dk/"
     ],
-    "name": "University of Southern Denmark",
+    "name": "University of Southern Denmark - SDU",
     "alpha_two_code": "DK",
     "state-province": null,
     "domains": [
@@ -35478,7 +35577,7 @@
     "alpha_two_code": "EC",
     "state-province": null,
     "domains": [
-      "espe.edu.e"
+      "espe.edu.ec"
     ],
     "country": "Ecuador"
   },
@@ -37440,6 +37539,19 @@
   },
   {
     "web_pages": [
+      "http://www.laurea.fi/"
+    ],
+    "name": "Laurea University of Applied Sciences",
+    "alpha_two_code": "FI",
+    "state-province": null,
+    "domains": [
+      "laurea.fi",
+      "student.laurea.fi"
+    ],
+    "country": "Finland"
+  },
+  {
+    "web_pages": [
       "http://www.lut.fi/"
     ],
     "name": "Lappeenranta University of Technology",
@@ -38652,13 +38764,15 @@
   },
   {
     "web_pages": [
-      "http://www.ensm-ales.fr/"
+      "https://www.mines-ales.fr/"
     ],
     "name": "Ecole Nationale Supérieure des Mines d'Alès",
     "alpha_two_code": "FR",
     "state-province": null,
     "domains": [
-      "ensm-ales.fr"
+      "ensm-ales.fr",
+      "mines-ales.fr",
+      "mines-ales.org"
     ],
     "country": "France"
   },
@@ -40862,6 +40976,79 @@
   },
   {
     "web_pages": [
+      "http://www.epitech.eu/"
+    ],
+    "name": "Ecole pour l'Informatique et les nouvelles Technologies",
+    "alpha_two_code": "FR",
+    "state-province": null,
+    "domains": [
+      "epitech.eu",
+      "epitech.net"
+    ],
+    "country": "France"
+  },
+  {
+    "web_pages": [
+      "http://www.epita.fr/"
+    ],
+    "name": "Ecole Pour l'Informatique et les Techniques Avancees",
+    "alpha_two_code": "FR",
+    "state-province": null,
+    "domains": [
+      "epita.fr"
+    ],
+    "country": "France"
+  },
+  {
+    "web_pages": [
+      "http://www.ipsa.fr/"
+    ],
+    "name": "Institut polytechnique des sciences avancees",
+    "alpha_two_code": "FR",
+    "state-province": null,
+    "domains": [
+      "ipsa.fr"
+    ],
+    "country": "France"
+  },
+  {
+    "web_pages": [
+      "http://www.etna.io/"
+    ],
+    "name": "Ecole des technologies numeriques appliquees",
+    "alpha_two_code": "FR",
+    "state-province": null,
+    "domains": [
+      "etna.io"
+    ],
+    "country": "France"
+  },
+  {
+    "web_pages": [
+      "http://www.esme.fr/"
+    ],
+    "name": "ESME Sudria",
+    "alpha_two_code": "FR",
+    "state-province": null,
+    "domains": [
+      "esme.fr"
+    ],
+    "country": "France"
+  },
+  {
+    "web_pages": [
+      "http://www.supbiotech.fr/"
+    ],
+    "name": "Institut Sup'Biotech de Paris",
+    "alpha_two_code": "FR",
+    "state-province": null,
+    "domains": [
+      "supbiotech.fr"
+    ],
+    "country": "France"
+  },
+  {
+    "web_pages": [
       "http://www.univ-ag.fr/"
     ],
     "name": "Université des Antilles et de la Guyane",
@@ -41571,6 +41758,18 @@
   },
   {
     "web_pages": [
+      "http://www.th-brandenburg.de/"
+    ],
+    "name": "Technische Hochschule Brandenburg",
+    "alpha_two_code": "DE",
+    "state-province": null,
+    "domains": [
+      "th-brandenburg.de"
+    ],
+    "country": "Germany"
+  },
+  {
+    "web_pages": [
       "http://www.th-deg.de/"
     ],
     "name": "Technische Hochschule Deggendorf",
@@ -41799,13 +41998,13 @@
   },
   {
     "web_pages": [
-      "http://www.fh-ingolstadt.de/"
+      "https://www.thi.de/"
     ],
-    "name": "Fachhochschule Ingolstadt",
+    "name": "Technische Hochschule Ingolstadt",
     "alpha_two_code": "DE",
     "state-province": null,
     "domains": [
-      "fh-ingolstadt.de"
+      "thi.de"
     ],
     "country": "Germany"
   },
@@ -41853,7 +42052,7 @@
     "alpha_two_code": "DE",
     "state-province": null,
     "domains": [
-      "fh-Kempten.de"
+      "fh-kempten.de"
     ],
     "country": "Germany"
   },
@@ -42399,13 +42598,14 @@
   },
   {
     "web_pages": [
-      "http://www.fhtw-berlin.de/"
+      "https://www.htw-berlin.de/"
     ],
-    "name": "Fachhochschule für Technik und Wirtschaft Berlin",
+    "name": "Hochschule für Technik und Wirtschaft Berlin",
     "alpha_two_code": "DE",
     "state-province": null,
     "domains": [
-      "fhtw-berlin.de"
+      "fhtw-berlin.de",
+      "htw-berlin.de"
     ],
     "country": "Germany"
   },
@@ -43053,7 +43253,7 @@
     "alpha_two_code": "DE",
     "state-province": null,
     "domains": [
-      "kfh-Freiburg.de"
+      "kfh-freiburg.de"
     ],
     "country": "Germany"
   },
@@ -43695,13 +43895,13 @@
   },
   {
     "web_pages": [
-      "http://www.tu-harburg.de/"
+      "http://www.tuhh.de/"
     ],
-    "name": "Technische Universität Hamburg-Harburg",
+    "name": "Technische Universität Hamburg",
     "alpha_two_code": "DE",
     "state-province": null,
     "domains": [
-      "tu-harburg.de"
+      "tuhh.de"
     ],
     "country": "Germany"
   },
@@ -43828,13 +44028,13 @@
   },
   {
     "web_pages": [
-      "http://www.uni-dortmund.de/"
+      "http://www.tu-dortmund.de/"
     ],
-    "name": "Universität Dortmund",
+    "name": "Technische Universität Dortmund",
     "alpha_two_code": "DE",
     "state-province": null,
     "domains": [
-      "uni-dortmund.de"
+      "tu-dortmund.de"
     ],
     "country": "Germany"
   },
@@ -44056,13 +44256,13 @@
   },
   {
     "web_pages": [
-      "http://www.uni-karlsruhe.de/"
+      "http://www.kit.edu/"
     ],
-    "name": "Universität Fridericana Karlsruhe (Technische Hochschule)",
+    "name": "Karlsruher Institut für Technologie",
     "alpha_two_code": "DE",
     "state-province": null,
     "domains": [
-      "uni-karlsruhe.de"
+      "kit.edu"
     ],
     "country": "Germany"
   },
@@ -44236,13 +44436,15 @@
   },
   {
     "web_pages": [
-      "http://www.uni-muenster.de/"
+      "http://www.uni-muenster.de/",
+      "http://www.wwu.de/"
     ],
     "name": "Westfälische Wilhelms-Universität Münster",
     "alpha_two_code": "DE",
     "state-province": null,
     "domains": [
-      "uni-muenster.de"
+      "uni-muenster.de",
+      "wwu.de"
     ],
     "country": "Germany"
   },
@@ -46664,7 +46866,7 @@
     ],
     "name": "University of Health Sciences Andhra Pradesh",
     "alpha_two_code": "IN",
-    "state-province": null,
+    "state-province": "Andhra Pradesh",
     "domains": [
       "59.163.116.210"
     ],
@@ -46688,7 +46890,7 @@
     ],
     "name": "Assam Agricultural University",
     "alpha_two_code": "IN",
-    "state-province": null,
+    "state-province": "Assam",
     "domains": [
       "aau.ac.in"
     ],
@@ -46700,7 +46902,7 @@
     ],
     "name": "Ahmedabad University",
     "alpha_two_code": "IN",
-    "state-province": null,
+    "state-province": "Gujarat",
     "domains": [
       "ahduni.edu.in"
     ],
@@ -46736,7 +46938,7 @@
     ],
     "name": "Alagappa University",
     "alpha_two_code": "IN",
-    "state-province": null,
+    "state-province": "Tamil Nadu",
     "domains": [
       "alagappauniversity.ac.in"
     ],
@@ -46748,7 +46950,7 @@
     ],
     "name": "Allahabad University",
     "alpha_two_code": "IN",
-    "state-province": null,
+    "state-province": "Uttar Pradesh",
     "domains": [
       "alldunivpio.org"
     ],
@@ -46772,7 +46974,7 @@
     ],
     "name": "Indian Board of Alternative Medicine",
     "alpha_two_code": "IN",
-    "state-province": null,
+    "state-province": "West Bengal",
     "domains": [
       "altmedworld.net"
     ],
@@ -46856,7 +47058,7 @@
     ],
     "name": "Annamalai University",
     "alpha_two_code": "IN",
-    "state-province": null,
+    "state-province": "Tamil Nadu",
     "domains": [
       "annamalaiuniversity.ac.in"
     ],
@@ -46868,7 +47070,7 @@
     ],
     "name": "Anna University of Technology, Tirunelveli",
     "alpha_two_code": "IN",
-    "state-province": null,
+    "state-province": "Tamil Nadu",
     "domains": [
       "annauniv.edu.in"
     ],
@@ -46880,7 +47082,7 @@
     ],
     "name": "Anna University",
     "alpha_two_code": "IN",
-    "state-province": null,
+    "state-province": "Tamil Nadu",
     "domains": [
       "annauniv.edu"
     ],
@@ -46892,7 +47094,7 @@
     ],
     "name": "Awadhesh Pratap Singh University",
     "alpha_two_code": "IN",
-    "state-province": null,
+    "state-province": "Madhya Pradesh",
     "domains": [
       "apsurewa.nic.in"
     ],
@@ -46904,7 +47106,7 @@
     ],
     "name": "ARYA Institute of Engineering & Technology",
     "alpha_two_code": "IN",
-    "state-province": null,
+    "state-province": "Rajasthan",
     "domains": [
       "aryainstitutejpr.com"
     ],
@@ -48094,7 +48296,7 @@
     "alpha_two_code": "IN",
     "state-province": null,
     "domains": [
-      "iiitvadodara.ac.in/"
+      "iiitvadodara.ac.in"
     ],
     "country": "India"
   },
@@ -48106,7 +48308,7 @@
     "alpha_two_code": "IN",
     "state-province": null,
     "domains": [
-      "iiitkota.ac.in/"
+      "iiitkota.ac.in"
     ],
     "country": "India"
   },
@@ -48155,6 +48357,18 @@
     "state-province": null,
     "domains": [
       "iitd.ernet.in"
+    ],
+    "country": "India"
+  },
+  {
+    "web_pages": [
+      "https://iitgn.ac.in/"
+    ],
+    "name": "Indian Institute of Technology, Gandhinagar",
+    "alpha_two_code": "IN",
+    "state-province": null,
+    "domains": [
+      "iitgn.ac.in"
     ],
     "country": "India"
   },
@@ -48311,6 +48525,18 @@
     "state-province": null,
     "domains": [
       "ilidelhi.org"
+    ],
+    "country": "India"
+  },
+  {
+    "web_pages": [
+      "http://www.indusuni.ac.in/"
+    ],
+    "name": "Indus University",
+    "alpha_two_code": "IN",
+    "state-province": null,
+    "domains": [
+      "indusuni.ac.in"
     ],
     "country": "India"
   },
@@ -49756,6 +49982,18 @@
   },
   {
     "web_pages": [
+      "http://www.pdpu.ac.in/"
+    ],
+    "name": "Pandit Deendayal Petroleum University",
+    "alpha_two_code": "IN",
+    "state-province": null,
+    "domains": [
+      "pdpu.ac.in"
+    ],
+    "country": "India"
+  },
+  {
+    "web_pages": [
       "http://www.pau.edu/"
     ],
     "name": "Punjab Agricultural University",
@@ -49775,6 +50013,18 @@
     "state-province": null,
     "domains": [
       "pdkv.ac.in"
+    ],
+    "country": "India"
+  },
+  {
+    "web_pages": [
+      "http://www.paruluniversity.ac.in/"
+    ],
+    "name": "Parul University",
+    "alpha_two_code": "IN",
+    "state-province": null,
+    "domains": [
+      "paruluniversity.ac.in"
     ],
     "country": "India"
   },
@@ -50408,7 +50658,7 @@
     ],
     "name": "SRM Institute Of Science & Technology ( Deemed University)",
     "alpha_two_code": "IN",
-    "state-province": null,
+    "state-province": "Tamil Nadu",
     "domains": [
       "srmuniv.ac.in"
     ],
@@ -51092,7 +51342,7 @@
     ],
     "name": "Vellore Institute of Technology",
     "alpha_two_code": "IN",
-    "state-province": null,
+    "state-province": "Tamil Nadu",
     "domains": [
       "vit.ac.in"
     ],
@@ -53364,7 +53614,7 @@
     "domains": [
       "acmt.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53376,7 +53626,7 @@
     "domains": [
       "adiban.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53388,7 +53638,7 @@
     "domains": [
       "ajums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53400,7 +53650,7 @@
     "domains": [
       "aliabadiau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53412,7 +53662,7 @@
     "domains": [
       "almustafaou.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53424,7 +53674,7 @@
     "domains": [
       "arakmu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53436,7 +53686,7 @@
     "domains": [
       "araku.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53448,7 +53698,7 @@
     "domains": [
       "arakut.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53460,7 +53710,7 @@
     "domains": [
       "art.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53472,7 +53722,7 @@
     "domains": [
       "arums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53484,7 +53734,7 @@
     "domains": [
       "atu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53496,7 +53746,7 @@
     "domains": [
       "aums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53508,7 +53758,7 @@
     "domains": [
       "aut.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53520,7 +53770,7 @@
     "domains": [
       "azad.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53532,7 +53782,7 @@
     "domains": [
       "azzahra.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53544,7 +53794,7 @@
     "domains": [
       "basu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53556,7 +53806,7 @@
     "domains": [
       "bihe.org"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53568,7 +53818,7 @@
     "domains": [
       "bihe.org"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53580,7 +53830,7 @@
     "domains": [
       "birjand.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53592,7 +53842,7 @@
     "domains": [
       "bmsu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53604,7 +53854,7 @@
     "domains": [
       "bojnourdiau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53616,7 +53866,7 @@
     "domains": [
       "bpums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53628,7 +53878,7 @@
     "domains": [
       "bums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53640,7 +53890,7 @@
     "domains": [
       "cua.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53652,7 +53902,7 @@
     "domains": [
       "dehaghan.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53664,7 +53914,7 @@
     "domains": [
       "delijanpnu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53676,7 +53926,7 @@
     "domains": [
       "deylaman.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53688,7 +53938,7 @@
     "domains": [
       "dubs.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53700,7 +53950,7 @@
     "domains": [
       "falavarjan.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53712,7 +53962,7 @@
     "domains": [
       "fsriau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53724,7 +53974,7 @@
     "domains": [
       "fums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53736,7 +53986,7 @@
     "domains": [
       "gau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53748,7 +53998,7 @@
     "domains": [
       "gmu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53760,7 +54010,7 @@
     "domains": [
       "gorganiau.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53772,7 +54022,7 @@
     "domains": [
       "goums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53784,7 +54034,7 @@
     "domains": [
       "guilan.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53796,7 +54046,7 @@
     "domains": [
       "gums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53808,7 +54058,7 @@
     "domains": [
       "hormozgan.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53820,7 +54070,7 @@
     "domains": [
       "hums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53832,7 +54082,7 @@
     "domains": [
       "hyrcania.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53844,7 +54094,7 @@
     "domains": [
       "iasbs.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53856,7 +54106,7 @@
     "domains": [
       "iau-ahar.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53868,7 +54118,7 @@
     "domains": [
       "iau-arak.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53880,7 +54130,7 @@
     "domains": [
       "iauardabil.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53892,7 +54142,7 @@
     "domains": [
       "iauba.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53904,7 +54154,7 @@
     "domains": [
       "iaubos.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53914,9 +54164,9 @@
     "alpha_two_code": "IR",
     "state-province": null,
     "domains": [
-      "iau-boukan.ac.i"
+      "iau-boukan.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53928,7 +54178,7 @@
     "domains": [
       "iauctb.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53940,7 +54190,7 @@
     "domains": [
       "iau-garmsar.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53952,7 +54202,7 @@
     "domains": [
       "iauh.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53964,7 +54214,7 @@
     "domains": [
       "iauk.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53976,7 +54226,7 @@
     "domains": [
       "iaukb.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -53988,7 +54238,7 @@
     "domains": [
       "iau-lahijan.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54000,7 +54250,7 @@
     "domains": [
       "iaumajlesi.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54012,7 +54262,7 @@
     "domains": [
       "iaumehriz.com"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54024,7 +54274,7 @@
     "domains": [
       "iaun.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54036,7 +54286,7 @@
     "domains": [
       "iauq.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54048,7 +54298,7 @@
     "domains": [
       "iauro.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54060,7 +54310,7 @@
     "domains": [
       "iau-saveh.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54072,7 +54322,7 @@
     "domains": [
       "iausdj.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54084,7 +54334,7 @@
     "domains": [
       "iaushab.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54096,7 +54346,7 @@
     "domains": [
       "iau-shahrood.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54108,7 +54358,7 @@
     "domains": [
       "iaushiraz.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54120,7 +54370,7 @@
     "domains": [
       "iau-shirvan.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54132,7 +54382,7 @@
     "domains": [
       "iausr.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54144,7 +54394,7 @@
     "domains": [
       "iaut.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54156,7 +54406,7 @@
     "domains": [
       "iautb.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54168,7 +54418,7 @@
     "domains": [
       "iautmu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54180,7 +54430,7 @@
     "domains": [
       "iau-tnb.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54192,7 +54442,7 @@
     "domains": [
       "iauvaramin.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54204,7 +54454,7 @@
     "domains": [
       "iauyazd.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54216,7 +54466,7 @@
     "domains": [
       "ikiu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54228,7 +54478,7 @@
     "domains": [
       "ilam.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54240,7 +54490,7 @@
     "domains": [
       "imamreza.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54252,7 +54502,7 @@
     "domains": [
       "isu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54264,7 +54514,7 @@
     "domains": [
       "iums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54276,7 +54526,7 @@
     "domains": [
       "iust.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54288,7 +54538,7 @@
     "domains": [
       "iut.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54300,7 +54550,7 @@
     "domains": [
       "jami.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54312,7 +54562,7 @@
     "domains": [
       "janahiau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54324,7 +54574,7 @@
     "domains": [
       "jums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54336,7 +54586,7 @@
     "domains": [
       "kamalolmolk.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54348,7 +54598,7 @@
     "domains": [
       "karuniversity.com"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54360,7 +54610,7 @@
     "domains": [
       "kashanu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54372,7 +54622,7 @@
     "domains": [
       "kau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54384,7 +54634,7 @@
     "domains": [
       "kaums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54396,7 +54646,7 @@
     "domains": [
       "kgut.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54408,7 +54658,7 @@
     "domains": [
       "khuisf.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54420,7 +54670,7 @@
     "domains": [
       "kish.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54432,7 +54682,7 @@
     "domains": [
       "km.isfpnu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54444,7 +54694,7 @@
     "domains": [
       "kmu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54456,7 +54706,7 @@
     "domains": [
       "kntu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54468,7 +54718,7 @@
     "domains": [
       "kums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54480,7 +54730,7 @@
     "domains": [
       "lavasanpnu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54492,7 +54742,7 @@
     "domains": [
       "lu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54504,7 +54754,7 @@
     "domains": [
       "lums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54516,7 +54766,7 @@
     "domains": [
       "mahshahriau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54528,7 +54778,7 @@
     "domains": [
       "malayeru.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54540,7 +54790,7 @@
     "domains": [
       "malekanpnu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54552,7 +54802,7 @@
     "domains": [
       "mamasaniiau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54564,7 +54814,7 @@
     "domains": [
       "mau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54576,7 +54826,7 @@
     "domains": [
       "maybod.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54588,7 +54838,7 @@
     "domains": [
       "mazums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54600,7 +54850,7 @@
     "domains": [
       "medilam.hbi.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54612,7 +54862,7 @@
     "domains": [
       "medsab.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54624,7 +54874,7 @@
     "domains": [
       "miu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54636,7 +54886,7 @@
     "domains": [
       "modares.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54648,7 +54898,7 @@
     "domains": [
       "mofidu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54660,7 +54910,7 @@
     "domains": [
       "mshdiau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54672,7 +54922,7 @@
     "domains": [
       "mubabol.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54684,7 +54934,7 @@
     "domains": [
       "mui.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54696,7 +54946,7 @@
     "domains": [
       "muk.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54708,7 +54958,7 @@
     "domains": [
       "mums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54720,7 +54970,7 @@
     "domains": [
       "muq.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54732,7 +54982,7 @@
     "domains": [
       "najafabad-uast.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54744,7 +54994,7 @@
     "domains": [
       "nit.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54756,7 +55006,7 @@
     "domains": [
       "persianacademy.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54768,7 +55018,7 @@
     "domains": [
       "pgu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54780,7 +55030,7 @@
     "domains": [
       "piau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54792,7 +55042,7 @@
     "domains": [
       "pnu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54804,7 +55054,7 @@
     "domains": [
       "pnum.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54816,7 +55066,7 @@
     "domains": [
       "pnut.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54828,7 +55078,7 @@
     "domains": [
       "put.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54840,7 +55090,7 @@
     "domains": [
       "pwit.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54852,7 +55102,7 @@
     "domains": [
       "qazviniau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54864,7 +55114,7 @@
     "domains": [
       "qom.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54876,7 +55126,7 @@
     "domains": [
       "qom-iau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54888,7 +55138,7 @@
     "domains": [
       "qums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54900,7 +55150,7 @@
     "domains": [
       "qut.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54912,7 +55162,7 @@
     "domains": [
       "raghebisf.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54924,7 +55174,7 @@
     "domains": [
       "razi.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54936,7 +55186,7 @@
     "domains": [
       "riau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54948,7 +55198,7 @@
     "domains": [
       "rums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54960,7 +55210,7 @@
     "domains": [
       "sadjad.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54972,7 +55222,7 @@
     "domains": [
       "sadra.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54984,7 +55234,7 @@
     "domains": [
       "sbmu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -54996,7 +55246,7 @@
     "domains": [
       "sbu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55008,7 +55258,7 @@
     "domains": [
       "sdi.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55020,7 +55270,7 @@
     "domains": [
       "semnan.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55032,7 +55282,7 @@
     "domains": [
       "semnaniau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55044,7 +55294,7 @@
     "domains": [
       "sem-ums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55056,7 +55306,7 @@
     "domains": [
       "ses.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55068,7 +55318,7 @@
     "domains": [
       "shahed.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55080,7 +55330,7 @@
     "domains": [
       "shahroodut.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55092,7 +55342,7 @@
     "domains": [
       "shahryariau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55104,7 +55354,7 @@
     "domains": [
       "sharif.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55116,7 +55366,7 @@
     "domains": [
       "shbu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55128,7 +55378,7 @@
     "domains": [
       "shirazu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55140,7 +55390,7 @@
     "domains": [
       "shmu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55152,7 +55402,7 @@
     "domains": [
       "shomal.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55164,7 +55414,7 @@
     "domains": [
       "sku.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55176,7 +55426,7 @@
     "domains": [
       "skums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55188,7 +55438,7 @@
     "domains": [
       "sowmesaraiau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55200,7 +55450,7 @@
     "domains": [
       "spnu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55212,7 +55462,7 @@
     "domains": [
       "srbiau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55224,7 +55474,7 @@
     "domains": [
       "srttu.edu"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55236,7 +55486,7 @@
     "domains": [
       "ssu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55248,7 +55498,7 @@
     "domains": [
       "sttu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55260,7 +55510,7 @@
     "domains": [
       "sums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55272,7 +55522,7 @@
     "domains": [
       "sut.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55284,7 +55534,7 @@
     "domains": [
       "sutech.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55296,7 +55546,7 @@
     "domains": [
       "tabriziau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55308,7 +55558,7 @@
     "domains": [
       "tabrizu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55320,7 +55570,7 @@
     "domains": [
       "tbzmed.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55332,7 +55582,7 @@
     "domains": [
       "tct.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55344,7 +55594,7 @@
     "domains": [
       "thums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55356,7 +55606,7 @@
     "domains": [
       "tiau.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55368,7 +55618,7 @@
     "domains": [
       "tmu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55380,7 +55630,7 @@
     "domains": [
       "tums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55392,7 +55642,7 @@
     "domains": [
       "uast.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55404,7 +55654,7 @@
     "domains": [
       "ucna.info"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55416,7 +55666,7 @@
     "domains": [
       "ui.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55428,7 +55678,7 @@
     "domains": [
       "uk.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55440,7 +55690,7 @@
     "domains": [
       "uma.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55452,7 +55702,7 @@
     "domains": [
       "um.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55464,7 +55714,7 @@
     "domains": [
       "umsha.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55476,7 +55726,7 @@
     "domains": [
       "umsu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55488,7 +55738,7 @@
     "domains": [
       "umz.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55500,7 +55750,7 @@
     "domains": [
       "uok.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55512,7 +55762,7 @@
     "domains": [
       "uoz.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55524,7 +55774,7 @@
     "domains": [
       "urmia.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55536,7 +55786,7 @@
     "domains": [
       "usb.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55548,7 +55798,7 @@
     "domains": [
       "usc.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55560,7 +55810,7 @@
     "domains": [
       "ustmb.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55572,7 +55822,7 @@
     "domains": [
       "uswr.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55584,7 +55834,7 @@
     "domains": [
       "ut.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55596,7 +55846,7 @@
     "domains": [
       "uut.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55608,7 +55858,7 @@
     "domains": [
       "vru.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55620,7 +55870,7 @@
     "domains": [
       "yazduni.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55632,7 +55882,7 @@
     "domains": [
       "yu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55644,7 +55894,7 @@
     "domains": [
       "yums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55656,7 +55906,7 @@
     "domains": [
       "zdmu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55668,7 +55918,7 @@
     "domains": [
       "znu.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -55680,7 +55930,7 @@
     "domains": [
       "zums.ac.ir"
     ],
-    "country": "Iran, Islamic Republic of"
+    "country": "Iran"
   },
   {
     "web_pages": [
@@ -56543,6 +56793,18 @@
     "state-province": null,
     "domains": [
       "afeka.ac.il"
+    ],
+    "country": "Israel"
+  },
+  {
+    "web_pages": [
+      "http://www.jct.ac.il/"
+    ],
+    "name": "JCT Lev Academic Center",
+    "alpha_two_code": "IL",
+    "state-province": null,
+    "domains": [
+      "jct.ac.il"
     ],
     "country": "Israel"
   },
@@ -63802,7 +64064,7 @@
     "alpha_two_code": "JP",
     "state-province": null,
     "domains": [
-      "tohtech.ac.j"
+      "tohtech.ac.jp"
     ],
     "country": "Japan"
   },
@@ -66121,6 +66383,18 @@
       "changwon.ac.kr"
     ],
     "country": "Korea, Republic of"
+  },
+  {
+    "web_pages": [
+      "https://www.charusat.ac.in/"
+    ],
+    "name": "Charotar University of Science and Technology",
+    "alpha_two_code": "IN",
+    "state-province": null,
+    "domains": [
+      "charusat.ac.in"
+    ],
+    "country": "India"
   },
   {
     "web_pages": [
@@ -75306,6 +75580,18 @@
   },
   {
     "web_pages": [
+      "https://www.rsm.nl/"
+    ],
+    "name": "Rotterdam School of Management",
+    "alpha_two_code": "NL",
+    "state-province": null,
+    "domains": [
+      "rsm.nl"
+    ],
+    "country": "Netherlands"
+  },
+  {
+    "web_pages": [
       "http://www.europeanopenuniversity.com/"
     ],
     "name": "European Open University",
@@ -75384,7 +75670,8 @@
     "alpha_two_code": "NL",
     "state-province": null,
     "domains": [
-      "hro.nl"
+      "hro.nl",
+      "hr.nl"
     ],
     "country": "Netherlands"
   },
@@ -76344,7 +76631,7 @@
     "alpha_two_code": "NG",
     "state-province": null,
     "domains": [
-      "bazeuniversity.edu.n"
+      "bazeuniversity.edu.ng"
     ],
     "country": "Nigeria"
   },
@@ -77902,7 +78189,7 @@
     ],
     "name": "Abasyn University Peshawar",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Khyber Pakhtunkhwa",
     "domains": [
       "abasyn.edu.pk"
     ],
@@ -77938,7 +78225,7 @@
     ],
     "name": "Aga Khan University",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Sindh",
     "domains": [
       "aku.edu"
     ],
@@ -77948,9 +78235,9 @@
     "web_pages": [
       "http://www.aldirasat.edu.pk/"
     ],
-    "name": "University of Islamic Studies",
+    "name": "Jamia Al Dirasat Ul Islami Karachi",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Sindh",
     "domains": [
       "aldirasat.edu.pk"
     ],
@@ -77970,37 +78257,13 @@
   },
   {
     "web_pages": [
-      "http://www.alphaomega.edu.pk/"
-    ],
-    "name": "Alpha Omega University",
-    "alpha_two_code": "PK",
-    "state-province": null,
-    "domains": [
-      "alphaomega.edu.pk"
-    ],
-    "country": "Pakistan"
-  },
-  {
-    "web_pages": [
       "http://www.ami.edu.pk/"
     ],
-    "name": "Asian Management Institute",
+    "name": "Ahmed Medical Institute",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Khyber Pakhtunkhwa",
     "domains": [
       "ami.edu.pk"
-    ],
-    "country": "Pakistan"
-  },
-  {
-    "web_pages": [
-      "http://www.apiit.edu.pk/"
-    ],
-    "name": "Asia Pacific Institute of Information Technology Pakistan (APIIT PAK)",
-    "alpha_two_code": "PK",
-    "state-province": null,
-    "domains": [
-      "apiit.edu.pk"
     ],
     "country": "Pakistan"
   },
@@ -78010,7 +78273,7 @@
     ],
     "name": "Air University",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "au.edu.pk"
     ],
@@ -78018,23 +78281,11 @@
   },
   {
     "web_pages": [
-      "http://www.auh.edu.pk/"
-    ],
-    "name": "American University of Hawaii, Punjab Campus",
-    "alpha_two_code": "PK",
-    "state-province": null,
-    "domains": [
-      "auh.edu.pk"
-    ],
-    "country": "Pakistan"
-  },
-  {
-    "web_pages": [
       "http://www.aup.edu.pk/"
     ],
-    "name": "North West Frontier Province Agricultural University",
+    "name": "The University of Agriculture, Peshawar",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Khyber Pakhtunkhwa",
     "domains": [
       "aup.edu.pk"
     ],
@@ -78046,7 +78297,7 @@
     ],
     "name": "Bahria University",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "bahria.edu.pk"
     ],
@@ -78058,7 +78309,7 @@
     ],
     "name": "Barani Institute of Information Technology",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "biit.edu.pk"
     ],
@@ -78070,7 +78321,7 @@
     ],
     "name": "Barani Institute of Management Sciences",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "bims.edu.pk"
     ],
@@ -78078,25 +78329,13 @@
   },
   {
     "web_pages": [
-      "http://baqai.freeyellow.com/"
+      "https://baqai.edu.pk/"
     ],
     "name": "Baqai Medical University",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Sindh",
     "domains": [
-      "baqai.freeyellow.com"
-    ],
-    "country": "Pakistan"
-  },
-  {
-    "web_pages": [
-      "http://www.biztek.edu.pk/"
-    ],
-    "name": "Institute of Business & Technology",
-    "alpha_two_code": "PK",
-    "state-province": null,
-    "domains": [
-      "biztek.edu.pk"
+      "baqai.edu.pk"
     ],
     "country": "Pakistan"
   },
@@ -78106,7 +78345,7 @@
     ],
     "name": "Balochistan University of Engineering and Technology Khuzdar",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Balochistan",
     "domains": [
       "buetk.edu.pk"
     ],
@@ -78118,7 +78357,7 @@
     ],
     "name": "Balochistan University of Information Technology & Management Sciences",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Balochistan",
     "domains": [
       "buitms.edu.pk"
     ],
@@ -78130,7 +78369,7 @@
     ],
     "name": "Bahauddin Zakariya University, Multan",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "bzu.edu.pk"
     ],
@@ -78138,13 +78377,13 @@
   },
   {
     "web_pages": [
-      "http://www.cbm.edu.pk/"
+      "https://cbm.iobm.edu.pk/"
     ],
-    "name": "College of Business Management ( CBM )",
+    "name": "College of Business Management (CBM)",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Sindh",
     "domains": [
-      "cbm.edu.pk"
+      "cbm.iobm.edu.pk"
     ],
     "country": "Pakistan"
   },
@@ -78154,7 +78393,7 @@
     ],
     "name": "Cecos Univeristy of Information Technology",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Khyber Pakhtunkhwa",
     "domains": [
       "cecos.edu.pk"
     ],
@@ -78166,7 +78405,7 @@
     ],
     "name": "COMSATS Institute of Information Technology, Abbottabad",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Khyber Pakhtunkhwa",
     "domains": [
       "ciit-atd.edu.pk"
     ],
@@ -78178,7 +78417,7 @@
     ],
     "name": "COMSATS Institute of Information Technology, Attock",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "ciit-attock.edu.pk"
     ],
@@ -78202,7 +78441,7 @@
     ],
     "name": "COMSATS Institute of Information Technology, Lahore",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "ciitlahore.edu.pk"
     ],
@@ -78238,7 +78477,7 @@
     ],
     "name": "Dadabhoy Institute of Higher Education",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Sindh",
     "domains": [
       "dadabhoy.edu.pk"
     ],
@@ -78250,7 +78489,7 @@
     ],
     "name": "Dawood College of Engineering and Technology",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Sindh",
     "domains": [
       "dcet.edu.pk"
     ],
@@ -78262,7 +78501,7 @@
     ],
     "name": "Dow University of Health Sciences",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Sindh",
     "domains": [
       "duhs.edu.pk"
     ],
@@ -78360,7 +78599,7 @@
     "alpha_two_code": "PK",
     "state-province": null,
     "domains": [
-      "zu.edu.pk/"
+      "zu.edu.pk"
     ],
     "country": "Pakistan"
   },
@@ -78695,7 +78934,7 @@
     ],
     "name": "Karachi School of Art",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Sindh",
     "domains": [
       "ksa.edu.pk"
     ],
@@ -78707,7 +78946,7 @@
     ],
     "name": "Kohat University of Science and Technology  (KUST)",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Khyber Pakhtunkhwa",
     "domains": [
       "kust.edu.pk"
     ],
@@ -78719,7 +78958,7 @@
     ],
     "name": "Lahore College for Women University",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "lcwu.edu.pk"
     ],
@@ -78743,7 +78982,7 @@
     ],
     "name": "Lahore University of Management Sciences",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "lums.edu.pk"
     ],
@@ -78791,7 +79030,7 @@
     ],
     "name": "Minhaj University Lahore",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "mul.edu.pk"
     ],
@@ -78815,7 +79054,7 @@
     ],
     "name": "NED University of Engineering and Technology Karachi",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Sindh",
     "domains": [
       "neduet.edu.pk"
     ],
@@ -78887,7 +79126,7 @@
     ],
     "name": "University of Engineering and Technology Peshawar",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Khyber Pakhtunkhwa",
     "domains": [
       "nwfpuet.edu.pk"
     ],
@@ -78899,7 +79138,7 @@
     ],
     "name": "Karachi Institute Of Economics And Technology",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Sindh",
     "domains": [
       "pafkiet.edu.pk"
     ],
@@ -78923,7 +79162,7 @@
     ],
     "name": "Institute of Management Sciences, Lahore (IMS)",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "pakaims.edu.pk"
     ],
@@ -78971,7 +79210,7 @@
     ],
     "name": "Punjab Institute of Computer science",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "pics.edu.pk"
     ],
@@ -78995,7 +79234,7 @@
     ],
     "name": "Preston Institute of Management Sciences and Technology (PIMSAT)",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Sindh",
     "domains": [
       "pimsat-khi.edu.pk"
     ],
@@ -79031,7 +79270,7 @@
     ],
     "name": "Punjab University College of Information Tecnology",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "pucit.edu.pk"
     ],
@@ -79043,7 +79282,7 @@
     ],
     "name": "University of the Punjab",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "pu.edu.pk"
     ],
@@ -79055,7 +79294,7 @@
     ],
     "name": "University of the Punjab, Gujranwala Campus",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "pugc.edu.pk"
     ],
@@ -79115,7 +79354,7 @@
     ],
     "name": "Sindh Agricultural University",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Sindh",
     "domains": [
       "sau.edu.pk"
     ],
@@ -79127,7 +79366,7 @@
     ],
     "name": "Sir Syed Institute Of Technology Islamabad",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "ssms.edu.pk"
     ],
@@ -79211,7 +79450,7 @@
     ],
     "name": "Arid Agriculture University",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "uaar.edu.pk"
     ],
@@ -79331,7 +79570,7 @@
     ],
     "name": "University of Gujrat",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "uog.edu.pk"
     ],
@@ -79343,7 +79582,7 @@
     ],
     "name": "University of Karachi",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Sindh",
     "domains": [
       "uok.edu.pk"
     ],
@@ -79355,7 +79594,7 @@
     ],
     "name": "University of Lahore",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "uol.edu.pk"
     ],
@@ -79367,7 +79606,7 @@
     ],
     "name": "University of Malakand",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Khyber Pakhtunkhwa",
     "domains": [
       "uom.edu.pk"
     ],
@@ -79379,7 +79618,7 @@
     ],
     "name": "University of Sargodha",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "uos.edu.pk"
     ],
@@ -79391,7 +79630,7 @@
     ],
     "name": "University of Peshawar",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Khyber Pakhtunkhwa",
     "domains": [
       "upesh.edu"
     ],
@@ -79415,7 +79654,7 @@
     ],
     "name": "University of Sindh",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Sindh",
     "domains": [
       "usindh.edu.pk"
     ],
@@ -79439,7 +79678,7 @@
     ],
     "name": "University of Veterinary & Animal Science",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "uvas.edu.pk"
     ],
@@ -79463,7 +79702,7 @@
     ],
     "name": "Virtual University of Pakistan",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "vu.edu.pk"
     ],
@@ -79475,7 +79714,7 @@
     ],
     "name": "Wah Medical College",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "wahmedicalcollege.edu.pk"
     ],
@@ -79487,7 +79726,7 @@
     ],
     "name": "Zawiya Academy",
     "alpha_two_code": "PK",
-    "state-province": null,
+    "state-province": "Panjab",
     "domains": [
       "zawiya.edu.pk"
     ],
@@ -84152,13 +84391,14 @@
   },
   {
     "web_pages": [
-      "http://www.iscte.pt/"
+      "http://www.iscte-iul.pt/"
     ],
-    "name": "Instituto Superior de Ciências do Trabalho e da Empresa",
+    "name": "ISCTE - Instituto Universitário de Lisboa",
     "alpha_two_code": "PT",
     "state-province": null,
     "domains": [
-      "iscte.pt"
+      "iscte.pt",
+      "iscte-iul.pt"
     ],
     "country": "Portugal"
   },
@@ -84663,18 +84903,6 @@
     "state-province": null,
     "domains": [
       "pucpr.edu"
-    ],
-    "country": "Puerto Rico"
-  },
-  {
-    "web_pages": [
-      "http://www.pupr.edu/"
-    ],
-    "name": "Universidad Politecnica de Puerto Rico",
-    "alpha_two_code": "PR",
-    "state-province": null,
-    "domains": [
-      "pupr.edu"
     ],
     "country": "Puerto Rico"
   },
@@ -86468,6 +86696,18 @@
   },
   {
     "web_pages": [
+      "http://www.ibch.ru/"
+    ],
+    "name": "Shemyakin–Ovchinnikov Institute of bioorganic chemistry RAS",
+    "alpha_two_code": "RU",
+    "state-province": null,
+    "domains": [
+      "ibch.ru"
+    ],
+    "country": "Russian Federation"
+  },
+  {
+    "web_pages": [
       "http://www.ibi.spb.ru/"
     ],
     "name": "International Banking Institute, St. Petersburg",
@@ -87488,9 +87728,9 @@
   },
   {
     "web_pages": [
-      "http://www.msu.ru/"
+      "https://www.msu.ru/"
     ],
-    "name": "Moscow State University",
+    "name": "Lomonosov Moscow State University",
     "alpha_two_code": "RU",
     "state-province": null,
     "domains": [
@@ -89451,6 +89691,20 @@
     "state-province": null,
     "domains": [
       "ysu.ru"
+    ],
+    "country": "Russian Federation"
+  },
+  {
+    "web_pages": [
+      "https://synergy.ru/",
+      "http://synergy.university/"
+    ],
+    "name": "Moscow University for Industry and Finance “Synergy”",
+    "alpha_two_code": "RU",
+    "state-province": null,
+    "domains": [
+      "synergy.ru",
+      "synergy.university"
     ],
     "country": "Russian Federation"
   },
@@ -92480,6 +92734,18 @@
   },
   {
     "web_pages": [
+      "https://www.uloyola.es/"
+    ],
+    "name": "Universidad Loyola Andalucía",
+    "alpha_two_code": "ES",
+    "state-province": null,
+    "domains": [
+      "uloyola.es"
+    ],
+    "country": "Spain"
+  },
+  {
+    "web_pages": [
       "http://www.uniactiva.com/"
     ],
     "name": "Universidad Abierta Interactiva",
@@ -93114,6 +93380,30 @@
     "state-province": null,
     "domains": [
       "wyb.ac.lk"
+    ],
+    "country": "Sri Lanka"
+  },
+  {
+    "web_pages": [
+      "http://www.nsbm.lk/"
+    ],
+    "name": "National School of Business Management",
+    "alpha_two_code": "LK",
+    "state-province": null,
+    "domains": [
+      "nsbm.lk"
+    ],
+    "country": "Sri Lanka"
+  },
+  {
+    "web_pages": [
+      "https://www.nibm.lk/"
+    ],
+    "name": "National Institute of Business Management",
+    "alpha_two_code": "LK",
+    "state-province": null,
+    "domains": [
+      "nibm.lk"
     ],
     "country": "Sri Lanka"
   },
@@ -93793,7 +94083,7 @@
     "web_pages": [
       "http://www.kth.se/"
     ],
-    "name": "Royal lnstitute of Technology",
+    "name": "KTH Royal Institute of Technology",
     "alpha_two_code": "SE",
     "state-province": null,
     "domains": [
@@ -95119,7 +95409,7 @@
     "domains": [
       "au.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95131,7 +95421,7 @@
     "domains": [
       "ccu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95143,7 +95433,7 @@
     "domains": [
       "cgu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95155,7 +95445,7 @@
     "domains": [
       "chna.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95167,7 +95457,7 @@
     "domains": [
       "chu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95179,7 +95469,7 @@
     "domains": [
       "cju.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95191,7 +95481,7 @@
     "domains": [
       "cku.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95203,7 +95493,7 @@
     "domains": [
       "cmc.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95215,7 +95505,7 @@
     "domains": [
       "cpu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95227,7 +95517,7 @@
     "domains": [
       "csmc.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95239,7 +95529,7 @@
     "domains": [
       "cycu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95251,7 +95541,7 @@
     "domains": [
       "cyut.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95263,7 +95553,7 @@
     "domains": [
       "dyu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95275,7 +95565,7 @@
     "domains": [
       "english.web.ncku.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95287,7 +95577,7 @@
     "domains": [
       "fcu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95299,7 +95589,7 @@
     "domains": [
       "fju.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95311,7 +95601,7 @@
     "domains": [
       "hcu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95323,7 +95613,7 @@
     "domains": [
       "hfu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95335,7 +95625,7 @@
     "domains": [
       "isu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95347,7 +95637,7 @@
     "domains": [
       "kmc.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95359,7 +95649,7 @@
     "domains": [
       "ksit.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95371,7 +95661,7 @@
     "domains": [
       "ksu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95383,7 +95673,7 @@
     "domains": [
       "kuas.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95395,7 +95685,7 @@
     "domains": [
       "lhu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95407,7 +95697,7 @@
     "domains": [
       "ltc.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95419,7 +95709,7 @@
     "domains": [
       "mcu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95431,7 +95721,7 @@
     "domains": [
       "nccu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95443,7 +95733,7 @@
     "domains": [
       "nchu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95455,7 +95745,7 @@
     "domains": [
       "nchulc.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95467,7 +95757,7 @@
     "domains": [
       "ncnu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95479,7 +95769,7 @@
     "domains": [
       "ncpes.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95491,7 +95781,7 @@
     "domains": [
       "nctu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95503,7 +95793,7 @@
     "domains": [
       "ncu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95515,7 +95805,7 @@
     "domains": [
       "ncue.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95527,7 +95817,7 @@
     "domains": [
       "ncyu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95539,7 +95829,7 @@
     "domains": [
       "ndhu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95551,7 +95841,7 @@
     "domains": [
       "nfu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95563,7 +95853,7 @@
     "domains": [
       "nhctc.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95575,7 +95865,7 @@
     "domains": [
       "nhltc.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95587,7 +95877,7 @@
     "domains": [
       "nhu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95599,7 +95889,7 @@
     "domains": [
       "nia.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95611,7 +95901,7 @@
     "domains": [
       "niu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95623,7 +95913,7 @@
     "domains": [
       "nkfu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95635,7 +95925,7 @@
     "domains": [
       "nknu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95647,7 +95937,7 @@
     "domains": [
       "nou.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95659,7 +95949,7 @@
     "domains": [
       "npttc.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95671,7 +95961,7 @@
     "domains": [
       "npust.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95683,7 +95973,7 @@
     "domains": [
       "nsysu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95695,7 +95985,7 @@
     "domains": [
       "ntca.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95707,7 +95997,7 @@
     "domains": [
       "ntcn.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95719,7 +96009,7 @@
     "domains": [
       "ntcpe.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95731,7 +96021,7 @@
     "domains": [
       "ntctc.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95743,7 +96033,7 @@
     "domains": [
       "nthu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95755,7 +96045,7 @@
     "domains": [
       "ntntc.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95767,7 +96057,7 @@
     "domains": [
       "ntnu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95779,7 +96069,7 @@
     "domains": [
       "ntou.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95791,7 +96081,7 @@
     "domains": [
       "ntptc.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95803,7 +96093,7 @@
     "domains": [
       "ntpu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95815,7 +96105,7 @@
     "domains": [
       "ntttc.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95827,7 +96117,7 @@
     "domains": [
       "ntu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95839,7 +96129,7 @@
     "domains": [
       "ntust.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95851,7 +96141,7 @@
     "domains": [
       "ntut.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95863,7 +96153,7 @@
     "domains": [
       "nuk.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95875,7 +96165,7 @@
     "domains": [
       "nuu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95887,7 +96177,7 @@
     "domains": [
       "ouk.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95899,7 +96189,7 @@
     "domains": [
       "pccu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95911,7 +96201,7 @@
     "domains": [
       "pu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95923,7 +96213,7 @@
     "domains": [
       "scc.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95935,7 +96225,7 @@
     "domains": [
       "scu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95947,7 +96237,7 @@
     "domains": [
       "shu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95959,7 +96249,7 @@
     "domains": [
       "sjsmit.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95971,7 +96261,7 @@
     "domains": [
       "stut.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95983,7 +96273,7 @@
     "domains": [
       "tcu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -95995,7 +96285,7 @@
     "domains": [
       "thmu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -96007,7 +96297,7 @@
     "domains": [
       "thu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -96019,7 +96309,7 @@
     "domains": [
       "tku.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -96031,7 +96321,7 @@
     "domains": [
       "tmc.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -96043,7 +96333,7 @@
     "domains": [
       "tmtc.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -96055,7 +96345,7 @@
     "domains": [
       "tnca.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -96067,7 +96357,7 @@
     "domains": [
       "tpec.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -96079,7 +96369,7 @@
     "domains": [
       "ttit.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -96091,7 +96381,7 @@
     "domains": [
       "ttu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -96103,7 +96393,7 @@
     "domains": [
       "ym.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -96115,7 +96405,7 @@
     "domains": [
       "yuntech.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -96127,7 +96417,7 @@
     "domains": [
       "yzu.edu.tw"
     ],
-    "country": "Taiwan, Province of China"
+    "country": "Taiwan"
   },
   {
     "web_pages": [
@@ -96896,6 +97186,18 @@
       "nida.ac.th"
     ],
     "country": "Thailand"
+  },
+  {
+    "web_pages": [
+      "http://www.nuv.ac.in/"
+    ],
+    "name": "Navrachana University",
+    "alpha_two_code": "IN",
+    "state-province": null,
+    "domains": [
+      "nuv.ac.in"
+    ],
+    "country": "India"
   },
   {
     "web_pages": [
@@ -97705,7 +98007,7 @@
     "web_pages": [
       "http://www.boun.edu.tr/"
     ],
-    "name": "Bogazici University",
+    "name": "Boğaziçi University",
     "alpha_two_code": "TR",
     "state-province": null,
     "domains": [
@@ -97878,6 +98180,18 @@
     "state-province": null,
     "domains": [
       "firat.edu.tr"
+    ],
+    "country": "Turkey"
+  },
+  {
+    "web_pages": [
+      "https://fbu.edu.tr/"
+    ],
+    "name": "Fenerbahce University",
+    "alpha_two_code": "TR",
+    "state-province": null,
+    "domains": [
+      "fbu.edu.tr"
     ],
     "country": "Turkey"
   },
@@ -98187,7 +98501,7 @@
     "web_pages": [
       "http://www.ku.edu.tr/"
     ],
-    "name": "Koc University",
+    "name": "Koç University",
     "alpha_two_code": "TR",
     "state-province": null,
     "domains": [
@@ -98405,7 +98719,7 @@
     "web_pages": [
       "http://www.sehir.edu.tr/"
     ],
-    "name": "İstanbul Şehir University",
+    "name": "Istanbul Şehir University",
     "alpha_two_code": "TR",
     "state-province": null,
     "domains": [
@@ -100125,18 +100439,7 @@
     "alpha_two_code": "GB",
     "state-province": null,
     "domains": [
-      "abdn.ac.uk"
-    ],
-    "country": "United Kingdom"
-  },
-  {
-    "web_pages": [
-      "http://www.abdn.ac.uk/"
-    ],
-    "name": "University of Aberdeen",
-    "alpha_two_code": "GB",
-    "state-province": null,
-    "domains": [
+      "abdn.ac.uk",
       "aberdeen.ac.uk"
     ],
     "country": "United Kingdom"
@@ -100606,6 +100909,18 @@
     "state-province": null,
     "domains": [
       "dur.ac.uk"
+    ],
+    "country": "United Kingdom"
+  },
+  {
+    "web_pages": [
+      "http://www.edgehill.ac.uk/"
+    ],
+    "name": "Edge Hill University",
+    "alpha_two_code": "GB",
+    "state-province": null,
+    "domains": [
+      "edgehill.ac.uk"
     ],
     "country": "United Kingdom"
   },
@@ -101109,7 +101424,7 @@
     "alpha_two_code": "GB",
     "state-province": null,
     "domains": [
-      "https://www.ljmu.ac.uk/"
+      "ljmu.ac.uk"
     ],
     "country": "United Kingdom"
   },
@@ -101187,12 +101502,14 @@
   },
   {
     "web_pages": [
-      "http://www.man.ac.uk/"
+      "http://www.manchester.ac.uk/"
     ],
     "name": "University of Manchester",
     "alpha_two_code": "GB",
     "state-province": null,
     "domains": [
+      "manchester.ac.uk",
+      "mbs.ac.uk",
       "man.ac.uk"
     ],
     "country": "United Kingdom"
@@ -101379,13 +101696,14 @@
   },
   {
     "web_pages": [
-      "http://www.qmw.ac.uk/"
+      "http://www.qmul.ac.uk/"
     ],
-    "name": "Queen Mary and Westfield College, University of London",
+    "name": "Queen Mary, University of London",
     "alpha_two_code": "GB",
     "state-province": null,
     "domains": [
-      "qmw.ac.uk"
+      "qmw.ac.uk",
+      "qmul.ac.uk"
     ],
     "country": "United Kingdom"
   },
@@ -101739,12 +102057,13 @@
   },
   {
     "web_pages": [
-      "http://www.st-and.ac.uk/"
+      "https://www.st-andrews.ac.uk/"
     ],
     "name": "University of St. Andrews",
     "alpha_two_code": "GB",
     "state-province": null,
     "domains": [
+      "st-andrews.ac.uk",
       "st-and.ac.uk"
     ],
     "country": "United Kingdom"
@@ -103961,7 +104280,7 @@
     "web_pages": [
       "http://www.agri.edu.tr/"
     ],
-    "name": "Agri İbrahim Cecen University",
+    "name": "Agri Ibrahim Cecen University",
     "alpha_two_code": "TR",
     "state-province": null,
     "domains": [
@@ -104045,7 +104364,7 @@
     "web_pages": [
       "http://www.bamdirma.edu.tr/"
     ],
-    "name": "Bandirma ONYEDİ Eylul University",
+    "name": "Bandirma ONYEDI Eylul University",
     "alpha_two_code": "TR",
     "state-province": null,
     "domains": [
@@ -104097,7 +104416,7 @@
     "alpha_two_code": "TR",
     "state-province": null,
     "domains": [
-      "bilecik..edu.tr"
+      "bilecik.edu.tr"
     ],
     "country": "Turkey"
   },
@@ -104285,7 +104604,7 @@
     "web_pages": [
       "http://www.igdir.edu.tr/"
     ],
-    "name": "İgdir University",
+    "name": "Igdir University",
     "alpha_two_code": "TR",
     "state-province": null,
     "domains": [
@@ -104297,7 +104616,7 @@
     "web_pages": [
       "http://www.iste.edu.tr/"
     ],
-    "name": "İskenderun Tecnical University",
+    "name": "Iskenderun Tecnical University",
     "alpha_two_code": "TR",
     "state-province": null,
     "domains": [
@@ -104321,7 +104640,7 @@
     "web_pages": [
       "http://www.istanbul.edu.tr/"
     ],
-    "name": "İstanbul University",
+    "name": "Istanbul University",
     "alpha_two_code": "TR",
     "state-province": null,
     "domains": [
@@ -104333,7 +104652,7 @@
     "web_pages": [
       "http://www.ikc.edu.tr/"
     ],
-    "name": "İzmir Katip celebi University",
+    "name": "Izmir Katip celebi University",
     "alpha_two_code": "TR",
     "state-province": null,
     "domains": [
@@ -104446,18 +104765,6 @@
     "state-province": null,
     "domains": [
       "nevsehir.edu.tr"
-    ],
-    "country": "Turkey"
-  },
-  {
-    "web_pages": [
-      "http://www.odtu.edu.tr/"
-    ],
-    "name": "Ortadogu Tecnical University",
-    "alpha_two_code": "TR",
-    "state-province": null,
-    "domains": [
-      "odtu.edu.tr"
     ],
     "country": "Turkey"
   },
@@ -104669,7 +104976,7 @@
     "web_pages": [
       "http://www.29mayis.edu.tr/"
     ],
-    "name": "İstanbul 29Mayis  University",
+    "name": "Istanbul 29Mayis  University",
     "alpha_two_code": "TR",
     "state-province": null,
     "domains": [
@@ -105243,13 +105550,13 @@
   },
   {
     "web_pages": [
-      "http://www.pwscc.edu"
+      "http://pwsc.alaska.edu"
     ],
-    "name": "Prince William Sound Community College",
+    "name": "Prince William Sound College",
     "alpha_two_code": "US",
     "state-province": null,
     "domains": [
-      "pwscc.edu"
+      "pwsc.alaska.edu"
     ],
     "country": "United States"
   },
@@ -105357,7 +105664,8 @@
     "alpha_two_code": "US",
     "state-province": null,
     "domains": [
-      "mesacc.edu"
+      "mesacc.edu",
+      "maricopa.edu"
     ],
     "country": "United States"
   },
@@ -108737,7 +109045,7 @@
     "web_pages": [
       "http://www.nicc.edu"
     ],
-    "name": "Northeast Iowa Community College-​Calmar",
+    "name": "Northeast Iowa Community College",
     "alpha_two_code": "US",
     "state-province": null,
     "domains": [
@@ -109713,7 +110021,8 @@
     "alpha_two_code": "US",
     "state-province": null,
     "domains": [
-      "massasoit.mass.edu"
+      "massasoit.mass.edu",
+      "massasoit.edu"
     ],
     "country": "United States"
   },
@@ -115897,5 +116206,361 @@
       "alumnos.ui1.es"
     ],
     "country": "Spain"
+  },
+  {
+    "web_pages": [
+      "http://www.dhbw-mannheim.de/"
+    ],
+    "name": "Duale Hochschule Baden-Wuerttemberg Mannheim",
+    "alpha_two_code": "DE",
+    "state-province": "null",
+    "domains": [
+      "dhbw-mannheim.de"
+    ],
+    "country": "Germany"
+  },
+  {
+    "web_pages": [
+      "https://www.hs-hannover.de/"
+    ],
+    "name": "Hochschule Hannover",
+    "alpha_two_code": "DE",
+    "state-province": "null",
+    "domains": [
+      "hs-hannover.de",
+      "stud.hs-hannover.de"
+    ],
+    "country": "Germany"
+  },
+  {
+    "web_pages": [
+      "https://trinitybiblecollege.edu"
+    ],
+    "name": "Trinity Bible College & Graduate School",
+    "alpha_two_code": "US",
+    "state-province": "ND",
+    "domains": [
+      "trinitybiblecollege.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "http://www.umflint.edu"
+    ],
+    "name": "University of Michigan-Flint",
+    "alpha_two_code": "US",
+    "state-province": "MI",
+    "domains": [
+      "umflint.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "https://www.torrens.edu.au"
+    ],
+    "name": "Torrens University Australia",
+    "alpha_two_code": "AU",
+    "state-province": null,
+    "domains": [
+      "torrens.edu.au",
+      "tua.edu.au"
+    ],
+    "country": "Australia"
+  },
+  {
+    "web_pages": [
+      "https://www.mmibordeaux.com/"
+    ],
+    "name": "DUT MMI - Université Bordeaux Montaigne",
+    "alpha_two_code": "FR",
+    "state-province": null,
+    "domains": [
+      "mmibordeaux.com"
+    ],
+    "country": "France"
+  },
+  {
+    "web_pages": [
+      "http://btu.ge"
+    ],
+    "name": "Business and Technology University",
+    "alpha_two_code": "GE",
+    "state-province": null,
+    "domains": [
+      "btu.ge",
+      "btu.edu.ge"
+    ],
+    "country": "Georgia"
+  },
+  {
+    "web_pages": [
+      "http://cic-cairo.com/"
+    ],
+    "name": "CIC - Canadian International College",
+    "alpha_two_code": "EG",
+    "state-province": null,
+    "domains": [
+      "cic-cairo.com"
+    ],
+    "country": "Egypt"
+  },
+  {
+    "web_pages": [
+      "http://www.kpc.alaska.edu"
+    ],
+    "name": "Kenai Peninsula College",
+    "alpha_two_code": "US",
+    "state-province": null,
+    "domains": [
+      "kpc.alaska.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "http://matsu.alaska.edu"
+    ],
+    "name": "Mat-Su College",
+    "alpha_two_code": "US",
+    "state-province": null,
+    "domains": [
+      "matsu.alaska.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "http://koc.alaska.edu"
+    ],
+    "name": "Kodiak College",
+    "alpha_two_code": "US",
+    "state-province": null,
+    "domains": [
+      "koc.alaska.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "http://www.alaskapacific.edu"
+    ],
+    "name": "Alaska Pacific University",
+    "alpha_two_code": "US",
+    "state-province": null,
+    "domains": [
+      "alaskapacific.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "http://www.wbu.edu"
+    ],
+    "name": "Wayland Baptist University",
+    "alpha_two_code": "US",
+    "state-province": null,
+    "domains": [
+      "wbu.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "http://hust.edu.vn"
+    ],
+    "name": "Hanoi University of Science and Technology",
+    "alpha_two_code": "VN",
+    "state-province": null,
+    "domains": [
+      "hust.edu.vn"
+    ],
+    "country": "Vietnam"
+  },
+  {
+    "web_pages": [
+      "http://www.bhtafe.edu.au",
+      "http://www.boxhill.edu.au"
+    ],
+    "name": "Box Hill Institute",
+    "alpha_two_code": "AU",
+    "state-province": null,
+    "domains": [
+      "bhtafe.edu.au",
+      "boxhill.edu.au"
+    ],
+    "country": "Australia"
+  },
+  {
+    "web_pages": [
+      "http://www.cust.edu.cn",
+      "http://ieec.cust.edu.cn/"
+    ],
+    "name": "Changchun University of Science and Technology",
+    "alpha_two_code": "CU",
+    "state-province": "JiLin",
+    "domains": [
+      "cust.edu.cn",
+      "ieec.cust.edu.cn"
+    ],
+    "country": "China"
+  },
+  {
+    "web_pages": [
+      "https://www.polk.edu/"
+    ],
+    "name": "Polk State College",
+    "alpha_two_code": "US",
+    "state-province": null,
+    "domains": [
+      "polk.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "https://www.mohawkcollege.ca/"
+    ],
+    "name": "Mohawk College",
+    "alpha_two_code": "CA",
+    "state-province": null,
+    "domains": [
+      "mohawkcollege.ca"
+    ],
+    "country": "Canada"
+  },
+  {
+    "web_pages": [
+      "https://www.brescia.edu/"
+    ],
+    "name": "Brescia University",
+    "alpha_two_code": "US",
+    "state-province": null,
+    "domains": [
+      "brescia.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "https://www.rsu.edu/"
+    ],
+    "name": "Rogers State University",
+    "alpha_two_code": "US",
+    "state-province": null,
+    "domains": [
+      "rsu.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "https://www.neumann.edu/"
+    ],
+    "name": "Neumann University",
+    "alpha_two_code": "US",
+    "state-province": null,
+    "domains": [
+      "neumann.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "https://www.fanshawec.ca/"
+    ],
+    "name": "Fanshawe College",
+    "alpha_two_code": "CA",
+    "state-province": null,
+    "domains": [
+      "fanshawec.ca",
+      "fanshaweonline.ca"
+    ],
+    "country": "Canada"
+  },
+  {
+    "web_pages": [
+      "https://www.ashford.edu/"
+    ],
+    "name": "Ashford University",
+    "alpha_two_code": "US",
+    "state-province": null,
+    "domains": [
+      "ashford.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "https://www.mcpherson.edu/"
+    ],
+    "name": "McPherson College",
+    "alpha_two_code": "US",
+    "state-province": null,
+    "domains": [
+      "mcpherson.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "https://www.ccsnh.edu/"
+    ],
+    "name": "Community College System of New Hampshire",
+    "alpha_two_code": "US",
+    "state-province": null,
+    "domains": [
+      "ccsnh.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "https://www.vaniercollege.qc.ca/"
+    ],
+    "name": "Vanier College",
+    "alpha_two_code": "CA",
+    "state-province": null,
+    "domains": [
+      "vaniercollege.qc.ca"
+    ],
+    "country": "Canada"
+  },
+  {
+    "web_pages": [
+      "http://www.defiance.edu/"
+    ],
+    "name": "Defiance College",
+    "alpha_two_code": "US",
+    "state-province": "Ohio",
+    "domains": [
+      "defiance.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "http://www.musc.edu/"
+    ],
+    "name": "Medical University of South Carolina",
+    "alpha_two_code": "US",
+    "state-province": null,
+    "domains": [
+      "musc.edu"
+    ],
+    "country": "United States"
+  },
+  {
+    "web_pages": [
+      "https://www.gulfcoast.edu/"
+    ],
+    "name": "Gulf Coast State College",
+    "alpha_two_code": "US",
+    "state-province": "Florida",
+    "domains": [
+      "gulfcoast.edu"
+    ],
+    "country": "United States"
   }
 ]
