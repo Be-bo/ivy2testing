@@ -41,8 +41,12 @@
         <item name="android:trackTint">@color/switch_color</item>   <!--30% transparent by default-->
     </style>
 
-    <style name="SwitchCompatTheme" >
-        <item name="colorAccent">@color/interaction</item>
+    <style name="MainNavBar" parent="Widget.Design.BottomNavigationView">
+        <item name="itemIconTint">@color/bottom_nav_color</item>
+        <item name="itemTextColor">@color/bottom_nav_color</item>
+        <item name="backgroundTint">@color/off_white</item>
+        <item name="elevation">10dp</item>
+        <item name="menu">@menu/main_tab_bar</item>
     </style>
 
 

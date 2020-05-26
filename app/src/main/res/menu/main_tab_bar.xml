@@ -6,19 +6,19 @@
 
         <item
             android:id="@+id/tab_bar_chat"
-            android:title="Chat"
+            android:title="@string/chat"
             android:icon="@drawable/ivy_logo"
             />
 
         <item
             android:id="@+id/tab_bar_home"
-            android:title="Home"
+            android:title="@string/home"
             android:icon="@drawable/ivy_logo"
             />
 
         <item
             android:id="@+id/tab_bar_profile"
-            android:title="Profile"
+            android:title="@string/profile"
             android:icon="@drawable/ivy_logo"
             />
     </group>
