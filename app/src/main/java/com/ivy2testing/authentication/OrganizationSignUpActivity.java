@@ -92,7 +92,7 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                register_button.setEnabled(emailOk() && passwordOk() && passConfirmOk());
+                register_button.setEnabled(!fieldsEmpty());
             }
             @Override
             public void afterTextChanged(Editable s) {}
@@ -179,27 +179,46 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
 
     // Set error on an editText view based on a condition
     private void setInputErrors(EditText editText, String error_msg, boolean check){
-        if (check) editText.setError(null);
-        else editText.setError(error_msg);
+        if (!check) editText.setError(error_msg);
+    }
+
+    // Check to see if any of fields are empty
+    private boolean fieldsEmpty(){
+        return
+            email_editText.getText().toString().isEmpty() ||
+            pass_editText.getText().toString().isEmpty() ||
+            pass_confirm_editText.getText().toString().isEmpty();
     }
 
     // Make sure email has a correct format and is not empty
     private boolean emailOk() {
         String email = email_editText.getText().toString().trim();
-        return email.length() > 5 && email.contains("@") && !email.contains(" ") && email.contains(".");
+        if (email.length() > 5 && email.contains("@") && !email.contains(" ") && email.contains(".")){
+            email_editText.setError(null);
+            return true;
+        }
+        else return false;
     }
 
     // Make sure password field is at lest 6 characters long
     private boolean passwordOk() {
         String password = pass_editText.getText().toString();
-        return password.length() > 5;
+        if (password.length() > 5){
+            pass_editText.setError(null);
+            return true;
+        }
+        else return false;
     }
 
     // PassConfirmCheck will check if the password confirm field matches password
     private boolean passConfirmOk() {
         String password = pass_editText.getText().toString();
         String password_confirm = pass_confirm_editText.getText().toString();
-        return password_confirm.equals(password);
+        if (password_confirm.equals(password)){
+            pass_confirm_editText.setError(null);
+            return true;
+        }
+        else return false;
     }
 
 

@@ -1,4 +1,4 @@
-package com.ivy2testing;
+package com.ivy2testing.authentication;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.ivy2testing.R;
 import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.authentication.StudentSignupDialog;
 

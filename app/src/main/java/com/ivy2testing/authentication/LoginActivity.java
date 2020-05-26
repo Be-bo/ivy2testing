@@ -34,7 +34,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ivy2testing.MainActivity;
 import com.ivy2testing.R;
-import com.ivy2testing.StudentSignUpActivity;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -97,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mLoginButton.setEnabled(emailOk() && passwordOk() && domainOk());
+                mLoginButton.setEnabled(!fieldsEmpty());
             }
             @Override
             public void afterTextChanged(Editable s) {}
@@ -182,6 +181,13 @@ public class LoginActivity extends AppCompatActivity {
     private void setInputErrors(EditText editText, String error_msg, boolean check){
         if (check) editText.setError(null);
         else editText.setError(error_msg);
+    }
+
+    // Check to see if any of fields are empty
+    private boolean fieldsEmpty(){
+        return
+                mEmailView.getText().toString().isEmpty() ||
+                mPasswordView.getText().toString().isEmpty();
     }
 
     // Make sure email has a correct format and is not empty
