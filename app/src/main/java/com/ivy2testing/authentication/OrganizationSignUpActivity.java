@@ -266,7 +266,6 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
     }
 
     private void barInteraction() {
-        // Animation? TODO
         closeKeyboard();
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         register_button.setVisibility(View.GONE);

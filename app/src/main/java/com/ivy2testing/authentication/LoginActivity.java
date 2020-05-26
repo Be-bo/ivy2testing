@@ -274,7 +274,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void barInteraction() {
-        // Animation? TODO
         closeKeyboard();
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         mLoginButton.setVisibility(View.GONE);
@@ -318,7 +317,7 @@ public class LoginActivity extends AppCompatActivity {
 /* UI related Methods
 ***************************************************************************************************/
 
-    // Loading screen to Login page Animation TODO
+    // Loading screen to Login page Animation (currently unused)
     private void splashAnimation(){
 
         // Get hidden layouts
