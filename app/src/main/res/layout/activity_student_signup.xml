@@ -4,7 +4,7 @@
     style='"@style/Base.Widget.AppCompat.Spinner.Underlined"'
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_greenwhite_reverse">
+    android:background="@drawable/gradient_green_reverse">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"

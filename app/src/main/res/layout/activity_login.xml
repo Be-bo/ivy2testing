@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     tools:context="com.ivy2testing.authentication.LoginActivity"
-    android:background="@drawable/gradient_greenwhite">
+    android:background="@drawable/gradient_green">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/login_guideline1"
@@ -77,6 +77,14 @@
             android:enabled="false"
             android:onClick="login"
             android:text="@string/login" />
+
+        <ProgressBar
+            android:id="@+id/login_progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:indeterminateTint="@color/hint"/>
+
     </LinearLayout>
 
 

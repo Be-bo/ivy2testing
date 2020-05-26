@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -45,6 +46,7 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
     private EditText pass_confirm_editText;
     private Switch isClub_switch;
     private Button register_button;
+    private ProgressBar progress_bar;
 
     // Firebase
     private FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -78,6 +80,7 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         pass_confirm_editText = findViewById(R.id.org_signup_pass_confirm);
         isClub_switch = findViewById(R.id.org_signup_switch);
         register_button = findViewById(R.id.org_signup_register_button);
+        progress_bar = findViewById(R.id.org_signup_progressBar);
     }
 
 
@@ -257,6 +260,8 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
 ***************************************************************************************************/
 
     private void allowInteraction(){
+        progress_bar.setVisibility(View.GONE);
+        register_button.setVisibility(View.VISIBLE);
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
@@ -264,6 +269,8 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         // Animation? TODO
         closeKeyboard();
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        register_button.setVisibility(View.GONE);
+        progress_bar.setVisibility(View.VISIBLE);
     }
 
 

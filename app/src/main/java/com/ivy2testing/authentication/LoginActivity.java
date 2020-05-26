@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -51,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mEmailView;
     private EditText mPasswordView;
     private Button mLoginButton;
+    private ProgressBar mProgressBar;
 
     // Firebase
     private FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -82,6 +84,8 @@ public class LoginActivity extends AppCompatActivity {
         mEmailView = findViewById(R.id.login_email);
         mPasswordView = findViewById(R.id.login_password);
         mLoginButton = findViewById(R.id.login_logInButton);
+        mProgressBar = findViewById(R.id.login_progressBar);
+        mProgressBar.setVisibility(View.GONE);
     }
 
     // Set up textWatchers for real time error checking
@@ -264,6 +268,8 @@ public class LoginActivity extends AppCompatActivity {
 ***************************************************************************************************/
 
     private void allowInteraction(){
+        mProgressBar.setVisibility(View.GONE);
+        mLoginButton.setVisibility(View.VISIBLE);
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
@@ -271,6 +277,8 @@ public class LoginActivity extends AppCompatActivity {
         // Animation? TODO
         closeKeyboard();
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        mLoginButton.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
 
