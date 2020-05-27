@@ -7,24 +7,33 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ivy2testing.OnSelectionListener;
 import com.ivy2testing.R;
 
 import java.util.List;
+import java.util.Objects;
 
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImgHolder> {
 
     // Attributes
     private List<Integer> images;
-    private Context context;
+    private ImgHolder viewHolder;
+    private OnSelectionListener mSelectionListener;
 
 
     // Constructor
-    ImageAdapter(Context context, List<Integer> images){
-        this.context = context;
+    ImageAdapter(List<Integer> images){
         this.images = images;
+    }
+
+    // Listener Setter
+    void setOnSelectionListener(OnSelectionListener listener){
+        this.mSelectionListener = listener;
     }
 
 
@@ -34,15 +43,15 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImgHolder> {
     @NonNull
     @Override
     public ImgHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.recycler_grid_item, parent, false);
-        return new ImgHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_grid_item, parent, false);
+        return new ImgHolder(view, mSelectionListener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ImgHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ImgHolder holder, final int position) {
+        viewHolder = holder;
         holder.mImageView.setImageResource(images.get(position));
     }
-
 
     @Override
     public int getItemCount() {
@@ -50,19 +59,33 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImgHolder> {
     }
 
 
-/* Item View Subclass
+/* View Holder subclass
 ***************************************************************************************************/
 
-    class ImgHolder extends RecyclerView.ViewHolder{
+    static class ImgHolder extends RecyclerView.ViewHolder{
 
         // Attributes
         ImageView mImageView;
+        CardView mCardView;
+        ConstraintLayout mLayout;
 
         // Methods
-        ImgHolder(@NonNull View itemView) {
+        ImgHolder(@NonNull View itemView, final OnSelectionListener listener) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.recyclerGridItem_img);
+            mCardView = itemView.findViewById(R.id.recyclerGridItem_cardView);
+            mLayout = itemView.findViewById(R.id.recyclerGridItem_layout);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null){
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION)
+                            listener.onSelectionClick(position);
+                    }
+                }
+            });
         }
     }
-
 }

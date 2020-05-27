@@ -15,9 +15,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ivy2testing.MainActivity;
+import com.ivy2testing.OnSelectionListener;
 import com.ivy2testing.R;
 import com.ivy2testing.authentication.LoginActivity;
 
@@ -39,6 +41,7 @@ public class UserProfileFragment extends Fragment {
     // FireBase
 
     // Other Variables
+    private ImageAdapter adapter;
 
 
     // Constructor
@@ -58,6 +61,7 @@ public class UserProfileFragment extends Fragment {
         // Initialization Methods
         declareViews(rootView);
         setUpRecycler();
+        setListeners(rootView);
 
         return rootView;
     }
@@ -67,6 +71,9 @@ public class UserProfileFragment extends Fragment {
 
     // TODO
     private void declareViews(View v){
+        mProfileImg = v.findViewById(R.id.userProfile_circleImg);
+        mName = v.findViewById(R.id.userProfile_name);
+        mDegree = v.findViewById(R.id.userProfile_degree);
         mRecyclerView = v.findViewById(R.id.userProfile_posts);
     }
 
@@ -76,13 +83,32 @@ public class UserProfileFragment extends Fragment {
         // Get list of image ids
         List<Integer> imageIds = new ArrayList<>();
         imageIds.add(R.drawable.test_flower);
+        imageIds.add(R.drawable.test_flower);
+        imageIds.add(R.drawable.test_flower);
+        imageIds.add(R.drawable.test_flower);
 
-        // Adapter
-        ImageAdapter adapter = new ImageAdapter(mContext, imageIds);
-        GridLayoutManager manager =
-                new GridLayoutManager(mContext, 3, GridLayoutManager.VERTICAL, false);
-        mRecyclerView.setLayoutManager(manager);
+        // set LayoutManager and Adapter
+        adapter = new ImageAdapter(imageIds);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), 3, GridLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(adapter);
+    }
+
+    // Set Listeners
+    private void setListeners(View v){
+        v.findViewById(R.id.userProfile_edit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {editProfile();}
+        });
+
+        v.findViewById(R.id.userProfile_seeAll).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {seeAllPosts();}
+        });
+
+        adapter.setOnSelectionListener(new OnSelectionListener() {
+            @Override
+            public void onSelectionClick(int position) {selectPost();}
+        });
 
     }
 
@@ -93,11 +119,15 @@ public class UserProfileFragment extends Fragment {
 
 
     // Edit profile TODO
-    void editProfile(View v){}
+    private void editProfile(){}
 
     // See all posts TODO
-    void seeAllPosts(View v){}
+    private void seeAllPosts(){}
 
+    // A post in recycler was selected  TODO
+    private void selectPost() {
+        Toast.makeText(mContext,"I was clicked here! ", Toast.LENGTH_SHORT).show();
+    }
 
 /* Firebase related Methods
 ***************************************************************************************************/
