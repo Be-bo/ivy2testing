@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.ivy2testing.chat.ChatFragment;
+import com.ivy2testing.home.HomeFragment;
 import com.ivy2testing.userProfile.UserProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,13 +35,13 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item.getItemId()){
                     case R.id.tab_bar_chat:
-                        Toast.makeText(MainActivity.this,"chat!", Toast.LENGTH_SHORT).show();
+                        selectedFragment = new ChatFragment();
                         break;
                     case R.id.tab_bar_home:
-                        Toast.makeText(MainActivity.this,"home!", Toast.LENGTH_SHORT).show();
+                        selectedFragment = new HomeFragment();
                         break;
                     case R.id.tab_bar_profile:
-                        selectedFragment = new UserProfileFragment();
+                        selectedFragment = new UserProfileFragment(MainActivity.this);
                         break;
                 }
                 if (selectedFragment!= null)

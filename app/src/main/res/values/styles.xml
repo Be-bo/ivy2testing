@@ -27,11 +27,11 @@
         <item name="android:textColorHint">@color/hint</item>
         <item name="android:backgroundTint">@color/hint</item>
         <item name="android:textCursorDrawable">@null</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="StandardClickableText" parent="android:Widget.TextView">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:textColor">@color/interaction</item>
         <item name="android:textCursorDrawable">@null</item>
