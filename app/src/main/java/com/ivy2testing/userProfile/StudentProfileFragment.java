@@ -26,7 +26,7 @@ import com.ivy2testing.authentication.LoginActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserProfileFragment extends Fragment {
+public class StudentProfileFragment extends Fragment {
 
     // Constants
     private final static String TAG = "UserProfileFragment";
@@ -41,12 +41,14 @@ public class UserProfileFragment extends Fragment {
     // FireBase
 
     // Other Variables
+    private String student_id;
     private ImageAdapter adapter;
 
 
     // Constructor
-    public UserProfileFragment(Context context){
+    public StudentProfileFragment(Context context, String student_id) {
         mContext = context;
+        this.student_id = student_id;
     }
 
 

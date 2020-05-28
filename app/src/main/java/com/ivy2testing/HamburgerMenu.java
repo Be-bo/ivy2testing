@@ -16,7 +16,7 @@ public class HamburgerMenu extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_placeholder);
+        //setContentView(R.layout.activity);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -30,7 +30,7 @@ public class HamburgerMenu extends AppCompatActivity {
         // this is required to nullify title, title will be sent to blank character in xml too
         getSupportActionBar().setTitle(null);
         //set color of draw bar
-        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.interaction));
+        toggle.getDrawerArrowDrawable().setColor(getColor(R.color.interaction));
 
     }
 

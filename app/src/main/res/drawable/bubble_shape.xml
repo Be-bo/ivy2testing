@@ -10,7 +10,7 @@
                 />
             <solid
                 android:color="@color/interaction"
-                android:textColor="@color/android_default_bg"
+                android:textColor="@color/off_white"
                 />
             <padding
                 android:left="10dp"
@@ -30,7 +30,7 @@
                 android:radius="25dp"
                 />
             <solid
-                android:color="@color/android_default_bg"
+                android:color="@color/off_white"
                 />
 
             <padding
