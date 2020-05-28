@@ -22,62 +22,62 @@
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/btn_1"
                 style="@style/Bubble"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:enabled="true"
-                android:text="Ucalgary" />
+                android:text="Ucalgary"/>
 
             <Button
-                android:id="@+id/button26"
+                android:id="@+id/btn_2"
                 style="@style/Bubble"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:enabled="false"
+                android:enabled="true"
                 android:text="Social" />
 
             <Button
-                android:id="@+id/button27"
+                android:id="@+id/btn_3"
                 style="@style/Bubble"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:enabled="false"
+                android:enabled="true"
                 android:text="For You" />
 
             <Button
-                android:id="@+id/button28"
+                android:id="@+id/btn_4"
                 style="@style/Bubble"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:enabled="false"
+                android:enabled="true"
                 android:text="UoC Ski + Board Club" />
 
             <Button
-                android:id="@+id/button29"
+                android:id="@+id/btn_5"
                 style="@style/Bubble"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:enabled="false"
+                android:enabled="true"
                 android:text="Grind" />
 
             <Button
-                android:id="@+id/button30"
+                android:id="@+id/btn_6"
                 style="@style/Bubble"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:enabled="false"
+                android:enabled="true"
                 android:text="Chill" />
 
         </LinearLayout>
@@ -102,26 +102,5 @@
         android:textColor="@color/interaction"
         app:layout_constraintStart_toEndOf="@+id/textView3"
         app:layout_constraintTop_toBottomOf="@+id/bubble_scrollview" />
-
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="17sp"
-        android:layout_height="17sp"
-        android:layout_gravity="end"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bubble_scrollview"
-        app:srcCompat="@android:drawable/btn_dialog" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="add item"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
