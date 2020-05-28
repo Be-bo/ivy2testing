@@ -27,12 +27,9 @@
     <string name="profile">Profile</string>
 
 
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
     <!-- There is a space before and after each item... -->
-    <string-array name="select_prompt">
-        <item>Degree</item>
-    </string-array>
-
-
     <string-array name="degree_list">
         <item> Degree </item>
         <item> Accounting </item>
@@ -95,7 +92,7 @@
         <item> Leadership </item>
         <item> Linguistics </item>
         <item> Marketing </item>
-        <item> Masters Degree </item>
+        <item> Master\'s Degree </item>
         <item> Math </item>
         <item> Medicine </item>
         <item> Neuroscience </item>
@@ -116,7 +113,7 @@
         <item> Spanish </item>
         <item> Urban Studies </item>
         <item> Veterinary Medicine </item>
-        <item> Womens Studies </item>
+        <item> Women\'s Studies </item>
         <item> Zoology </item>
     </string-array>
 </resources>

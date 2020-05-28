@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Search">
+        <menu>
+            <item
+                android:id="@+id/search_bar_hamburger_menu"
+                android:icon="@drawable/ic_search_placeholder"
+                app:actionViewClass="android.widget.SearchView"
+                android:title="Search"/>
+        </menu>
+
+    </item>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_placeholder"
+            android:title="Settings" />
+        <item
+            android:id="@+id/nav_terms"
+            android:icon="@drawable/ic_subject_placeholder"
+            android:title="Terms of Use"
+            />
+    </group>
+</menu>

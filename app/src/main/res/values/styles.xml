@@ -4,6 +4,11 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
     </style>
 
+    <!-- Theme being used for the hamburger testing class. Changes transparency on nav bar -->
+    <style name="HamburgerTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
     <style name="StandardButton" parent="Widget.AppCompat.Button">
         <item name="android:layout_height">50dp</item>
         <item name="android:includeFontPadding">false</item>
@@ -19,6 +24,7 @@
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/off_black</item>
     </style>
+
 
     <style name="StandardEditText" parent="android:Widget.EditText">
         <item name="android:layout_height">50dp</item>
@@ -52,6 +58,20 @@
         <item name="backgroundTint">@color/off_white</item>
         <item name="elevation">10dp</item>
         <item name="menu">@menu/main_tab_bar</item>
+    </style>
+
+    <!-- Styling for bubbles in the uni + tags scrollview -->
+    <style name="Bubble" parent="Widget.AppCompat.Button">
+        <item name="android:layout_height">25dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/interaction</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/bubble_shape</item>
+        <item name="android:enabled">false</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_marginStart">2dp</item>
+        <item name="android:layout_marginEnd">2dp</item>
     </style>
 
 

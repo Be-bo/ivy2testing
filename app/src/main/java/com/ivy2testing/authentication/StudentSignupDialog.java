@@ -35,8 +35,8 @@ public class StudentSignupDialog extends AppCompatDialogFragment {
 //
 //                    }
 //                });
-        positive_button = view.findViewById(R.id.Poisitve_button);
-        text_view = view.findViewById(R.id.Info_textview);
+        positive_button = view.findViewById(R.id.positive_button);
+        text_view = view.findViewById(R.id.dialog_text);
         positive_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
