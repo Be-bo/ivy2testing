@@ -54,9 +54,6 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     //Adapter for spinner
     private ArrayAdapter<CharSequence> degree_adapter;
 
-    //Progress bar
-    private ProgressBar signup_progress_bar;
-    private TextView signup_progress_text;
 
     //Firebase
     private FirebaseFirestore db_reference = FirebaseFirestore.getInstance();
@@ -82,8 +79,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         degree_spinner = findViewById(R.id.student_signup_degree);
         register_button = findViewById(R.id.student_register_button);
         register_button.setEnabled(false);
-        signup_progress_bar = findViewById(R.id.student_signup_progressbar);
-        signup_progress_text = findViewById(R.id.student_signup_progress_text);
+
 
         // Creating and applying adapter to the spinner
         degree_adapter = ArrayAdapter.createFromResource(this, R.array.degree_list, android.R.layout.simple_spinner_item);
@@ -173,6 +169,10 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
             passCheck();
             passConfirmCheck();
         }
+        else {
+            register_button.setEnabled(false);
+        }
+
     }
 
     @Override
@@ -270,12 +270,11 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            incrementProgressBar();
+
                             if (auth.getCurrentUser() != null) {
                                 auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        incrementProgressBar();
                                         registerInDB();
                                     }
                                 });
@@ -312,7 +311,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
             db_reference.collection("universities").document(domain).collection("users").document(id).set(user_info).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    incrementProgressBar();
+
                     openDialogComplete();
 
                 }
@@ -324,16 +323,6 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
                 }
             });
         }
-    }
-
-    // Increments progress bar by a static amount
-    // Animation doesn't stack progress + doesn't finish simultaneously with DB methods
-
-    private void incrementProgressBar() {
-//        ObjectAnimator animation = ObjectAnimator.ofInt(signup_progress_bar, "progress", 100);
-//        animation.setDuration(1000);
-//        animation.start();
-        signup_progress_bar.incrementProgressBy(34);
     }
 
     // Logs out user + clears activity and returns to Login
@@ -368,19 +357,13 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
 
     // Stop's the user from interacting with the page while firebase methods are working
     private void barInteraction() {
-        signup_progress_bar.setVisibility(View.VISIBLE);
-        signup_progress_text.setVisibility(View.VISIBLE);
-        register_button.setVisibility(View.GONE);
+        register_button.setEnabled(false);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     // Re-allows interaction
     private void allowInteraction() {
-        signup_progress_bar.setVisibility(View.INVISIBLE);
-        signup_progress_text.setVisibility(View.INVISIBLE);
-        // if the progress bar is disappearing and reappearing the signup is probably starting all over
-        signup_progress_bar.setProgress(0);
-        register_button.setVisibility(View.VISIBLE);
+        register_button.setEnabled(true);
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
