@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_parent_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <LinearLayout
+        android:id="@+id/dialog_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:padding="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/dialog_background"
+        android:gravity="center"
         android:orientation="vertical"
-        android:background="#fff"
-        android:gravity="center">
+        android:padding="10dp">
 
         <TextView
-            android:id="@+id/Info_textview"
+            android:id="@+id/dialog_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
@@ -23,20 +28,25 @@
             android:textSize="16sp" />
 
         <Button
-            android:id="@+id/Poisitve_button"
+            android:id="@+id/positive_button"
             android:layout_width="match_parent"
             android:layout_height="30dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/button_shape"
-            android:text="Okay" />
+            android:text="Okay"
+            android:textAllCaps="false"
+            android:textColor="@color/android_default_bg" />
 
     </LinearLayout>
 
 
     <ImageView
+        android:id="@+id/dialog_logo"
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/ivy_logo"
-        android:padding="3dp" />
+        android:background="@drawable/background_circle"
+        android:padding="3dp"
+        android:src="@drawable/ivy_logo" />
 </RelativeLayout>
     <!-- https://stackoverflow.com/questions/58633351/how-to-create-a-dialogfragment-with-a-transparent-part -->

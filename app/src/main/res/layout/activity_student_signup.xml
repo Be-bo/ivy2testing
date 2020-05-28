@@ -2,19 +2,20 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/student_signup_root_layout"
     style='"@style/Base.Widget.AppCompat.Spinner.Underlined"'
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
+        android:id="@+id/student_signup_guideline_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.15" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
+        android:id="@+id/student_signup_guideline_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -36,9 +37,9 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintEnd_toStartOf="@+id/student_signup_guideline_2"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/student_signup_guideline_1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.451">
 
@@ -94,13 +95,6 @@
 
     </LinearLayout>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.24" />
-
     <ImageView
         android:id="@+id/student_signup_gradient"
         android:layout_width="0dp"
@@ -114,6 +108,7 @@
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/gradient_greenwhite_reverse" />
 
+    <!-- Progress bar doesn't fit in 100% where button was  when displayed -->
     <ProgressBar
         android:id="@+id/student_signup_progressbar"
         style="?android:attr/progressBarStyleHorizontal"
@@ -122,10 +117,12 @@
         android:progress="0"
         android:progressDrawable="@drawable/custom_progress_bar_registration"
         android:visibility="invisible"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintEnd_toStartOf="@+id/student_signup_guideline_2"
+        app:layout_constraintStart_toStartOf="@+id/student_signup_guideline_1"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
+    <!-- Y translations are set to the same height as the signup button, so they can jump the same
+    amount of space as the signup button leaves behind when View.gone is applied  -->
     <TextView
         android:id="@+id/student_signup_progress_text"
         android:layout_width="wrap_content"
@@ -135,8 +132,8 @@
         android:textColor="#FFFFFF"
         android:translationY="-30dp"
         android:visibility="invisible"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintEnd_toStartOf="@+id/student_signup_guideline_2"
+        app:layout_constraintStart_toStartOf="@+id/student_signup_guideline_1"
         app:layout_constraintTop_toBottomOf="@+id/student_signup_progressbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
