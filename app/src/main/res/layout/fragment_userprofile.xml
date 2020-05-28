@@ -64,7 +64,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.30" />
+        app:layout_constraintGuide_percent="0.25" />
 
     <View
         android:id="@+id/divider"
@@ -87,20 +87,13 @@
         android:id="@+id/userProfile_posts"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="16dp"
+        android:layout_margin="8dp"
         app:layout_constraintBottom_toTopOf="@+id/userProfile_seeAll"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/userProfile_header">
 
     </androidx.recyclerview.widget.RecyclerView>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/userProfile_guidelineH2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="45dp" />
 
     <TextView
         android:id="@+id/userProfile_seeAll"
@@ -109,7 +102,14 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:text="See All"
-        app:layout_constraintBottom_toBottomOf="@id/userProfile_guidelineH2"
+        app:layout_constraintBottom_toBottomOf="@id/userProfile_navBarGuideline"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/userProfile_navBarGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="45dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

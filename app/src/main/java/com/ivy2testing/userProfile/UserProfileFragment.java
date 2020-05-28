@@ -86,6 +86,11 @@ public class UserProfileFragment extends Fragment {
         imageIds.add(R.drawable.test_flower);
         imageIds.add(R.drawable.test_flower);
         imageIds.add(R.drawable.test_flower);
+        imageIds.add(R.drawable.test_flower);
+        imageIds.add(R.drawable.test_flower);
+        imageIds.add(R.drawable.test_flower);
+        imageIds.add(R.drawable.test_flower);
+        imageIds.add(R.drawable.test_flower);
 
         // set LayoutManager and Adapter
         adapter = new ImageAdapter(imageIds);

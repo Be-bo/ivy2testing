@@ -23,8 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:srcCompat="@drawable/test_flower"
-            android:contentDescription="Post"
-            android:layout_margin="8dp"/>
+            android:contentDescription="Post"/>
 
     </androidx.cardview.widget.CardView>
 
