@@ -303,6 +303,7 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
     private void returnToLogin() {
         auth.signOut();
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        intent.putExtra("isStudent", false);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         finish();
         startActivity(intent);

@@ -315,6 +315,7 @@ public class LoginActivity extends AppCompatActivity {
         final Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.putExtra("this_user_id", auth.getUid());
         intent.putExtra("this_uni_domain", currentDomain);
+        intent.putExtra("isStudent", getIntent().getBooleanExtra("isStudent",true));
         finish();
         startActivity(intent);
         allowInteraction();

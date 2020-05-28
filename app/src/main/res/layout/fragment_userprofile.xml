@@ -102,14 +102,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:text="See All"
-        app:layout_constraintBottom_toBottomOf="@id/userProfile_navBarGuideline"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/userProfile_navBarGuideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="45dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

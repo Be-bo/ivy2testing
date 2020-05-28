@@ -18,6 +18,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.ivy2testing.MainActivity;
 import com.ivy2testing.OnSelectionListener;
 import com.ivy2testing.R;
@@ -39,16 +44,17 @@ public class StudentProfileFragment extends Fragment {
     private RecyclerView mRecyclerView;
 
     // FireBase
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     // Other Variables
-    private String student_id;
+    private Student student;
     private ImageAdapter adapter;
 
 
     // Constructor
-    public StudentProfileFragment(Context context, String student_id) {
+    public StudentProfileFragment(Context context, Student student) {
         mContext = context;
-        this.student_id = student_id;
+        this.student = student;
     }
 
 
@@ -62,6 +68,7 @@ public class StudentProfileFragment extends Fragment {
 
         // Initialization Methods
         declareViews(rootView);
+        setupViews();
         setUpRecycler();
         setListeners(rootView);
 
@@ -77,6 +84,12 @@ public class StudentProfileFragment extends Fragment {
         mName = v.findViewById(R.id.userProfile_name);
         mDegree = v.findViewById(R.id.userProfile_degree);
         mRecyclerView = v.findViewById(R.id.userProfile_posts);
+    }
+
+    // TODO image
+    private void setupViews(){
+        mName.setText(student.getName());
+        mDegree.setText(student.getDegree());
     }
 
     // TODO
@@ -138,6 +151,9 @@ public class StudentProfileFragment extends Fragment {
 
 /* Firebase related Methods
 ***************************************************************************************************/
+
+
+
 
 /* Transition Methods
 ***************************************************************************************************/
