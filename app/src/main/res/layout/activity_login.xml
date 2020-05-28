@@ -97,6 +97,8 @@
             android:enabled="false"
             android:onClick="login"
             android:text="@string/login" />
+        
+
     </LinearLayout>
 
 

@@ -50,7 +50,8 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     private String domain;
     private String degree;
     private String id;
-
+    //
+    private ProgressBar student_progress_bar;
     //Adapter for spinner
     private ArrayAdapter<CharSequence> degree_adapter;
 
@@ -78,6 +79,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         pass_confirm_editText = findViewById(R.id.student_signup_pass_confirm);
         degree_spinner = findViewById(R.id.student_signup_degree);
         register_button = findViewById(R.id.student_register_button);
+        student_progress_bar = findViewById(R.id.signup_progressBar);
         register_button.setEnabled(false);
 
 
@@ -336,6 +338,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
 
     // Opens static dialogue on complete profile creation. Can be modified to be used for error messages
     private void openDialogComplete() {
+        student_progress_bar.setVisibility(View.GONE);
         final Dialog infoDialog = new Dialog(this);
         infoDialog.setContentView(R.layout.activity_signup_dialog);
         Button okButton = infoDialog.findViewById(R.id.positive_button);
@@ -357,13 +360,15 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
 
     // Stop's the user from interacting with the page while firebase methods are working
     private void barInteraction() {
-        register_button.setEnabled(false);
+        student_progress_bar.setVisibility(View.VISIBLE);
+        register_button.setVisibility(View.GONE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     // Re-allows interaction
     private void allowInteraction() {
-        register_button.setEnabled(true);
+        student_progress_bar.setVisibility(View.GONE);
+        register_button.setVisibility(View.VISIBLE);
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 

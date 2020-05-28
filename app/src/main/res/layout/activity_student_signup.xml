@@ -89,9 +89,7 @@
             android:background="@drawable/button_shape"
             android:text="Sign Up"
             android:textColor="#FFFFFF"
-            tools:layout_constraintBottom_toBottomOf="@id/imageView"
-            tools:layout_editor_absoluteX="-87dp"
-            tools:layout_editor_absoluteY="374dp" />
+            tools:layout_constraintBottom_toBottomOf="@id/imageView" />
 
     </LinearLayout>
 
@@ -107,6 +105,16 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/gradient_greenwhite_reverse" />
+
+    <ProgressBar
+        android:id="@+id/signup_progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/hint"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/student_signup_guideline_2"
+        app:layout_constraintStart_toStartOf="@+id/student_signup_guideline_1"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <!-- Progress bar doesn't fit in 100% where button was  when displayed -->
 
