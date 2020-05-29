@@ -28,7 +28,7 @@
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:enabled="true"
-                android:text="Ucalgary"/>
+                android:text="Ucalgary" />
 
             <Button
                 android:id="@+id/btn_2"
@@ -36,7 +36,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="1"
                 android:enabled="true"
                 android:text="Social" />
 
@@ -46,7 +45,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="1"
                 android:enabled="true"
                 android:text="For You" />
 
@@ -56,7 +54,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="1"
                 android:enabled="true"
                 android:text="UoC Ski + Board Club" />
 
@@ -66,7 +63,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="1"
                 android:enabled="true"
                 android:text="Grind" />
 
@@ -76,7 +72,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="1"
                 android:enabled="true"
                 android:text="Chill" />
 

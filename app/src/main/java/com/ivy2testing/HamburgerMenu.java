@@ -2,6 +2,7 @@ package com.ivy2testing;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -40,50 +41,13 @@ public class HamburgerMenu extends AppCompatActivity {
 
         //testing some buttons
         button_1 = findViewById(R.id.btn_1);
-        button_1.setEnabled(false);
-        currentButton = button_1;
-        button_1.setTextColor(getResources().getColor(R.color.android_default_bg));
-        button_1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateButton(button_1);
-            }
-        });
+        button_1.setPressed(true);
+       // currentButton = button_1;
         button_2 = findViewById(R.id.btn_2);
-        button_2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateButton(button_2);
-            }
-        });
         button_3 = findViewById(R.id.btn_3);
-        button_3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateButton(button_3);
-            }
-        });
         button_4 = findViewById(R.id.btn_4);
-        button_4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateButton(button_4);
-            }
-        });
         button_5 = findViewById(R.id.btn_5);
-        button_5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateButton(button_5);
-            }
-        });
         button_6 = findViewById(R.id.btn_6);
-        button_6.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateButton(button_6);
-            }
-        });
 
 
 
@@ -101,14 +65,12 @@ public class HamburgerMenu extends AppCompatActivity {
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.interaction));
 
     }
-    public void updateButton(Button b) {
-        currentButton.setEnabled(true);
-        currentButton.setTextColor(getResources().getColor(R.color.interaction));
-        b.setEnabled(false);
-        b.setTextColor(getResources().getColor(R.color.android_default_bg));
-        currentButton = b;
-    }
+    private void togglePressed(Button b){
+     //   currentButton.setPressed(false);
+        b.setPressed(true);
+       // currentButton = b;
 
+    }
 
     @Override
     public void onBackPressed() {
