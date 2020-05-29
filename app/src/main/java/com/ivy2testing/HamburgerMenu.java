@@ -22,13 +22,8 @@ public class HamburgerMenu extends AppCompatActivity {
     private DrawerLayout drawer;
 
     private Button currentButton;
-
     private Button button_1;
-    private Button button_2;
-    private Button button_3;
-    private Button button_4;
-    private Button button_5;
-    private Button button_6;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,11 +39,6 @@ public class HamburgerMenu extends AppCompatActivity {
         currentButton = button_1;
         currentButton.setEnabled(false);
 
-        button_2 = findViewById(R.id.btn_2);
-        button_3 = findViewById(R.id.btn_3);
-        button_4 = findViewById(R.id.btn_4);
-        button_5 = findViewById(R.id.btn_5);
-        button_6 = findViewById(R.id.btn_6);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawer,toolbar,
                 R.string.navigation_drawer_open,R.string.navigation_drawer_close);
