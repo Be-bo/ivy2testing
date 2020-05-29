@@ -1,7 +1,9 @@
 package com.ivy2testing.userProfile;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,17 +18,21 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.ivy2testing.OnSelectionListener;
+import com.ivy2testing.entities.OnSelectionListener;
 import com.ivy2testing.R;
+import com.ivy2testing.entities.Student;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/** @author Zahra Ghavasieh
+ * Overview: Student Profile view fragment
+ * Notes: Image view not implemented to show student's img yet, Recycler items currently hard-coded
+ */
 public class StudentProfileFragment extends Fragment {
 
     // Constants
-    private final static String TAG = "UserProfileFragment";
+    private final static String TAG = "StudentProfileFragment";
 
     // Views
     private Context mContext;
@@ -34,9 +40,6 @@ public class StudentProfileFragment extends Fragment {
     private TextView mName;
     private TextView mDegree;
     private RecyclerView mRecyclerView;
-
-    // FireBase
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     // Other Variables
     private Student student;
@@ -56,7 +59,7 @@ public class StudentProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_userprofile, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_studentprofile, container, false);
 
         // Initialization Methods
         declareViews(rootView);
@@ -70,7 +73,6 @@ public class StudentProfileFragment extends Fragment {
 /* Initialization Methods
 ***************************************************************************************************/
 
-    // TODO
     private void declareViews(View v){
         mProfileImg = v.findViewById(R.id.userProfile_circleImg);
         mName = v.findViewById(R.id.userProfile_name);
@@ -84,7 +86,7 @@ public class StudentProfileFragment extends Fragment {
         mDegree.setText(student.getDegree());
     }
 
-    // TODO
+    // TODO set up with Post objects later
     private void setUpRecycler(){
 
         // Get list of image ids
@@ -105,33 +107,33 @@ public class StudentProfileFragment extends Fragment {
         mRecyclerView.setAdapter(adapter);
     }
 
-    // Set Listeners
+    // Set up onClick Listeners
     private void setListeners(View v){
         v.findViewById(R.id.userProfile_edit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {editProfile();}
         });
-
         v.findViewById(R.id.userProfile_seeAll).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {seeAllPosts();}
         });
-
         adapter.setOnSelectionListener(new OnSelectionListener() {
             @Override
             public void onSelectionClick(int position) {selectPost();}
         });
-
     }
 
 /* OnClick Methods
 ***************************************************************************************************/
 
-    // Edit Profile Picture TODO
-
-
     // Edit profile TODO
-    private void editProfile(){}
+    private void editProfile(){
+        Intent intent = new Intent(mContext, EditStudentProfileActivity.class);
+        intent.putExtra("user", (Parcelable) student);
+        startActivity(intent);
+
+        //getStudentInfo();
+    }
 
     // See all posts TODO
     private void seeAllPosts(){}
@@ -141,17 +143,6 @@ public class StudentProfileFragment extends Fragment {
         Toast.makeText(mContext,"I was clicked here! ", Toast.LENGTH_SHORT).show();
     }
 
-/* Firebase related Methods
-***************************************************************************************************/
-
-
-
-
-/* Transition Methods
-***************************************************************************************************/
-
-/* UI related Methods
-***************************************************************************************************/
 
 /* Utility Methods
 ***************************************************************************************************/

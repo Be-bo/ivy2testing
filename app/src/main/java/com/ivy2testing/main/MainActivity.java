@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -23,7 +22,7 @@ import com.ivy2testing.R;
 import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.chat.ChatFragment;
 import com.ivy2testing.home.HomeFragment;
-import com.ivy2testing.userProfile.Student;
+import com.ivy2testing.entities.Student;
 import com.ivy2testing.userProfile.StudentProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -121,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
 /* OnClick Methods
 ***************************************************************************************************/
 
+    // Go to login screen
     public void mainLogin(View view) {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
@@ -161,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
 
     // Set loading page animation
     private void startLoading(){
-        loadingLayout.bringToFront();
         loadingLayout.setVisibility(View.VISIBLE);      // Bring up view to cover entire screen
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_loadingScreen, new LoadingPageFragment(this)).commit();      // Populate View with loading page layout

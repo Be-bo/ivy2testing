@@ -51,7 +51,6 @@
             android:id="@+id/login_email"
             style="@style/StandardEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:autofillHints=""
             android:ems="10"
@@ -62,7 +61,6 @@
             android:id="@+id/login_password"
             style="@style/StandardEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:autofillHints=""
             android:ems="10"
@@ -73,7 +71,6 @@
             android:id="@+id/login_logInButton"
             style="@style/StandardButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:enabled="false"
             android:onClick="login"
             android:text="@string/login" />
@@ -81,7 +78,7 @@
         <ProgressBar
             android:id="@+id/login_progressBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:visibility="gone"
             android:indeterminateTint="@color/hint"/>
 

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/editStudent_guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/editStudent_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.85" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/editStudent_img"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:src="@drawable/test_flower"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/editStudent_fields"
+        app:layout_constraintStart_toStartOf="@id/editStudent_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/editStudent_guideline2"
+        app:layout_constraintVertical_bias="0.4"/>
+
+    <TextView
+        android:id="@+id/editStudent_change"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/StandardClickableText"
+        android:text="@string/change"
+        android:layout_marginTop="6dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editStudent_img"/>
+
+    <LinearLayout
+        android:id="@+id/editStudent_fields"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="@id/editStudent_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/editStudent_guideline2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.58">
+
+        <EditText
+            android:id="@+id/editStudent_name"
+            android:layout_width="match_parent"
+            style="@style/StandardEditText"
+            android:inputType="textPersonName"
+            android:hint="@string/name"
+            android:autofillHints=""
+            android:layout_marginBottom="16dp"/>
+
+        <Spinner
+            android:id="@+id/editStudent_degree"
+            android:layout_width="match_parent"
+            style="@style/StandardSpinner"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/hint"
+            android:prompt="@string/app_name" />
+
+        <TextView
+            android:id="@+id/editStudent_birthdayText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/StandardText"
+            android:text="@string/birthday"/>
+
+        <android.widget.DatePicker
+            android:id="@+id/editStudent_birthdayDatePicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:calendarViewShown="false"
+            android:datePickerMode="spinner"
+            android:startYear="2000"
+            android:maxDate="01/01/2005"
+            android:minDate="01/01/1920"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/editStudent_saveButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style="@style/StandardButton"
+        android:text="@string/save"
+        app:layout_constraintTop_toBottomOf="@id/editStudent_fields"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/editStudent_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/editStudent_guideline2"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

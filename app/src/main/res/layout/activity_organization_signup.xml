@@ -45,7 +45,6 @@
             android:id="@+id/org_signup_email"
             style="@style/StandardEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:ems="10"
             android:hint="@string/email"
@@ -56,7 +55,6 @@
             android:id="@+id/org_signup_pass"
             style="@style/StandardEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:ems="10"
             android:hint="@string/password"
@@ -67,7 +65,6 @@
             android:id="@+id/org_signup_pass_confirm"
             style="@style/StandardEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:ems="10"
             android:hint="@string/confirm_password"
@@ -78,7 +75,6 @@
             android:id="@+id/org_signup_switch"
             style="@style/StandardSwitch"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginStart="5dp"
             android:text="@string/switch_sign_up"/>
@@ -86,7 +82,6 @@
         <Button
             android:id="@+id/org_signup_register_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             style ="@style/StandardButton"
             android:background="@drawable/button_shape"
             android:text="@string/sign_up_org"
@@ -95,7 +90,7 @@
         <ProgressBar
             android:id="@+id/org_signup_progressBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:visibility="gone"
             android:indeterminateTint="@color/hint"/>
 

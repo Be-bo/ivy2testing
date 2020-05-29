@@ -1,6 +1,5 @@
 package com.ivy2testing.userProfile;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +10,10 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ivy2testing.OnSelectionListener;
+import com.ivy2testing.entities.OnSelectionListener;
 import com.ivy2testing.R;
 
 import java.util.List;
-import java.util.Objects;
 
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImgHolder> {

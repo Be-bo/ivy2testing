@@ -1,4 +1,7 @@
-package com.ivy2testing.userProfile;
+package com.ivy2testing.entities;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.firebase.firestore.Exclude;
 
@@ -86,7 +89,4 @@ public class Student {
     public void setUni_domain(String domain) {
         this.uni_domain = domain;
     }
-
-/* Other Methods
-***************************************************************************************************/
 }
