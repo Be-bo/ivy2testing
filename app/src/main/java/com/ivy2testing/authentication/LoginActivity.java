@@ -32,7 +32,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.ivy2testing.MainActivity;
+import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.R;
 
 import java.util.ArrayList;
@@ -159,7 +159,7 @@ public class LoginActivity extends AppCompatActivity {
     // mLoginButton onClick method
     public void login(View view) {
         barInteraction();
-        Objects.requireNonNull(getCurrentFocus()).clearFocus();
+        if (getCurrentFocus() != null) getCurrentFocus().clearFocus();
         loginToFirebaseAuth();
     }
 
@@ -261,6 +261,10 @@ public class LoginActivity extends AppCompatActivity {
                         barInteraction();
                         savePreferences();
                         transToMain();
+                    }
+                    else {
+                        toastError("Email not verified yet!");
+                        allowInteraction();
                     }
                 } else {
                     mLoginButton.setError(getString(R.string.error_loginInvalid));

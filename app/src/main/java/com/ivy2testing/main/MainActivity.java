@@ -1,4 +1,4 @@
-package com.ivy2testing;
+package com.ivy2testing.main;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,12 +9,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.ivy2testing.R;
 import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.chat.ChatFragment;
 import com.ivy2testing.home.HomeFragment;
@@ -28,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
 
     // Views
     private BottomNavigationView mainTabBar;
+    private FrameLayout mFrameLayout;
+    private Button mainLoginButton;
+    private Button mainTestButton;
 
     // FireBase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -57,13 +63,26 @@ public class MainActivity extends AppCompatActivity {
 
     private void declareViews(){
         mainTabBar = findViewById(R.id.main_tab_bar);
+        mFrameLayout = findViewById(R.id.main_fragmentContainer);
+        mainLoginButton = findViewById(R.id.main_loginButton);
+        mainTestButton = findViewById(R.id.main_testButton);
     }
 
     // Enable bottom Navigation for a logged-in user
     private void setLoggedInDisplay(){
-        findViewById(R.id.main_loginButton).setVisibility(View.GONE);
-        findViewById(R.id.main_testButton).setVisibility(View.GONE);
+        mainLoginButton.setVisibility(View.GONE);
+        mainTestButton.setVisibility(View.GONE);
+        mainTabBar.setVisibility(View.VISIBLE);
         mainTabBar.setSelectedItemId(R.id.tab_bar_home);
+        mFrameLayout.setVisibility(View.VISIBLE);
+    }
+
+    // Disable bottom Navigation for a logged-in user
+    private void setLoggedOutDisplay(){
+        mainLoginButton.setVisibility(View.VISIBLE);
+        mainTestButton.setVisibility(View.VISIBLE);
+        mainTabBar.setVisibility(View.GONE);
+        mFrameLayout.setVisibility(View.GONE);
     }
 
     private void setNavigationListener() {
@@ -115,6 +134,9 @@ public class MainActivity extends AppCompatActivity {
 /* Transition Methods
 ***************************************************************************************************/
     private void chooseDisplay(){
+
+        startLoading();
+
         if(getIntent() != null){
             this_uni_domain = getIntent().getStringExtra("this_uni_domain");
             this_user_id = getIntent().getStringExtra("this_user_id");
@@ -122,14 +144,22 @@ public class MainActivity extends AppCompatActivity {
 
             if(this_uni_domain == null || this_user_id == null){
                 Log.w(TAG,"Not signed in yet!");
-                mainTabBar.setVisibility(View.GONE);
+                setLoggedOutDisplay();
             }
             else {
-                // Loading screen?
                 if (isStudent) getStudentInfo();
                 // else organization sign in
             }
         }
+    }
+
+    // Set loading page animation
+    private void startLoading(){
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragmentContainer, new LoadingPageFragment(this)).commit();
+        mainTabBar.setVisibility(View.GONE);
+        mainLoginButton.setVisibility(View.GONE);
+        mainTestButton.setVisibility(View.GONE);
     }
 
 /* Firebase Methods

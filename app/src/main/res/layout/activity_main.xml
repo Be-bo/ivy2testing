@@ -4,35 +4,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".main.MainActivity">
 
 
+    <!--Temporary buttons-->
     <FrameLayout
         android:id="@+id/main_fragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/main_tab_bar"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/main_tab_bar">
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="16dp">
 
-    <!--Temporary buttons-->
+    </FrameLayout>
+
     <Button
         android:id="@+id/main_loginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="mainLogin"
         android:text="Login"
-        android:layout_gravity="center"
-        android:layout_marginTop="50dp"
-        android:onClick="mainLogin"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.4"/>
 
     <Button
         android:id="@+id/main_testButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="mainTest"
         android:text="Test"
-        android:layout_gravity="center"
-        android:onClick="mainTest"/>
-
-    </FrameLayout>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/main_tab_bar"
