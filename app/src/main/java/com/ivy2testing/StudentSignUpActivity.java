@@ -151,7 +151,10 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         register_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Objects.requireNonNull(getCurrentFocus()).clearFocus();
+//TODO this line is causing the degree null -> degree selected issue  issue
+                if(getCurrentFocus()!=null){
+                    Objects.requireNonNull(getCurrentFocus()).clearFocus();
+                }
                 if (emailCheck() && passCheck() && passConfirmCheck()) {
                     if (!degree.equals("Degree")) {
                         barInteraction();
