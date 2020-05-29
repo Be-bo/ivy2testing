@@ -171,12 +171,8 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         });
     }
 
-    // These methods decide what happens on spinner item selection.
-
-    // Bugs: (with text watchers enabling register button) choosing one item -> click signup -> receive error -> open spinner -> choose another item = crash
-    //       (with empty editTexts) choose degree item -> click signup -> crash
-    // Degree selector enabling Signup with incorrect EditText fields can cause crashes. The EditTexts don't have this issue.
-    // Calling errorCheckers here will mitigate crashes by encouraging the user to fix input so the 2nd signup attempt is either correct or changed thus no crash.
+    // These mandatory methods decide what happens on spinner item selection.
+    // If something other than degree is selected, either errors will be set on EditTexts, or the register button will be re-enabled with all proper input
 
     // Variables: degree is set here
     @Override
@@ -209,7 +205,8 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
             // as long as the fields all have input the button will be enabled
             register_button.setEnabled(!email_input.isEmpty() &&
                     !pass_input.isEmpty() &&
-                    !pass_confirm_input.isEmpty());
+                    !pass_confirm_input.isEmpty()&&
+                    !degree.equals("Degree"));
         }
 
         @Override
