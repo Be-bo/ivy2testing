@@ -83,6 +83,21 @@ public class EditStudentProfileActivity extends Activity {
 ***************************************************************************************************/
 
     public void saveStudentProfileChange(View view) {
+        saveStudentInfo();
+        backToMain();
+    }
+
+
+/* Field Checking Methods
+***************************************************************************************************/
+
+
+
+/* Transition Methods
+***************************************************************************************************/
+
+    // Go back to Main Activity
+    private void backToMain(){
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("this_uni_domain", this_uni_domain);
         intent.putExtra("this_user_id", this_user_id);
@@ -93,13 +108,17 @@ public class EditStudentProfileActivity extends Activity {
     }
 
 
-/* Transition Methods
-***************************************************************************************************/
-
-
-
 /* Firebase Related Methods
 ***************************************************************************************************/
+
+    private void getStudentInfo(){
+        //TODO
+    }
+
+    private void saveStudentInfo(){
+        //TODO
+    }
+
 
 /*
 Notes:
