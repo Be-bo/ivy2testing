@@ -41,18 +41,14 @@ public class HamburgerMenu extends AppCompatActivity {
 
         //testing some buttons
         button_1 = findViewById(R.id.btn_1);
-        button_1.setPressed(true);
-       // currentButton = button_1;
+        currentButton = button_1;
+        currentButton.setEnabled(false);
+
         button_2 = findViewById(R.id.btn_2);
         button_3 = findViewById(R.id.btn_3);
         button_4 = findViewById(R.id.btn_4);
         button_5 = findViewById(R.id.btn_5);
         button_6 = findViewById(R.id.btn_6);
-
-
-
-
-
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawer,toolbar,
                 R.string.navigation_drawer_open,R.string.navigation_drawer_close);
@@ -65,12 +61,7 @@ public class HamburgerMenu extends AppCompatActivity {
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.interaction));
 
     }
-    private void togglePressed(Button b){
-     //   currentButton.setPressed(false);
-        b.setPressed(true);
-       // currentButton = b;
 
-    }
 
     @Override
     public void onBackPressed() {
@@ -82,4 +73,11 @@ public class HamburgerMenu extends AppCompatActivity {
         }
     }
 
+
+    public void toggleEnabled(View view) {
+        currentButton.setEnabled(true);
+        view.setEnabled(false);
+        currentButton = (Button) view;
+        Toast.makeText(this, ""+currentButton.getText(), Toast.LENGTH_SHORT).show();
+    }
 }
