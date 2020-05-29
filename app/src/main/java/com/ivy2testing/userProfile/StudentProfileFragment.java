@@ -128,11 +128,13 @@ public class StudentProfileFragment extends Fragment {
 
     // Edit profile TODO
     private void editProfile(){
-        Intent intent = new Intent(mContext, EditStudentProfileActivity.class);
-        intent.putExtra("user", (Parcelable) student);
+        Intent intent = new Intent(getActivity(), EditStudentProfileActivity.class);
+        Log.d(TAG, "domain: " + student.getUni_domain() + ", id: " + student.getId());
+        intent.putExtra("this_uni_domain",student.getUni_domain());
+        intent.putExtra("this_user_id", student.getId());
         startActivity(intent);
 
-        //getStudentInfo();
+        //TODO update view
     }
 
     // See all posts TODO

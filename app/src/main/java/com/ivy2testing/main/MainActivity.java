@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private String this_uni_domain;
     private String this_user_id;
     private boolean isStudent;
+    private int returning_fragId;
     private Student mStudent;
 
 
@@ -76,8 +77,8 @@ public class MainActivity extends AppCompatActivity {
         mainLoginButton.setVisibility(View.GONE);
         mainTestButton.setVisibility(View.GONE);
         mainTabBar.setVisibility(View.VISIBLE);
-        mainTabBar.setSelectedItemId(R.id.tab_bar_home);
         mFrameLayout.setVisibility(View.VISIBLE);
+        mainTabBar.setSelectedItemId(returning_fragId);
         endLoading();
     }
 
@@ -139,14 +140,17 @@ public class MainActivity extends AppCompatActivity {
 
 /* Transition Methods
 ***************************************************************************************************/
+
+    // Get intent extras and see if logged in
     private void chooseDisplay(){
 
-        startLoading();
+        startLoading();     // Loading Animation overlay
 
         if(getIntent() != null){
             this_uni_domain = getIntent().getStringExtra("this_uni_domain");
             this_user_id = getIntent().getStringExtra("this_user_id");
             isStudent = getIntent().getBooleanExtra("isStudent",true);
+            returning_fragId = getIntent().getIntExtra("returning_fragId", R.id.tab_bar_home);
 
             if(this_uni_domain == null || this_user_id == null){
                 Log.w(TAG,"Not signed in yet!");
@@ -154,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
             }
             else {
                 if (isStudent) getStudentInfo();
-                // else organization sign in
+                // TODO else organization sign in
             }
         }
     }
@@ -175,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 /* Firebase Methods
 ***************************************************************************************************/
 
-    // Get all student info and return student class TODO
+    // Get all student info and return student class
     public void getStudentInfo(){
 
         db.collection("universities").document(this_uni_domain).collection("users").document(this_user_id)
@@ -189,6 +193,8 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
                     mStudent = doc.toObject(Student.class);
+                    if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
+                    else mStudent.setId(this_user_id);
                     setNavigationListener();
                     setLoggedInDisplay();
                 }

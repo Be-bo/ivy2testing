@@ -41,6 +41,10 @@
             tools:ignore="LockedOrientationActivity"
             android:theme="@style/HamburgerTheme"/>
 
+        <activity android:name=".userProfile.EditStudentProfileActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"/>
+
     </application>
 
 </manifest>

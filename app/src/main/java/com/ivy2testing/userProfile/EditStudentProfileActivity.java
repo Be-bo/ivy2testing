@@ -1,31 +1,105 @@
 package com.ivy2testing.userProfile;
 
-import android.content.Context;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Spinner;
 
-import androidx.recyclerview.widget.RecyclerView;
-
+import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
+import com.ivy2testing.main.MainActivity;
 
 /** @author Zahra Ghavasieh
  * Overview: Edit Student Profile from Student Profile Fragment
  */
-class EditStudentProfileActivity {
+public class EditStudentProfileActivity extends Activity {
 
     // Constants
     private final static String TAG = "StudentEditProfileActivity";
 
     // Views
+    ImageView mImg;
+    EditText mName;
+    Spinner mDegree;
+    DatePicker mBirthDay;
+    Button mSaveButton;
 
     // Other Variables
     private Student student;
-    private ImageAdapter adapter;
+    private String this_uni_domain;
+    private String this_user_id;
 
 
 /* Override Methods
 ***************************************************************************************************/
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_edit_studentprofile);
+
+        getIntentExtras();
+        declareViews();
+        mSaveButton.setEnabled(true);
+    }
+
+
+
+
+/* Initialization Methods
+***************************************************************************************************/
+
+    private void getIntentExtras() {
+        if(getIntent() != null) {
+            this_uni_domain = getIntent().getStringExtra("this_uni_domain");
+            this_user_id = getIntent().getStringExtra("this_user_id");
+
+            if (this_uni_domain == null || this_user_id == null)
+                Log.w(TAG, "One of the UserID or Domain is null!");
+
+
+        }
+    }
+
+    private void declareViews(){
+        mImg = findViewById(R.id.editStudent_img);
+        mName = findViewById(R.id.editStudent_name);
+        mDegree = findViewById(R.id.editStudent_degree);
+        mBirthDay = findViewById(R.id.editStudent_birthdayDatePicker);
+        mSaveButton = findViewById(R.id.editStudent_saveButton);
+    }
+
+
+
+
+/* OnClick Methods
+***************************************************************************************************/
+
+    public void saveStudentProfileChange(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("this_uni_domain", this_uni_domain);
+        intent.putExtra("this_user_id", this_user_id);
+        intent.putExtra("isStudent",true);
+        intent.putExtra("returning_fragId", R.id.tab_bar_profile);
+        finish();
+        startActivity(intent);
+    }
+
+
+/* Transition Methods
+***************************************************************************************************/
+
+
+
+/* Firebase Related Methods
+***************************************************************************************************/
 
 /*
 Notes:
