@@ -49,9 +49,7 @@ public class HamburgerMenu extends AppCompatActivity {
         getSupportActionBar().setTitle(null);
         //set color of draw bar
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.interaction));
-
     }
-
 
     @Override
     public void onBackPressed() {
@@ -62,7 +60,6 @@ public class HamburgerMenu extends AppCompatActivity {
             super.onBackPressed();
         }
     }
-
 
     public void toggleEnabled(View view) {
         currentButton.setEnabled(true);

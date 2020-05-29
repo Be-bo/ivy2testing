@@ -29,11 +29,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import static com.ivy2testing.StaticDomainList.domain_list;
+import static com.ivy2testing.StaticDegreesList.degree_array;
 
 public class StudentSignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     // Views
@@ -83,9 +86,22 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         register_button.setEnabled(false);
 
 
+
+
         // Creating and applying adapter to the spinner
-        degree_adapter = ArrayAdapter.createFromResource(this, R.array.degree_list, android.R.layout.simple_spinner_item);
-        degree_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+       // ArrayList<CharSequence> testarray = new ArrayList<CharSequence>(Arrays.asList(degree_array));
+        ArrayAdapter<CharSequence> degree_adapter = new ArrayAdapter<CharSequence>(this,android.R.layout.simple_spinner_dropdown_item,degree_array){
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        };
         degree_spinner.setAdapter(degree_adapter);
     }
 
@@ -153,8 +169,6 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     }
 
     // These methods decide what happens on spinner item selection.
-    // The onItemSelected method constantly fires so beware. Changing the degree field will keep enabling the signup button. To cancel this, the other errorSetting functions are called on degree selection
-    // When the user interacts with the other fields, the textWatchers will re-disable the signup button, and this function will wait for further input.
 
     // Bugs: (with text watchers enabling register button) choosing one item -> click signup -> receive error -> open spinner -> choose another item = crash
     //       (with empty editTexts) choose degree item -> click signup -> crash
@@ -165,16 +179,12 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         degree = parent.getItemAtPosition(position).toString().trim();
-        if (!degree.equals("Degree")) {
+        if(!degree.equals("Degree")&&
+                emailCheck()&&
+                passCheck()&&
+                passConfirmCheck()){
             register_button.setEnabled(true);
-            emailCheck();
-            passCheck();
-            passConfirmCheck();
         }
-        else {
-            register_button.setEnabled(false);
-        }
-
     }
 
     @Override

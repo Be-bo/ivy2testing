@@ -79,8 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/hint"
-            android:prompt="@string/app_name" />
+            android:backgroundTint="@color/hint" />
 
         <Button
             android:id="@+id/student_register_button"
