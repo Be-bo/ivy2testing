@@ -17,16 +17,13 @@ import com.ivy2testing.R;
 
 public class LoadingPageFragment extends Fragment {
 
-    // Constants
-    private final static String TAG = "UserProfileFragment";
-
     // Views
     private Context mContext;
     private ImageView img;
 
 
     // Constructor
-    public LoadingPageFragment(Context c){
+    LoadingPageFragment(Context c){
         this.mContext = c;
     }
 
@@ -44,7 +41,7 @@ public class LoadingPageFragment extends Fragment {
 
     // Animation
     private void startAnimation() {
-       Animation animation = AnimationUtils.loadAnimation(mContext,R.anim.spinning_logo);
+       Animation animation = AnimationUtils.loadAnimation(mContext,R.anim.rotation_even);
        //animation.setInterpolator(android.R.anim.linear_interpolator);
        animation.setRepeatCount(Animation.INFINITE);
        img.startAnimation(animation);

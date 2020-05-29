@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     // Views
     private BottomNavigationView mainTabBar;
     private FrameLayout mFrameLayout;
+    private FrameLayout loadingLayout;
     private Button mainLoginButton;
     private Button mainTestButton;
 
@@ -63,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void declareViews(){
         mainTabBar = findViewById(R.id.main_tab_bar);
+        loadingLayout = findViewById(R.id.main_loadingScreen);
         mFrameLayout = findViewById(R.id.main_fragmentContainer);
         mainLoginButton = findViewById(R.id.main_loginButton);
         mainTestButton = findViewById(R.id.main_testButton);
@@ -75,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         mainTabBar.setVisibility(View.VISIBLE);
         mainTabBar.setSelectedItemId(R.id.tab_bar_home);
         mFrameLayout.setVisibility(View.VISIBLE);
+        endLoading();
     }
 
     // Disable bottom Navigation for a logged-in user
@@ -83,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         mainTestButton.setVisibility(View.VISIBLE);
         mainTabBar.setVisibility(View.GONE);
         mFrameLayout.setVisibility(View.GONE);
+        endLoading();
     }
 
     private void setNavigationListener() {
@@ -155,11 +161,16 @@ public class MainActivity extends AppCompatActivity {
 
     // Set loading page animation
     private void startLoading(){
+        loadingLayout.bringToFront();
+        loadingLayout.setVisibility(View.VISIBLE);      // Bring up view to cover entire screen
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_fragmentContainer, new LoadingPageFragment(this)).commit();
-        mainTabBar.setVisibility(View.GONE);
-        mainLoginButton.setVisibility(View.GONE);
-        mainTestButton.setVisibility(View.GONE);
+                .replace(R.id.main_loadingScreen, new LoadingPageFragment(this)).commit();      // Populate View with loading page layout
+    }
+
+    // Fade out loading page animation
+    private void endLoading(){
+        loadingLayout.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out));  // Start fade out animation
+        loadingLayout.setVisibility(View.GONE);
     }
 
 /* Firebase Methods
