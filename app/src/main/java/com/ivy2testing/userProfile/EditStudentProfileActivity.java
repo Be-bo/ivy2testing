@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -64,7 +65,7 @@ public class EditStudentProfileActivity extends Activity {
         declareViews();
         barInteraction();       // Don't allow user to do anything yet
         getIntentExtras();      // Get address of student in database via intent extras
-        mSaveButton.setEnabled(true);
+        mSaveButton.setEnabled(true); //TODO delete when implemented textwatchers
         getStudentInfo();       // Load student info from Firestore
     }
 
@@ -94,24 +95,33 @@ public class EditStudentProfileActivity extends Activity {
         mProgressBar = findViewById(R.id.editStudent_progressBar);
 
         // Create and apply a degree adapter to the spinner
-        ArrayAdapter<CharSequence> degree_adapter = ArrayAdapter.createFromResource(this, R.array.degree_list, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> degree_adapter =
+            ArrayAdapter.createFromResource(this, R.array.degree_list, android.R.layout.simple_spinner_item);
         degree_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mDegree.setAdapter(degree_adapter);
     }
 
     // Preset fields with current Student info
     private void setFields() {
+        // Image
+        // TODO
+
+        // Name
+        mName.setText(student.getName());
+
+        // Spinner
+        String[] degrees = getResources().getStringArray(R.array.degree_list);
+        for (int i = 0; i < degrees.length; i++){
+            if (degrees[i].equals(student.getDegree())){
+                mDegree.setSelection(i);
+                break;
+            }
+        }
+
         // Calendar
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(student.getBirthday());
         mBirthDay.updateDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-
-        // Name and Spinner
-        mName.setText(student.getName());
-        //mDegree.setSelection();
-
-        // Image
-        // TODO
     }
 
     private void setTextWatcher() {
@@ -121,9 +131,6 @@ public class EditStudentProfileActivity extends Activity {
     private void setFocusListener(){
         // TODO
     }
-
-
-
 
 /* OnClick Methods
 ***************************************************************************************************/
@@ -146,6 +153,8 @@ public class EditStudentProfileActivity extends Activity {
         // Save to student TODO
         student.setName(name);
         student.setBirthday(birthday);
+        String degree = mDegree.getSelectedItem().toString().trim();
+        if (!degree.equals("Degree")) student.setDegree(degree);
 
         saveStudentInfo();
     }
