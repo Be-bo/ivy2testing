@@ -69,14 +69,15 @@
     <style name="Bubble" parent="Widget.AppCompat.Button">
         <item name="android:layout_height">25dp</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:textColor">@color/interaction</item>
+        <item name="android:textColor">@drawable/bubble_color</item>
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/bubble_shape</item>
-        <item name="android:enabled">false</item>
+        <item name="android:enabled">true</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">15sp</item>
         <item name="android:layout_marginStart">2dp</item>
         <item name="android:layout_marginEnd">2dp</item>
+        <item name="android:onClick">toggleEnabled"</item>
     </style>
 
 

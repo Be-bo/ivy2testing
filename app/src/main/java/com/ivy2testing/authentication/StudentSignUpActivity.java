@@ -32,11 +32,14 @@ import com.ivy2testing.R;
 import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.authentication.StudentSignupDialog;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import static com.ivy2testing.StaticDomainList.domain_list;
+import static com.ivy2testing.StaticDegreesList.degree_array;
 
 public class StudentSignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     // Views
@@ -53,13 +56,11 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     private String domain;
     private String degree;
     private String id;
-
+    //
+    private ProgressBar student_progress_bar;
     //Adapter for spinner
     private ArrayAdapter<CharSequence> degree_adapter;
 
-    //Progress bar
-    private ProgressBar signup_progress_bar;
-    private TextView signup_progress_text;
 
     //Firebase
     private FirebaseFirestore db_reference = FirebaseFirestore.getInstance();
@@ -84,13 +85,26 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         pass_confirm_editText = findViewById(R.id.student_signup_pass_confirm);
         degree_spinner = findViewById(R.id.student_signup_degree);
         register_button = findViewById(R.id.student_register_button);
+        student_progress_bar = findViewById(R.id.signup_progressBar);
         register_button.setEnabled(false);
-        signup_progress_bar = findViewById(R.id.student_signup_progressbar);
-        signup_progress_text = findViewById(R.id.student_signup_progress_text);
+
+
+
 
         // Creating and applying adapter to the spinner
-        degree_adapter = ArrayAdapter.createFromResource(this, R.array.degree_list, android.R.layout.simple_spinner_item);
-        degree_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+       // ArrayList<CharSequence> testarray = new ArrayList<CharSequence>(Arrays.asList(degree_array));
+        ArrayAdapter<CharSequence> degree_adapter = new ArrayAdapter<CharSequence>(this,android.R.layout.simple_spinner_dropdown_item,degree_array){
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        };
         degree_spinner.setAdapter(degree_adapter);
     }
 
@@ -140,7 +154,10 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         register_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Objects.requireNonNull(getCurrentFocus()).clearFocus();
+//TODO this line is causing the degree null -> degree selected issue  issue
+                if(getCurrentFocus()!=null){
+                    Objects.requireNonNull(getCurrentFocus()).clearFocus();
+                }
                 if (emailCheck() && passCheck() && passConfirmCheck()) {
                     if (!degree.equals("Degree")) {
                         barInteraction();
@@ -157,24 +174,18 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         });
     }
 
-    // These methods decide what happens on spinner item selection.
-    // The onItemSelected method constantly fires so beware. Changing the degree field will keep enabling the signup button. To cancel this, the other errorSetting functions are called on degree selection
-    // When the user interacts with the other fields, the textWatchers will re-disable the signup button, and this function will wait for further input.
-
-    // Bugs: (with text watchers enabling register button) choosing one item -> click signup -> receive error -> open spinner -> choose another item = crash
-    //       (with empty editTexts) choose degree item -> click signup -> crash
-    // Degree selector enabling Signup with incorrect EditText fields can cause crashes. The EditTexts don't have this issue.
-    // Calling errorCheckers here will mitigate crashes by encouraging the user to fix input so the 2nd signup attempt is either correct or changed thus no crash.
+    // These mandatory methods decide what happens on spinner item selection.
+    // If something other than degree is selected, either errors will be set on EditTexts, or the register button will be re-enabled with all proper input
 
     // Variables: degree is set here
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         degree = parent.getItemAtPosition(position).toString().trim();
-        if (!degree.equals("Degree")) {
+        if(!degree.equals("Degree")&&
+                emailCheck()&&
+                passCheck()&&
+                passConfirmCheck()){
             register_button.setEnabled(true);
-            emailCheck();
-            passCheck();
-            passConfirmCheck();
         }
     }
 
@@ -197,7 +208,8 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
             // as long as the fields all have input the button will be enabled
             register_button.setEnabled(!email_input.isEmpty() &&
                     !pass_input.isEmpty() &&
-                    !pass_confirm_input.isEmpty());
+                    !pass_confirm_input.isEmpty()&&
+                    !degree.equals("Degree"));
         }
 
         @Override
@@ -273,12 +285,11 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            incrementProgressBar();
+
                             if (auth.getCurrentUser() != null) {
                                 auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        incrementProgressBar();
                                         registerInDB();
                                     }
                                 });
@@ -315,7 +326,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
             db_reference.collection("universities").document(domain).collection("users").document(id).set(user_info).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    incrementProgressBar();
+
                     openDialogComplete();
 
                 }
@@ -329,16 +340,6 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         }
     }
 
-    // Increments progress bar by a static amount
-    // Animation doesn't stack progress + doesn't finish simultaneously with DB methods
-
-    private void incrementProgressBar() {
-//        ObjectAnimator animation = ObjectAnimator.ofInt(signup_progress_bar, "progress", 100);
-//        animation.setDuration(1000);
-//        animation.start();
-        signup_progress_bar.incrementProgressBy(34);
-    }
-
     // Logs out user + clears activity and returns to Login
     private void returnToLogin() {
         auth.signOut();
@@ -350,6 +351,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
 
     // Opens static dialogue on complete profile creation. Can be modified to be used for error messages
     private void openDialogComplete() {
+        student_progress_bar.setVisibility(View.GONE);
         final Dialog infoDialog = new Dialog(this);
         infoDialog.setContentView(R.layout.activity_signup_dialog);
         Button okButton = infoDialog.findViewById(R.id.positive_button);
@@ -371,18 +373,14 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
 
     // Stop's the user from interacting with the page while firebase methods are working
     private void barInteraction() {
-        signup_progress_bar.setVisibility(View.VISIBLE);
-        signup_progress_text.setVisibility(View.VISIBLE);
+        student_progress_bar.setVisibility(View.VISIBLE);
         register_button.setVisibility(View.GONE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     // Re-allows interaction
     private void allowInteraction() {
-        signup_progress_bar.setVisibility(View.INVISIBLE);
-        signup_progress_text.setVisibility(View.INVISIBLE);
-        // if the progress bar is disappearing and reappearing the signup is probably starting all over
-        signup_progress_bar.setProgress(0);
+        student_progress_bar.setVisibility(View.GONE);
         register_button.setVisibility(View.VISIBLE);
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
