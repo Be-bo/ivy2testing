@@ -234,7 +234,6 @@ public class LoginActivity extends AppCompatActivity {
                             }
 
                             // Continue with rest of sign up process
-                            splashAnimation();
                             allowInteraction();
                             setTextWatcher();
                             setFocusListener();
@@ -325,37 +324,6 @@ public class LoginActivity extends AppCompatActivity {
         allowInteraction();
     }
 
-
-/* UI related Methods
-***************************************************************************************************/
-
-    // Loading screen to Login page Animation (currently unused)
-    private void splashAnimation(){
-
-        // Get hidden layouts
-        final ConstraintLayout rootLayout = findViewById(R.id.login_rootLayout);
-        final LinearLayout fieldsLayout = findViewById(R.id.login_fieldsLayout);
-        final LinearLayout signupLayout = findViewById(R.id.login_singUps);
-
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                // Change image constraints
-                ConstraintSet constraintSet = new ConstraintSet();
-                constraintSet.clone(rootLayout);
-                //constraintSet.connect(R.id.login_images, ConstraintSet.BOTTOM, R.id.login_fieldsLayout, ConstraintSet.TOP,0);
-                TransitionManager.beginDelayedTransition(rootLayout);
-                constraintSet.applyTo(rootLayout);
-
-                // Stop hiding other fields
-                fieldsLayout.setVisibility(View.VISIBLE);
-                signupLayout.setVisibility(View.VISIBLE);
-            }
-        };
-
-        Handler handler = new Handler();
-        handler.postDelayed(runnable, 1000); //delayMillis = timeout for splash
-    }
 
 /* Utility Methods
 ***************************************************************************************************/

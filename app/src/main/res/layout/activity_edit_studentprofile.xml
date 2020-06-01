@@ -100,5 +100,16 @@
         app:layout_constraintEnd_toEndOf="@id/editStudent_guideline2"
         android:onClick="saveStudentProfileChange"/>
 
+    <ProgressBar
+        android:id="@+id/editStudent_progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        android:indeterminateTint="@color/hint"
+        app:layout_constraintTop_toBottomOf="@id/editStudent_fields"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/editStudent_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/editStudent_guideline2"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
