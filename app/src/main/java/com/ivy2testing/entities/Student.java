@@ -8,18 +8,21 @@ import java.util.Calendar;
  */
 public class Student {
 
-    // Constant
-    private static final int STOCK_COUNT = 35; //actual num, inclusive
-
     // Fields
     private String id;
+    private String email;
     private String name;
     private String degree;
-    private String email;
     private String uni_domain;
     private long registration_millis;
-    private long birthday = 0;
+    private long birth_millis = 0;
+    private String messaging_token;
     private String profile_picture;
+    private static final boolean is_organization = false;
+    private boolean is_banned = false;
+    private String registration_platform;
+    private String[] post_ids;
+
 
 
 /* Constructors
@@ -74,24 +77,43 @@ public class Student {
         return email;
     }
 
-    public Long getBirthday(){
+    public Long getBirth_millis(){
         // Set a default value for birthday
-        if (birthday == 0){
+        if (birth_millis == 0){
             Calendar cal = Calendar.getInstance();
             cal.set(Calendar.YEAR,2000);
             cal.set(Calendar.MONTH, 1);
             cal.set(Calendar.DAY_OF_MONTH, 1);
-            birthday = cal.getTimeInMillis();
+            birth_millis = cal.getTimeInMillis();
         }
-        return birthday;
+        return birth_millis;
     }
 
     public String getProfile_picture() {
         return profile_picture;
     }
 
+    public String getMessaging_token() {
+        return messaging_token;
+    }
 
-/* Setters
+    public static boolean isIs_organization() {
+        return is_organization;
+    }
+
+    public boolean isIs_banned() {
+        return is_banned;
+    }
+
+    public String getRegistration_platform() {
+        return registration_platform;
+    }
+
+    public String[] getPost_ids() {
+        return post_ids;
+    }
+
+    /* Setters
 ***************************************************************************************************/
 
     public void setId(String id) {
@@ -115,8 +137,8 @@ public class Student {
         this.uni_domain = domain;
     }
 
-    public void setBirthday(long bd){
-        this.birthday = bd;
+    public void setBirth_millis(long bd){
+        this.birth_millis = bd;
     }
 
     public void setProfile_picture(String profile_picture) {

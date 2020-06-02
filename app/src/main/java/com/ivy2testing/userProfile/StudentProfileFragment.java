@@ -133,8 +133,6 @@ public class StudentProfileFragment extends Fragment {
         intent.putExtra("this_uni_domain",student.getUni_domain());
         intent.putExtra("this_user_id", student.getId());
         startActivity(intent);
-
-        //TODO update view
     }
 
     // See all posts TODO

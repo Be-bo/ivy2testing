@@ -2,19 +2,16 @@ package com.ivy2testing.userProfile;
 
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -25,7 +22,6 @@ import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -36,10 +32,8 @@ import com.google.firebase.storage.UploadTask;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.main.MainActivity;
+import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.Calendar;
 import java.util.UUID;
 
@@ -50,7 +44,7 @@ public class EditStudentProfileActivity extends Activity {
 
     // Constants
     private final static String TAG = "StudEditProfileActivity";
-    private static final int GALLERY_REQUEST_CODE = 456;
+    private static final int PICKIMAGE_REQUEST_CODE = 456;
 
     // Views
     ImageView mImg;
@@ -68,8 +62,7 @@ public class EditStudentProfileActivity extends Activity {
     private Student student;
     private String this_uni_domain;
     private String this_user_id;
-    private Uri img_filePath;
-    private byte[] raw_bitmap;
+    private Uri imgUri;
 
 
 /* Override Methods
@@ -91,18 +84,11 @@ public class EditStudentProfileActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Returning from choosing an image
-        if (resultCode == Activity.RESULT_OK && requestCode == GALLERY_REQUEST_CODE
-            && data != null && data.getData() != null) {
+        if (resultCode == RESULT_OK && requestCode == PICKIMAGE_REQUEST_CODE
+                && data != null && data.getData() != null) {
 
-            img_filePath = data.getData();
-                try {
-                    // Setting image on image view using Bitmap
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), img_filePath);
-                    mImg.setImageBitmap(bitmap);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
+            imgUri = data.getData();
+            mImg.setImageURI(imgUri);
         }
     }
 
@@ -141,7 +127,7 @@ public class EditStudentProfileActivity extends Activity {
 
         loadImage();                                            // Image
         mName.setText(student.getName());                       // Name
-        millisToDatePicker(mBirthDay, student.getBirthday());   // Calendar
+        millisToDatePicker(mBirthDay, student.getBirth_millis());   // Calendar
 
         // Spinner
         int degreeIndex = findStringPosition(student.getDegree().trim(), getResources().getStringArray(R.array.degree_list));
@@ -167,14 +153,12 @@ public class EditStudentProfileActivity extends Activity {
         long birthday = datePickerToMillis(mBirthDay);
         String name = mName.getText().toString();
         String degree = mDegree.getSelectedItem().toString().trim();
-        // image? //TODO
-
 
         // Check if ok TODO
 
         // Save to student
         student.setName(name);
-        student.setBirthday(birthday);
+        student.setBirth_millis(birthday);
         if (!degree.equals("Degree")) student.setDegree(degree);
 
         saveImage();
@@ -186,11 +170,11 @@ public class EditStudentProfileActivity extends Activity {
         // Set up intent to go to gallery
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
-        String[] mimeTypes = {"image/jpeg", "image/png"};
+        String[] mimeTypes = {"image/jpeg", "image/png"};       // Only accept jpeg/png images
         intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
 
         // onActivityResult is triggered when coming back
-        startActivityForResult(intent, GALLERY_REQUEST_CODE);
+        startActivityForResult(intent, PICKIMAGE_REQUEST_CODE);
     }
 
 /* UI Related Methods
@@ -266,12 +250,20 @@ public class EditStudentProfileActivity extends Activity {
         });
     }
 
-    // Load student profile picture TODO doesn't work rn
+    // Load student profile picture
     private void loadImage(){
         // Make sure student has a profile image already
         if (student.getProfile_picture() != null){
-            StorageReference storageReference = base_storage_ref.child(student.getProfile_picture());
-            //Glide.with(this).load(storageReference).into(mImg);
+            base_storage_ref.child(student.getProfile_picture()).getDownloadUrl()
+                    .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()){
+                                Uri path = task.getResult();
+                                Picasso.get().load(path).into(mImg);
+                            }
+                        }
+                    });
         }
     }
 
@@ -289,15 +281,21 @@ public class EditStudentProfileActivity extends Activity {
         });
     }
 
-    // Rewrite old Pic
+    // Rewrite old Pic adn save to storage
     private void saveImage(){
 
+        // Skip image saving if image hasn't changed
+        if (imgUri == null){
+            saveStudentInfo();
+            return;
+        }
+
         // Build storage path
-        final String path = "userfiles/" + this_user_id + "/" + UUID.randomUUID().toString() + ".jpg";
+        final String path = "userfiles/" + this_user_id + "/" + UUID.randomUUID().toString() + getFileExt(imgUri);
         StorageReference storageReference = base_storage_ref.child(path);
 
         // Upload image to storage and proceed to save other user info
-        UploadTask uploadTask = storageReference.putFile(img_filePath);
+        UploadTask uploadTask = storageReference.putFile(imgUri);
         uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -306,12 +304,15 @@ public class EditStudentProfileActivity extends Activity {
                 if (!task.isSuccessful()) {
                     EditStudentProfileActivity.this.allowInteraction();
                     Log.e(TAG, "Profile Upload Failed.");
-                    return;
                 }
 
                 // Task was successful
-                student.setProfile_picture(path);                   // Save path of profile picture
-                EditStudentProfileActivity.this.saveStudentInfo();  // Add user profile to database
+                else if (task.getResult() != null)
+                    student.setProfile_picture(path);     // Save download URL of profile picture
+
+
+                // Add user profile to database
+                EditStudentProfileActivity.this.saveStudentInfo();
             }
         });
     }
@@ -343,6 +344,14 @@ public class EditStudentProfileActivity extends Activity {
         }
         return -1; // Not found
     }
+
+    // Get file Extension
+    private String getFileExt(Uri file){
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(file));
+    }
+
 
 /*
 Notes:
