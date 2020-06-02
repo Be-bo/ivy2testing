@@ -195,11 +195,17 @@ public class MainActivity extends AppCompatActivity {
                     mStudent = doc.toObject(Student.class);
                     if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
                     else mStudent.setId(this_user_id);
-                    setNavigationListener();
-                    setLoggedInDisplay();
+                    getStudentPic();
                 }
                 else Log.e(TAG,"getStudentInfo: unsuccessful!");
             }
         });
+    }
+
+    // TODO load picture from firebase storage
+    private void getStudentPic() {
+
+        setNavigationListener();
+        setLoggedInDisplay();
     }
 }

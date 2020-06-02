@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.ivy2testing">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -12,39 +13,38 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".main.MainActivity"
+        <activity
+            android:name=".main.MainActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- perhaps screen orientation should be changed-->
-        <activity android:name=".authentication.StudentSignUpActivity"
+        </activity> <!-- perhaps screen orientation should be changed -->
+        <activity
+            android:name=".authentication.StudentSignUpActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-
-        <activity android:name=".authentication.OrganizationSignUpActivity"
+        <activity
+            android:name=".authentication.OrganizationSignUpActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-
-        <activity android:name=".authentication.LoginActivity"
-            android:screenOrientation="portrait"
+        <activity
+            android:name=".authentication.LoginActivity"
             android:exported="true"
-            tools:ignore="LockedOrientationActivity"/>
-
-        <activity android:name=".HamburgerMenu"
             android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity"
-            android:theme="@style/HamburgerTheme"/>
-
-        <activity android:name=".userProfile.EditStudentProfileActivity"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".HamburgerMenu"
             android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity"/>
-
+            android:theme="@style/HamburgerTheme"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".userProfile.EditStudentProfileActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
     </application>
 
 </manifest>

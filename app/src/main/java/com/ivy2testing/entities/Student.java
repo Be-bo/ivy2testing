@@ -1,16 +1,15 @@
 package com.ivy2testing.entities;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.firebase.firestore.Exclude;
-
 import java.util.Calendar;
 
 /** @author Zahra Ghavasieh
  * Overview: Class to store a Firebase student user document
  */
 public class Student {
+
+    // Constant
+    private static final int STOCK_COUNT = 35; //actual num, inclusive
 
     // Fields
     private String id;
@@ -20,7 +19,7 @@ public class Student {
     private String uni_domain;
     private long registration_millis;
     private long birthday = 0;
-    //private byte[] profileImage; ? // TODO
+    private String profile_picture;
 
 
 /* Constructors
@@ -87,6 +86,11 @@ public class Student {
         return birthday;
     }
 
+    public String getProfile_picture() {
+        return profile_picture;
+    }
+
+
 /* Setters
 ***************************************************************************************************/
 
@@ -113,5 +117,9 @@ public class Student {
 
     public void setBirthday(long bd){
         this.birthday = bd;
+    }
+
+    public void setProfile_picture(String profile_picture) {
+        this.profile_picture = profile_picture;
     }
 }
