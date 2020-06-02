@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -72,10 +74,10 @@ public class EditStudentProfileActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_studentprofile);
+
         declareViews();
         barInteraction();       // Don't allow user to do anything yet
         getIntentExtras();      // Get address of student in database via intent extras
-        mSaveButton.setEnabled(true); //TODO delete when implemented textwatchers
         getStudentInfo();       // Load student info from Firestore
     }
 
@@ -124,7 +126,6 @@ public class EditStudentProfileActivity extends Activity {
 
     // Preset fields with current Student info
     private void setFields() {
-
         loadImage();                                            // Image
         mName.setText(student.getName());                       // Name
         millisToDatePicker(mBirthDay, student.getBirth_millis());   // Calendar
@@ -132,14 +133,35 @@ public class EditStudentProfileActivity extends Activity {
         // Spinner
         int degreeIndex = findStringPosition(student.getDegree().trim(), getResources().getStringArray(R.array.degree_list));
         if (degreeIndex != -1) mDegree.setSelection(degreeIndex);
+
+        // Save Button
+        mSaveButton.setEnabled(nameOk() && degreeOk());
     }
 
+    // Automatically enable button if name is not empty
     private void setTextWatcher() {
-        // TODO
+        mName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mSaveButton.setEnabled(nameOk());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
     }
 
+    // Set up focus listener for for real time error checking
     private void setFocusListener(){
-        // TODO
+        mName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) setInputErrors(mName, getString(R.string.error_invalidName), nameOk());
+            }
+        });
     }
 
 /* OnClick Methods
@@ -148,23 +170,24 @@ public class EditStudentProfileActivity extends Activity {
     // OnClick for Save Button
     public void saveStudentProfileChange(View view) {
         barInteraction();
+        if (getCurrentFocus() != null) getCurrentFocus().clearFocus();
 
         // Get field values
-        long birthday = datePickerToMillis(mBirthDay);
-        String name = mName.getText().toString();
         String degree = mDegree.getSelectedItem().toString().trim();
 
-        // Check if ok TODO
+        // Check if ok
+        setInputErrors(mName, getString(R.string.error_invalidName), nameOk());
+
 
         // Save to student
-        student.setName(name);
-        student.setBirth_millis(birthday);
+        student.setName(mName.getText().toString().trim());
+        student.setBirth_millis(datePickerToMillis(mBirthDay));
         if (!degree.equals("Degree")) student.setDegree(degree);
 
         saveImage();
     }
 
-    // TODO OnClick for edit image (upload an image from gallery)
+    // OnClick for edit image (upload an image from gallery)
     public void editImage(View v) {
 
         // Set up intent to go to gallery
@@ -177,10 +200,24 @@ public class EditStudentProfileActivity extends Activity {
         startActivityForResult(intent, PICKIMAGE_REQUEST_CODE);
     }
 
-/* UI Related Methods
+/* Input Checking Methods
 ***************************************************************************************************/
 
+    // Set error on an editText view based on a condition
+    private void setInputErrors(EditText editText, String error_msg, boolean check){
+        if (check) editText.setError(null);
+        else editText.setError(error_msg);
+    }
 
+    // Make sure Name field is not empty
+    private boolean nameOk() {
+        return !mName.getText().toString().trim().isEmpty();
+    }
+
+    // Make sure Degree field is not chosen as "Degree"
+    private boolean degreeOk() {
+        return !mDegree.getSelectedItem().toString().trim().equals("Degree");
+    }
 
 
 /* Transition Methods
@@ -251,6 +288,7 @@ public class EditStudentProfileActivity extends Activity {
     }
 
     // Load student profile picture
+    // Will throw an exception if file doesn't exist in storage but app continues to work fine
     private void loadImage(){
         // Make sure student has a profile image already
         if (student.getProfile_picture() != null){
@@ -261,6 +299,10 @@ public class EditStudentProfileActivity extends Activity {
                             if (task.isSuccessful()){
                                 Uri path = task.getResult();
                                 Picasso.get().load(path).into(mImg);
+                            }
+                            else {
+                                Log.w(TAG, task.getException());
+                                student.setProfile_picture(""); // image doesn't exist
                             }
                         }
                     });

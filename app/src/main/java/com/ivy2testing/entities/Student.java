@@ -142,6 +142,8 @@ public class Student {
     }
 
     public void setProfile_picture(String profile_picture) {
-        this.profile_picture = profile_picture;
+        if (profile_picture == null) this.profile_picture = null;
+        else if (profile_picture.isEmpty()) this.profile_picture = null;
+        else this.profile_picture = profile_picture;
     }
 }

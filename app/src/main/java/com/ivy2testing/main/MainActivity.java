@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -18,12 +19,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.chat.ChatFragment;
 import com.ivy2testing.home.HomeFragment;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.userProfile.StudentProfileFragment;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     // FireBase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
     // Other Variables
     private String this_uni_domain;
@@ -46,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isStudent;
     private int returning_fragId;
     private Student mStudent;
+    private Uri profileImgUri;
 
 
 /* Overridden Methods
@@ -106,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
                         selectedFragment = new HomeFragment();
                         break;
                     case R.id.tab_bar_profile:
-                        selectedFragment = new StudentProfileFragment(MainActivity.this, mStudent);
+                        selectedFragment = new StudentProfileFragment(MainActivity.this, mStudent, profileImgUri);
                         break;
                 }
                 if (selectedFragment!= null)
@@ -202,10 +208,29 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // TODO load picture from firebase storage
+    // load picture from firebase storage
+    // Will throw an exception if file doesn't exist in storage but app continues to work fine
     private void getStudentPic() {
 
-        setNavigationListener();
-        setLoggedInDisplay();
+        // Make sure student has a profile image already
+        if (mStudent.getProfile_picture() != null){
+            base_storage_ref.child(mStudent.getProfile_picture()).getDownloadUrl()
+                    .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()){
+                                profileImgUri = task.getResult();
+                            }
+                            else {
+                                Log.w(TAG, task.getException());
+                                mStudent.setProfile_picture(""); // image doesn't exist
+                            }
+                            // Continue to rest of App
+                            setNavigationListener();
+                            setLoggedInDisplay();
+                        }
+                    });
+        }
+
     }
 }

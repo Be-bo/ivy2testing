@@ -37,6 +37,8 @@
     <string name="name">Name</string>
     <string name="birthday">Birthday</string>
 
+    <string name="error_invalidName">Name cannot be empty</string>
+
 
     <!-- There is a space before and after each item... -->
     <string-array name="degree_list">

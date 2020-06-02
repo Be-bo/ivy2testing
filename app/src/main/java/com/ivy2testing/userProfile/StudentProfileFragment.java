@@ -2,6 +2,7 @@ package com.ivy2testing.userProfile;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ivy2testing.entities.OnSelectionListener;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,12 +46,14 @@ public class StudentProfileFragment extends Fragment {
     // Other Variables
     private Student student;
     private ImageAdapter adapter;
+    private Uri profileImgUri;
 
 
     // Constructor
-    public StudentProfileFragment(Context context, Student student) {
+    public StudentProfileFragment(Context context, Student student, Uri profileImgUri) {
         mContext = context;
         this.student = student;
+        this.profileImgUri = profileImgUri;
     }
 
 
@@ -84,6 +88,7 @@ public class StudentProfileFragment extends Fragment {
     private void setupViews(){
         mName.setText(student.getName());
         mDegree.setText(student.getDegree());
+        if (profileImgUri!= null) Picasso.get().load(profileImgUri).into(mProfileImg);
     }
 
     // TODO set up with Post objects later
