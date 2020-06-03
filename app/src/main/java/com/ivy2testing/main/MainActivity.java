@@ -27,7 +27,6 @@ import com.ivy2testing.chat.ChatFragment;
 import com.ivy2testing.home.HomeFragment;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.userProfile.StudentProfileFragment;
-import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,9 +47,9 @@ public class MainActivity extends AppCompatActivity {
     // Other Variables
     private String this_uni_domain;
     private String this_user_id;
-    private boolean isStudent;
+    private boolean is_organization = false;
     private int returning_fragId;
-    private Student mStudent;
+    private Student mStudent;       //TODO need abstract class User?
     private Uri profileImgUri;
 
 
@@ -152,20 +151,16 @@ public class MainActivity extends AppCompatActivity {
 
         startLoading();     // Loading Animation overlay
 
-        if(getIntent() != null){
+        if (getIntent() != null){
             this_uni_domain = getIntent().getStringExtra("this_uni_domain");
             this_user_id = getIntent().getStringExtra("this_user_id");
-            isStudent = getIntent().getBooleanExtra("isStudent",true);
             returning_fragId = getIntent().getIntExtra("returning_fragId", R.id.tab_bar_home);
 
-            if(this_uni_domain == null || this_user_id == null){
+            if (this_uni_domain == null || this_user_id == null){
                 Log.w(TAG,"Not signed in yet!");
                 setLoggedOutDisplay();
             }
-            else {
-                if (isStudent) getStudentInfo();
-                // TODO else organization sign in
-            }
+            else getUserInfo();
         }
     }
 
@@ -186,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
 ***************************************************************************************************/
 
     // Get all student info and return student class
-    public void getStudentInfo(){
+    public void getUserInfo(){
 
         db.collection("universities").document(this_uni_domain).collection("users").document(this_user_id)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -198,12 +193,27 @@ public class MainActivity extends AppCompatActivity {
                         Log.e(TAG, "Document doesn't exist");
                         return;
                     }
-                    mStudent = doc.toObject(Student.class);
-                    if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
-                    else mStudent.setId(this_user_id);
-                    getStudentPic();
+
+                    if (doc.get("is_organization") == null){
+                        Log.e(TAG, "getUserInfo: 'is_organization' field doesn't exist");
+                        return;
+                    }
+
+                    // Student or Organization?
+                    is_organization = (boolean) doc.get("is_organization");
+                    if (is_organization){
+                        //TODO is organization
+                        Log.d(TAG, "User is an organization!");
+                        endLoading();
+                    }
+                    else {
+                        mStudent = doc.toObject(Student.class);
+                        if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
+                        else mStudent.setId(this_user_id);
+                        getStudentPic();
+                    }
                 }
-                else Log.e(TAG,"getStudentInfo: unsuccessful!");
+                else Log.e(TAG,"getUserInfo: unsuccessful!");
             }
         });
     }

@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -23,6 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -126,16 +129,13 @@ public class EditStudentProfileActivity extends Activity {
 
     // Preset fields with current Student info
     private void setFields() {
-        loadImage();                                            // Image
-        mName.setText(student.getName());                       // Name
+        loadImage();                                                // Image
+        mName.setText(student.getName());                           // Name
         millisToDatePicker(mBirthDay, student.getBirth_millis());   // Calendar
 
         // Spinner
         int degreeIndex = findStringPosition(student.getDegree().trim(), getResources().getStringArray(R.array.degree_list));
         if (degreeIndex != -1) mDegree.setSelection(degreeIndex);
-
-        // Save Button
-        mSaveButton.setEnabled(nameOk() && degreeOk());
     }
 
     // Automatically enable button if name is not empty
@@ -146,11 +146,11 @@ public class EditStudentProfileActivity extends Activity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mSaveButton.setEnabled(nameOk());
+                if (!student.getName().contentEquals(s)) mSaveButton.setEnabled(nameOk());
             }
 
             @Override
-            public void afterTextChanged(Editable s) { }
+            public void afterTextChanged(Editable s) {}
         });
     }
 
@@ -161,6 +161,31 @@ public class EditStudentProfileActivity extends Activity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) setInputErrors(mName, getString(R.string.error_invalidName), nameOk());
             }
+        });
+    }
+
+    // Listener for birthday change
+    private void setBirthDayChangeListener(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mBirthDay.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
+                @Override
+                public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                    if (student.getBirth_millis() != datePickerToMillis(view)) mSaveButton.setEnabled(true);
+                }
+            });
+        }
+    }
+
+    // Listener for degree change
+    private void setDegreeChangeListener(){
+        mDegree.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (student.getDegree() != mDegree.getSelectedItem()) mSaveButton.setEnabled(degreeOk());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
         });
     }
 
@@ -228,7 +253,6 @@ public class EditStudentProfileActivity extends Activity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("this_uni_domain", this_uni_domain);
         intent.putExtra("this_user_id", this_user_id);
-        intent.putExtra("isStudent",true);
         intent.putExtra("returning_fragId", R.id.tab_bar_profile);
         finish();
         startActivity(intent);
@@ -276,13 +300,14 @@ public class EditStudentProfileActivity extends Activity {
                     if (student == null) Log.e(TAG, "Student object obtained from database is null!");
                     else student.setId(this_user_id);
 
-                    // Continue with rest of sign up process
+                    // Set fields with current values and initiate listeners
                     setFields();
                     setTextWatcher();
                     setFocusListener();
+                    setBirthDayChangeListener();
+                    setDegreeChangeListener();
                 }
                 else Log.e(TAG,"getStudentInfo: unsuccessful!");
-                allowInteraction();
             }
         });
     }
@@ -304,6 +329,7 @@ public class EditStudentProfileActivity extends Activity {
                                 Log.w(TAG, task.getException());
                                 student.setProfile_picture(""); // image doesn't exist
                             }
+                            allowInteraction();
                         }
                     });
         }

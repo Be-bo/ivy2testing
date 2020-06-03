@@ -1,7 +1,10 @@
 package com.ivy2testing.entities;
 
 import com.google.firebase.firestore.Exclude;
+
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /** @author Zahra Ghavasieh
  * Overview: Class to store a Firebase student user document
@@ -18,10 +21,11 @@ public class Student {
     private long birth_millis = 0;
     private String messaging_token;
     private String profile_picture;
-    private static final boolean is_organization = false;
+    private final boolean is_organization = false;
+    private final boolean is_club = false;
     private boolean is_banned = false;
     private String registration_platform;
-    private String[] post_ids;
+    private List<String> post_ids = new ArrayList<>();
 
 
 
@@ -97,7 +101,7 @@ public class Student {
         return messaging_token;
     }
 
-    public static boolean isIs_organization() {
+    public boolean isIs_organization() {
         return is_organization;
     }
 
@@ -109,11 +113,16 @@ public class Student {
         return registration_platform;
     }
 
-    public String[] getPost_ids() {
-        return post_ids;
+    public List<String> getPost_ids() {
+        if (post_ids == null) return new ArrayList<>();
+        else return new ArrayList<>(post_ids);          // Return copy
     }
 
-    /* Setters
+    public boolean isIs_club() {
+        return is_club;
+    }
+
+/* Setters
 ***************************************************************************************************/
 
     public void setId(String id) {
@@ -145,5 +154,13 @@ public class Student {
         if (profile_picture == null) this.profile_picture = null;
         else if (profile_picture.isEmpty()) this.profile_picture = null;
         else this.profile_picture = profile_picture;
+    }
+
+    public void addPostToList(String postId){
+        post_ids.add(postId);
+    }
+
+    public void deletePostfromList(String postId){
+        post_ids.remove(postId);
     }
 }
