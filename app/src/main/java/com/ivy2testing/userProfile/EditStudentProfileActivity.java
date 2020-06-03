@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 
@@ -78,14 +79,6 @@ public class EditStudentProfileActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_studentprofile);
 
-        // Action bar TODO
-        ActionBar actionBar = getActionBar();
-        if (actionBar != null){
-            actionBar.setTitle("Edit Profile");
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        else Log.e(TAG, "no actionbar");
-
         declareViews();
         barInteraction();       // Don't allow user to do anything yet
         getIntentExtras();      // Get address of student in database via intent extras
@@ -133,6 +126,15 @@ public class EditStudentProfileActivity extends Activity {
             ArrayAdapter.createFromResource(this, R.array.degree_list, android.R.layout.simple_spinner_item);
         degree_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mDegree.setAdapter(degree_adapter);
+
+        // Action bar
+        setActionBar((Toolbar) findViewById(R.id.editStudent_toolBar));
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null){
+            actionBar.setTitle("Edit Profile");
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        else Log.e(TAG, "no actionbar");
     }
 
     // Preset fields with current Student info
@@ -428,12 +430,4 @@ public class EditStudentProfileActivity extends Activity {
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(file));
     }
-
-
-/*
-Notes:
-Don't try to style the nav bar at the top, just use the default.
-You'll have to use a navbar style for that activity and set its parent to be the MainActivity in the manifest.
-*/
-
 }
