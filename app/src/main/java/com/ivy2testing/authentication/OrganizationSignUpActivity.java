@@ -1,7 +1,10 @@
 package com.ivy2testing.authentication;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,15 +23,20 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.ivy2testing.R;
+import com.ivy2testing.entities.Organization;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import static com.ivy2testing.StaticDomainList.domain_list;
 
 /** @author Zahra Ghavasieh
  * Overview: Activity for registering organizations such as clubs. Very similar to student sign up
@@ -54,6 +62,7 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
 
     // Other Variables
     private boolean isClub = false;
+    private String currentDomain;
 
 
 /* Override Methods
@@ -110,11 +119,17 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         email_editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
+                if (!hasFocus) {
                     setInputErrors(
                             email_editText,
                             getString(R.string.error_invalidEmailFormat),
                             emailOk());
+                    if (emailOk())
+                        setInputErrors(
+                                email_editText,
+                                getString(R.string.error_invalidDomain),
+                                domainOk());
+                }
             }
         });
         // Check if password is correct after focus change
@@ -195,9 +210,22 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         String email = email_editText.getText().toString().trim();
         if (email.length() > 5 && email.contains("@") && !email.contains(" ") && email.contains(".")){
             email_editText.setError(null);
+            currentDomain = email.substring(email.indexOf("@") + 1).trim();
             return true;
         }
         else return false;
+    }
+
+    // Make sure domain exists
+    private boolean domainOk() {
+        for (String item : domain_list) {
+            if (item.equals(currentDomain)) {
+                email_editText.setError(null);
+                return true;
+            }
+        }
+        email_editText.setError(getString(R.string.error_invalidDomain));
+        return false;
     }
 
     // Make sure password field is at lest 6 characters long
@@ -238,7 +266,6 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
                         auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                toastError("Registration Successful! Please check your email");
                                 registerInDB();
                             }
                         });
@@ -258,22 +285,27 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
     private void registerInDB(){
         String id = auth.getUid();
         if (id != null){
-            Map<String, Object> user_info = makeProfile(id);
-            toastError("Database registration not fully implemented yet!");
-            // ADD TO DATABASE
+
+            // Make new organization object to store in db
+            String email = email_editText.getText().toString().trim();
+            Organization orgUser = new Organization(id, email, isClub);
+            String domain = email.split("@")[1];
+
+            dbRef.collection("universities").document(currentDomain).collection("users").document(id).set(orgUser)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) openDialogComplete();
+                            else {
+                                Toast.makeText(getApplicationContext(), "Profile creation failed. Please try again later.", Toast.LENGTH_LONG).show();
+                                returnToLogin();
+                            }
+                        }
+                    });
         }
-        returnToLogin();
+        else Log.e(TAG, "Id was null!");
     }
 
-    // Store user info in a map and return it
-    private Map<String, Object> makeProfile(String id){
-        Map<String, Object> user_info = new HashMap<>();
-        user_info.put("id", id);
-        user_info.put("email", email_editText.getText().toString().trim());
-        user_info.put("isClub", isClub);
-        user_info.put("registration_millis", System.currentTimeMillis());
-        return user_info;
-    }
 
 /* Transition Methods
 ***************************************************************************************************/
@@ -291,7 +323,6 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         progress_bar.setVisibility(View.VISIBLE);
     }
 
-
     private void closeKeyboard() {
         View view = this.getCurrentFocus();
         if (view != null) {
@@ -303,10 +334,29 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
     private void returnToLogin() {
         auth.signOut();
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        intent.putExtra("isStudent", false);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         finish();
         startActivity(intent);
+    }
+
+    // Opens static dialogue on complete profile creation. Can be modified to be used for error messages
+    private void openDialogComplete() {
+        allowInteraction();
+        final Dialog infoDialog = new Dialog(this);
+        infoDialog.setContentView(R.layout.activity_signup_dialog);
+        Button okButton = infoDialog.findViewById(R.id.positive_button);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                infoDialog.cancel();
+                returnToLogin();
+            }
+        });
+        ColorDrawable transparentColor = new ColorDrawable(Color.TRANSPARENT);
+        if (infoDialog.getWindow() != null)
+            infoDialog.getWindow().setBackgroundDrawable(transparentColor);
+        infoDialog.setCancelable(true);
+        infoDialog.show();
     }
 
 

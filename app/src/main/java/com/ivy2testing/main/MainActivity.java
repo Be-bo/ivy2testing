@@ -256,6 +256,5 @@ public class MainActivity extends AppCompatActivity {
             setNavigationListener();
             setLoggedInDisplay();
         }
-
     }
 }
