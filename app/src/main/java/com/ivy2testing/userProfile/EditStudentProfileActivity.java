@@ -1,6 +1,7 @@
 package com.ivy2testing.userProfile;
 
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -25,7 +26,6 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -77,6 +77,14 @@ public class EditStudentProfileActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_studentprofile);
+
+        // Action bar TODO
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null){
+            actionBar.setTitle("Edit Profile");
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        else Log.e(TAG, "no actionbar");
 
         declareViews();
         barInteraction();       // Don't allow user to do anything yet
@@ -333,6 +341,7 @@ public class EditStudentProfileActivity extends Activity {
                         }
                     });
         }
+        else allowInteraction();
     }
 
     // Rewrite old student document with new info
@@ -423,9 +432,6 @@ public class EditStudentProfileActivity extends Activity {
 
 /*
 Notes:
-make sure the birthday is saved in the appropriate variable based on the db schema.
-It has to be saved as System.curentTimeInMillis() which is # of milliseconds since Jan 1 1970, i.e. epoch time.
-Everything in there should function as expected (simlar to login...).
 Don't try to style the nav bar at the top, just use the default.
 You'll have to use a navbar style for that activity and set its parent to be the MainActivity in the manifest.
 */

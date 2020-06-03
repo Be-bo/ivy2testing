@@ -111,7 +111,8 @@ public class MainActivity extends AppCompatActivity {
                         selectedFragment = new HomeFragment();
                         break;
                     case R.id.tab_bar_profile:
-                        selectedFragment = new StudentProfileFragment(MainActivity.this, mStudent, profileImgUri);
+                        if (is_organization) Log.w(TAG, "Organization Profile View under construction.");
+                        else selectedFragment = new StudentProfileFragment(MainActivity.this, mStudent, profileImgUri);
                         break;
                 }
                 if (selectedFragment!= null)
@@ -194,8 +195,15 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
 
+                    // what TODO if field doesn't exist?
                     if (doc.get("is_organization") == null){
                         Log.e(TAG, "getUserInfo: 'is_organization' field doesn't exist");
+                        mStudent = doc.toObject(Student.class);
+                        if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
+                        else mStudent.setId(this_user_id);
+                        // Continue to rest of App
+                        setNavigationListener();
+                        setLoggedInDisplay();
                         return;
                     }
 
@@ -204,7 +212,9 @@ public class MainActivity extends AppCompatActivity {
                     if (is_organization){
                         //TODO is organization
                         Log.d(TAG, "User is an organization!");
-                        endLoading();
+                        // Continue to rest of App
+                        setNavigationListener();
+                        setLoggedInDisplay();
                     }
                     else {
                         mStudent = doc.toObject(Student.class);
@@ -240,6 +250,11 @@ public class MainActivity extends AppCompatActivity {
                             setLoggedInDisplay();
                         }
                     });
+        }
+        else {
+            // Continue to rest of App
+            setNavigationListener();
+            setLoggedInDisplay();
         }
 
     }

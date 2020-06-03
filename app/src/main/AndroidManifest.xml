@@ -44,7 +44,8 @@
         <activity
             android:name=".userProfile.EditStudentProfileActivity"
             android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
+            tools:ignore="LockedOrientationActivity"
+            android:parentActivityName=".main.MainActivity"/>
     </application>
 
 </manifest>

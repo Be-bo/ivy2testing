@@ -85,7 +85,7 @@ public class Student {
         // Set a default value for birthday
         if (birth_millis == 0){
             Calendar cal = Calendar.getInstance();
-            cal.set(Calendar.YEAR,2000);
+            cal.set(Calendar.YEAR, 2000);
             cal.set(Calendar.MONTH, 1);
             cal.set(Calendar.DAY_OF_MONTH, 1);
             birth_millis = cal.getTimeInMillis();
