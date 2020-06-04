@@ -3,6 +3,7 @@ package com.ivy2testing.authentication;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -145,6 +146,7 @@ public class LoginActivity extends AppCompatActivity {
         if (user != null && auth.getUid() != null && user.isEmailVerified()) {
             loadPreferences();
             if (!currentDomain.equals("")) {
+                Log.d(TAG, "autologin User: " + user.getUid());
                 transToMain();
             } else {
                 toastError("Couldn't perform auto-login, please log in manually.");
@@ -230,7 +232,6 @@ public class LoginActivity extends AppCompatActivity {
                             for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())){
                                 String domain = String.valueOf(doc.get("domain"));
                                 domains.add(domain);
-                                Log.d(TAG, "Added new domain = " + domain);
                             }
 
                             // Continue with rest of sign up process
@@ -318,7 +319,6 @@ public class LoginActivity extends AppCompatActivity {
         final Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.putExtra("this_user_id", auth.getUid());
         intent.putExtra("this_uni_domain", currentDomain);
-        intent.putExtra("isStudent", getIntent().getBooleanExtra("isStudent",true));
         finish();
         startActivity(intent);
         allowInteraction();

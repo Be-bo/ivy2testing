@@ -60,13 +60,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         declareViews();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         chooseDisplay();       // Which display to use depending on if user is signed in or nah
     }
 
-
-/* Initialization Methods
+    /* Initialization Methods
 ***************************************************************************************************/
 
     private void declareViews(){
@@ -131,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
     public void mainLogin(View view) {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+        finish();
     }
 
     // TEST For testing purposes only!
@@ -152,17 +156,13 @@ public class MainActivity extends AppCompatActivity {
 
         startLoading();     // Loading Animation overlay
 
-        if (getIntent() != null){
-            this_uni_domain = getIntent().getStringExtra("this_uni_domain");
-            this_user_id = getIntent().getStringExtra("this_user_id");
-            returning_fragId = getIntent().getIntExtra("returning_fragId", R.id.tab_bar_home);
+        getIntentExtras();
 
-            if (this_uni_domain == null || this_user_id == null){
-                Log.w(TAG,"Not signed in yet!");
-                setLoggedOutDisplay();
-            }
-            else getUserInfo();
+        if (this_uni_domain == null || this_user_id == null){
+            Log.w(TAG,"Not signed in yet!");
+            setLoggedOutDisplay();
         }
+        else getUserInfo();
     }
 
     // Set loading page animation
@@ -257,4 +257,23 @@ public class MainActivity extends AppCompatActivity {
             setLoggedInDisplay();
         }
     }
+
+/* Utility Methods
+***************************************************************************************************/
+
+    // Returning fragment view
+    private void getIntentExtras(){
+        if (getIntent() == null) return;
+
+        this_uni_domain = getIntent().getStringExtra("this_uni_domain");
+        this_user_id = getIntent().getStringExtra("this_user_id");
+        String frag = getIntent().getStringExtra("return_fragId"); //TODO is null for some reason???
+        Log.d(TAG, "GOT CHAR: "+frag + ", domain: " + this_uni_domain);
+
+        if (frag == null) returning_fragId = R.id.tab_bar_home;
+        else if (frag.equals("p")) returning_fragId = R.id.tab_bar_profile;
+        else if (frag.equals("c")) returning_fragId = R.id.tab_bar_chat;
+        else returning_fragId = R.id.tab_bar_home;
+    }
+
 }

@@ -6,6 +6,9 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,11 +43,14 @@ import com.ivy2testing.entities.Student;
 import com.ivy2testing.main.MainActivity;
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 import java.util.UUID;
 
 /** @author Zahra Ghavasieh
  * Overview: Edit Student Profile from Student Profile Fragment
+ * Notes: Image [crop, compression] not implemented yet
  */
 public class EditStudentProfileActivity extends Activity {
 
@@ -94,7 +100,12 @@ public class EditStudentProfileActivity extends Activity {
                 && data != null && data.getData() != null) {
 
             imgUri = data.getData();
-            mImg.setImageURI(imgUri);
+
+            Picasso.get()
+                    .load(data.getData())
+                    .fit()
+                    .centerCrop()
+                    .into(mImg);
         }
     }
 
@@ -263,7 +274,8 @@ public class EditStudentProfileActivity extends Activity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("this_uni_domain", this_uni_domain);
         intent.putExtra("this_user_id", this_user_id);
-        intent.putExtra("returning_fragId", R.id.tab_bar_profile);
+        intent.putExtra("return_fragId", "p"); //TODO doesn't transmit properly??
+        Log.d(TAG, "GIVING CHAR: " + 'p');
         finish();
         startActivity(intent);
     }
@@ -364,17 +376,18 @@ public class EditStudentProfileActivity extends Activity {
     private void saveImage(){
 
         // Skip image saving if image hasn't changed
-        if (imgUri == null){
+        if (imgUri == null || getCompressedImageBytes() == null){
             saveStudentInfo();
             return;
         }
 
+
         // Build storage path
-        final String path = "userfiles/" + this_user_id + "/" + UUID.randomUUID().toString() + getFileExt(imgUri);
+        final String path = "userfiles/" + this_user_id + "/" + UUID.randomUUID().toString() +"JPG";
         StorageReference storageReference = base_storage_ref.child(path);
 
         // Upload image to storage and proceed to save other user info
-        UploadTask uploadTask = storageReference.putFile(imgUri);
+        UploadTask uploadTask = storageReference.putBytes(getCompressedImageBytes());
         uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -429,5 +442,17 @@ public class EditStudentProfileActivity extends Activity {
         ContentResolver cR = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(file));
+    }
+
+    // Compress image
+    private byte[] getCompressedImageBytes(){
+        if (mImg.getDrawable() != null) {
+            BitmapDrawable bitmapDrawable = ((BitmapDrawable) mImg.getDrawable());
+            Bitmap bitmap = bitmapDrawable.getBitmap();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            return stream.toByteArray();
+        }
+        else return null;
     }
 }

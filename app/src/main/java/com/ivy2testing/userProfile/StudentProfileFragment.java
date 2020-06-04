@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +28,7 @@ import java.util.List;
 
 /** @author Zahra Ghavasieh
  * Overview: Student Profile view fragment
- * Notes: Image view not implemented to show student's img yet, Recycler items currently hard-coded
+ * Notes: Recycler items currently hard-coded
  */
 public class StudentProfileFragment extends Fragment {
 
@@ -78,13 +77,12 @@ public class StudentProfileFragment extends Fragment {
 ***************************************************************************************************/
 
     private void declareViews(View v){
-        mProfileImg = v.findViewById(R.id.userProfile_circleImg);
-        mName = v.findViewById(R.id.userProfile_name);
-        mDegree = v.findViewById(R.id.userProfile_degree);
-        mRecyclerView = v.findViewById(R.id.userProfile_posts);
+        mProfileImg = v.findViewById(R.id.studentProfile_circleImg);
+        mName = v.findViewById(R.id.studentProfile_name);
+        mDegree = v.findViewById(R.id.studentProfile_degree);
+        mRecyclerView = v.findViewById(R.id.studentProfile_posts);
     }
 
-    // TODO image
     private void setupViews(){
         mName.setText(student.getName());
         mDegree.setText(student.getDegree());
@@ -114,11 +112,11 @@ public class StudentProfileFragment extends Fragment {
 
     // Set up onClick Listeners
     private void setListeners(View v){
-        v.findViewById(R.id.userProfile_edit).setOnClickListener(new View.OnClickListener() {
+        v.findViewById(R.id.studentProfile_edit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {editProfile();}
         });
-        v.findViewById(R.id.userProfile_seeAll).setOnClickListener(new View.OnClickListener() {
+        v.findViewById(R.id.studentProfile_seeAll).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {seeAllPosts();}
         });
@@ -131,7 +129,7 @@ public class StudentProfileFragment extends Fragment {
 /* OnClick Methods
 ***************************************************************************************************/
 
-    // Edit profile TODO
+    // Edit profile
     private void editProfile(){
         Intent intent = new Intent(getActivity(), EditStudentProfileActivity.class);
         Log.d(TAG, "domain: " + student.getUni_domain() + ", id: " + student.getId());
@@ -146,14 +144,5 @@ public class StudentProfileFragment extends Fragment {
     // A post in recycler was selected  TODO
     private void selectPost() {
         Toast.makeText(mContext,"I was clicked here! ", Toast.LENGTH_SHORT).show();
-    }
-
-
-/* Utility Methods
-***************************************************************************************************/
-
-    private void toastError(String msg){
-        Log.w(TAG, msg);
-        Toast.makeText(this.getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 }

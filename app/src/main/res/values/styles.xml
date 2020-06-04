@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-    </style>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar"/>
 
     <style name="StandardButton" parent="Widget.AppCompat.Button">
         <item name="android:layout_height">40dp</item>
@@ -49,7 +48,8 @@
         <item name="android:includeFontPadding">false</item>
         <item name="android:textColor">@color/text_color</item>
         <item name="android:thumbTint">@color/switch_color</item>
-        <item name="android:trackTint">@color/switch_color</item>   <!--30% transparent by default-->
+        <item name="android:trackTint">@color/switch_color
+        </item>   <!--30% transparent by default-->
     </style>
 
     <style name="MainNavBar" parent="Widget.Design.BottomNavigationView">
@@ -79,6 +79,5 @@
         <item name="android:layout_marginEnd">2dp</item>
         <item name="android:onClick">toggleEnabled"</item>
     </style>
-
 
 </resources>
