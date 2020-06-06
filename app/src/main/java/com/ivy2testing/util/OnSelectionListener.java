@@ -1,4 +1,4 @@
-package com.ivy2testing.entities;
+package com.ivy2testing.util;
 
 /**Interface used for click listener
  * Use in ViewHolders in a Recycler

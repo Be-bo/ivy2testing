@@ -22,7 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
-import com.ivy2testing.entities.OnSelectionListener;
+import com.ivy2testing.util.OnSelectionListener;
 import com.ivy2testing.entities.Student;
 import com.squareup.picasso.Picasso;
 

@@ -1,5 +1,8 @@
 package com.ivy2testing.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.firestore.Exclude;
 
 import java.util.ArrayList;
@@ -9,7 +12,7 @@ import java.util.List;
 /** @author Zahra Ghavasieh
  * Overview: Class to store a Firebase student user document
  */
-public class Student {
+public class Student implements Parcelable {
 
     // Fields
     private String id;
@@ -162,5 +165,58 @@ public class Student {
 
     public void deletePostfromList(String postId){
         post_ids.remove(postId);
+    }
+
+
+/* Parcelable Override Methods
+***************************************************************************************************/
+
+    // Must have same order as writeToParcel since it's reading in bytes
+    protected Student(Parcel in) {
+        id = in.readString();
+        email = in.readString();
+        name = in.readString();
+        degree = in.readString();
+        uni_domain = in.readString();
+        registration_millis = in.readLong();
+        birth_millis = in.readLong();
+        messaging_token = in.readString();
+        profile_picture = in.readString();
+        is_banned = in.readByte() != 0;
+        registration_platform = in.readString();
+        post_ids = in.createStringArrayList();
+    }
+
+    public static final Creator<Student> CREATOR = new Creator<Student>() {
+        @Override
+        public Student createFromParcel(Parcel in) {
+            return new Student(in);
+        }
+
+        @Override
+        public Student[] newArray(int size) {
+            return new Student[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(email);
+        dest.writeString(name);
+        dest.writeString(degree);
+        dest.writeString(uni_domain);
+        dest.writeLong(registration_millis);
+        dest.writeLong(birth_millis);
+        dest.writeString(messaging_token);
+        dest.writeString(profile_picture);
+        dest.writeByte((byte) (is_banned ? 1 : 0));
+        dest.writeString(registration_platform);
+        dest.writeStringList(post_ids);
     }
 }

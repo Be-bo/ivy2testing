@@ -3,41 +3,31 @@ package com.ivy2testing.authentication;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.nfc.Tag;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.R;
-
-import java.util.ArrayList;
-import java.util.Objects;
 
 /** @author = Zahra Ghavasieh
  * Overview: First activity user encounters when launching app
@@ -60,7 +50,6 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
 
     // Other variables
-    private ArrayList<String> domains = new ArrayList<>();
     private String currentDomain = "";
 
 
@@ -73,7 +62,11 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         declareViews();
         attemptAutoLogin();
-        getDomains();
+
+        // Continue with rest of sign up process
+        allowInteraction();
+        setTextWatcher();
+        setFocusListener();
     }
 
 
@@ -119,11 +112,6 @@ public class LoginActivity extends AppCompatActivity {
                             mEmailView,
                             getString(R.string.error_invalidEmailFormat),
                             emailOk());
-                    if (emailOk())
-                        setInputErrors(
-                                mEmailView,
-                                getString(R.string.error_invalidDomain),
-                                domainOk());
                 }
             }
         });
@@ -162,7 +150,7 @@ public class LoginActivity extends AppCompatActivity {
     public void login(View view) {
         barInteraction();
         if (getCurrentFocus() != null) getCurrentFocus().clearFocus();
-        loginToFirebaseAuth();
+        domainExists();
     }
 
     // student sign up onClick method
@@ -205,44 +193,30 @@ public class LoginActivity extends AppCompatActivity {
         return password.length() > 5;
     }
 
-    // Check to see if email domain exists in database
-    private boolean domainOk(){
-        if (domains.contains(currentDomain)){
-            mEmailView.setError(null);
-            return true;
-        }
-        else mEmailView.setError(getString(R.string.error_invalidDomain));
-        return false;
-    }
-
 
 /* Firebase related Methods
 ***************************************************************************************************/
 
     // Get list of users' domains
-    private void getDomains(){
+    private void domainExists(){
 
-        dbRef.collection("universities").get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        dbRef.collection("universities").document(currentDomain).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()){
-
-                            // store domains in ArrayList
-                            for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())){
-                                String domain = String.valueOf(doc.get("domain"));
-                                domains.add(domain);
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot doc = task.getResult();
+                            if (doc != null && doc.exists()) loginToFirebaseAuth();     // YAY!
+                            else {
+                                mEmailView.setError(getString(R.string.error_invalidDomain)); // Domain doesn't exist in DB
+                                allowInteraction();
                             }
-
-                            // Continue with rest of sign up process
+                        } else {
+                            toastError("Domain get() failed");
                             allowInteraction();
-                            setTextWatcher();
-                            setFocusListener();
                         }
-                        else toastError("Failed in connecting to collection");
                     }
                 });
-
     }
 
     // Attempt to log in to Firebase Auth
@@ -257,7 +231,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (task.isSuccessful()){
                     FirebaseUser user = auth.getCurrentUser();
                     if(user!=null && user.isEmailVerified()){
-                        // Save uni domain for autologins and send off to MainActivity
+                        // Save uni domain for auto-logins and send off to MainActivity
                         barInteraction();
                         savePreferences();
                         transToMain();
@@ -332,5 +306,4 @@ public class LoginActivity extends AppCompatActivity {
         Log.w(TAG, msg);
         Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
-
 }

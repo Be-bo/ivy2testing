@@ -3,12 +3,10 @@ package com.ivy2testing.userProfile;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +16,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -33,7 +30,6 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -41,9 +37,9 @@ import com.google.firebase.storage.UploadTask;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.main.MainActivity;
+import com.ivy2testing.util.Constant;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 import java.util.UUID;
@@ -56,25 +52,23 @@ public class EditStudentProfileActivity extends Activity {
 
     // Constants
     private final static String TAG = "StudEditProfileActivity";
-    private static final int PICKIMAGE_REQUEST_CODE = 456;
 
     // Views
-    ImageView mImg;
-    EditText mName;
-    Spinner mDegree;
-    DatePicker mBirthDay;
-    Button mSaveButton;
-    ProgressBar mProgressBar;
+    private ImageView mImg;
+    private EditText mName;
+    private Spinner mDegree;
+    private DatePicker mBirthDay;
+    private Button mSaveButton;
+    private ProgressBar mProgressBar;
 
     // Firebase
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
     // Other Variables
     private Student student;
-    private String this_uni_domain;
-    private String this_user_id;
     private Uri imgUri;
+    private boolean updated = false;
 
 
 /* Override Methods
@@ -85,10 +79,17 @@ public class EditStudentProfileActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_studentprofile);
 
+        // Initialization
         declareViews();
         barInteraction();       // Don't allow user to do anything yet
         getIntentExtras();      // Get address of student in database via intent extras
-        getStudentInfo();       // Load student info from Firestore
+        setFields();
+
+        // Set Listeners
+        setTextWatcher();
+        setFocusListener();
+        setBirthDayChangeListener();
+        setDegreeChangeListener();
     }
 
     @Override
@@ -96,7 +97,7 @@ public class EditStudentProfileActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Returning from choosing an image
-        if (resultCode == RESULT_OK && requestCode == PICKIMAGE_REQUEST_CODE
+        if (resultCode == RESULT_OK && requestCode == Constant.PICK_IMAGE_REQUEST_CODE
                 && data != null && data.getData() != null) {
 
             imgUri = data.getData();
@@ -113,15 +114,16 @@ public class EditStudentProfileActivity extends Activity {
 /* Initialization Methods
 ***************************************************************************************************/
 
-    // Get address of student in database
+    // Get student values
     private void getIntentExtras() {
-        if(getIntent() != null) {
-            this_uni_domain = getIntent().getStringExtra("this_uni_domain");
-            this_user_id = getIntent().getStringExtra("this_user_id");
+        if(getIntent() != null)
+            student = getIntent().getParcelableExtra("student");
 
-            if (this_uni_domain == null || this_user_id == null)
-                Log.e(TAG, "One of UserID or Domain is null!");
+        if (student == null) {
+            Log.e(TAG, "Student Parcel was null!");
+            backToMain();
         }
+
     }
 
     private void declareViews(){
@@ -230,7 +232,7 @@ public class EditStudentProfileActivity extends Activity {
         student.setBirth_millis(datePickerToMillis(mBirthDay));
         if (!degree.equals("Degree")) student.setDegree(degree);
 
-        saveImage();
+        saveImage();    // Save to database
     }
 
     // OnClick for edit image (upload an image from gallery)
@@ -243,7 +245,7 @@ public class EditStudentProfileActivity extends Activity {
         intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
 
         // onActivityResult is triggered when coming back
-        startActivityForResult(intent, PICKIMAGE_REQUEST_CODE);
+        startActivityForResult(intent, Constant.PICK_IMAGE_REQUEST_CODE);
     }
 
 /* Input Checking Methods
@@ -271,13 +273,11 @@ public class EditStudentProfileActivity extends Activity {
 
     // Go back to Main Activity
     private void backToMain(){
+        Log.d(TAG, "Going back to main");
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("this_uni_domain", this_uni_domain);
-        intent.putExtra("this_user_id", this_user_id);
-        intent.putExtra("return_fragId", "p"); //TODO doesn't transmit properly??
-        Log.d(TAG, "GIVING CHAR: " + 'p');
+        intent.putExtra("updated", updated);    // Tell main to reload profile or nah
+        setResult(RESULT_OK, intent);
         finish();
-        startActivity(intent);
     }
 
     private void allowInteraction(){
@@ -306,34 +306,6 @@ public class EditStudentProfileActivity extends Activity {
 /* Firebase Related Methods
 ***************************************************************************************************/
 
-    // Load student document from database
-    private void getStudentInfo(){
-        db.collection("universities").document(this_uni_domain).collection("users").document(this_user_id)
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    DocumentSnapshot doc = task.getResult();
-                    if (doc == null){
-                        Log.e(TAG, "Document doesn't exist");
-                        return;
-                    }
-                    student = doc.toObject(Student.class);
-                    if (student == null) Log.e(TAG, "Student object obtained from database is null!");
-                    else student.setId(this_user_id);
-
-                    // Set fields with current values and initiate listeners
-                    setFields();
-                    setTextWatcher();
-                    setFocusListener();
-                    setBirthDayChangeListener();
-                    setDegreeChangeListener();
-                }
-                else Log.e(TAG,"getStudentInfo: unsuccessful!");
-            }
-        });
-    }
-
     // Load student profile picture
     // Will throw an exception if file doesn't exist in storage but app continues to work fine
     private void loadImage(){
@@ -360,11 +332,19 @@ public class EditStudentProfileActivity extends Activity {
 
     // Rewrite old student document with new info
     private void saveStudentInfo(){
-        db.collection("universities").document(this_uni_domain).collection("users").document(this_user_id)
-                .set(student).addOnCompleteListener(new OnCompleteListener<Void>() {
+        String address = "universities/" + student.getUni_domain() + "/users/" + student.getId();
+        if (address.contains("null")){
+            Log.e(TAG, "Student Address has null values.");
+            return;
+        }
+
+        db.document(address).set(student).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) Log.d(TAG, "Changes saved.");
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "Changes saved.");
+                    updated = true;
+                }
                 else Log.e(TAG, "Something went wrong when trying to save changes.\n" + task.getException());
                 allowInteraction();
                 backToMain();
@@ -383,7 +363,7 @@ public class EditStudentProfileActivity extends Activity {
 
 
         // Build storage path
-        final String path = "userfiles/" + this_user_id + "/" + UUID.randomUUID().toString() +"JPG";
+        final String path = "userfiles/" + student.getId() + "/" + UUID.randomUUID().toString() +"JPG";
         StorageReference storageReference = base_storage_ref.child(path);
 
         // Upload image to storage and proceed to save other user info
@@ -394,17 +374,19 @@ public class EditStudentProfileActivity extends Activity {
 
                 // Task failed
                 if (!task.isSuccessful()) {
-                    EditStudentProfileActivity.this.allowInteraction();
+                    allowInteraction();
                     Log.e(TAG, "Profile Upload Failed.");
                 }
 
                 // Task was successful
-                else if (task.getResult() != null)
-                    student.setProfile_picture(path);     // Save download URL of profile picture
+                else if (task.getResult() != null) {
+                    student.setProfile_picture(path);   // Save download URL of profile picture
+                    updated = true;                     // Profile was updated
+                }
 
 
                 // Add user profile to database
-                EditStudentProfileActivity.this.saveStudentInfo();
+                saveStudentInfo();
             }
         });
     }
@@ -435,13 +417,6 @@ public class EditStudentProfileActivity extends Activity {
             if (array[i].trim().equals(str)) return i;
         }
         return -1; // Not found
-    }
-
-    // Get file Extension
-    private String getFileExt(Uri file){
-        ContentResolver cR = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cR.getType(file));
     }
 
     // Compress image

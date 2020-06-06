@@ -29,17 +29,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.ivy2testing.R;
-import com.ivy2testing.authentication.LoginActivity;
-import com.ivy2testing.authentication.StudentSignupDialog;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.ivy2testing.StaticDomainList.domain_list;
-import static com.ivy2testing.StaticDegreesList.degree_array;
+import static com.ivy2testing.util.StaticDomainList.domain_list;
+import static com.ivy2testing.util.StaticDegreesList.degree_array;
 
 public class StudentSignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     // Views

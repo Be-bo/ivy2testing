@@ -1,4 +1,4 @@
-package com.ivy2testing;
+package com.ivy2testing.util;
 
 public class StaticDegreesList {
     

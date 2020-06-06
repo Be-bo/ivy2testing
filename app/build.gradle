@@ -32,6 +32,7 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:1.1.0"
     implementation 'androidx.navigation:navigation-fragment:2.1.0'
     implementation 'androidx.navigation:navigation-ui:2.1.0'
+    implementation 'androidx.wear:wear:1.0.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
@@ -49,7 +50,8 @@ dependencies {
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'             // Circular image views
     implementation 'com.github.bumptech.glide:glide:4.8.0'          // Glide
-    implementation 'com.squareup.picasso:picasso:2.71828'           // Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    compileOnly 'com.google.android.wearable:wearable:2.5.0'// Picasso
 }
 
 apply plugin: 'com.android.application'

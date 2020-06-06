@@ -27,8 +27,9 @@ import com.ivy2testing.chat.ChatFragment;
 import com.ivy2testing.home.HomeFragment;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.userProfile.StudentProfileFragment;
+import com.ivy2testing.util.FragCommunicator;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FragCommunicator {
 
     // Constants
     private final static String TAG = "MainActivity";
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private String this_uni_domain;
     private String this_user_id;
     private boolean is_organization = false;
-    private int returning_fragId;
+    private int returning_fragId = R.id.tab_bar_home;   // Show home by default
     private Student mStudent;       //TODO need abstract class User?
     private Uri profileImgUri;
 
@@ -61,12 +62,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         declareViews();
+        chooseDisplay();       // Which display to use depending on if user is signed in or nah
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        chooseDisplay();       // Which display to use depending on if user is signed in or nah
+    public void onAttachFragment(@NonNull Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (fragment instanceof StudentProfileFragment) {
+            StudentProfileFragment profileFragment = (StudentProfileFragment) fragment;
+            profileFragment.setCommunicator(this);
+        }
     }
 
     /* Initialization Methods
@@ -156,7 +161,11 @@ public class MainActivity extends AppCompatActivity {
 
         startLoading();     // Loading Animation overlay
 
-        getIntentExtras();
+        // Get intent extras
+        if (getIntent() != null) {
+            this_uni_domain = getIntent().getStringExtra("this_uni_domain");
+            this_user_id = getIntent().getStringExtra("this_user_id");
+        }
 
         if (this_uni_domain == null || this_user_id == null){
             Log.w(TAG,"Not signed in yet!");
@@ -183,47 +192,51 @@ public class MainActivity extends AppCompatActivity {
 
     // Get all student info and return student class
     public void getUserInfo(){
+        String address = "universities/" + this_uni_domain + "/users/" + this_user_id;
+        if (address.contains("null")){
+            Log.e(TAG, "User Address has null values.");
+            return;
+        }
 
-        db.collection("universities").document(this_uni_domain).collection("users").document(this_user_id)
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.document(address).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    DocumentSnapshot doc = task.getResult();
-                    if (doc == null){
-                        Log.e(TAG, "Document doesn't exist");
-                        return;
-                    }
-
-                    // what TODO if field doesn't exist?
-                    if (doc.get("is_organization") == null){
-                        Log.e(TAG, "getUserInfo: 'is_organization' field doesn't exist");
-                        mStudent = doc.toObject(Student.class);
-                        if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
-                        else mStudent.setId(this_user_id);
-                        // Continue to rest of App
-                        setNavigationListener();
-                        setLoggedInDisplay();
-                        return;
-                    }
-
-                    // Student or Organization?
-                    is_organization = (boolean) doc.get("is_organization");
-                    if (is_organization){
-                        //TODO is organization
-                        Log.d(TAG, "User is an organization!");
-                        // Continue to rest of App
-                        setNavigationListener();
-                        setLoggedInDisplay();
-                    }
-                    else {
-                        mStudent = doc.toObject(Student.class);
-                        if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
-                        else mStudent.setId(this_user_id);
-                        getStudentPic();
-                    }
+            if (task.isSuccessful()){
+                DocumentSnapshot doc = task.getResult();
+                if (doc == null){
+                    Log.e(TAG, "Document doesn't exist");
+                    return;
                 }
-                else Log.e(TAG,"getUserInfo: unsuccessful!");
+
+                // what TODO if field doesn't exist?
+                if (doc.get("is_organization") == null){
+                    Log.e(TAG, "getUserInfo: 'is_organization' field doesn't exist");
+                    mStudent = doc.toObject(Student.class);
+                    if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
+                    else mStudent.setId(this_user_id);
+                    // Continue to rest of App
+                    setNavigationListener();
+                    setLoggedInDisplay();
+                    return;
+                }
+
+                // Student or Organization?
+                is_organization = (boolean) doc.get("is_organization");
+                if (is_organization){
+                    //TODO is organization
+                    Log.d(TAG, "User is an organization!");
+                    // Continue to rest of App
+                    setNavigationListener();
+                    setLoggedInDisplay();
+                }
+                else {
+                    mStudent = doc.toObject(Student.class);
+                    if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
+                    else mStudent.setId(this_user_id);
+                    getStudentPic();
+                }
+            }
+            else Log.e(TAG,"getUserInfo: unsuccessful!");
             }
         });
     }
@@ -258,22 +271,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-/* Utility Methods
+
+/* Interface Methods
 ***************************************************************************************************/
 
-    // Returning fragment view
-    private void getIntentExtras(){
-        if (getIntent() == null) return;
-
-        this_uni_domain = getIntent().getStringExtra("this_uni_domain");
-        this_user_id = getIntent().getStringExtra("this_user_id");
-        String frag = getIntent().getStringExtra("return_fragId"); //TODO is null for some reason???
-        Log.d(TAG, "GOT CHAR: "+frag + ", domain: " + this_uni_domain);
-
-        if (frag == null) returning_fragId = R.id.tab_bar_home;
-        else if (frag.equals("p")) returning_fragId = R.id.tab_bar_profile;
-        else if (frag.equals("c")) returning_fragId = R.id.tab_bar_chat;
-        else returning_fragId = R.id.tab_bar_home;
+    // Frag Communicator
+    @Override
+    public Object message(Object obj) {
+        if (obj instanceof Student) {
+            mStudent = (Student) obj;   // Update student user
+            Log.d(TAG, "Student " + mStudent.getName() + " got updated!");
+        }
+        return null;
     }
-
 }

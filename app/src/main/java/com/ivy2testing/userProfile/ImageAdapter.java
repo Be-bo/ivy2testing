@@ -10,7 +10,7 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ivy2testing.entities.OnSelectionListener;
+import com.ivy2testing.util.OnSelectionListener;
 import com.ivy2testing.R;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.ivy2testing;
+package com.ivy2testing.util;
 
 public class StaticDomainList {
     // TODO  Has been updated on 5/25/2020 to contain only NA domains otherwise the file is too long
