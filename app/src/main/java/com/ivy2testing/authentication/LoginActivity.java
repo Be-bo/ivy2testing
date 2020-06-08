@@ -26,8 +26,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.R;
+import com.ivy2testing.main.MainActivity;
 
 /** @author = Zahra Ghavasieh
  * Overview: First activity user encounters when launching app

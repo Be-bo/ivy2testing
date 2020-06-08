@@ -3,7 +3,7 @@
     android:id="@+id/hamburger_menu_container"
     android:layout_width="match_parent"
     android:layout_height="180dp"
-    android:background="@drawable/gradient_greenwhite"
+    android:background="@drawable/gradient_green"
     android:gravity="bottom"
     android:orientation="vertical"
     android:padding="16dp"

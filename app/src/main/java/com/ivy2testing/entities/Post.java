@@ -1,4 +1,4 @@
-package com.ivy2testing;
+package com.ivy2testing.entities;
 
 public class Post {
     // this class is just getters and setters...
