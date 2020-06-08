@@ -2,6 +2,7 @@ package com.ivy2testing.home;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -51,6 +53,7 @@ public class HomeFragment extends Fragment {
     private StorageReference db_storage = FirebaseStorage.getInstance().getReference();
 
     private Student student;
+    private boolean is_organization = false;
 
     // Constructor
     public HomeFragment(Context context, Student student){
@@ -209,5 +212,83 @@ public class HomeFragment extends Fragment {
         insertPoint.addView(v,0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
+    /* Firebase Methods
+     ***************************************************************************************************/
+
+    // Get all student info and return student class
+    public void getUserInfo(){
+        final String this_user_id = student.getId();
+        String address = "universities/" + student.getUni_domain() + "/users/" + this_user_id;
+        if (address.contains("null")){
+            Log.e(TAG, "User Address has null values.");
+            return;
+        }
+
+        db_reference.document(address).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot doc = task.getResult();
+                    if (doc == null){
+                        Log.e(TAG, "Document doesn't exist");
+                        return;
+                    }
+
+                    // what TODO if field doesn't exist?
+                    if (doc.get("is_organization") == null){
+                        Log.e(TAG, "getUserInfo: 'is_organization' field doesn't exist");
+                        student = doc.toObject(Student.class);
+                        if (student == null) Log.e(TAG, "Student object obtained from database is null!");
+                        else {
+                            student.setId(this_user_id);
+                            setLoggedInDisplay();   // Logged in!
+                        }
+
+                        return;
+                    }
+
+                    // Student or Organization?
+                    is_organization = (boolean) doc.get("is_organization");
+                    if (is_organization){
+                        //TODO is organization
+                        Log.d(TAG, "User is an organization!");
+                        mCommunicator.message(is_organization); //Update in Main Activity
+                        setLoggedInDisplay();   // Continue to rest of App TODO change to org view
+                    }
+                    else {
+                        student = doc.toObject(Student.class);
+                        if (student == null) Log.e(TAG, "Student object obtained from database is null!");
+                        else student.setId(this_user_id);
+                        getStudentPic();
+                    }
+                }
+                else Log.e(TAG,"getUserInfo: unsuccessful!");
+            }
+        });
+    }
+
+    // load picture from firebase storage
+    // Will throw an exception if file doesn't exist in storage but app continues to work fine
+    private void getStudentPic() {
+
+        // Make sure student has a profile image already
+        if (student.getProfile_picture() != null){
+            db_storage.child(student.getProfile_picture()).getDownloadUrl()
+                    .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()){
+                                mCommunicator.message(task.getResult()); //Send Uri to main
+                            }
+                            else {
+                                Log.w(TAG, task.getException());
+                                student.setProfile_picture(""); // image doesn't exist
+                            }
+                            setLoggedInDisplay(); // Logged In!
+                        }
+                    });
+        }
+        else setLoggedInDisplay(); // Logged In with no pic!
+    }
 
 }

@@ -120,6 +120,7 @@ public class StudentProfileFragment extends Fragment {
     }
 
     private void setupViews(){
+        if (student == null) return;
         mName.setText(student.getName());
         mDegree.setText(student.getDegree());
         if (profileImgUri!= null) Picasso.get().load(profileImgUri).into(mProfileImg);
@@ -192,6 +193,8 @@ public class StudentProfileFragment extends Fragment {
 
     // Reload student profile
     private void reloadStudent() {
+        if (student == null) return;
+
         final String this_user_id = student.getId();
         String address = "universities/" + student.getUni_domain() + "/users/" + student.getId();
         if (address.contains("null")){
@@ -224,6 +227,7 @@ public class StudentProfileFragment extends Fragment {
     // load picture from firebase storage
     // Will throw an exception if file doesn't exist in storage but app continues to work fine
     private void getStudentPic() {
+        if (student == null) return;
 
         // Make sure student has a profile image already
         if (student.getProfile_picture() != null){

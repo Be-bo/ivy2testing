@@ -10,33 +10,27 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.ivy2testing.entities.Organization;
 import com.ivy2testing.home.CreatePost;
 import com.ivy2testing.R;
 import com.ivy2testing.authentication.LoginActivity;
@@ -46,8 +40,6 @@ import com.ivy2testing.home.HomeFragment;
 import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.FragCommunicator;
 
-import java.util.Map;
-
 public class MainActivity extends AppCompatActivity implements FragCommunicator {
 
     // Constants
@@ -55,16 +47,15 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
 
     // Hamburger menu
     private DrawerLayout drawer;
-    private Toolbar main_toolbar;
 
-
-    private BottomNavigationView mainTabBar;
+    private BottomNavigationView mBottomNav;
     private FrameLayout mFrameLayout;
     private FrameLayout loadingLayout;
 
-
     private Button post_button;
 
+    // Firebase
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseFirestore db_reference = FirebaseFirestore.getInstance();
     private StorageReference db_storage = FirebaseStorage.getInstance().getReference();
 
@@ -72,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
     private boolean is_organization = false;
     private Student mStudent;       //TODO need abstract class User?
     private Uri profileImgUri;
+    private String currentDomain;
 
 
     // On create
@@ -86,7 +78,12 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
 
         setHandlers();
         setListeners();
-        startLoading();     // Loading Animation overlay
+        //attemptAutoLogin();
+
+        // Set up home fragment
+        Fragment selectedFragment = new HomeFragment(MainActivity.this, mStudent);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragmentContainer, selectedFragment).commit();
 
         // this method is kept so people can swap fragments when need be
         // fragmentHandler();
@@ -95,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
 
     private void setToolBar() {
         // toolbar is an <include> in xml, referencing the file main_toolbar.xml
-        main_toolbar = findViewById(R.id.main_toolbar_id);
+        Toolbar main_toolbar = findViewById(R.id.main_toolbar_id);
 
         // setting support action bar builds the toolbar (required for a hamburger menu)
         setSupportActionBar(main_toolbar);
@@ -144,22 +141,23 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
 
     // Enable bottom Navigation for a logged-in user
     private void setLoggedInDisplay(){
-        mainTabBar.setVisibility(View.VISIBLE);
+        mBottomNav.setVisibility(View.VISIBLE);
         mFrameLayout.setVisibility(View.VISIBLE);
-        mainTabBar.setSelectedItemId(R.id.tab_bar_home);
+        mBottomNav.setSelectedItemId(R.id.tab_bar_home);
+        setNavigationListener();
         endLoading();
     }
 
     // Disable bottom Navigation for a logged-in user
     private void setLoggedOutDisplay(){
-        mainTabBar.setVisibility(View.GONE);
+        mBottomNav.setVisibility(View.GONE);
         mFrameLayout.setVisibility(View.VISIBLE);
         endLoading();
     }
 
     private void setNavigationListener() {
         // Test bottom navigation
-        mainTabBar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment selectedFragment = null;
@@ -188,9 +186,10 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
     /* ************************************************************************************************** */
     // grabbing views and setting current_button to handle clicks on bubbles
     private void setHandlers(){
-        mainTabBar = findViewById(R.id.main_tab_bar);
+        mBottomNav = findViewById(R.id.main_tab_bar);
         loadingLayout = findViewById(R.id.main_loadingScreen);
         post_button = findViewById(R.id.post_button);
+        mFrameLayout = findViewById(R.id.main_fragmentContainer);
     }
 
     /* ************************************************************************************************** */
@@ -251,6 +250,9 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
             mStudent = (Student) obj;   // Update student user
             Log.d(TAG, "Student " + mStudent.getName() + " got updated!");
         }
+        else if (obj instanceof Organization){
+            Log.e(TAG, "Oh no! Organization view not implemented yet!");
+        }
         else if (obj instanceof String) {
             switch (obj.toString()){
                 case "loggedIn":
@@ -268,6 +270,10 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
         else if (obj instanceof Uri) {
             profileImgUri = (Uri) obj;
             Log.d(TAG, "Image Uri got updated!");
+        }
+        else if(obj instanceof Boolean) {
+            is_organization = (Boolean) obj;
+            Log.d(TAG, "Is_Organization updated to: " + is_organization);
         }
         return null;
     }
@@ -310,5 +316,109 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
             fragmentTransaction.remove(mf).commit();
             getSupportFragmentManager().executePendingTransactions();
         }
+    }
+
+    // Auto Login
+    /* ************************************************************************************************** */
+
+    // Check to see if we still have user's Firebase Auth token if we do, attempt login
+    private void attemptAutoLogin() {
+        startLoading();     // Loading Animation overlay
+
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null && auth.getUid() != null && user.isEmailVerified()) {
+            loadPreferences();
+            if (!currentDomain.equals("")) {
+                Log.d(TAG, "autologin User: " + user.getUid());
+                setLoggedInDisplay();
+            } else {
+                Log.d(TAG,"Couldn't perform auto-login.");
+                setLoggedOutDisplay();
+            }
+        }
+    }
+
+    // Load the university domain for auto login
+    private void loadPreferences() {
+        SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
+        currentDomain = sharedPreferences.getString("domain", "");
+    }
+
+
+    /* Firebase Methods
+     ***************************************************************************************************/
+
+    // Get all student info and return student class
+    public void getUserInfo(){
+        String address = "universities/" + currentDomain + "/users/" + auth.getUid();
+        if (address.contains("null")){
+            Log.e(TAG, "User Address has null values.");
+            return;
+        }
+
+        db_reference.document(address).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot doc = task.getResult();
+                    if (doc == null){
+                        Log.e(TAG, "Document doesn't exist");
+                        return;
+                    }
+
+                    // what TODO if field doesn't exist?
+                    if (doc.get("is_organization") == null){
+                        Log.e(TAG, "getUserInfo: 'is_organization' field doesn't exist");
+                        mStudent = doc.toObject(Student.class);
+                        if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
+                        else {
+                            mStudent.setId(auth.getUid());
+                            setLoggedInDisplay();   // Logged in!
+                        }
+
+                        return;
+                    }
+
+                    // Student or Organization?
+                    is_organization = (boolean) doc.get("is_organization");
+                    if (is_organization){
+                        //TODO is organization
+                        Log.d(TAG, "User is an organization!");
+                        setLoggedInDisplay();   // Continue to rest of App TODO change to org view
+                    }
+                    else {
+                        mStudent = doc.toObject(Student.class);
+                        if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
+                        else mStudent.setId(auth.getUid());
+                        getStudentPic();
+                    }
+                }
+                else Log.e(TAG,"getUserInfo: unsuccessful!");
+            }
+        });
+    }
+
+    // load picture from firebase storage
+    // Will throw an exception if file doesn't exist in storage but app continues to work fine
+    private void getStudentPic() {
+
+        // Make sure student has a profile image already
+        if (mStudent.getProfile_picture() != null){
+            db_storage.child(mStudent.getProfile_picture()).getDownloadUrl()
+                    .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()){
+                                profileImgUri = task.getResult();
+                            }
+                            else {
+                                Log.w(TAG, task.getException());
+                                mStudent.setProfile_picture(""); // image doesn't exist
+                            }
+                            setLoggedInDisplay(); // Logged In!
+                        }
+                    });
+        }
+        else setLoggedInDisplay(); // Logged In with no pic!
     }
 }
