@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
     private String this_uni_domain;
     private String this_user_id;
     private boolean is_organization = false;
-    private int returning_fragId = R.id.tab_bar_home;   // Show home by default
     private Student mStudent;       //TODO need abstract class User?
     private Uri profileImgUri;
 
@@ -91,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
         mainTestButton.setVisibility(View.GONE);
         mainTabBar.setVisibility(View.VISIBLE);
         mFrameLayout.setVisibility(View.VISIBLE);
-        mainTabBar.setSelectedItemId(returning_fragId);
+        mainTabBar.setSelectedItemId(R.id.tab_bar_home);
         endLoading();
     }
 

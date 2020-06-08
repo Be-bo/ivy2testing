@@ -51,7 +51,7 @@ import java.util.UUID;
 public class EditStudentProfileActivity extends Activity {
 
     // Constants
-    private final static String TAG = "StudEditProfileActivity";
+    private final static String TAG = "EditStudProfileActivity";
 
     // Views
     private ImageView mImg;
@@ -102,6 +102,7 @@ public class EditStudentProfileActivity extends Activity {
 
             imgUri = data.getData();
 
+            // TODO implement crop
             Picasso.get()
                     .load(data.getData())
                     .fit()
@@ -123,7 +124,6 @@ public class EditStudentProfileActivity extends Activity {
             Log.e(TAG, "Student Parcel was null!");
             backToMain();
         }
-
     }
 
     private void declareViews(){

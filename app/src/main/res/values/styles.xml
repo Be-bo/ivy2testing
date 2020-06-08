@@ -48,8 +48,7 @@
         <item name="android:includeFontPadding">false</item>
         <item name="android:textColor">@color/text_color</item>
         <item name="android:thumbTint">@color/switch_color</item>
-        <item name="android:trackTint">@color/switch_color
-        </item>   <!--30% transparent by default-->
+        <item name="android:trackTint">@color/switch_color</item>   <!--30% transparent by default-->
     </style>
 
     <style name="MainNavBar" parent="Widget.Design.BottomNavigationView">
