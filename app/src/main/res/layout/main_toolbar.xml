@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_toolbar_view"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:background="#FAFAFA"
@@ -9,16 +10,18 @@
     app:title="">
 
     <ImageView
+        android:id="@+id/ivy_logo_toolbar"
         android:layout_width="55dp"
         android:layout_height="55dp"
         android:layout_gravity="center"
         android:src="@drawable/ivy_logo" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:paddingEnd="16dp"
-        android:src="@drawable/ic_create_placeholder" />
+    <Button
+        android:id="@+id/post_button"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="right"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/ic_create_placeholder" />
 
 </androidx.appcompat.widget.Toolbar>

@@ -5,6 +5,7 @@
     android:id="@+id/constraintlayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+    <!-- file is defined as a placeholder until it is decided how bubbles will work -->
 
     <HorizontalScrollView
         android:id="@+id/bubble_scrollview"

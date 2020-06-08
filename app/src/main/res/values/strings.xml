@@ -19,7 +19,7 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <!-- There is a space before and after each item... -->
+    <!-- There is a space before and after each item... using .trim in student signup -->
     <string-array name="degree_list">
         <item> Degree </item>
         <item> Accounting </item>
@@ -106,4 +106,7 @@
         <item> Women\'s Studies </item>
         <item> Zoology </item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
