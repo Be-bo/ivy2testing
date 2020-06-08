@@ -7,19 +7,19 @@
         <item
             android:id="@+id/tab_bar_chat"
             android:title="@string/chat"
-            android:icon="@drawable/ivy_logo"
+            android:icon="@drawable/ic_chat"
             />
 
         <item
             android:id="@+id/tab_bar_home"
             android:title="@string/home"
-            android:icon="@drawable/ivy_logo"
+            android:icon="@drawable/ic_home"
             />
 
         <item
             android:id="@+id/tab_bar_profile"
             android:title="@string/profile"
-            android:icon="@drawable/ivy_logo"
+            android:icon="@drawable/ic_profile"
             />
     </group>
 
