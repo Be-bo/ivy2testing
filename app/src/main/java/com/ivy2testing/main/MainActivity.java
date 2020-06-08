@@ -57,10 +57,6 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
     private DrawerLayout drawer;
     private Toolbar main_toolbar;
 
-    // Testing buttons
-    private Button mainLoginButton;
-    private Button mainTestButton;
-
 
     private BottomNavigationView mainTabBar;
     private FrameLayout mFrameLayout;
@@ -69,15 +65,10 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
 
     private Button post_button;
 
-    private Button uni_button;
-    private Button current_button;
-
     private FirebaseFirestore db_reference = FirebaseFirestore.getInstance();
     private StorageReference db_storage = FirebaseStorage.getInstance().getReference();
 
     // Other Variables
-    private String this_uni_domain;
-    private String this_user_id;
     private boolean is_organization = false;
     private Student mStudent;       //TODO need abstract class User?
     private Uri profileImgUri;
@@ -89,6 +80,20 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Set Up Top Navigation Toolbar
+        setToolBar();
+
+        setHandlers();
+        setListeners();
+        startLoading();     // Loading Animation overlay
+
+        // this method is kept so people can swap fragments when need be
+        // fragmentHandler();
+
+    }
+
+    private void setToolBar() {
         // toolbar is an <include> in xml, referencing the file main_toolbar.xml
         main_toolbar = findViewById(R.id.main_toolbar_id);
 
@@ -105,20 +110,10 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
         toggle.syncState();
 
         // this is required to nullify title, title is set to empty character in xml too but still writes
-        getSupportActionBar().setTitle(null);
+        if (getSupportActionBar() != null) getSupportActionBar().setTitle(null);
 
         // set color of hamburger menu
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.interaction));
-
-        setHandlers();
-        setListeners();
-        chooseDisplay();
-
-
-        // this method is kept so people can swap fragments when need be
-        // fragmentHandler();
-
-        buildMainFeed();
     }
 
     /* ************************************************************************************************** */
@@ -141,24 +136,24 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
             StudentProfileFragment profileFragment = (StudentProfileFragment) fragment;
             profileFragment.setCommunicator(this);
         }
+        else if (fragment instanceof HomeFragment) {
+            HomeFragment profileFragment = (HomeFragment) fragment;
+            profileFragment.setCommunicator(this);
+        }
     }
 
     // Enable bottom Navigation for a logged-in user
     private void setLoggedInDisplay(){
-        mainLoginButton.setVisibility(View.GONE);
-        mainTestButton.setVisibility(View.GONE);
         mainTabBar.setVisibility(View.VISIBLE);
-     //  mFrameLayout.setVisibility(View.VISIBLE);
+        mFrameLayout.setVisibility(View.VISIBLE);
         mainTabBar.setSelectedItemId(R.id.tab_bar_home);
         endLoading();
     }
 
     // Disable bottom Navigation for a logged-in user
     private void setLoggedOutDisplay(){
-        mainLoginButton.setVisibility(View.VISIBLE);
-        mainTestButton.setVisibility(View.VISIBLE);
         mainTabBar.setVisibility(View.GONE);
-//        mFrameLayout.setVisibility(View.GONE);
+        mFrameLayout.setVisibility(View.VISIBLE);
         endLoading();
     }
 
@@ -174,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
                         selectedFragment = new ChatFragment();
                         break;
                     case R.id.tab_bar_home:
-                        selectedFragment = new HomeFragment();
+                        selectedFragment = new HomeFragment(MainActivity.this, mStudent);
                         break;
                     case R.id.tab_bar_profile:
                         if (is_organization) Log.w(TAG, "Organization Profile View under construction.");
@@ -196,11 +191,6 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
         mainTabBar = findViewById(R.id.main_tab_bar);
         loadingLayout = findViewById(R.id.main_loadingScreen);
         post_button = findViewById(R.id.post_button);
-        uni_button = findViewById(R.id.btn_1);
-        mainLoginButton = findViewById(R.id.main_loginButton);
-        mainTestButton = findViewById(R.id.main_testButton);
-
-        current_button = uni_button;
     }
 
     /* ************************************************************************************************** */
@@ -231,28 +221,12 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
                 startActivity(intent);
             }
         });
-        current_button.setEnabled(false);
     }
+
     /* Transition Methods
      ***************************************************************************************************/
 
-    // Get intent extras and see if logged in
-    private void chooseDisplay(){
 
-        startLoading();     // Loading Animation overlay
-
-        // Get intent extras
-        if (getIntent() != null) {
-            this_uni_domain = getIntent().getStringExtra("this_uni_domain");
-            this_user_id = getIntent().getStringExtra("this_user_id");
-        }
-
-        if (this_uni_domain == null || this_user_id == null){
-            Log.w(TAG,"Not signed in yet!");
-            setLoggedOutDisplay();
-        }
-        else getUserInfo();
-    }
     // Set loading page animation
     private void startLoading(){
         loadingLayout.setVisibility(View.VISIBLE);      // Bring up view to cover entire screen
@@ -267,118 +241,6 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
     }
 
 
-    /* ************************************************************************************************** */
-    // resets main "Uni" button to be selected/ deselects others,
-    // this method is can be called when returning from other activities or back presses
-
-    private void resetMainBubble(){
-        current_button.setEnabled(true);
-        uni_button.setEnabled(false);
-        current_button = uni_button;
-    }
-
-    /* ************************************************************************************************** */
-    // the buttons are set to enabled to be clickable and disabled  when selected so they can't be constantly clicked
-    // they can be set to selected and unselected but it depends on what function they perform when clicked
-    // I was struggling to get the buttons to stay clicked so i threw together this enabled solution, and it works,
-    // but we can change the states... for now this works
-
-    // all bubbles are also set with an onClick function so they call this function, and locally, whichever button
-    // triggers the function, is saved locally and the view is updated. current_button = most recently clicked button, the last button will be re-enabled
-    // functions can be placed here to perform a function based off the text/ information in a button i.e a search with current_button.getText
-
-    public void toggleEnabled(View view){
-        current_button.setEnabled(true);
-        view.setEnabled(false);
-        current_button = (Button) view;
-      //  Toast.makeText(this, "" + current_button.getText(), Toast.LENGTH_SHORT).show();
-
-    }
-
-    /* Firebase Methods
-     ***************************************************************************************************/
-
-    // Get all student info and return student class
-    public void getUserInfo(){
-        String address = "universities/" + this_uni_domain + "/users/" + this_user_id;
-        if (address.contains("null")){
-            Log.e(TAG, "User Address has null values.");
-            return;
-        }
-
-        db_reference.document(address).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    DocumentSnapshot doc = task.getResult();
-                    if (doc == null){
-                        Log.e(TAG, "Document doesn't exist");
-                        return;
-                    }
-
-                    // what TODO if field doesn't exist?
-                    if (doc.get("is_organization") == null){
-                        Log.e(TAG, "getUserInfo: 'is_organization' field doesn't exist");
-                        mStudent = doc.toObject(Student.class);
-                        if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
-                        else mStudent.setId(this_user_id);
-                        // Continue to rest of App
-                        setNavigationListener();
-                        setLoggedInDisplay();
-                        return;
-                    }
-
-                    // Student or Organization?
-                    is_organization = (boolean) doc.get("is_organization");
-                    if (is_organization){
-                        //TODO is organization
-                        Log.d(TAG, "User is an organization!");
-                        // Continue to rest of App
-                        setNavigationListener();
-                        setLoggedInDisplay();
-                    }
-                    else {
-                        mStudent = doc.toObject(Student.class);
-                        if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
-                        else mStudent.setId(this_user_id);
-                        getStudentPic();
-                    }
-                }
-                else Log.e(TAG,"getUserInfo: unsuccessful!");
-            }
-        });
-    }
-
-    // load picture from firebase storage
-    // Will throw an exception if file doesn't exist in storage but app continues to work fine
-    private void getStudentPic() {
-
-        // Make sure student has a profile image already
-        if (mStudent.getProfile_picture() != null){
-            db_storage.child(mStudent.getProfile_picture()).getDownloadUrl()
-                    .addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if (task.isSuccessful()){
-                                profileImgUri = task.getResult();
-                            }
-                            else {
-                                Log.w(TAG, task.getException());
-                                mStudent.setProfile_picture(""); // image doesn't exist
-                            }
-                            // Continue to rest of App
-                            setNavigationListener();
-                            setLoggedInDisplay();
-                        }
-                    });
-        }
-        else {
-            // Continue to rest of App
-            setNavigationListener();
-            setLoggedInDisplay();
-        }
-    }
-
     /* Interface Methods
      ***************************************************************************************************/
 
@@ -389,84 +251,27 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
             mStudent = (Student) obj;   // Update student user
             Log.d(TAG, "Student " + mStudent.getName() + " got updated!");
         }
+        else if (obj instanceof String) {
+            switch (obj.toString()){
+                case "loggedIn":
+                    setLoggedInDisplay();
+                    Log.d(TAG, "Display got updated!");
+                    break;
+                case "loggedOut":
+                    setLoggedOutDisplay();
+                    Log.d(TAG, "Display got updated!");
+                    break;
+                default:
+                    Log.e(TAG, "Did not recognize the String " + obj.toString());
+            }
+        }
+        else if (obj instanceof Uri) {
+            profileImgUri = (Uri) obj;
+            Log.d(TAG, "Image Uri got updated!");
+        }
         return null;
     }
 
-
-
-
-
-
-
-    /* ************************************************************************************************** */
-    // this function navigates to the collection containing posts, checks if an item is a post. It then converts the
-    // item to a hash map and creates a post in the fragment container view
-
-    private void buildMainFeed(){
-        //DocumentReference sampler = db_reference.collection("universities").document("ucalgary.ca").collection("posts").document("5c2fbbf4-c06b-406c-92e9-71321f046d43");
-        db_reference.collection("universities").document("ucalgary.ca").collection("posts")
-                .whereEqualTo("is_event", false)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // Toast.makeText(MainActivity.this, document.getId() + " => " + document.getData(), Toast.LENGTH_SHORT).show();
-                                Map<String, Object> is_post = document.getData();
-                                postCreator(is_post);
-                            }
-                        } else {
-                            //  Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-    }
-
-    /* ************************************************************************************************** */
-    //This function takes a hash map and fills a sample post with its information
-    //https://stackoverflow.com/questions/6216547/android-dynamically-add-views-into-view
-
-    private void postCreator( Map<String, Object> post ){
-        // layout inflater puts views inside other views
-        LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = vi.inflate(R.layout.sample_post,null);
-
-        // fill in any details dynamically here
-        final ImageView sample_image =  v.findViewById(R.id.sample_image);
-        //TODO do posts have titles?
-        TextView tv =  v.findViewById(R.id.sample_name);
-        TextView description =  v.findViewById(R.id.sample_description);
-        TextView author_name =  v.findViewById(R.id.sample_author_nam);
-        description.setText((String) post.get("text"));
-        author_name.setText( (String) post.get("author_name") );
-        String visual_path =(String) post.get("visual");
-        // if the visual path contains a / it will be a link to storage location
-        if (visual_path.contains("/") ){
-            // max download size = 1.5mb
-            db_storage.child(visual_path).getBytes(1500000).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-
-                    // bytes is an byte [] returned from storage,
-                    // set the image to be visible
-                    sample_image.setImageBitmap(BitmapFactory.decodeByteArray(bytes , 0, bytes.length));
-                    sample_image.setVisibility(View.VISIBLE);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                // TODO error handler
-                }
-            });
-        }
-
-
-        // insert into main view
-        // currently inserts newest post last... needs better queries
-        ViewGroup insertPoint = (ViewGroup) findViewById(R.id.main_fragment_linear_layout);
-        insertPoint.addView(v,0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-    }
 
 
     /* ************************************************************************************************** */

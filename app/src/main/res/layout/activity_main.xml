@@ -12,46 +12,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <include
+            android:id="@+id/main_toolbar_id"
+            layout="@layout/main_toolbar" />
+
+        <FrameLayout
+            android:id="@+id/main_fragmentContainer"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toTopOf="@+id/main_tab_bar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <include
-                android:id="@+id/main_toolbar_id"
-                layout="@layout/main_toolbar" />
-
-
-            <!-- for handling fragments we should use a frame layout, they stack views on top of eachother
-        I am changing this to a scroll view with a linear layout to chain layouts veritcally-->
-            <include layout="@layout/bubble_bar_placeholder" />
-            <FrameLayout
-                android:id="@+id/main_fragmentContainer"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@id/main_tab_bar"
-                app:layout_constraintTop_toTopOf="parent" >
-
-            <ScrollView
-                android:id="@+id/main_fragment_scrollview"
-                android:name="com.ivy2testing.mainFragmentName"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <LinearLayout
-                    android:id="@+id/main_fragment_linear_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"/>
-            </ScrollView>
-            </FrameLayout>
-
-
-        </LinearLayout>
+            app:layout_constraintBottom_toTopOf="@id/main_tab_bar"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/main_tab_bar"
@@ -72,7 +42,6 @@
         android:visibility="gone" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     <!-- navigation view is composed of a header and a menu that are defined in other files
      currently the layout for the menu is a placeholder-->
     <com.google.android.material.navigation.NavigationView
@@ -82,8 +51,5 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/main_hamburger_menu_layout"
         app:menu="@menu/hamburger_menu_menu" />
-
-
-
 
 </androidx.drawerlayout.widget.DrawerLayout>
