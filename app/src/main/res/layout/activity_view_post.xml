@@ -1,15 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
+
+        <Toolbar
+        android:id="@+id/viewPost_toolBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/gradient_toolbar_white"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/viewPost_guideline1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.02" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/viewPost_guideline1_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.10"/>
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/viewPost_guideline2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.98"/>
+
                 <ImageView
-                    android:id="@+id/event_page_image"
+                    android:id="@+id/viewPost_visual"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:src="@drawable/test_flower"
@@ -18,161 +53,86 @@
                     app:layout_constraintTop_toTopOf="parent"
                     android:adjustViewBounds="true"/>
 
-                <TextView
-                    android:id="@+id/event_page_info_row"
-                    style="@style/StandardText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:autoLink="web"
-                    android:textIsSelectable="true"
-                    android:text="info"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/event_page_image" />
-
-                <TextView
-                    android:id="@+id/event_page_description"
-                    style="@style/StandardText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:autoLink="web"
-                    android:textIsSelectable="true"
-                    android:text="Description"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/event_page_info_row" />
-
-                <TextView
-                    android:id="@+id/event_page_keywords"
-                    style="@style/StandardText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:textColor="@color/interaction"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/event_page_description" />
-
-                <TextView
-                    android:id="@+id/event_page_brought_title"
-                    style="@style/StandardText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:text="Brought to you by:"
-                    android:textAlignment="center"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/event_page_keywords" />
-
                 <ImageView
-                    android:id="@+id/event_page_logo"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="32dp"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/ivy_logo"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toTopOf="@id/event_page_going_title"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/event_page_brought_title" />
+                    android:id="@+id/viewPost_userImage"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_account_circle"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginVertical="4dp"
+                    app:layout_constraintTop_toBottomOf="@id/viewPost_visual"
+                    app:layout_constraintStart_toStartOf="@id/viewPost_guideline1"
+                    app:layout_constraintEnd_toEndOf="@id/viewPost_guideline1_5"/>
 
                 <TextView
-                    android:id="@+id/event_page_going_title"
+                    android:id="@+id/viewPost_userName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/StandardText"
+                    android:text="UserName"
+                    android:layout_margin="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/viewPost_visual"
+                    app:layout_constraintStart_toEndOf="@id/viewPost_guideline1_5"
+                    />
+
+                <TextView
+                    android:id="@+id/viewPost_viewNum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/StandardText"
+                    android:text="#### Views"
+                    android:layout_margin="8dp"
+                    app:layout_constraintTop_toBottomOf="@id/viewPost_visual"
+                    app:layout_constraintEnd_toEndOf="@id/viewPost_guideline2"/>
+
+                <TextView
+                    android:id="@+id/viewPost_description"
                     style="@style/StandardText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:text="Event Title"
-                    android:textAlignment="center"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/event_page_logo" />
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="10dp"
+                    android:text="Description DESCRIPTON blah blah blahblah blah b blahblah! blah blah blah, blah blah b bblah blah blahblah blah; blah b bblah blah b blah blah blah blahblah blah blahblah blah blah blah blah blahblah blah blahblah blah blah."
+                    app:layout_constraintEnd_toEndOf="@id/viewPost_guideline2"
+                    app:layout_constraintStart_toStartOf="@id/viewPost_guideline1"
+                    app:layout_constraintTop_toBottomOf="@id/viewPost_userImage"
+                    app:layout_constraintBottom_toTopOf="@id/viewPost_keywords"/>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/event_page_going_recycler_view"
+                <TextView
+                    android:id="@+id/viewPost_keywords"
+                    style="@style/StandardClickableText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/event_page_going_title" />
-
-                <Button
-                    android:id="@+id/event_page_im_going_button"
-                    style="@style/StandardButton"
-                    android:layout_width="0dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="I'm Going"
-                    android:visibility="visible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/event_page_register_button"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/event_page_going_recycler_view" />
-
-                <LinearLayout
-                    android:id="@+id/event_page_im_going_check_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/event_page_register_button"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/event_page_going_recycler_view">
-
-                        <ImageView
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_gravity="center_vertical"
-                            android:background="@color/transparent"
-                            android:src="@drawable/ic_baseline_add"/>
-
-                        <TextView
-                            style="@style/StandardText"
-                            android:textColor="@color/interaction"
-                            android:layout_marginStart="8dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:gravity="center_vertical"
-                            android:text="I'm going!"/>
-
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/event_page_register_button"
-                    style="@style/StandardButton"
-                    android:layout_width="0dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="Link"
-                    android:visibility="visible"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_margin="8dp"
+                    android:text="keyword1, keyword2"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/event_page_im_going_check_layout"
-                    app:layout_constraintTop_toBottomOf="@+id/event_page_going_recycler_view" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/viewPost_description" />
+
+                <TextView
+                    android:id="@+id/viewPost_comment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/StandardClickableText"
+                    android:text="Comments"
+                    android:layout_marginTop="24dp"
+                    app:layout_constraintTop_toBottomOf="@id/viewPost_keywords"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="?android:attr/listDivider"
+                    android:layout_marginTop="2dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/viewPost_comment"/>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-</ScrollView>
+        </ScrollView>
+
+</RelativeLayout>

@@ -25,6 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.ivy2testing.home.ViewPostActivity;
 import com.ivy2testing.util.FragCommunicator;
 import com.ivy2testing.util.OnSelectionListener;
 import com.ivy2testing.R;
@@ -158,7 +159,7 @@ public class StudentProfileFragment extends Fragment {
         });
         adapter.setOnSelectionListener(new OnSelectionListener() {
             @Override
-            public void onSelectionClick(int position) {selectPost();}
+            public void onSelectionClick(int position) {selectPost(position);}
         });
     }
 
@@ -181,9 +182,12 @@ public class StudentProfileFragment extends Fragment {
     // See all posts TODO
     private void seeAllPosts(){}
 
-    // A post in recycler was selected  TODO
-    private void selectPost() {
-        Toast.makeText(mContext,"I was clicked here! ", Toast.LENGTH_SHORT).show();
+    // A post in recycler was selected
+    private void selectPost(int position) {
+        Intent intent = new Intent(getActivity(), ViewPostActivity.class);
+        Log.d(TAG, "Starting ViewPost Activity for post #" + position);
+        //intent.putExtra("post", post); //TODO Post class not defined yet
+        startActivity(intent);
     }
 
 

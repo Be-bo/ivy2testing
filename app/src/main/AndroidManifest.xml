@@ -16,15 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity
-            android:name=".home.ViewPostActivity"
-            android:label="@string/title_activity_view_post">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".main.MainActivity"
             android:launchMode="singleTop"
@@ -61,6 +53,11 @@
             tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".userProfile.StudentProfileActivity"
+            android:parentActivityName=".main.MainActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".home.ViewPostActivity"
             android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
