@@ -1,6 +1,8 @@
 package com.ivy2testing.home;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,9 +29,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
+import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.entities.Student;
+import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.FragCommunicator;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class HomeFragment extends Fragment {
@@ -55,11 +60,21 @@ public class HomeFragment extends Fragment {
     private Student student;
     private boolean is_organization = false;
 
+
     // Constructor
-    public HomeFragment(Context context, Student student){
+    public HomeFragment(Context context, Student student) {
         mContext = context;
         this.student = student;
     }
+
+    // Setter for communicator
+    public void setCommunicator(FragCommunicator communicator) {
+        mCommunicator = communicator;
+    }
+
+
+    /* Overridden Methods
+     ***************************************************************************************************/
 
     @Nullable
     @Override
@@ -71,8 +86,20 @@ public class HomeFragment extends Fragment {
         mainLoginButton = rootView.findViewById(R.id.main_loginButton);
         mainTestButton = rootView.findViewById(R.id.main_testButton);
 
-        // Attempt Login
-        chooseDisplay();
+        mainLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainLogin();
+            }
+        });
+        mainTestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainTest();
+            }
+        });
+
+        chooseDisplay(); // Login?
 
         buildMainFeed();
         current_button = uni_button;
@@ -81,44 +108,75 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
-    // Setter for communicator
-    public void setCommunicator(FragCommunicator communicator) {
-        mCommunicator = communicator;
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Came back from Login activity (Change to a switch statement if more request codes)
+        if (requestCode == Constant.LOGIN_REQUEST_CODE) {
+            Log.d(TAG, "Coming back from LoginActivity!");
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                Map<Object, Object> map = new HashMap<>();
+                map.put("this_user_id", data.getStringExtra("this_user_id"));
+                map.put("this_uni_domain", data.getStringExtra("this_uni_domain"));
+                mCommunicator.mapMessage(map);  // Tell MainActivity to log us in!
+            }
+        } else
+            Log.w(TAG, "Don't know how to handle the request code, \"" + requestCode + "\" yet!");
     }
 
+    /* OnClick Methods
+     ***************************************************************************************************/
+
+    // Go to login screen
+    public void mainLogin() {
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        Log.d(TAG, "Launching LoginActivity");
+
+        // onActivityResult in MainActivity gets called!
+        if (getActivity() != null)
+            startActivityForResult(intent, Constant.LOGIN_REQUEST_CODE);
+        else
+            Log.e(TAG, "getActivity() was null when calling LoginActivity.");
+    }
+
+    // TEST For testing purposes only!
+    public void mainTest() {
+        Map<Object, Object> map = new HashMap<>();
+        map.put("this_user_id", "testID");
+        map.put("this_uni_domain", "ucalgary.ca");
+        mCommunicator.mapMessage(map);  // Tell MainActivity to log us in as testID!
+    }
 
     /* Transition Methods
      ***************************************************************************************************/
 
     // See if logged in (check if parent Activity gave us an actual student)
-    private void chooseDisplay(){
+    private void chooseDisplay() {
 
-        if (student == null){
-            Log.w(TAG,"Not signed in yet!");
+        if (student == null) {
+            Log.w(TAG, "Not signed in yet!");
             setLoggedOutDisplay();
-        }
-        else getUserInfo();
+        } else setLoggedInDisplay();
     }
+
     // Enable bottom Navigation for a logged-in user
-    private void setLoggedInDisplay(){
+    private void setLoggedInDisplay() {
         mainLoginButton.setVisibility(View.GONE);
         mainTestButton.setVisibility(View.GONE);
-        mCommunicator.message("loggedIn");  // Tells mainActivity to show bottom Nav
-        mCommunicator.message(student);
     }
 
     // Disable bottom Navigation for a logged-in user
-    private void setLoggedOutDisplay(){
+    private void setLoggedOutDisplay() {
         mainLoginButton.setVisibility(View.VISIBLE);
         mainTestButton.setVisibility(View.VISIBLE);
-        mCommunicator.message("loggedOut"); // Tells mainActivity to hide bottom Nav
     }
 
     /* ************************************************************************************************** */
     // resets main "Uni" button to be selected/ deselects others,
     // this method is can be called when returning from other activities or back presses
 
-    private void resetMainBubble(){
+    private void resetMainBubble() {
         current_button.setEnabled(true);
         uni_button.setEnabled(false);
         current_button = uni_button;
@@ -134,7 +192,7 @@ public class HomeFragment extends Fragment {
     // triggers the function, is saved locally and the view is updated. current_button = most recently clicked button, the last button will be re-enabled
     // functions can be placed here to perform a function based off the text/ information in a button i.e a search with current_button.getText
 
-    public void toggleEnabled(View view){
+    public void toggleEnabled(View view) {
         current_button.setEnabled(true);
         view.setEnabled(false);
         current_button = (Button) view;
@@ -146,7 +204,7 @@ public class HomeFragment extends Fragment {
     // this function navigates to the collection containing posts, checks if an item is a post. It then converts the
     // item to a hash map and creates a post in the fragment container view
 
-    private void buildMainFeed(){
+    private void buildMainFeed() {
         //DocumentReference sampler = db_reference.collection("universities").document("ucalgary.ca").collection("posts").document("5c2fbbf4-c06b-406c-92e9-71321f046d43");
         db_reference.collection("universities").document("ucalgary.ca").collection("posts")
                 .whereEqualTo("is_event", false)
@@ -171,22 +229,22 @@ public class HomeFragment extends Fragment {
     //This function takes a hash map and fills a sample post with its information
     //https://stackoverflow.com/questions/6216547/android-dynamically-add-views-into-view
 
-    private void postCreator( Map<String, Object> post ){
+    private void postCreator(Map<String, Object> post) {
         // layout inflater puts views inside other views
         LayoutInflater vi = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = vi.inflate(R.layout.sample_post,null);
+        View v = vi.inflate(R.layout.sample_post, null);
 
         // fill in any details dynamically here
-        final ImageView sample_image =  v.findViewById(R.id.sample_image);
+        final ImageView sample_image = v.findViewById(R.id.sample_image);
         //TODO do posts have titles?
-        TextView tv =  v.findViewById(R.id.sample_name);
-        TextView description =  v.findViewById(R.id.sample_description);
-        TextView author_name =  v.findViewById(R.id.sample_author_nam);
+        TextView tv = v.findViewById(R.id.sample_name);
+        TextView description = v.findViewById(R.id.sample_description);
+        TextView author_name = v.findViewById(R.id.sample_author_nam);
         description.setText((String) post.get("text"));
-        author_name.setText( (String) post.get("author_name") );
-        String visual_path =(String) post.get("visual");
+        author_name.setText((String) post.get("author_name"));
+        String visual_path = (String) post.get("visual");
         // if the visual path contains a / it will be a link to storage location
-        if (visual_path.contains("/") ){
+        if (visual_path.contains("/")) {
             // max download size = 1.5mb
             db_storage.child(visual_path).getBytes(1500000).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
@@ -194,7 +252,7 @@ public class HomeFragment extends Fragment {
 
                     // bytes is an byte [] returned from storage,
                     // set the image to be visible
-                    sample_image.setImageBitmap(BitmapFactory.decodeByteArray(bytes , 0, bytes.length));
+                    sample_image.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
                     sample_image.setVisibility(View.VISIBLE);
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -209,86 +267,6 @@ public class HomeFragment extends Fragment {
         // insert into main view
         // currently inserts newest post last... needs better queries
         ViewGroup insertPoint = rootView.findViewById(R.id.main_fragment_linear_layout);
-        insertPoint.addView(v,0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        insertPoint.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
-
-    /* Firebase Methods
-     ***************************************************************************************************/
-
-    // Get all student info and return student class
-    public void getUserInfo(){
-        final String this_user_id = student.getId();
-        String address = "universities/" + student.getUni_domain() + "/users/" + this_user_id;
-        if (address.contains("null")){
-            Log.e(TAG, "User Address has null values.");
-            return;
-        }
-
-        db_reference.document(address).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    DocumentSnapshot doc = task.getResult();
-                    if (doc == null){
-                        Log.e(TAG, "Document doesn't exist");
-                        return;
-                    }
-
-                    // what TODO if field doesn't exist?
-                    if (doc.get("is_organization") == null){
-                        Log.e(TAG, "getUserInfo: 'is_organization' field doesn't exist");
-                        student = doc.toObject(Student.class);
-                        if (student == null) Log.e(TAG, "Student object obtained from database is null!");
-                        else {
-                            student.setId(this_user_id);
-                            setLoggedInDisplay();   // Logged in!
-                        }
-
-                        return;
-                    }
-
-                    // Student or Organization?
-                    is_organization = (boolean) doc.get("is_organization");
-                    if (is_organization){
-                        //TODO is organization
-                        Log.d(TAG, "User is an organization!");
-                        mCommunicator.message(is_organization); //Update in Main Activity
-                        setLoggedInDisplay();   // Continue to rest of App TODO change to org view
-                    }
-                    else {
-                        student = doc.toObject(Student.class);
-                        if (student == null) Log.e(TAG, "Student object obtained from database is null!");
-                        else student.setId(this_user_id);
-                        getStudentPic();
-                    }
-                }
-                else Log.e(TAG,"getUserInfo: unsuccessful!");
-            }
-        });
-    }
-
-    // load picture from firebase storage
-    // Will throw an exception if file doesn't exist in storage but app continues to work fine
-    private void getStudentPic() {
-
-        // Make sure student has a profile image already
-        if (student.getProfile_picture() != null){
-            db_storage.child(student.getProfile_picture()).getDownloadUrl()
-                    .addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if (task.isSuccessful()){
-                                mCommunicator.message(task.getResult()); //Send Uri to main
-                            }
-                            else {
-                                Log.w(TAG, task.getException());
-                                student.setProfile_picture(""); // image doesn't exist
-                            }
-                            setLoggedInDisplay(); // Logged In!
-                        }
-                    });
-        }
-        else setLoggedInDisplay(); // Logged In with no pic!
-    }
-
 }

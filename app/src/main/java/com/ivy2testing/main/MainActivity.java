@@ -33,12 +33,15 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.home.CreatePost;
 import com.ivy2testing.R;
-import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.chat.ChatFragment;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.home.HomeFragment;
 import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.FragCommunicator;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements FragCommunicator {
 
@@ -63,7 +66,8 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
     private boolean is_organization = false;
     private Student mStudent;       //TODO need abstract class User?
     private Uri profileImgUri;
-    private String currentDomain;
+    private String this_user_id;
+    private String this_uni_domain;
 
 
     // On create
@@ -195,23 +199,6 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
     /* ************************************************************************************************** */
     // setting listeners on the post icon, and disables current button
 
-    // Go to login screen
-    public void mainLogin(View view) {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    // TEST For testing purposes only!
-    public void mainTest(View view) {
-        Intent intent = new Intent(this, com.ivy2testing.main.MainActivity.class);
-        intent.putExtra("this_uni_domain","ucalgary.ca");
-        intent.putExtra("this_user_id", "testID");
-        intent.putExtra("isStudent", true);
-        finish();
-        startActivity(intent);
-    }
-
     private void setListeners(){
         post_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -253,20 +240,6 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
         else if (obj instanceof Organization){
             Log.e(TAG, "Oh no! Organization view not implemented yet!");
         }
-        else if (obj instanceof String) {
-            switch (obj.toString()){
-                case "loggedIn":
-                    setLoggedInDisplay();
-                    Log.d(TAG, "Display got updated!");
-                    break;
-                case "loggedOut":
-                    setLoggedOutDisplay();
-                    Log.d(TAG, "Display got updated!");
-                    break;
-                default:
-                    Log.e(TAG, "Did not recognize the String " + obj.toString());
-            }
-        }
         else if (obj instanceof Uri) {
             profileImgUri = (Uri) obj;
             Log.d(TAG, "Image Uri got updated!");
@@ -275,10 +248,18 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
             is_organization = (Boolean) obj;
             Log.d(TAG, "Is_Organization updated to: " + is_organization);
         }
+
         return null;
     }
 
-
+    @Override
+    public void mapMessage(Map<Object, Object> map) {
+        if (map.get("this_user_id") != null && map.get("this_uni_domain") != null) {
+            this_user_id = Objects.requireNonNull(map.get("this_user_id")).toString();
+            this_uni_domain = Objects.requireNonNull(map.get("this_uni_domain")).toString();
+            getUserInfo();
+        }
+    }
 
     /* ************************************************************************************************** */
     // this handler will allow another fragment to be placed in the fragment container
@@ -326,11 +307,12 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
         startLoading();     // Loading Animation overlay
 
         FirebaseUser user = auth.getCurrentUser();
-        if (user != null && auth.getUid() != null && user.isEmailVerified()) {
+        this_user_id = auth.getUid();
+        if (user != null && this_user_id != null && user.isEmailVerified()) {
             loadPreferences();
-            if (!currentDomain.equals("")) {
+            if (!this_uni_domain.equals("")) {
                 Log.d(TAG, "autologin User: " + user.getUid());
-                setLoggedInDisplay();
+                getUserInfo();
             } else {
                 Log.d(TAG,"Couldn't perform auto-login.");
                 setLoggedOutDisplay();
@@ -341,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
     // Load the university domain for auto login
     private void loadPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
-        currentDomain = sharedPreferences.getString("domain", "");
+        this_uni_domain = sharedPreferences.getString("domain", "");
     }
 
 
@@ -350,7 +332,8 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
 
     // Get all student info and return student class
     public void getUserInfo(){
-        String address = "universities/" + currentDomain + "/users/" + auth.getUid();
+        startLoading();     // Display loading screen
+        String address = "universities/" + this_uni_domain + "/users/" + this_user_id;
         if (address.contains("null")){
             Log.e(TAG, "User Address has null values.");
             return;

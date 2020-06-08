@@ -172,7 +172,7 @@ public class Student implements Parcelable {
 ***************************************************************************************************/
 
     // Must have same order as writeToParcel since it's reading in bytes
-    protected Student(Parcel in) {
+    public Student(Parcel in) {
         id = in.readString();
         email = in.readString();
         name = in.readString();

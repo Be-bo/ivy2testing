@@ -61,7 +61,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         declareViews();
-        attemptAutoLogin();
 
         // Continue with rest of sign up process
         allowInteraction();
@@ -126,20 +125,6 @@ public class LoginActivity extends AppCompatActivity {
                             passwordOk());
             }
         });
-    }
-
-    // Check to see if we still have user's Firebase Auth token if we do, attempt login
-    private void attemptAutoLogin() {
-        FirebaseUser user = auth.getCurrentUser();
-        if (user != null && auth.getUid() != null && user.isEmailVerified()) {
-            loadPreferences();
-            if (!currentDomain.equals("")) {
-                Log.d(TAG, "autologin User: " + user.getUid());
-                transToMain();
-            } else {
-                toastError("Couldn't perform auto-login, please log in manually.");
-            }
-        }
     }
 
 
@@ -234,7 +219,7 @@ public class LoginActivity extends AppCompatActivity {
                         // Save uni domain for auto-logins and send off to MainActivity
                         barInteraction();
                         savePreferences();
-                        transToMain();
+                        backToMain();
                     }
                     else {
                         toastError("Email not verified yet!");
@@ -289,12 +274,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // Go back to main activity
-    private void transToMain(){
-        final Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+    private void backToMain(){
+        final Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("this_user_id", auth.getUid());
         intent.putExtra("this_uni_domain", currentDomain);
+        setResult(RESULT_OK, intent);
         finish();
-        startActivity(intent);
         allowInteraction();
     }
 
