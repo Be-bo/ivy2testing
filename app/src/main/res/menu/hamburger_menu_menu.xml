@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/search_placeholder"
+        android:title="Search">
+        <menu>
+            <item
+                android:id="@+id/hamburger_menu_search_bar_"
+                android:icon="@drawable/ic_search_placeholder"
+                android:title="Search"
+                app:actionViewClass="android.widget.SearchView" />
+        </menu>
+
+    </item>
+    <group
+        android:id="@+id/hamburger_menu_fragment_group"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/hamburger_menu_settings_placeholder"
+            android:icon="@drawable/ic_settings_placeholder"
+            android:title="Settings" />
+        <item
+            android:id="@+id/hamburger_menu_terms_placeholder"
+            android:icon="@drawable/ic_subject_placeholder"
+            android:title="Terms of Use" />
+    </group>
+</menu>

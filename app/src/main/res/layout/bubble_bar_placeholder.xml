@@ -5,6 +5,7 @@
     android:id="@+id/constraintlayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+    <!-- file is defined as a placeholder until it is decided how bubbles will work -->
 
     <HorizontalScrollView
         android:id="@+id/bubble_scrollview"
@@ -78,6 +79,26 @@
         android:text="here."
         android:textColor="@color/interaction"
         app:layout_constraintStart_toEndOf="@+id/textView3"
+        app:layout_constraintTop_toBottomOf="@+id/bubble_scrollview" />
+
+    <Button
+        android:id="@+id/main_loginButton"
+        style="@style/SegmentedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:text="Login"
+        app:layout_constraintEnd_toStartOf="@+id/main_testButton"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintTop_toBottomOf="@+id/bubble_scrollview" />
+
+    <Button
+        android:id="@+id/main_testButton"
+        style="@style/SegmentedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:text="Test"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/main_loginButton"
         app:layout_constraintTop_toBottomOf="@+id/bubble_scrollview" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -40,7 +40,8 @@
     <string name="error_invalidName">Name cannot be empty</string>
 
 
-    <!-- There is a space before and after each item... -->
+
+    <!-- There is a space before and after each item... using .trim in student signup -->
     <string-array name="degree_list">
         <item> Degree </item>
         <item> Accounting </item>
