@@ -6,11 +6,11 @@ import android.os.Parcelable;
 import com.google.firebase.firestore.Exclude;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /** @author Zahra Ghavasieh
 * Overview: Class to store a Firebase organization user document
+ * Features: firebase compatible, Parcelable (can pass as intent Extra)
 */
 public class Organization implements Parcelable {
 
@@ -19,7 +19,7 @@ public class Organization implements Parcelable {
     private String email;
     private String name;
     private String uni_domain;
-    private long registration_millis;
+    private long registration_millis = 0;
     private String messaging_token;
     private String profile_picture;
     private final boolean is_organization = true;

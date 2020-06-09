@@ -11,6 +11,7 @@ import java.util.List;
 
 /** @author Zahra Ghavasieh
  * Overview: Class to store a Firebase student user document
+ * Features: firebase compatible, Parcelable (can pass as intent Extra)
  */
 public class Student implements Parcelable {
 
@@ -20,7 +21,7 @@ public class Student implements Parcelable {
     private String name;
     private String degree;
     private String uni_domain;
-    private long registration_millis;
+    private long registration_millis = 0;
     private long birth_millis = 0;
     private String messaging_token;
     private String profile_picture;
@@ -104,11 +105,11 @@ public class Student implements Parcelable {
         return messaging_token;
     }
 
-    public boolean isIs_organization() {
+    public boolean getIs_organization() {
         return is_organization;
     }
 
-    public boolean isIs_banned() {
+    public boolean getIs_banned() {
         return is_banned;
     }
 
@@ -121,7 +122,7 @@ public class Student implements Parcelable {
         else return new ArrayList<>(post_ids);          // Return copy
     }
 
-    public boolean isIs_club() {
+    public boolean getIs_club() {
         return is_club;
     }
 
@@ -160,10 +161,10 @@ public class Student implements Parcelable {
     }
 
     public void addPostToList(String postId){
-        post_ids.add(postId);
+        if (postId != null && !postId.isEmpty()) post_ids.add(postId);
     }
 
-    public void deletePostfromList(String postId){
+    public void deletePostFromList(String postId){
         post_ids.remove(postId);
     }
 

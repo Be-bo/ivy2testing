@@ -395,19 +395,13 @@ public class CreatePost extends AppCompatActivity {
     //TODO update this post function properly when AUTH is set
 
     private void initialize_post(){
-        current_post = new Post();
-        String newUUID = UUID.randomUUID().toString();
-        current_post.setId(newUUID);
-        current_post.setUni_domain("ucalgary");
-        current_post.setAuthor_id("temp_id");
-        current_post.setAuthor_name("test_user");
-        current_post.setPinned_id("null");
-        current_post.setViews_id("n/a");
-
-
-        //initialize choices
-        current_post.setIs_event(false);
-        current_post.setMain_feed_visible(true);
+        current_post = new Post(
+                UUID.randomUUID().toString(),
+                "ucalgary",
+                "temp_id",
+                "test_user",
+                true,
+                "null");
     }
 
     /* ************************************************************************************************** */

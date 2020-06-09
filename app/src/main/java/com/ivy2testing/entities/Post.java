@@ -1,34 +1,62 @@
 package com.ivy2testing.entities;
 
-public class Post {
-    // this class is just getters and setters...
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    // shall these vars be public? or private...
+import com.google.firebase.database.Exclude;
 
-    // first half pre initialized
-    public String id;
-    public String uni_domain;
-    public String author_id;
-    public String author_name;
+import java.util.ArrayList;
+import java.util.List;
 
-    public Boolean is_event;
+/** @author Clyde
+ * @author Zahra Ghavasieh
+ * Overview: Class to store a Firebase Post document
+ * Features: firebase compatible, Parcelable (can pass as intent Extra)
+ */
+public class Post implements Parcelable {
 
-    // second half finalized through createpost
-    public Boolean main_feed_visible;
+    // Fields
+    private String id;
+    private String uni_domain;
+    private String author_id;
+    private String author_name;
+    private final boolean is_event = false;
+    private boolean main_feed_visible = true;
+    private long creation_millis = 0;
+    private String text;
+    private String visual;
+    private String pinned_id;
+    private List<String> views_id;
 
-    public Long creation_millis;
 
-    public String text;
-    public String visual;
-    public String pinned_id;
-    public String views_id;
+/* Constructors
+***************************************************************************************************/
 
-    public String getId() {
-        return id;
+    // Requirement for FireStore
+    public Post(){}
+
+    // Use for creating a new Post in code
+    public Post(String id, String uni_domain, String author_id, String author_name,
+                boolean main_feed_visible, String pinned_id){
+        this.id = id;
+        this.uni_domain = uni_domain;
+        this.author_id = author_id;
+        this.author_name = author_name;
+        this.main_feed_visible = main_feed_visible;
+        this.pinned_id = pinned_id;
+
+        this.views_id = new ArrayList<>();
+        creation_millis = System.currentTimeMillis();
     }
 
-    public void setId(String id) {
-        this.id = id;
+
+/* Setters and Getters
+***************************************************************************************************/
+
+    // Don't write ID in database! (redundant)
+    @Exclude
+    public String getId() {
+        return id;
     }
 
     public String getUni_domain() {
@@ -36,7 +64,8 @@ public class Post {
     }
 
     public void setUni_domain(String uni_domain) {
-        this.uni_domain = uni_domain;
+        if (uni_domain != null && !uni_domain.isEmpty())
+            this.uni_domain = uni_domain;
     }
 
     public String getAuthor_id() {
@@ -44,7 +73,8 @@ public class Post {
     }
 
     public void setAuthor_id(String author_id) {
-        this.author_id = author_id;
+        if (author_id != null && !author_id.isEmpty())
+            this.author_id = author_id;
     }
 
     public String getAuthor_name() {
@@ -52,15 +82,12 @@ public class Post {
     }
 
     public void setAuthor_name(String author_name) {
-        this.author_name = author_name;
+        if (author_name != null && !author_name.isEmpty())
+            this.author_name = author_name;
     }
 
     public Boolean getIs_event() {
         return is_event;
-    }
-
-    public void setIs_event(Boolean is_event) {
-        this.is_event = is_event;
     }
 
     public Boolean getMain_feed_visible() {
@@ -71,12 +98,8 @@ public class Post {
         this.main_feed_visible = main_feed_visible;
     }
 
-    public Long getCreation_millis() {
+    public long getCreation_millis() {
         return creation_millis;
-    }
-
-    public void setCreation_millis(Long creation_millis) {
-        this.creation_millis = creation_millis;
     }
 
     public String getText() {
@@ -103,13 +126,63 @@ public class Post {
         this.pinned_id = pinned_id;
     }
 
-    public String getViews_id() {
-        return views_id;
+    public List<String> getViews_id(){
+        if (views_id == null) return new ArrayList<>();
+        else return new ArrayList<>(views_id);
     }
 
-    public void setViews_id(String views_id) {
-        this.views_id = views_id;
+    public void addViewIdToList(String userId){
+        if (userId != null && !userId.isEmpty()) views_id.add(userId);
     }
 
+    public void deleteViewIdFromList(String userId){
+        views_id.remove(userId);
+    }
 
+/* Parcelable Override Methods
+***************************************************************************************************/
+
+    protected Post(Parcel in) {
+        id = in.readString();
+        uni_domain = in.readString();
+        author_id = in.readString();
+        author_name = in.readString();
+        main_feed_visible = in.readByte() != 0;
+        creation_millis = in.readLong();
+        text = in.readString();
+        visual = in.readString();
+        pinned_id = in.readString();
+        views_id = in.createStringArrayList();
+    }
+
+    public static final Creator<Post> CREATOR = new Creator<Post>() {
+        @Override
+        public Post createFromParcel(Parcel in) {
+            return new Post(in);
+        }
+
+        @Override
+        public Post[] newArray(int size) {
+            return new Post[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(uni_domain);
+        dest.writeString(author_id);
+        dest.writeString(author_name);
+        dest.writeByte((byte) (main_feed_visible ? 1 : 0));
+        dest.writeLong(creation_millis);
+        dest.writeString(text);
+        dest.writeString(visual);
+        dest.writeString(pinned_id);
+        dest.writeStringList(views_id);
+    }
 }
