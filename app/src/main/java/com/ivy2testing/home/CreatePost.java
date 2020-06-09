@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +30,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.ivy2testing.R;
+import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 
 import java.io.ByteArrayOutputStream;
@@ -79,6 +81,7 @@ public class CreatePost extends AppCompatActivity {
 
     // post class
     private Post current_post;
+    private Event current_event;
 
     // firebase
     private StorageReference db_storage = FirebaseStorage.getInstance().getReference();
@@ -256,10 +259,15 @@ public class CreatePost extends AppCompatActivity {
     /* ************************************************************************************************** */
     // event is initialized to false (its a post), this will swap if its true or not
     private void swap_type(){
-        if(current_post.getIs_event())
-            current_post.setIs_event(false);
-        else
-            current_post.setIs_event(true);
+        if(current_post != null){
+            current_event = new Event(current_post);
+            current_post = null;
+        }
+        else if (current_event != null){
+            current_post = new Post(current_event);
+            current_event = null;
+        }
+        else Log.e("CreatePost", "Both current_event and current_post are null!");
     }
 
     /* ************************************************************************************************** */
@@ -408,7 +416,6 @@ public class CreatePost extends AppCompatActivity {
     // on pressing the post button, this function is called to submit in the db and end the activity
 
     private void finalize_post() throws IOException {
-        current_post.setCreation_millis(System.currentTimeMillis());
         current_post.setText(description_edit_text.getText().toString());
 
         // TODO add proper on failure listener

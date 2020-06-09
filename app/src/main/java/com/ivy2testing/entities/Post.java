@@ -49,6 +49,12 @@ public class Post implements Parcelable {
         creation_millis = System.currentTimeMillis();
     }
 
+    // Make Post from Event
+    public Post(Event event){
+        this(event.getId(), event.getUni_domain(), event.getAuthor_id(), event.getAuthor_name(),
+                event.isMain_feed_visible(), event.getPinned_id());
+    }
+
 
 /* Setters and Getters
 ***************************************************************************************************/
