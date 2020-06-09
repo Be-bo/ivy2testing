@@ -100,12 +100,16 @@ public class CreatePost extends AppCompatActivity {
         setSupportActionBar(post_toolbar);
 
         // this adds the back button to the toolbar
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+            // this is required to nullify title, title will be sent to blank character in xml too
+            getSupportActionBar().setTitle(null);
+        }
 
 
-        // this is required to nullify title, title will be sent to blank character in xml too
-        getSupportActionBar().setTitle(null);
+
 
         initialize_post();
         setHandlers();
@@ -273,10 +277,18 @@ public class CreatePost extends AppCompatActivity {
     /* ************************************************************************************************** */
     // campus feed is initialized to false, this function swaps that
     private void swap_campus_feed(){
-        if(current_post.getMain_feed_visible())
-            current_post.setMain_feed_visible(false);
-        else
-            current_post.setMain_feed_visible(true);
+        if (current_post != null){
+            if(current_post.getMain_feed_visible())
+                current_post.setMain_feed_visible(false);
+            else
+                current_post.setMain_feed_visible(true);
+        }
+        else if (current_event != null){
+            if(current_event.isMain_feed_visible())
+                current_event.setMain_feed_visible(false);
+            else
+                current_event.setMain_feed_visible(true);
+        }
     }
 
     /* ************************************************************************************************** */
@@ -357,7 +369,7 @@ public class CreatePost extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // case pick_image_phone
-        if(resultCode== RESULT_OK && requestCode == PICK_IMAGE_PHONE){
+        if(resultCode== RESULT_OK && requestCode == PICK_IMAGE_PHONE && data != null){
             pic_selected = data.getData();
 
             // the picture setting methods need to be here or after this point/
@@ -371,7 +383,8 @@ public class CreatePost extends AppCompatActivity {
                     image_upload_view.setImageBitmap(compressed_bitmap);
 
                     // visual is set to "picture" until finalized and a path is set
-                    current_post.setVisual("picture");
+                    if (current_post != null) current_post.setVisual("picture");
+                    else if (current_event != null) current_event.setVisual("picture");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -383,14 +396,15 @@ public class CreatePost extends AppCompatActivity {
         }
 
         // gifs are just displayed, not sent to DB
-        if(resultCode == RESULT_OK && requestCode == PICK_GIF_PHONE){
+        if(resultCode == RESULT_OK && requestCode == PICK_GIF_PHONE && data != null){
             gif_selected = data.getData();
             if(gif_selected!=null){
                 RequestOptions myOptions = new RequestOptions().centerCrop();
                 // glide allows gif to be displayed
                 Glide.with(this).asGif().apply(myOptions).load(gif_selected).into(gif_upload_view);
                 //TODO this is the place to check sizes/ compress images also potentially clear all other views their previously chosen images
-                current_post.setVisual("gif");
+                if (current_post != null) current_post.setVisual("gif");
+                else if (current_event != null) current_event.setVisual("gif");
             }
             else{
                 Toast.makeText(CreatePost.this, "No Gif Selected", Toast.LENGTH_SHORT).show();
@@ -416,17 +430,40 @@ public class CreatePost extends AppCompatActivity {
     // on pressing the post button, this function is called to submit in the db and end the activity
 
     private void finalize_post() throws IOException {
-        current_post.setText(description_edit_text.getText().toString());
+        String address = "";
+
+        if (current_post != null){
+            current_post.setText(description_edit_text.getText().toString());
+
+            // if a picture was selected, a compressed bitmap will converted to a byte array and stored in the DB
+            //TODO if someone chooses a picture, then a different media but finally decides on picture this wont fire
+            if(current_post.getVisual().equals("picture")){
+                storePictureInDB(bmpToByteArray(compressed_bitmap));
+            }
+
+            address = "universities/" + current_post.getUni_domain() + "/posts/" + current_post.getId();
+        }
+        else if (current_event != null){
+            current_event.setText(description_edit_text.getText().toString());
+
+            if(current_event.getVisual().equals("picture")){
+                storePictureInDB(bmpToByteArray(compressed_bitmap));
+            }
+
+            address = "universities/" + current_event.getUni_domain() + "/posts/" + current_event.getId();
+        }
+
+        if (address.isEmpty()){
+            Log.e("CreatePost", "database address was null!");
+            return;
+        }
 
         // TODO add proper on failure listener
 
-        // if a picture was selected, a compressed bitmap will converted to a byte array and stored in the DB
-        //TODO if someone chooses a picture, then a different media but finally decides on picture this wont fire
-        if(current_post.getVisual().equals("picture")){
-            storePictureInDB(bmpToByteArray(compressed_bitmap));
-        }
+
         // object will be added to the DB, must wait for on success listener to end AFTER everything else has finished
-        db_reference.collection("universities").document("ucalgary.ca").collection("posts").document(current_post.getId()).set(current_post).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+        db_reference.document(address).set(current_post).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Toast.makeText(CreatePost.this, "Posted!", Toast.LENGTH_SHORT).show();
@@ -495,7 +532,11 @@ public class CreatePost extends AppCompatActivity {
 
     private void storePictureInDB(byte [] jpeg_file){
         // uses current posts random UUID
-        final String path = "test_for_posts/" + current_post.getId() + "/" + current_post.getId() + ".jpg";
+        String path = "test_for_posts/" + current_post.getId() + "/" + current_post.getId() + ".jpg";
+        if (path.contains("null"))
+            path = "test_for_posts/" + current_event.getId() + "/" + current_event.getId() + ".jpg";
+        if (path.contains("null"))
+            Log.e("CreatePost", "storePictureinDB: path contains null!");
 
         // i believe that test_storage is a keyword, the path cant be initialized
         //final String path = "test_storage/" + current_post.getId()  + ".jpg";
@@ -503,7 +544,8 @@ public class CreatePost extends AppCompatActivity {
         StorageReference post_image_storage = db_storage.child(path);
 
         // if current post is not set here the function ends to quick for it to be set properly
-        current_post.setVisual(path);
+        if (current_post != null) current_post.setVisual(path);
+        else if (current_event != null) current_event.setVisual(path);
         post_image_storage.putBytes(jpeg_file).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -513,7 +555,8 @@ public class CreatePost extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(getApplicationContext(), "photo upload failed", Toast.LENGTH_LONG).show();
-                current_post.setVisual("upload failed");
+                if (current_post != null) current_post.setVisual("upload failed");
+                else if (current_event != null) current_event.setVisual("upload failed");
             }
         });
     }
