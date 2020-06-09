@@ -5,7 +5,9 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -24,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
@@ -38,6 +41,7 @@ import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.util.Constant;
+import com.ivy2testing.util.SpinnerAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -135,7 +139,7 @@ public class EditStudentProfileActivity extends Activity {
         mProgressBar = findViewById(R.id.editStudent_progressBar);
 
         // Create and apply a degree adapter to the spinner
-        ArrayAdapter<CharSequence> degree_adapter =
+        SpinnerAdapter degree_adapter = new SpinnerAdapter(this, getResources().getStringArray(R.array.degree_list));
             ArrayAdapter.createFromResource(this, R.array.degree_list, android.R.layout.simple_spinner_item);
         degree_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mDegree.setAdapter(degree_adapter);
@@ -144,7 +148,7 @@ public class EditStudentProfileActivity extends Activity {
         setActionBar((Toolbar) findViewById(R.id.editStudent_toolBar));
         ActionBar actionBar = getActionBar();
         if (actionBar != null){
-            actionBar.setTitle("Edit Profile");
+            actionBar.setTitle(null);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         else Log.e(TAG, "no actionbar");
@@ -225,14 +229,17 @@ public class EditStudentProfileActivity extends Activity {
 
         // Check if ok
         setInputErrors(mName, getString(R.string.error_invalidName), nameOk());
-
+        setInputErrors((TextView) mDegree.getSelectedView(), "", degreeOk());
 
         // Save to student
-        student.setName(mName.getText().toString().trim());
-        student.setBirth_millis(datePickerToMillis(mBirthDay));
-        if (!degree.equals("Degree")) student.setDegree(degree);
+        if (nameOk() && degreeOk()) {
+            student.setName(mName.getText().toString().trim());
+            student.setBirth_millis(datePickerToMillis(mBirthDay));
+            if (!degree.equals("Degree")) student.setDegree(degree);
 
-        saveImage();    // Save to database
+            saveImage();    // Save to database
+        }
+        else allowInteraction(); // There was an error. So try Again!
     }
 
     // OnClick for edit image (upload an image from gallery)
@@ -252,9 +259,9 @@ public class EditStudentProfileActivity extends Activity {
 ***************************************************************************************************/
 
     // Set error on an editText view based on a condition
-    private void setInputErrors(EditText editText, String error_msg, boolean check){
-        if (check) editText.setError(null);
-        else editText.setError(error_msg);
+    private void setInputErrors(TextView text, String error_msg, boolean check){
+        if (check) text.setError(null);
+        else text.setError(error_msg);
     }
 
     // Make sure Name field is not empty

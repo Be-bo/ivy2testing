@@ -36,6 +36,7 @@
     <string name="save">Save</string>
     <string name="name">Name</string>
     <string name="birthday">Birthday</string>
+    <string name="editProfile">Edit Profile</string>
 
     <string name="error_invalidName">Name cannot be empty</string>
 
