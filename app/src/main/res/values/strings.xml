@@ -3,22 +3,44 @@
 
     <!--Authentication-->
     <string name="login">Log In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_up_org">Organization Sign Up</string>
     <string name="student_sign_up">Student Sign Up</string>
     <string name="org_sign_up">Organization Sign Up</string>
     <string name="password">Password</string>
     <string name="email">Email</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="switch_sign_up">We are a club</string>
 
     <string name="error_invalidDomain">This domain is not recognizable.</string>
     <string name="error_invalidEmailFormat">Please enter a valid email.</string>
     <string name="error_invalidPasswordLength">Your password must be at least six characters long.</string>
+    <string name="error_invalidPasswordMatch">Passwords do not match.</string>
     <string name="error_loginInvalid">Login failed, invalid email or password.</string>
 
     <string name="login_gradient_desc">Green to white gradient</string>
-    <string name="login_logo_desc">White Ivy Logo</string>
+    <string name="logo_desc">Ivy Logo</string>
 
+
+    <!-- Main tab bar -->
+    <string name="chat">Chat</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+
+    <!-- User Profile -->
+    <string name="change">Change</string>
+    <string name="save">Save</string>
+    <string name="name">Name</string>
+    <string name="birthday">Birthday</string>
+
+    <string name="error_invalidName">Name cannot be empty</string>
+
+
+
     <!-- There is a space before and after each item... using .trim in student signup -->
     <string-array name="degree_list">
         <item> Degree </item>
@@ -106,7 +128,19 @@
         <item> Women\'s Studies </item>
         <item> Zoology </item>
     </string-array>
+    <string name="title_activity_student_profile">StudentProfileActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="title_activity_view_post">ViewPostActivity</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
 </resources>

@@ -4,9 +4,12 @@
     <color name="hint">#802b9721</color>
     <color name="disabled">#b3b3b3</color>
     <color name="white">#ffffff</color>
+    <color name="off_white">#FAFAFA</color>
     <color name="black">#000000</color>
+    <color name="off_black">#232b2b</color>
     <color name="accent">#FF8C00</color>
     <color name="notification">#FE3C00</color>
+    <color name="transparent">#0000</color>
     <color name="android_default_bg">#FAFAFA</color>
     <color name="segmented_colour_bg">#EEEEEF</color>
 </resources>

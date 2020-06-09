@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/event_page_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/test_flower"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:adjustViewBounds="true"/>
+
+                <TextView
+                    android:id="@+id/event_page_info_row"
+                    style="@style/StandardText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:autoLink="web"
+                    android:textIsSelectable="true"
+                    android:text="info"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/event_page_image" />
+
+                <TextView
+                    android:id="@+id/event_page_description"
+                    style="@style/StandardText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:autoLink="web"
+                    android:textIsSelectable="true"
+                    android:text="Description"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/event_page_info_row" />
+
+                <TextView
+                    android:id="@+id/event_page_keywords"
+                    style="@style/StandardText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:textColor="@color/interaction"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/event_page_description" />
+
+                <TextView
+                    android:id="@+id/event_page_brought_title"
+                    style="@style/StandardText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="Brought to you by:"
+                    android:textAlignment="center"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/event_page_keywords" />
+
+                <ImageView
+                    android:id="@+id/event_page_logo"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="32dp"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/ivy_logo"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@id/event_page_going_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/event_page_brought_title" />
+
+                <TextView
+                    android:id="@+id/event_page_going_title"
+                    style="@style/StandardText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="Event Title"
+                    android:textAlignment="center"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/event_page_logo" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/event_page_going_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/event_page_going_title" />
+
+                <Button
+                    android:id="@+id/event_page_im_going_button"
+                    style="@style/StandardButton"
+                    android:layout_width="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="I'm Going"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/event_page_register_button"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/event_page_going_recycler_view" />
+
+                <LinearLayout
+                    android:id="@+id/event_page_im_going_check_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/event_page_register_button"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/event_page_going_recycler_view">
+
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center_vertical"
+                            android:background="@color/transparent"
+                            android:src="@drawable/ic_baseline_add"/>
+
+                        <TextView
+                            style="@style/StandardText"
+                            android:textColor="@color/interaction"
+                            android:layout_marginStart="8dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:text="I'm going!"/>
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/event_page_register_button"
+                    style="@style/StandardButton"
+                    android:layout_width="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Link"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/event_page_im_going_check_layout"
+                    app:layout_constraintTop_toBottomOf="@+id/event_page_going_recycler_view" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

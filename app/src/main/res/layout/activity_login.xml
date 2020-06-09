@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    tools:context="com.ivy2testing.LoginActivity">
+    tools:context="com.ivy2testing.authentication.LoginActivity"
+    android:background="@drawable/gradient_green">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/login_guideline1"
@@ -22,38 +23,17 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.85" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/login_images"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-
+    <ImageView
+        android:id="@+id/student_signup_logo"
+        android:layout_width="0dp"
+        android:layout_height="130dp"
+        android:contentDescription="@string/logo_desc"
+        app:layout_constraintBottom_toTopOf="@id/login_fieldsLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/login_fieldsLayout">
-
-        <ImageView
-            android:id="@+id/login_gradient"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:srcCompat="@drawable/gradient_greenwhite"
-            android:contentDescription="@string/login_gradient_desc"
-
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-        <ImageView
-            android:id="@+id/login_logo"
-            android:layout_width="wrap_content"
-            android:layout_height="130dp"
-            app:srcCompat="@drawable/ic_ivy_logo_white"
-            android:contentDescription="@string/login_logo_desc"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.25"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintVertical_bias="0.27"
+        app:srcCompat="@drawable/ic_ivy_logo_white" />
 
     <LinearLayout
         android:id="@+id/login_fieldsLayout"
@@ -71,7 +51,6 @@
             android:id="@+id/login_email"
             style="@style/StandardEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:autofillHints=""
             android:ems="10"
@@ -82,7 +61,6 @@
             android:id="@+id/login_password"
             style="@style/StandardEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:autofillHints=""
             android:ems="10"
@@ -93,11 +71,16 @@
             android:id="@+id/login_logInButton"
             style="@style/StandardButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:enabled="false"
             android:onClick="login"
             android:text="@string/login" />
-        
+
+        <ProgressBar
+            android:id="@+id/login_progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:visibility="gone"
+            android:indeterminateTint="@color/hint"/>
 
     </LinearLayout>
 
@@ -119,6 +102,7 @@
             android:layout_height="wrap_content"
             android:onClick="studentSignUp"
             android:text="@string/student_sign_up"
+            style="@style/StandardClickableText"
             android:layout_gravity="end"
             android:layout_marginBottom="16dp"/>
 
@@ -128,6 +112,7 @@
             android:layout_height="wrap_content"
             android:onClick="orgSignUp"
             android:text="@string/org_sign_up"
+            style="@style/StandardClickableText"
             android:layout_gravity="end"/>
     </LinearLayout>
 

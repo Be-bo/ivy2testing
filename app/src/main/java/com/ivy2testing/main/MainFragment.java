@@ -1,6 +1,5 @@
-package com.ivy2testing;
+package com.ivy2testing.main;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +8,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.ivy2testing.R;
 
 
 //https://google-developer-training.github.io/android-developer-advanced-course-practicals/unit-1-expand-the-user-experience/lesson-1-fragments/1-1-p-creating-a-fragment-with-a-ui/1-1-p-creating-a-fragment-with-a-ui.html

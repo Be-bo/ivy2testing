@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.ivy2testing">
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,33 +16,55 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity"
+
+
+        <activity android:name=".home.CreatePost"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <activity
+            android:name=".main.MainActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <activity android:name=".CreatePost"
+        </activity> <!-- perhaps screen orientation should be changed -->
+        <activity
+            android:name=".authentication.StudentSignUpActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".authentication.OrganizationSignUpActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".authentication.LoginActivity"
+            android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
 
-        <!-- perhaps screen orientation should be changed-->
-        <activity android:name=".StudentSignUpActivity"
+        <activity
+            android:name=".userProfile.EditStudentProfileActivity"
+            android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-
-        <activity android:name=".OrganizationSignUpActivity"
+        <activity
+            android:name=".userProfile.StudentProfileActivity"
+            android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
-
-        <activity android:name=".LoginActivity"
+        <activity
+            android:name=".home.ViewPostActivity"
+            android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait"
-            android:exported="true"
-            tools:ignore="LockedOrientationActivity"/>
-
+            tools:ignore="LockedOrientationActivity" />
     </application>
+        
+
+ 
 
 </manifest>
