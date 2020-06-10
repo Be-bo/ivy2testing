@@ -27,6 +27,8 @@ public class Organization implements Parcelable {
     private boolean is_banned = false;
     private String registration_platform;
     private List<String> post_ids = new ArrayList<>();
+    private List<String> member_ids = new ArrayList<>();
+    private List<String> request_ids = new ArrayList<>();
 
 
 /* Constructors
@@ -105,7 +107,15 @@ public class Organization implements Parcelable {
         return is_club;
     }
 
-/* Setters
+    public List<String> getMember_ids() {
+        return member_ids;
+    }
+
+    public List<String> getRequest_ids() {
+        return request_ids;
+    }
+
+    /* Setters
 ***************************************************************************************************/
 
     public void setId(String id) {
@@ -151,8 +161,15 @@ public class Organization implements Parcelable {
         post_ids.remove(postId);
     }
 
+    public void setMember_ids(List<String> member_ids) {
+        this.member_ids = member_ids;
+    }
 
-/* Parcelable Override Methods
+    public void setRequest_ids(List<String> request_ids) {
+        this.request_ids = request_ids;
+    }
+
+    /* Parcelable Override Methods
 ***************************************************************************************************/
 
     // Must have same order as writeToParcel since it's reading in bytes
@@ -168,6 +185,8 @@ public class Organization implements Parcelable {
         is_banned = in.readByte() != 0;
         registration_platform = in.readString();
         post_ids = in.createStringArrayList();
+        member_ids = in.createStringArrayList();
+        request_ids = in.createStringArrayList();
     }
 
     @Override
@@ -183,6 +202,8 @@ public class Organization implements Parcelable {
         dest.writeByte((byte) (is_banned ? 1 : 0));
         dest.writeString(registration_platform);
         dest.writeStringList(post_ids);
+        dest.writeStringList(member_ids);
+        dest.writeStringList(request_ids);
     }
 
     @Override

@@ -36,8 +36,9 @@
     <string name="save">Save</string>
     <string name="name">Name</string>
     <string name="birthday">Birthday</string>
-
     <string name="error_invalidName">Name cannot be empty</string>
+    <string name="organization_member_number">%1$i Members</string>
+    <string name="organization_request_number">Member Requests (%1$i)</string>
 
 
 
