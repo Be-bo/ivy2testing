@@ -60,6 +60,12 @@
             android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".userProfile.MembersActivity"
+            android:parentActivityName=".main.MainActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
     </application>
 
 </manifest>

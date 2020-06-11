@@ -17,6 +17,7 @@ import java.util.List;
 public class Student implements Parcelable {
 
     // Fields
+    private String id;
     private String email;
     private String name;
     private String degree;
@@ -25,17 +26,13 @@ public class Student implements Parcelable {
     private long birth_millis = 0;
     private String messaging_token;
     private String profile_picture;
+    private String preview_picture;
     private final boolean is_organization = false;
     private final boolean is_club = false;
     private boolean is_banned = false;
     private String registration_platform;
     private List<String> post_ids = new ArrayList<>();
-
-    // Fields not included in FireStore
-    private String id;
-    private Uri[] postImgUris;
-
-
+    
 
 /* Constructors
 ***************************************************************************************************/
@@ -131,9 +128,9 @@ public class Student implements Parcelable {
         return is_club;
     }
 
-    @Exclude
-    public Uri[] getPostImgUris() {
-        return postImgUris;
+
+    public String getPreview_picture() {
+        return preview_picture;
     }
 
 /* Setters
@@ -178,12 +175,11 @@ public class Student implements Parcelable {
         post_ids.remove(postId);
     }
 
-    public void editPostImgUris(Uri imgUri, int position) {
-        this.postImgUris[position] = imgUri;
+    public void setPreview_picture(String preview_picture) {
+        this.preview_picture = preview_picture;
     }
 
-
-/* Parcelable Override Methods
+    /* Parcelable Override Methods
 ***************************************************************************************************/
 
     // Must have same order as writeToParcel since it's reading in bytes
@@ -197,6 +193,7 @@ public class Student implements Parcelable {
         birth_millis = in.readLong();
         messaging_token = in.readString();
         profile_picture = in.readString();
+        preview_picture = in.readString();
         is_banned = in.readByte() != 0;
         registration_platform = in.readString();
         post_ids = in.createStringArrayList();
@@ -230,6 +227,7 @@ public class Student implements Parcelable {
         dest.writeLong(birth_millis);
         dest.writeString(messaging_token);
         dest.writeString(profile_picture);
+        dest.writeString(preview_picture);
         dest.writeByte((byte) (is_banned ? 1 : 0));
         dest.writeString(registration_platform);
         dest.writeStringList(post_ids);

@@ -51,6 +51,9 @@
     <!-- Posts and Events -->
     <string name="post_visual">Post Visual</string>
     <string name="comments">Comments</string>
+    <string name="error_invalidName">Name cannot be empty</string>
+    <string name="organization_member_number">%1$i Members</string>
+    <string name="organization_request_number">Member Requests (%1$i)</string>
 
 
 
