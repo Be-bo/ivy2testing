@@ -73,7 +73,7 @@ public class StudentProfileFragment extends Fragment {
     private Student student;
     private ImageAdapter adapter;
     private Uri profileImgUri;
-    private Post[] posts = new Post[6];                 // Load first 6 posts only
+    private List<Post> posts = new ArrayList<>();        // Load first 6 posts only
     private List<Uri> postImgUris = new ArrayList<>();  // non synchronous adds!
 
 
@@ -199,7 +199,7 @@ public class StudentProfileFragment extends Fragment {
     private void selectPost(int position) {
         Intent intent = new Intent(getActivity(), ViewPostActivity.class);
         Log.d(TAG, "Starting ViewPost Activity for post #" + position);
-        //intent.putExtra("post", post); //TODO Post class not defined yet
+        intent.putExtra("post", posts.get(position)); //TODO Post class not defined yet
         startActivityForResult(intent, Constant.VIEW_POST_REQUEST_CODE);
     }
 
@@ -323,11 +323,11 @@ public class StudentProfileFragment extends Fragment {
                     }
                     int i = 0;
                     for (QueryDocumentSnapshot doc : querySnapshot){
-                        posts[i] = doc.toObject(Post.class);
-                        if (posts[i] == null) Log.e(TAG, "Post object obtained from database is null!");
+                        posts.add(i, doc.toObject(Post.class));
+                        if (posts.get(i) == null) Log.e(TAG, "Post object obtained from database is null!");
                         else {
-                            posts[i].setId(doc.getId());    // Set Post ID
-                            loadPostImg(posts[i]);          // Upload pic and update views
+                            posts.get(i).setId(doc.getId());    // Set Post ID
+                            loadPostImg(posts.get(i));          // Upload pic and update views
                         }
                         i++;
                     }
@@ -349,7 +349,8 @@ public class StudentProfileFragment extends Fragment {
             return;
         }
 
-        // Make sure student has a profile image already
+        // Insert Image Uri to arrayList in same position as its post object
+        // Then it tells Recycler adapter that it should update the view
         if (post.getVisual() != null){
             base_storage_ref.child(post.getVisual()).getDownloadUrl()
                     .addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -358,10 +359,9 @@ public class StudentProfileFragment extends Fragment {
                             if (task.isSuccessful()){
                                 Uri uri = task.getResult();
                                 if (uri != null){
-                                    postImgUris.add(uri);
-                                    int position = student.getPost_ids().indexOf(post.getId());
-                                    adapter.notifyItemInserted(position);
-                                    Log.d(TAG, "Added to position "+position+" img " + uri);
+                                    postImgUris.add(posts.indexOf(post), uri);
+                                    adapter.notifyItemInserted(posts.indexOf(post));
+                                    Log.d(TAG, "Added to position "+posts.indexOf(post)+" img " + uri);
                                 }
                             }
                             else Log.w(TAG, "this post's image isn't here! Visual: " + post.getVisual());
