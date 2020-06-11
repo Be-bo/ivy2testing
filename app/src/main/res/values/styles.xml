@@ -54,6 +54,11 @@
         <item name="android:trackTint">@color/switch_color</item>   <!--30% transparent by default-->
     </style>
 
+    <style name="StandardIndefiniteProgressBar" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:layout_height">50dp</item>
+        <item name="android:indeterminateTint">@color/hint</item>
+    </style>
+
     <style name="MainNavBar" parent="Widget.Design.BottomNavigationView">
         <item name="itemIconTint">@color/bottom_nav_color</item>
         <item name="itemTextColor">@color/bottom_nav_color</item>
@@ -98,7 +103,11 @@
     <!-- This theme changes the color of the back button in the post activity/layout -->
     <style name="PostToolBarStyle"  parent="ThemeOverlay.AppCompat.Light">
         <item name="colorControlNormal">@color/interaction</item>
-        <item name="background">@color/white</item>
+    </style>
+
+    <!-- Use this theme for toolbars on top of images -->
+    <style name="ViewPostToolBarStyle"  parent="PostToolBarStyle">
+        <item name="android:background">@drawable/gradient_toolbar_white</item>
     </style>
 
 </resources>

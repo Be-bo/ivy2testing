@@ -33,7 +33,7 @@ import java.util.List;
  * Overview: 3rd party Student Profile view Activity.
  *          Takes in a user "address" in Firestore as intent extras.
  *          Otherwise similar to StudentProfileFragment.
- * Notes: Recycler items currently hard-coded
+ * Notes: Recycler items currently hard-coded, Needs Update from fragment version
  */
 public class StudentProfileActivity extends AppCompatActivity {
 
@@ -63,7 +63,7 @@ public class StudentProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_studentprofile);
+        setContentView(R.layout.fragment_studentprofile);
 
         // Initialization Methods
         getIntentExtras();
@@ -76,10 +76,10 @@ public class StudentProfileActivity extends AppCompatActivity {
 ***************************************************************************************************/
 
     private void declareViews(){
-        mProfileImg = findViewById(R.id.student_viewProf_circleImg);
-        mName = findViewById(R.id.student_viewProf_name);
-        mDegree = findViewById(R.id.student_viewProf_degree);
-        mRecyclerView = findViewById(R.id.student_viewProf_posts);
+        mProfileImg = findViewById(R.id.studentProfile_circleImg);
+        mName = findViewById(R.id.studentProfile_name);
+        mDegree = findViewById(R.id.studentProfile_degree);
+        mRecyclerView = findViewById(R.id.studentProfile_posts);
 
         // Action bar
         setActionBar((Toolbar) findViewById(R.id.editStudent_toolBar));
@@ -98,19 +98,10 @@ public class StudentProfileActivity extends AppCompatActivity {
     private void setUpRecycler(){
 
         // Get list of image ids
-        List<Integer> imageIds = new ArrayList<>();
-        imageIds.add(R.drawable.test_flower);
-        imageIds.add(R.drawable.test_flower);
-        imageIds.add(R.drawable.test_flower);
-        imageIds.add(R.drawable.test_flower);
-        imageIds.add(R.drawable.test_flower);
-        imageIds.add(R.drawable.test_flower);
-        imageIds.add(R.drawable.test_flower);
-        imageIds.add(R.drawable.test_flower);
-        imageIds.add(R.drawable.test_flower);
+        List<Uri> imageIds = new ArrayList<>();
 
         // set LayoutManager and Adapter
-        adapter = new ImageAdapter(imageIds);
+        //adapter = new ImageAdapter(imageIds);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(adapter);
     }

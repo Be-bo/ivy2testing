@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/StandardText"
-            android:text="Paul Dan"
+            android:text="@string/userName"
             app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
@@ -48,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/StandardText"
-            android:text="Mechanical Engineering" />
+            android:text="@string/degree" />
 
     </LinearLayout>
 
@@ -57,7 +57,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/StandardClickableText"
-        android:text="Edit"
+        android:text="@string/edit"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toEndOf="@id/studentProfile_guidelineV"
@@ -82,22 +82,50 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/StandardText"
-        android:text="Posts"
+        android:text="@string/posts"
         app:layout_constraintTop_toBottomOf="@id/studentProfile_divider"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_margin="16dp"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/studentProfile_posts"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/studentProfile_seeAll"
+        app:layout_constraintBottom_toTopOf="@id/studentProfile_seeAll"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/studentProfile_header">
 
-    </androidx.recyclerview.widget.RecyclerView>
+        <FrameLayout
+            android:id="@+id/studentProfile_loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/off_white"
+            android:translationZ="90dp">
+
+            <ProgressBar
+                android:id="@+id/studentProfile_progressBar"
+                android:layout_width="wrap_content"
+                style="@style/StandardIndefiniteProgressBar"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/studentProfile_errorMsg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/error_noPosts"
+                android:textColor="@color/disabled"/>
+
+        </FrameLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/studentProfile_posts"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/studentProfile_seeAll"
@@ -105,7 +133,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="See All"
+        android:text="@string/see_all"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

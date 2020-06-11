@@ -65,6 +65,10 @@ public class Post implements Parcelable {
         return id;
     }
 
+    public void setId(String id) {
+        if (id != null && !id.isEmpty()) this.id = id;
+    }
+
     public String getUni_domain() {
         return uni_domain;
     }

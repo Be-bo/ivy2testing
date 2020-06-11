@@ -54,7 +54,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/editStudent_fields"
             app:layout_constraintStart_toStartOf="@id/editStudent_guideline1"
-            app:layout_constraintEnd_toEndOf="@id/editStudent_guideline2"/>
+            app:layout_constraintEnd_toEndOf="@id/editStudent_guideline2"
+            android:contentDescription="@string/profile_pic"/>
 
         <TextView
             android:id="@+id/editStudent_change"
@@ -129,10 +130,9 @@
 
         <ProgressBar
             android:id="@+id/editStudent_progressBar"
+            style="@style/StandardIndefiniteProgressBar"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
             android:visibility="gone"
-            android:indeterminateTint="@color/hint"
             app:layout_constraintTop_toBottomOf="@id/editStudent_fields"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/editStudent_guideline1"

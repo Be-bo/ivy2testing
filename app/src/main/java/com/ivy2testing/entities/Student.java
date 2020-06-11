@@ -1,5 +1,6 @@
 package com.ivy2testing.entities;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -16,7 +17,6 @@ import java.util.List;
 public class Student implements Parcelable {
 
     // Fields
-    private String id;
     private String email;
     private String name;
     private String degree;
@@ -30,6 +30,10 @@ public class Student implements Parcelable {
     private boolean is_banned = false;
     private String registration_platform;
     private List<String> post_ids = new ArrayList<>();
+
+    // Fields not included in FireStore
+    private String id;
+    private Uri[] postImgUris;
 
 
 
@@ -52,6 +56,7 @@ public class Student implements Parcelable {
 
         this.name = splitEmail[0];      // Set a default name
         this.registration_millis = System.currentTimeMillis();
+        this.postImgUris = new Uri[6];
     }
 
 /* Getters
@@ -126,6 +131,11 @@ public class Student implements Parcelable {
         return is_club;
     }
 
+    @Exclude
+    public Uri[] getPostImgUris() {
+        return postImgUris;
+    }
+
 /* Setters
 ***************************************************************************************************/
 
@@ -166,6 +176,10 @@ public class Student implements Parcelable {
 
     public void deletePostFromList(String postId){
         post_ids.remove(postId);
+    }
+
+    public void editPostImgUris(Uri imgUri, int position) {
+        this.postImgUris[position] = imgUri;
     }
 
 

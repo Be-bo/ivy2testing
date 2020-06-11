@@ -355,7 +355,7 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
                         mStudent = doc.toObject(Student.class);
                         if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
                         else {
-                            mStudent.setId(auth.getUid());
+                            mStudent.setId(doc.getId());
                             setLoggedInDisplay();   // Logged in!
                         }
 
@@ -372,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
                     else {
                         mStudent = doc.toObject(Student.class);
                         if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
-                        else mStudent.setId(auth.getUid());
+                        else mStudent.setId(doc.getId());
                         getStudentPic();
                     }
                 }

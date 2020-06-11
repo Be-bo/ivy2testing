@@ -5,9 +5,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -299,7 +297,6 @@ public class EditStudentProfileActivity extends Activity {
         mSaveButton.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
     }
-
 
     private void closeKeyboard() {
         View view = this.getCurrentFocus();
