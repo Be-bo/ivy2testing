@@ -25,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -140,7 +139,7 @@ public class EditStudentProfileActivity extends Activity {
         mDegree.setAdapter(degree_adapter);
 
         // Action bar
-        setActionBar((Toolbar) findViewById(R.id.editStudent_toolBar));
+        setActionBar(findViewById(R.id.editStudent_toolBar));
         ActionBar actionBar = getActionBar();
         if (actionBar != null){
             actionBar.setTitle(null);

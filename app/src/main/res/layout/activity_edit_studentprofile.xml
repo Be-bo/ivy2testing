@@ -19,9 +19,8 @@
             android:id="@+id/post_toolbar_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/editProfile"
-            android:textSize="20sp" />
+            style="@style/ToolBarTitle"
+            android:text="@string/editProfile" />
 
     </Toolbar>
 

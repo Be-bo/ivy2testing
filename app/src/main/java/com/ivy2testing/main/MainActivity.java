@@ -159,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
     }
 
     private void setNavigationListener() {
-        // Test bottom navigation
         mBottomNav.setOnNavigationItemSelectedListener(item -> {
             Fragment selectedFragment = null;
 
@@ -172,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
                     break;
                 case R.id.tab_bar_profile:
                     if (is_organization) Log.w(TAG, "Organization Profile View under construction.");
-                    else selectedFragment = new StudentProfileFragment(mStudent, profileImgUri);
+                    else selectedFragment = new StudentProfileFragment(mStudent, profileImgUri, true);
                     break;
             }
             if (selectedFragment!= null)

@@ -1,7 +1,6 @@
 package com.ivy2testing.userProfile;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,7 +38,7 @@ import java.util.List;
 
 /** @author Zahra Ghavasieh
  * Overview: Student Profile view fragment
- * Notes: Recycler items currently hard-coded
+ * Notes: Used for viewing both student's own profile as well as viewing other students' profiles
  */
 public class StudentProfileFragment extends Fragment {
 
@@ -64,6 +63,7 @@ public class StudentProfileFragment extends Fragment {
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
     // Other Variables
+    private boolean myProfile;      // Don't show edit button if this is not myProfile
     private Student student;
     private ImageAdapter adapter;
     private Uri profileImgUri;
@@ -72,9 +72,10 @@ public class StudentProfileFragment extends Fragment {
 
 
     // Constructor
-    public StudentProfileFragment(Student student, Uri profileImgUri) {
+    public StudentProfileFragment(Student student, Uri profileImgUri, boolean myProfile) {
         this.student = student;
         this.profileImgUri = profileImgUri;
+        this.myProfile = myProfile;
     }
 
     // Setter for communicator
@@ -116,7 +117,7 @@ public class StudentProfileFragment extends Fragment {
             Log.d(TAG, "Coming back from ViewPost!");
             if (resultCode == Activity.RESULT_OK && data != null) {
                 boolean updated = data.getBooleanExtra("updated", false);
-                if (updated) loadPostImg((Post)data.getParcelableExtra("post"));
+                if (updated) loadPostImg(data.getParcelableExtra("post"));
             }
         } else
             Log.w(TAG, "Don't know how to handle the request code, \"" + requestCode + "\" yet!");
@@ -155,7 +156,8 @@ public class StudentProfileFragment extends Fragment {
 
     // Set up onClick Listeners
     private void setListeners(View v){
-        v.findViewById(R.id.studentProfile_edit).setOnClickListener(v12 -> editProfile());
+        if (myProfile) v.findViewById(R.id.studentProfile_edit).setOnClickListener(v12 -> editProfile());
+        else    v.findViewById(R.id.studentProfile_edit).setVisibility(View.GONE);
         v.findViewById(R.id.studentProfile_seeAll).setOnClickListener(v1 -> seeAllPosts());
         adapter.setOnSelectionListener(this::selectPost);
     }
