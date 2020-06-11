@@ -39,7 +39,6 @@ import com.ivy2testing.home.HomeFragment;
 import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.FragCommunicator;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -114,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
         if (getSupportActionBar() != null) getSupportActionBar().setTitle(null);
 
         // set color of hamburger menu
-        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.interaction));
+        toggle.getDrawerArrowDrawable().setColor(getColor(R.color.interaction));
     }
 
     /* ************************************************************************************************** */
@@ -161,29 +160,26 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
 
     private void setNavigationListener() {
         // Test bottom navigation
-        mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment selectedFragment = null;
+        mBottomNav.setOnNavigationItemSelectedListener(item -> {
+            Fragment selectedFragment = null;
 
-                switch (item.getItemId()){
-                    case R.id.tab_bar_chat:
-                        selectedFragment = new ChatFragment();
-                        break;
-                    case R.id.tab_bar_home:
-                        selectedFragment = new HomeFragment(MainActivity.this, mStudent);
-                        break;
-                    case R.id.tab_bar_profile:
-                        if (is_organization) Log.w(TAG, "Organization Profile View under construction.");
-                        else selectedFragment = new StudentProfileFragment(MainActivity.this, mStudent, profileImgUri);
-                        break;
-                }
-                if (selectedFragment!= null)
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.main_fragmentContainer, selectedFragment).commit();
-
-                return true;
+            switch (item.getItemId()){
+                case R.id.tab_bar_chat:
+                    selectedFragment = new ChatFragment();
+                    break;
+                case R.id.tab_bar_home:
+                    selectedFragment = new HomeFragment(MainActivity.this, mStudent);
+                    break;
+                case R.id.tab_bar_profile:
+                    if (is_organization) Log.w(TAG, "Organization Profile View under construction.");
+                    else selectedFragment = new StudentProfileFragment(mStudent, profileImgUri);
+                    break;
             }
+            if (selectedFragment!= null)
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.main_fragmentContainer, selectedFragment).commit();
+
+            return true;
         });
     }
 
@@ -200,12 +196,9 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
     // setting listeners on the post icon, and disables current button
 
     private void setListeners(){
-        post_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), CreatePost.class);
-                startActivity(intent);
-            }
+        post_button.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), CreatePost.class);
+            startActivity(intent);
         });
     }
 
@@ -339,45 +332,42 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
             return;
         }
 
-        db_reference.document(address).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    DocumentSnapshot doc = task.getResult();
-                    if (doc == null){
-                        Log.e(TAG, "Document doesn't exist");
-                        return;
-                    }
-
-                    // what TODO if field doesn't exist?
-                    if (doc.get("is_organization") == null){
-                        Log.e(TAG, "getUserInfo: 'is_organization' field doesn't exist");
-                        mStudent = doc.toObject(Student.class);
-                        if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
-                        else {
-                            mStudent.setId(doc.getId());
-                            setLoggedInDisplay();   // Logged in!
-                        }
-
-                        return;
-                    }
-
-                    // Student or Organization?
-                    is_organization = (boolean) doc.get("is_organization");
-                    if (is_organization){
-                        //TODO is organization
-                        Log.d(TAG, "User is an organization!");
-                        setLoggedInDisplay();   // Continue to rest of App TODO change to org view
-                    }
-                    else {
-                        mStudent = doc.toObject(Student.class);
-                        if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
-                        else mStudent.setId(doc.getId());
-                        getStudentPic();
-                    }
+        db_reference.document(address).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                DocumentSnapshot doc = task.getResult();
+                if (doc == null){
+                    Log.e(TAG, "Document doesn't exist");
+                    return;
                 }
-                else Log.e(TAG,"getUserInfo: unsuccessful!");
+
+                // what TODO if field doesn't exist?
+                if (doc.get("is_organization") == null){
+                    Log.e(TAG, "getUserInfo: 'is_organization' field doesn't exist");
+                    mStudent = doc.toObject(Student.class);
+                    if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
+                    else {
+                        mStudent.setId(doc.getId());
+                        setLoggedInDisplay();   // Logged in!
+                    }
+
+                    return;
+                }
+
+                // Student or Organization?
+                is_organization = (boolean) doc.get("is_organization");
+                if (is_organization){
+                    //TODO is organization
+                    Log.d(TAG, "User is an organization!");
+                    setLoggedInDisplay();   // Continue to rest of App TODO change to org view
+                }
+                else {
+                    mStudent = doc.toObject(Student.class);
+                    if (mStudent == null) Log.e(TAG, "Student object obtained from database is null!");
+                    else mStudent.setId(doc.getId());
+                    getStudentPic();
+                }
             }
+            else Log.e(TAG,"getUserInfo: unsuccessful!");
         });
     }
 
@@ -388,18 +378,15 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
         // Make sure student has a profile image already
         if (mStudent.getProfile_picture() != null){
             db_storage.child(mStudent.getProfile_picture()).getDownloadUrl()
-                    .addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if (task.isSuccessful()){
-                                profileImgUri = task.getResult();
-                            }
-                            else {
-                                Log.w(TAG, task.getException());
-                                mStudent.setProfile_picture(""); // image doesn't exist
-                            }
-                            setLoggedInDisplay(); // Logged In!
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()){
+                            profileImgUri = task.getResult();
                         }
+                        else {
+                            Log.w(TAG, task.getException());
+                            mStudent.setProfile_picture(""); // image doesn't exist
+                        }
+                        setLoggedInDisplay(); // Logged In!
                     });
         }
         else setLoggedInDisplay(); // Logged In with no pic!

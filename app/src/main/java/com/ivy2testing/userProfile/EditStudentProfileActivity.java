@@ -27,10 +27,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -181,22 +178,16 @@ public class EditStudentProfileActivity extends Activity {
 
     // Set up focus listener for for real time error checking
     private void setFocusListener(){
-        mName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) setInputErrors(mName, getString(R.string.error_invalidName), nameOk());
-            }
+        mName.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) setInputErrors(mName, getString(R.string.error_invalidName), nameOk());
         });
     }
 
     // Listener for birthday change
     private void setBirthDayChangeListener(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mBirthDay.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
-                @Override
-                public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                    if (student.getBirth_millis() != datePickerToMillis(view)) mSaveButton.setEnabled(true);
-                }
+            mBirthDay.setOnDateChangedListener((view, year, monthOfYear, dayOfMonth) -> {
+                if (student.getBirth_millis() != datePickerToMillis(view)) mSaveButton.setEnabled(true);
             });
         }
     }
@@ -231,11 +222,12 @@ public class EditStudentProfileActivity extends Activity {
 
         // Save to student
         if (nameOk() && degreeOk()) {
+            String old_name = student.getName();
             student.setName(mName.getText().toString().trim());
             student.setBirth_millis(datePickerToMillis(mBirthDay));
             if (!degree.equals("Degree")) student.setDegree(degree);
 
-            saveImage();    // Save to database
+            saveImage(old_name.equals(student.getName()));    // Save to database
         }
         else allowInteraction(); // There was an error. So try Again!
     }
@@ -316,52 +308,60 @@ public class EditStudentProfileActivity extends Activity {
         // Make sure student has a profile image already
         if (student.getProfile_picture() != null){
             base_storage_ref.child(student.getProfile_picture()).getDownloadUrl()
-                    .addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if (task.isSuccessful()){
-                                Uri path = task.getResult();
-                                Picasso.get().load(path).into(mImg);
-                            }
-                            else {
-                                Log.w(TAG, task.getException());
-                                student.setProfile_picture(""); // image doesn't exist
-                            }
-                            allowInteraction();
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()){
+                            Uri path = task.getResult();
+                            Picasso.get().load(path).into(mImg);
                         }
+                        else {
+                            Log.w(TAG, task.getException());
+                            student.setProfile_picture(""); // image doesn't exist
+                        }
+                        allowInteraction();
                     });
         }
         else allowInteraction();
     }
 
     // Rewrite old student document with new info
-    private void saveStudentInfo(){
+    private void saveStudentInfo(boolean name_changed){
         String address = "universities/" + student.getUni_domain() + "/users/" + student.getId();
         if (address.contains("null")){
             Log.e(TAG, "Student Address has null values.");
             return;
         }
 
-        db.document(address).set(student).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "Changes saved.");
-                    updated = true;
-                }
-                else Log.e(TAG, "Something went wrong when trying to save changes.\n" + task.getException());
-                allowInteraction();
-                backToMain();
+        // Save student info in /users
+        db.document(address).set(student).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Log.d(TAG, "Changes saved.");
+                updated = true;
             }
+            else Log.e(TAG, "Something went wrong when trying to save changes.\n" + task.getException());
+            allowInteraction();
+            backToMain();
         });
+
+        // No need to worry about posts and comments if name hasn't changed
+        if (!name_changed) return;
+
+        // Update posts associated with Student if student name has changed
+        address = "universities/" + student.getUni_domain() + "/posts";
+        db.collection(address).whereEqualTo("author_id", student.getId())
+            .get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null){
+                    for (DocumentSnapshot doc : task.getResult())
+                        doc.getReference().update("author_name",student.getName());
+                } else Log.e(TAG, "Post Update unsuccessful, or Student has no posts");
+            });
     }
 
     // Rewrite old Pic adn save to storage
-    private void saveImage(){
+    private void saveImage(boolean name_changed){
 
         // Skip image saving if image hasn't changed
         if (imgUri == null || getCompressedImageBytes() == null){
-            saveStudentInfo();
+            saveStudentInfo(name_changed);
             return;
         }
 
@@ -372,26 +372,23 @@ public class EditStudentProfileActivity extends Activity {
 
         // Upload image to storage and proceed to save other user info
         UploadTask uploadTask = storageReference.putBytes(getCompressedImageBytes());
-        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+        uploadTask.addOnCompleteListener(task -> {
 
-                // Task failed
-                if (!task.isSuccessful()) {
-                    allowInteraction();
-                    Log.e(TAG, "Profile Upload Failed.");
-                }
-
-                // Task was successful
-                else if (task.getResult() != null) {
-                    student.setProfile_picture(path);   // Save download URL of profile picture
-                    updated = true;                     // Profile was updated
-                }
-
-
-                // Add user profile to database
-                saveStudentInfo();
+            // Task failed
+            if (!task.isSuccessful()) {
+                allowInteraction();
+                Log.e(TAG, "Profile Upload Failed.");
             }
+
+            // Task was successful
+            else if (task.getResult() != null) {
+                student.setProfile_picture(path);   // Save download URL of profile picture
+                updated = true;                     // Profile was updated
+            }
+
+
+            // Add user profile to database
+            saveStudentInfo(name_changed);
         });
     }
 

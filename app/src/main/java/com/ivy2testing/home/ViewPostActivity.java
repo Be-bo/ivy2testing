@@ -125,7 +125,7 @@ public class ViewPostActivity extends AppCompatActivity {
         loadImages();           // Load author profile image and post visual
         mAuthorName.setText(post.getAuthor_name());
         mPostDescription.setText(post.getText());       // Post description
-        mPinnedEvent.setText(post.getPinned_id());         // ??? TODO
+        mPinnedEvent.setText(post.getPinned_id());      // Pinned Event (name or id??)
         loadComments();         // Load comments from database TODO only load when expanding comments
 
         // Can edit if viewer is the author of the post
@@ -145,7 +145,6 @@ public class ViewPostActivity extends AppCompatActivity {
         showToastError("ViewAuthorProfile WIP");
     }
 
-
    // onClick for Comments? TODO
 
     // onClick for edit Post (if viewer == author) TODO
@@ -159,10 +158,11 @@ public class ViewPostActivity extends AppCompatActivity {
 ***************************************************************************************************/
 
 
-
     private Intent backToParent(){
         Intent intent = new Intent();
         intent.putExtra("updated", updated);
+        if (updated) intent.putExtra("post", post);
+        setResult(RESULT_OK, intent);
         return intent;
     }
 
@@ -191,6 +191,4 @@ public class ViewPostActivity extends AppCompatActivity {
         Log.e(TAG, message);
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
-
-
 }
