@@ -9,31 +9,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** @author Zahra Ghavasieh
- * Overview: Class to store a Firebase Post document
+ * Overview: Class to store a Firebase Event document
  * Features: firebase compatible, Parcelable (can pass as intent Extra)
  */
 public class Event implements Parcelable {
 
     // Fields
-    private String id;
-    private String uni_domain;
+
+
     private String author_id;
     private String author_name;
-    private final boolean is_event = true;
-    private boolean main_feed_visible = true;
     private long creation_millis = 0;
-    private String name;
-    private long start_millis;
     private long end_millis;
-    private boolean is_featured = false;
+    private List<String> going_ids;
+    private String id;
     private boolean is_active = true;
+    private final boolean is_event = true;
+    private boolean is_featured = false;
     private String link;
     private String location;
-    private String text;
-    private String visual;
+    private boolean main_feed_visible = true;
+    private String name;
     private String pinned_id;
+    private long start_millis;
+    private String text;
+    private String uni_domain;
     private List<String> views_id;
-    private List<String> going_ids;
+    private String visual;
+
 
 
 /* Constructors
@@ -42,7 +45,7 @@ public class Event implements Parcelable {
     // Requirement for FireStore
     public Event(){}
 
-    // Use for creating a new Post in code TODO change parameters depending on createEvent page
+    // Use for creating a new Event in code TODO change parameters depending on createEvent page
     public Event(String id, String uni_domain, String author_id, String author_name,
                 boolean main_feed_visible, String pinned_id){
         this.id = id;
@@ -54,6 +57,8 @@ public class Event implements Parcelable {
 
         this.views_id = new ArrayList<>();
         creation_millis = System.currentTimeMillis();
+        // going IDs needs to be instantiated for it to go in the database with the constructor...
+        this.going_ids = new ArrayList<>();
     }
 
     // Make Event from Post
@@ -139,9 +144,10 @@ public class Event implements Parcelable {
         return views_id;
     }
 
+    // getters are required for pushing to firebase. This constructor can be simplified...
     public List<String> getGoing_ids() {
-        if (views_id == null) return new ArrayList<>();
-        else return new ArrayList<>(going_ids);
+        if (views_id == null) return new ArrayList<String>();
+        else return new ArrayList<String>(going_ids);
     }
 
 /* Setters

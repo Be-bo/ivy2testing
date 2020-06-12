@@ -4,6 +4,7 @@ android {
     compileSdkVersion 29
 
 
+
     defaultConfig {
         applicationId "com.ivy2testing"
         minSdkVersion 24
@@ -38,6 +39,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.2.2'
     implementation 'androidx.wear:wear:1.0.0'
 
+
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
@@ -60,6 +62,7 @@ dependencies {
     compileOnly 'com.google.android.wearable:wearable:2.7.0'        // Picasso
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    
 }
 
 apply plugin: 'com.android.application'

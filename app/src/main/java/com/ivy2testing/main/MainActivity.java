@@ -68,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
     private String this_user_id;
     private String this_uni_domain;
 
+    // bubble handlers
+    private Button uni_button;
+    private Button current_button;
 
     // On create
     /* ************************************************************************************************** */
@@ -79,8 +82,7 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
         // Set Up Top Navigation Toolbar
         setToolBar();
 
-        setHandlers();
-        setListeners();
+
         //attemptAutoLogin();
 
         // Set up home fragment
@@ -90,6 +92,8 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
 
         // this method is kept so people can swap fragments when need be
         // fragmentHandler();
+        setHandlers();
+        setListeners();
 
     }
 
@@ -189,6 +193,8 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
         loadingLayout = findViewById(R.id.main_loadingScreen);
         post_button = findViewById(R.id.post_button);
         mFrameLayout = findViewById(R.id.main_fragmentContainer);
+
+
     }
 
     /* ************************************************************************************************** */
@@ -390,4 +396,5 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
         }
         else setLoggedInDisplay(); // Logged In with no pic!
     }
+
 }

@@ -3,7 +3,7 @@
     android:id="@+id/hamburger_menu_container"
     android:layout_width="match_parent"
     android:layout_height="180dp"
-    android:background="@drawable/gradient_green"
+    android:background="@drawable/gradient_custom_hamburger_menu"
     android:gravity="bottom"
     android:orientation="vertical"
     android:padding="16dp"
@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:text="Placement Text"
+        android:text="Name: Test_User"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/accent" />
 
@@ -28,6 +28,6 @@
         android:id="@+id/hamburger_menu_bottomtext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="HEY whassup"
+        android:text="University: University of Testing"
         android:textColor="@color/hint" />
 </LinearLayout>
