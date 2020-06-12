@@ -188,8 +188,7 @@ public class StudentProfileFragment extends Fragment {
         Log.d(TAG, "Starting ViewPost Activity for post #" + position);
         intent.putExtra("post", posts.get(position));
         intent.putExtra("this_user_id", student.getId());
-        //startActivityForResult(intent, Constant.VIEW_POST_REQUEST_CODE);
-        startActivity(intent);
+        startActivityForResult(intent, Constant.VIEW_POST_REQUEST_CODE);
     }
 
 

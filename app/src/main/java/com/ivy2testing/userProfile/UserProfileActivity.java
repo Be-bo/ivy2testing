@@ -1,8 +1,10 @@
 package com.ivy2testing.userProfile;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +17,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Organization;
+import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.util.FragCommunicator;
 import com.ivy2testing.entities.Student;
 
@@ -40,10 +43,13 @@ public class UserProfileActivity extends AppCompatActivity implements FragCommun
     private String this_uni_domain;
     private String this_user_id;
 
-    // One will be null
+    // One of student/organization will be null
     private Student student;
     private Organization organization;
     private Uri profile_img;
+
+    private boolean nameUpdated = false;
+    private boolean imgUpdated = false;
 
 
 /* Overridden Methods
@@ -67,6 +73,16 @@ public class UserProfileActivity extends AppCompatActivity implements FragCommun
             StudentProfileFragment profileFragment = (StudentProfileFragment) fragment;
             profileFragment.setCommunicator(this);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Handling up button for when another activity called it (it will simply go back to main otherwise)
+        if (item.getItemId() == android.R.id.home && !isTaskRoot()){
+            goBackToParent(); // Tells parent if user was updated
+            return true;
+        }
+        else return super.onOptionsItemSelected(item);
     }
 
 
@@ -116,6 +132,29 @@ public class UserProfileActivity extends AppCompatActivity implements FragCommun
                 finish();
             }
         }
+    }
+
+    // Handle Up Button
+    private void goBackToParent(){
+        Log.d(TAG, "Returning to parent");
+        Intent intent;
+
+        // Try to go back to activity that called startActivityForResult()
+        if (getCallingActivity() != null)
+            intent = new Intent(this, getCallingActivity().getClass());
+        else intent = new Intent(this, MainActivity.class); // Go to main as default
+
+        // Pass on name if updated
+        if (nameUpdated){
+            if (student != null) intent.putExtra("user_name", student.getName());
+            else if (organization != null) intent.putExtra("user_name", organization.getName());
+        }
+
+        // Pass on profile image if updated
+        if (imgUpdated) intent.putExtra("profile_img", profile_img);
+
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
 
