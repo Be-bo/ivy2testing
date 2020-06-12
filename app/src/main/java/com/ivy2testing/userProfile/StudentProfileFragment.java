@@ -16,6 +16,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,7 +29,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.home.ViewPostActivity;
-import com.ivy2testing.util.FragCommunicator;
+import com.ivy2testing.main.UserViewModel;
+import com.ivy2testing.util.OnSelectionListener;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.util.Constant;
@@ -46,7 +49,7 @@ public class StudentProfileFragment extends Fragment {
     private final static String TAG = "StudentProfileFragment";
 
     // Parent activity
-    private FragCommunicator mCommunicator; // For communications to activity
+    private Context mContext;
 
     // Views
     private ImageView mProfileImg;
@@ -69,19 +72,49 @@ public class StudentProfileFragment extends Fragment {
     private Uri profileImgUri;
     private List<Post> posts = new ArrayList<>(6);        // Load first 6 posts only
     private List<Uri> postImgUris = new ArrayList<>(6);  // non synchronous adds!
+    private UserViewModel this_user_viewmodel;
 
 
     // Constructor
-    public StudentProfileFragment(Student student, Uri profileImgUri, boolean myProfile) {
-        this.student = student;
+    public StudentProfileFragment() {
+        mContext = getContext();
         this.profileImgUri = profileImgUri;
         this.myProfile = myProfile;
     }
 
-    // Setter for communicator
-    public void setCommunicator(FragCommunicator communicator) {
-        mCommunicator = communicator;
+
+
+
+
+
+    // MARK: Get User Data This Way - always stays update and doesn't require passing anything because ViewModel is connected to the Activity that manages the fragment
+    private void getUserProfile(View rootView){
+        if (getActivity() != null) {
+            this_user_viewmodel = new ViewModelProvider(getActivity()).get(UserViewModel.class);
+            student = this_user_viewmodel.getThisStudent().getValue(); //grab the initial data
+            // TODO: only start doing processes that depend on user profile here:
+            if(student != null){
+                // TODO: populate UI
+                // TODO: set up listeners
+                // TODO: etc.
+                // NOTE: everything depends on the user profile data, only execute stuff dependent on it once you 100% have it
+                setupViews();
+                setUpRecycler();
+                setListeners(rootView);
+            }
+            this_user_viewmodel.getThisStudent().observe(getActivity(), (Student updatedProfile) -> { //listen to realtime user profile changes afterwards
+                if (updatedProfile != null) student = updatedProfile;
+                // TODO: if stuff needs to be updated whenever the user profile receives an update, DO SO HERE
+            });
+        }
     }
+    // MARK: ------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
 
 
 /* Override Methods
@@ -91,13 +124,9 @@ public class StudentProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_studentprofile, container, false);
-
         // Initialization Methods
         declareViews(rootView);
-        setupViews();
-        setUpRecycler();
-        setListeners(rootView);
-
+        getUserProfile(rootView);
         return rootView;
     }
 
@@ -234,19 +263,21 @@ public class StudentProfileFragment extends Fragment {
             return;
         }
 
-        db.document(address).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()){
-                DocumentSnapshot doc = task.getResult();
-                if (doc == null){
-                    Log.e(TAG, "Document doesn't exist");
-                    return;
-                }
-                student = doc.toObject(Student.class);
-                if (student == null) Log.e(TAG, "Student object obtained from database is null!");
-                else {
-                    student.setId(this_user_id);    // Set student ID
-                    mCommunicator.message(student); // Tell MainActivity to use new student
-                    getStudentPic();                // Upload pic and update views
+        db.document(address).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot doc = task.getResult();
+                    if (doc == null){
+                        Log.e(TAG, "Document doesn't exist");
+                        return;
+                    }
+                    student = doc.toObject(Student.class);
+                    if (student == null) Log.e(TAG, "Student object obtained from database is null!");
+                    else {
+                        student.setId(this_user_id);    // Set student ID
+                        getStudentPic();                // Upload pic and update views
+                    }
                 }
             }
             else Log.e(TAG,"getUserInfo: unsuccessful!");

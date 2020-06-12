@@ -19,9 +19,9 @@ public class UserViewModel extends ViewModel {
 
     private String TAG = "ThisUserViewModelTag";
 
-    private MutableLiveData<Organization> thisOrganization;
-    private MutableLiveData<Student> thisStudent;
-    private DocumentReference documentReference;
+    private MutableLiveData<Organization> thisOrganization = new MutableLiveData<>();
+    private MutableLiveData<Student> thisStudent = new MutableLiveData<>();
+    private FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
     private ListenerRegistration listenerRegistration;
     private boolean initialAcquisition = true;
     private boolean isOrganization = false;
@@ -31,38 +31,25 @@ public class UserViewModel extends ViewModel {
 
     // MARK: Initial Acquisition of User's Profile (with student vs organization distinction)
 
-    void startListening(String thisUserId, String thisUniDomain, boolean isOrganization){
-        this.isOrganization = isOrganization;
-        if(isOrganization){
-            thisOrganization = new MutableLiveData<Organization>();
-            documentReference = FirebaseFirestore.getInstance().collection("universities").document(thisUniDomain).collection("users").document(thisUserId);
-
-            if(initialAcquisition){ //had problems with the listener not being up to date sometimes during the initial launch of the MainActivity so the first time is a one time query
-                documentReference.get().addOnCompleteListener(task -> {
-                    if(task.isSuccessful() && task.getResult() != null && task.getResult().getData() != null){
-                        thisOrganization.setValue(task.getResult().toObject(Organization.class));
-                        initialAcquisition = false;
-                        setUpListener(); //once we've acquired the profile initially start listening
+    void startListening(String thisUserId, String thisUniDomain){
+        if(initialAcquisition){ //had problems with the listener not being up to date sometimes during the initial launch of the MainActivity so the first time is a one time query
+            db_ref.collection("universities").document(thisUniDomain).collection("users").document(thisUserId).get().addOnCompleteListener(task -> {
+                if(task.isSuccessful() && task.getResult() != null && task.getResult().getData() != null){
+                    Map<String, Object> user = task.getResult().getData();
+                    if(user.get("is_organization") instanceof Boolean){
+                        if((Boolean)user.get("is_organization")){
+                            isOrganization = true;
+                            thisOrganization.setValue(task.getResult().toObject(Organization.class));
+                        }else{
+                            thisStudent.setValue(task.getResult().toObject(Student.class));
+                        }
                     }
-                });
-            }else{
-                setUpListener(); //if not the initial acquisition simply start listening
-            }
+                    initialAcquisition = false;
+                    setUpListener(thisUserId, thisUniDomain); //once we've acquired the profile initially start listening
+                }
+            });
         }else{
-            thisStudent = new MutableLiveData<Student>();
-            documentReference = FirebaseFirestore.getInstance().collection("universities").document(thisUniDomain).collection("users").document(thisUserId);
-
-            if(initialAcquisition){ //had problems with the listener not being up to date sometimes during the initial launch of the MainActivity so the first time is a one time query
-                documentReference.get().addOnCompleteListener(task -> {
-                    if(task.isSuccessful() && task.getResult() != null && task.getResult().getData() != null){
-                        thisStudent.setValue(task.getResult().toObject(Student.class));
-                        initialAcquisition = false;
-                        setUpListener(); //once we've acquired the profile initially start listening
-                    }
-                });
-            }else{
-                setUpListener(); //if not the initial acquisition simply start listening
-            }
+            setUpListener(thisUserId, thisUniDomain); //if not the initial acquisition simply start listening
         }
     }
 
@@ -73,8 +60,8 @@ public class UserViewModel extends ViewModel {
 
     // MARK: Active Listening to User's Profile in the DB
 
-    private void setUpListener(){ //listen to this user's profile updates in Firestore
-        listenerRegistration = documentReference.addSnapshotListener((documentSnapshot, e) -> {
+    private void setUpListener(String thisUserId, String thisUniDomain){ //listen to this user's profile updates in Firestore
+        listenerRegistration = db_ref.collection("universities").document(thisUniDomain).collection("users").document(thisUserId).addSnapshotListener((documentSnapshot, e) -> {
             if(e != null){
                 Log.d(TAG, "Listening for this user's profile failed: ", e);
             }
