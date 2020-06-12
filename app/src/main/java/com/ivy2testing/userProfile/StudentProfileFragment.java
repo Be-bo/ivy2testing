@@ -183,10 +183,13 @@ public class StudentProfileFragment extends Fragment {
 
     // A post in recycler was selected
     private void selectPost(int position) {
-        Intent intent = new Intent(getActivity(), ViewPostActivity.class);
+
+        Intent intent = new Intent(getContext(), ViewPostActivity.class);
         Log.d(TAG, "Starting ViewPost Activity for post #" + position);
-        intent.putExtra("post", posts.get(position)); //TODO Post class not defined yet
-        startActivityForResult(intent, Constant.VIEW_POST_REQUEST_CODE);
+        intent.putExtra("post", posts.get(position));
+        intent.putExtra("this_user_id", student.getId());
+        //startActivityForResult(intent, Constant.VIEW_POST_REQUEST_CODE);
+        startActivity(intent);
     }
 
 

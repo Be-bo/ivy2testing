@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
 
-    <Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/editStudent_toolBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -22,7 +22,7 @@
             style="@style/ToolBarTitle"
             android:text="@string/editProfile" />
 
-    </Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

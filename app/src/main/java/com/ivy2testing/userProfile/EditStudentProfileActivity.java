@@ -1,8 +1,6 @@
 package com.ivy2testing.userProfile;
 
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,6 +24,9 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -46,7 +47,7 @@ import java.util.UUID;
  * Overview: Edit Student Profile from Student Profile Fragment
  * Notes: Image [crop, compression] not implemented yet
  */
-public class EditStudentProfileActivity extends Activity {
+public class EditStudentProfileActivity extends AppCompatActivity {
 
     // Constants
     private final static String TAG = "EditStudProfileActivity";
@@ -139,8 +140,8 @@ public class EditStudentProfileActivity extends Activity {
         mDegree.setAdapter(degree_adapter);
 
         // Action bar
-        setActionBar(findViewById(R.id.editStudent_toolBar));
-        ActionBar actionBar = getActionBar();
+        setSupportActionBar(findViewById(R.id.editStudent_toolBar));
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null){
             actionBar.setTitle(null);
             actionBar.setDisplayHomeAsUpEnabled(true);

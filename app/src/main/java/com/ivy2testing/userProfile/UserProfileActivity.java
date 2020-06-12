@@ -1,12 +1,12 @@
 package com.ivy2testing.userProfile;
 
-import android.app.ActionBar;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -75,8 +75,8 @@ public class UserProfileActivity extends AppCompatActivity implements FragCommun
 
     // Set toolbar as actionBar
     private void setUpToolBar(){
-        setActionBar(findViewById(R.id.userProfile_toolBar));
-        ActionBar action_bar = getActionBar();
+        setSupportActionBar(findViewById(R.id.userProfile_toolBar));
+        ActionBar action_bar = getSupportActionBar();
         if (action_bar != null){
             action_bar.setTitle(null);
             action_bar.setDisplayHomeAsUpEnabled(true);
