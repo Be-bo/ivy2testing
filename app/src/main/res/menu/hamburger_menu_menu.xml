@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <!-- either groups  or menus are able to launch fragments or items, can...will need to check online again
+    i believe its groups -->
     <item
         android:id="@+id/search_placeholder"
         android:title="Search">
@@ -21,9 +22,51 @@
             android:id="@+id/hamburger_menu_settings_placeholder"
             android:icon="@drawable/ic_settings_placeholder"
             android:title="Settings" />
-        <item
-            android:id="@+id/hamburger_menu_terms_placeholder"
-            android:icon="@drawable/ic_subject_placeholder"
-            android:title="Terms of Use" />
     </group>
+    <item
+        android:id="@+id/privacy_and_security_placeholder"
+        android:title = "Privacy and Security">
+        <menu>
+            <item
+                android:id="@+id/change_pass_button"
+                android:icon="@drawable/ic_baseline_lock_placeholder"
+                android:title="Change Password"/>
+            <item
+                android:id="@+id/blocked_accounts_button"
+                android:icon="@drawable/ic_baseline_block_placeholder"
+                android:title="Blocked Accounts"/>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/support_placeholder"
+        android:title = "Support">
+        <menu>
+            <item
+                android:id="@+id/contact_us_button"
+                android:icon="@drawable/ic_baseline_contact_support_placeholder"
+                android:title="Contact Us"/>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/other_placeholder"
+        android:title = "Other">
+        <menu>
+            <item
+                android:id="@+id/hamburger_menu_terms_placeholder"
+                android:icon="@drawable/ic_subject_placeholder"
+                android:title="Terms of Use" />
+
+            <item
+                android:id="@+id/signout_button_placeholder"
+                android:icon="@drawable/ic_baseline_exit_to_app_placeholder"
+                android:title="Sign Out"/>
+            <item
+                android:id="@+id/delete_account_placeholder"
+                android:icon="@drawable/ic_baseline_delete_forever_placeholder"
+                android:title="Delete Account"/>
+
+        </menu>
+    </item>
+
 </menu>

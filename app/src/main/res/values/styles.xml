@@ -110,4 +110,12 @@
         <item name="android:background">@drawable/gradient_toolbar_white</item>
     </style>
 
+    <!-- not currently used( check datePickerdialog etc for use in future) -->
+    <style name="CalendarTheme"  parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:textColorPrimaryInverse">@color/white</item>
+        <item name="android:colorControlActivated">@color/interaction</item>
+    </style>
+
+
+
 </resources>

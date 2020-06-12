@@ -48,7 +48,9 @@ public class MainActivity extends AppCompatActivity {
     private Student this_student;
     private Organization this_organization;
 
-
+    // bubble handlers
+    private Button uni_button;
+    private Button current_button;
 
 
 
