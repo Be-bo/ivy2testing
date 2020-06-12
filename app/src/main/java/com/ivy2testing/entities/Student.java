@@ -53,7 +53,9 @@ public class Student implements Parcelable {
 
         this.name = splitEmail[0];      // Set a default name
         this.registration_millis = System.currentTimeMillis();
-        this.postImgUris = new Uri[6];
+
+        //TODO: the line below was in but prevented execution -> commented out
+//        this.postImgUris = new Uri[6];
     }
 
 /* Getters

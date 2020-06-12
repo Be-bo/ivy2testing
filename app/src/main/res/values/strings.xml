@@ -43,8 +43,6 @@
     <string name="degree">Degree</string>
     <string name="edit">Edit</string>
     <string name="posts">Posts</string>
-
-    <string name="error_invalidName">Name cannot be empty</string>
     <string name="error_noPosts">No Posts to Display</string>
     <string name="error_getPost">An error occurred while retrieving posts</string>
 

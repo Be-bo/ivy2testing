@@ -17,6 +17,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -31,8 +32,8 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.entities.Student;
+import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.util.Constant;
-import com.ivy2testing.util.FragCommunicator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +44,6 @@ public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
 
     // Parent activity
-    private FragCommunicator mCommunicator; // For communications to activity
     private Context mContext;
     private View rootView;
 
@@ -59,18 +59,38 @@ public class HomeFragment extends Fragment {
 
     private Student student;
     private boolean is_organization = false;
+    private UserViewModel this_user_viewmodel;
 
 
     // Constructor
-    public HomeFragment(Context context, Student student) {
-        mContext = context;
-        this.student = student;
+    public HomeFragment(Context con) {
+        mContext = con;
     }
 
-    // Setter for communicator
-    public void setCommunicator(FragCommunicator communicator) {
-        mCommunicator = communicator;
+
+
+
+    // MARK: Get User Data This Way - always stays update and doesn't require passing anything because ViewModel is connected to the Activity that manages the fragment
+    private void getUserProfile(View rootView){
+        if (getActivity() != null) {
+            this_user_viewmodel = new ViewModelProvider(getActivity()).get(UserViewModel.class);
+            student = this_user_viewmodel.getThisStudent().getValue(); //grab the initial data
+            // TODO: only start doing processes that depend on user profile here:
+            if(student != null){
+                // TODO: populate UI
+                // TODO: set up listeners
+                // TODO: etc.
+                // NOTE: everything depends on the user profile data, only execute stuff dependent on it once you 100% have it
+            }
+            this_user_viewmodel.getThisStudent().observe(getActivity(), (Student updatedProfile) -> { //listen to realtime user profile changes afterwards
+                if (updatedProfile != null) student = updatedProfile;
+                // TODO: if stuff needs to be updated whenever the user profile receives an update, DO SO HERE
+            });
+        }
     }
+    // MARK: ------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 
     /* Overridden Methods
@@ -119,7 +139,6 @@ public class HomeFragment extends Fragment {
                 Map<Object, Object> map = new HashMap<>();
                 map.put("this_user_id", data.getStringExtra("this_user_id"));
                 map.put("this_uni_domain", data.getStringExtra("this_uni_domain"));
-                mCommunicator.mapMessage(map);  // Tell MainActivity to log us in!
             }
         } else
             Log.w(TAG, "Don't know how to handle the request code, \"" + requestCode + "\" yet!");
@@ -145,7 +164,6 @@ public class HomeFragment extends Fragment {
         Map<Object, Object> map = new HashMap<>();
         map.put("this_user_id", "testID");
         map.put("this_uni_domain", "ucalgary.ca");
-        mCommunicator.mapMessage(map);  // Tell MainActivity to log us in as testID!
     }
 
     /* Transition Methods
