@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new HomeFragment(this);
                     break;
                 case R.id.tab_bar_profile:
-                    selectedFragment = new StudentProfileFragment();
+                    selectedFragment = new StudentProfileFragment(true);
                     break;
             }
             if (selectedFragment!= null) getSupportFragmentManager().beginTransaction().replace(R.id.main_fragmentContainer, selectedFragment).commit();

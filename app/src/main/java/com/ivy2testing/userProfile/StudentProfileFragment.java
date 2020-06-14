@@ -16,11 +16,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -30,7 +31,6 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.home.ViewPostActivity;
 import com.ivy2testing.main.UserViewModel;
-import com.ivy2testing.util.OnSelectionListener;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.util.Constant;
@@ -48,8 +48,9 @@ public class StudentProfileFragment extends Fragment {
     // Constants
     private final static String TAG = "StudentProfileFragment";
 
-    // Parent activity
-    private Context mContext;
+    // Parent Final fields
+    private UserViewModel user_view_model;
+    private View root_view;
 
     // Views
     private ImageView mProfileImg;
@@ -66,55 +67,19 @@ public class StudentProfileFragment extends Fragment {
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
     // Other Variables
-    private boolean myProfile;      // Don't show edit button if this is not myProfile
+    private boolean my_profile;      // Don't show edit button if this is not myProfile
     private Student student;
     private ImageAdapter adapter;
-    private Uri profileImgUri;
+    private Uri profile_img_uri;
     private List<Post> posts = new ArrayList<>(6);        // Load first 6 posts only
-    private List<Uri> postImgUris = new ArrayList<>(6);  // non synchronous adds!
-    private UserViewModel this_user_viewmodel;
+    private List<Uri> post_img_uris = new ArrayList<>(6); // non synchronous adds!
+
 
 
     // Constructor
-    public StudentProfileFragment() {
-        mContext = getContext();
-        this.profileImgUri = profileImgUri;
-        this.myProfile = myProfile;
+    public StudentProfileFragment(boolean my_profile) {
+        this.my_profile = my_profile;
     }
-
-
-
-
-
-
-    // MARK: Get User Data This Way - always stays update and doesn't require passing anything because ViewModel is connected to the Activity that manages the fragment
-    private void getUserProfile(View rootView){
-        if (getActivity() != null) {
-            this_user_viewmodel = new ViewModelProvider(getActivity()).get(UserViewModel.class);
-            student = this_user_viewmodel.getThisStudent().getValue(); //grab the initial data
-            // TODO: only start doing processes that depend on user profile here:
-            if(student != null){
-                // TODO: populate UI
-                // TODO: set up listeners
-                // TODO: etc.
-                // NOTE: everything depends on the user profile data, only execute stuff dependent on it once you 100% have it
-                setupViews();
-                setUpRecycler();
-                setListeners(rootView);
-            }
-            this_user_viewmodel.getThisStudent().observe(getActivity(), (Student updatedProfile) -> { //listen to realtime user profile changes afterwards
-                if (updatedProfile != null) student = updatedProfile;
-                // TODO: if stuff needs to be updated whenever the user profile receives an update, DO SO HERE
-            });
-        }
-    }
-    // MARK: ------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
 
 
 /* Override Methods
@@ -123,11 +88,12 @@ public class StudentProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_studentprofile, container, false);
+        root_view = inflater.inflate(R.layout.fragment_studentprofile, container, false);
+
         // Initialization Methods
-        declareViews(rootView);
-        getUserProfile(rootView);
-        return rootView;
+        declareViews(root_view);
+        getUserProfile();
+        return root_view;
     }
 
     @Override
@@ -139,7 +105,7 @@ public class StudentProfileFragment extends Fragment {
             Log.d(TAG, "Coming back from EditStudent!");
             if (resultCode == Activity.RESULT_OK && data != null) {
                 boolean updated = data.getBooleanExtra("updated", false);
-                if (updated) reloadStudent();
+                if (updated) Log.d(TAG, "updated?"); //TODO test!
             }
         }
         if (requestCode == Constant.VIEW_POST_REQUEST_CODE) {
@@ -152,8 +118,33 @@ public class StudentProfileFragment extends Fragment {
             Log.w(TAG, "Don't know how to handle the request code, \"" + requestCode + "\" yet!");
     }
 
+
 /* Initialization Methods
 ***************************************************************************************************/
+
+    // Get User Data - always stays update and doesn't require passing anything because ViewModel is connected to the Activity that manages the fragment
+    private void getUserProfile(){
+        if (getActivity() != null) {
+
+            user_view_model = new ViewModelProvider(getActivity()).get(UserViewModel.class);
+            student = user_view_model.getThisStudent().getValue(); //grab the initial data
+
+            // Only start doing processes that depend on user profile
+            if(student != null){
+                setupViews();           // populate UI
+                setUpRecycler();        // set up posts recycler view
+                setListeners(root_view); // set up listeners
+            }
+
+            // listen to realtime user profile changes afterwards
+            user_view_model.getThisStudent().observe(getActivity(), (Student updatedProfile) -> {
+                if (updatedProfile != null){
+                    student = updatedProfile;   // Update student
+                    getStudentPic();            // Do Other setups
+                }
+            });
+        }
+    }
 
     private void declareViews(View v){
         mProfileImg = v.findViewById(R.id.studentProfile_circleImg);
@@ -170,7 +161,7 @@ public class StudentProfileFragment extends Fragment {
         if (student == null) return;
         mName.setText(student.getName());
         mDegree.setText(student.getDegree());
-        if (profileImgUri!= null) Picasso.get().load(profileImgUri).into(mProfileImg);
+        if (profile_img_uri != null) Picasso.get().load(profile_img_uri).into(mProfileImg);
     }
 
     // Create adapter for recycler (empty!)
@@ -178,14 +169,14 @@ public class StudentProfileFragment extends Fragment {
         loadPostsFromDB();
 
         // set LayoutManager and Adapter
-        adapter = new ImageAdapter(postImgUris);
+        adapter = new ImageAdapter(post_img_uris);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), 3, GridLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(adapter);
     }
 
     // Set up onClick Listeners
     private void setListeners(View v){
-        if (myProfile) v.findViewById(R.id.studentProfile_edit).setOnClickListener(v12 -> editProfile());
+        if (my_profile) v.findViewById(R.id.studentProfile_edit).setOnClickListener(v12 -> editProfile());
         else    v.findViewById(R.id.studentProfile_edit).setVisibility(View.GONE);
         v.findViewById(R.id.studentProfile_seeAll).setOnClickListener(v1 -> seeAllPosts());
         adapter.setOnSelectionListener(this::selectPost);
@@ -252,38 +243,6 @@ public class StudentProfileFragment extends Fragment {
 /* Firebase Methods
 ***************************************************************************************************/
 
-    // Reload student profile
-    private void reloadStudent() {
-        if (student == null) return;
-
-        final String this_user_id = student.getId();
-        String address = "universities/" + student.getUni_domain() + "/users/" + student.getId();
-        if (address.contains("null")){
-            Log.e(TAG, "Student Address has null values.");
-            return;
-        }
-
-        db.document(address).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    DocumentSnapshot doc = task.getResult();
-                    if (doc == null){
-                        Log.e(TAG, "Document doesn't exist");
-                        return;
-                    }
-                    student = doc.toObject(Student.class);
-                    if (student == null) Log.e(TAG, "Student object obtained from database is null!");
-                    else {
-                        student.setId(this_user_id);    // Set student ID
-                        getStudentPic();                // Upload pic and update views
-                    }
-                }
-            }
-            else Log.e(TAG,"getUserInfo: unsuccessful!");
-        });
-    }
-
     // load picture from firebase storage
     // Will throw an exception if file doesn't exist in storage but app continues to work fine
     private void getStudentPic() {
@@ -294,7 +253,7 @@ public class StudentProfileFragment extends Fragment {
             base_storage_ref.child(student.getProfile_picture()).getDownloadUrl()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()){
-                            profileImgUri = task.getResult();
+                            profile_img_uri = task.getResult();
                         }
                         else {
                             Log.w(TAG, task.getException());
@@ -360,7 +319,7 @@ public class StudentProfileFragment extends Fragment {
         }
 
         int postIndex = posts.indexOf(post);
-        if (postIndex < postImgUris.size() && postImgUris.get(postIndex) != null) {
+        if (postIndex < post_img_uris.size() && post_img_uris.get(postIndex) != null) {
             Log.d(TAG,"Post Image already loaded!");
             return;
         }
@@ -373,8 +332,8 @@ public class StudentProfileFragment extends Fragment {
                         if (task.isSuccessful()){
                             Uri uri = task.getResult();
                             if (uri != null){
-                                postImgUris.add(uri);
-                                adapter.notifyItemInserted(postImgUris.size()-1);
+                                post_img_uris.add(uri);
+                                adapter.notifyItemInserted(post_img_uris.size()-1);
                                 Log.d(TAG, "Added to position "+posts.indexOf(post)+" img " + uri);
                             }
                         }

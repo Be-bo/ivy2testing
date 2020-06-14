@@ -31,7 +31,7 @@ public class UserViewModel extends ViewModel {
 
     // MARK: Initial Acquisition of User's Profile (with student vs organization distinction)
 
-    void startListening(String thisUserId, String thisUniDomain){
+    public void startListening(String thisUserId, String thisUniDomain){
         if(initialAcquisition){ //had problems with the listener not being up to date sometimes during the initial launch of the MainActivity so the first time is a one time query
             db_ref.collection("universities").document(thisUniDomain).collection("users").document(thisUserId).get().addOnCompleteListener(task -> {
                 if(task.isSuccessful() && task.getResult() != null && task.getResult().getData() != null){

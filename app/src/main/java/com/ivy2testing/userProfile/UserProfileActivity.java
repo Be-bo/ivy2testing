@@ -11,26 +11,24 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import com.google.firebase.firestore.DocumentSnapshot;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Organization;
+import com.ivy2testing.entities.User;
 import com.ivy2testing.main.MainActivity;
-import com.ivy2testing.util.FragCommunicator;
+import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.entities.Student;
-
-import java.util.Map;
-import java.util.Objects;
 
 /** @author Zahra Ghavasieh
  * Overview: 3rd party User Profile view Activity.
  *          Takes in a user "address" in Firestore as intent extras.
  *          And uses fragments
- * Notes: Needs update if abstract class User is created, TODO Up button configurations
  */
-public class UserProfileActivity extends AppCompatActivity implements FragCommunicator {
+public class UserProfileActivity extends AppCompatActivity {
 
     // Constants
     private final static String TAG = "UserProfileActivity";
@@ -43,13 +41,9 @@ public class UserProfileActivity extends AppCompatActivity implements FragCommun
     private String this_uni_domain;
     private String this_user_id;
 
-    // One of student/organization will be null
-    private Student student;
-    private Organization organization;
-    private Uri profile_img;
-
-    private boolean nameUpdated = false;
-    private boolean imgUpdated = false;
+    // user must be a student or an Organization!
+    private User user;
+    private boolean is_organization;
 
 
 /* Overridden Methods
@@ -64,15 +58,6 @@ public class UserProfileActivity extends AppCompatActivity implements FragCommun
         getIntentExtras();  // Get user address in database via intent
         setUpToolBar();     // set up toolBar as an actionBar
         getUserInfo();
-    }
-
-    @Override
-    public void onAttachFragment(@NonNull Fragment fragment) {
-        super.onAttachFragment(fragment);
-        if (fragment instanceof StudentProfileFragment) {
-            StudentProfileFragment profileFragment = (StudentProfileFragment) fragment;
-            profileFragment.setCommunicator(this);
-        }
     }
 
     @Override
@@ -102,18 +87,17 @@ public class UserProfileActivity extends AppCompatActivity implements FragCommun
 
     // Set up either StudentProfile or OrganizationProfile Fragment in FrameLayout
     private void setFragment() {
-        Fragment selected_fragment = null;
+        Fragment selected_fragment;
 
-        if (student != null) {
-            selected_fragment = new StudentProfileFragment(student, profile_img, false);
+        if (!is_organization) {
+            selected_fragment = new StudentProfileFragment(false);
         }
-        else if (organization != null) {
+        else {
             selected_fragment = new OrganizationProfileFragment();
         }
 
-        if (selected_fragment != null)
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.userProfile_frameLayout, selected_fragment).commit();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.userProfile_frameLayout, selected_fragment).commit();
     }
 
 
@@ -144,44 +128,8 @@ public class UserProfileActivity extends AppCompatActivity implements FragCommun
             intent = new Intent(this, getCallingActivity().getClass());
         else intent = new Intent(this, MainActivity.class); // Go to main as default
 
-        // Pass on name if updated
-        if (nameUpdated){
-            if (student != null) intent.putExtra("user_name", student.getName());
-            else if (organization != null) intent.putExtra("user_name", organization.getName());
-        }
-
-        // Pass on profile image if updated
-        if (imgUpdated) intent.putExtra("profile_img", profile_img);
-
         setResult(RESULT_OK, intent);
         finish();
-    }
-
-
-/* Interface (FragCommunicator) Methods
-***************************************************************************************************/
-
-    @Override
-    public Object message(Object obj) {
-        if (obj instanceof Student) {
-            student = (Student) obj;   // Update student user
-            Log.d(TAG, "Student " + student.getName() + " got updated!");
-        }
-        else if (obj instanceof Organization){
-            organization = (Organization) obj;   // Update organization user
-            Log.d(TAG, "Organization " + organization.getName() + " got updated!");
-        }
-
-        return null;
-    }
-
-    @Override
-    public void mapMessage(Map<Object, Object> map) {
-        if (map.get("this_user_id") != null && map.get("this_uni_domain") != null) {
-            this_user_id = Objects.requireNonNull(map.get("this_user_id")).toString();
-            this_uni_domain = Objects.requireNonNull(map.get("this_uni_domain")).toString();
-            getUserInfo();
-        }
     }
 
 
@@ -196,68 +144,25 @@ public class UserProfileActivity extends AppCompatActivity implements FragCommun
             return;
         }
 
-        db_reference.document(address).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()){
-                DocumentSnapshot doc = task.getResult();
-                if (doc == null){
-                    Log.e(TAG, "Document doesn't exist");
-                    return;
+        // Use UserViewModel to get user info and update realtime
+        UserViewModel user_view_model = new ViewModelProvider(this).get(UserViewModel.class);
+        user_view_model.startListening(this_user_id, this_uni_domain);
+        if (user_view_model.isOrganization()) {
+            user_view_model.getThisOrganization().observe(this, (Organization updatedUser) -> {
+                if (updatedUser != null) {
+                    is_organization = true;
+                    user = updatedUser;
+                    setFragment();
                 }
-
-                // Return if this field doesn't exist
-                if (doc.get("is_organization") == null){
-                    Log.e(TAG, "getUserInfo: 'is_organization' field doesn't exist");
-                    return;
+            });
+        } else {
+            user_view_model.getThisStudent().observe(this, (Student updatedUser) -> {
+                if (updatedUser != null) {
+                    is_organization = false;
+                    user = updatedUser;
+                    setFragment();
                 }
-
-                // Student or Organization?
-                if ((boolean) doc.get("is_organization")){
-                    organization = doc.toObject(Organization.class);
-                    if (organization == null) Log.e(TAG, "Organization object obtained from database is null!");
-                    else organization.setId(doc.getId());
-                }
-                else {
-                    student = doc.toObject(Student.class);
-                    if (student == null) Log.e(TAG, "Student object obtained from database is null!");
-                    else student.setId(doc.getId());
-                }
-                getUserPic(); // Attempt to load profile image Uri from firebase Storage
-            }
-            else Log.e(TAG,"getUserInfo: unsuccessful!");
-        });
-    }
-
-    // load picture from firebase storage
-    // Will throw an exception if file doesn't exist in storage but app continues to work fine
-    private void getUserPic() {
-
-        // Make sure student has a profile image already
-        if (student != null && student.getProfile_picture() != null){
-            db_storage.child(student.getProfile_picture()).getDownloadUrl()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()){
-                            profile_img = task.getResult();
-                        }
-                        else {
-                            Log.w(TAG, "getUserPic for Student Unsuccessful.");
-                            student.setProfile_picture(""); // image doesn't exist
-                        }
-                        setFragment(); // Show profile!
-                    });
+            });
         }
-        else if (organization != null && organization.getProfile_picture() != null){
-            db_storage.child(organization.getProfile_picture()).getDownloadUrl()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()){
-                            profile_img = task.getResult();
-                        }
-                        else {
-                            Log.w(TAG, "getUserPic for Organization Unsuccessful.");
-                            organization.setProfile_picture(""); // image doesn't exist
-                        }
-                        setFragment(); // Show Profile!
-                    });
-        }
-        else setFragment(); // Show Profile with no pic!
     }
 }
