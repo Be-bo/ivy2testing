@@ -48,7 +48,9 @@ public class MainActivity extends AppCompatActivity {
     private Student this_student;
     private Organization this_organization;
 
-
+    // bubble handlers
+    private Button uni_button;
+    private Button current_button;
 
 
 
@@ -131,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new HomeFragment(this);
                     break;
                 case R.id.tab_bar_profile:
-                    selectedFragment = new StudentProfileFragment(true);
+                    selectedFragment = new StudentProfileFragment();
                     break;
             }
             if (selectedFragment!= null) getSupportFragmentManager().beginTransaction().replace(R.id.main_fragmentContainer, selectedFragment).commit();
