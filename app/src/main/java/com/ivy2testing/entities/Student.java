@@ -30,7 +30,7 @@ public class Student implements Parcelable {
     private final boolean is_organization = false;
     private final boolean is_club = false;
     private boolean is_banned = false;
-    private String registration_platform;
+    private String registration_platform = "Android";
     private List<String> post_ids = new ArrayList<>();
     
 
@@ -107,6 +107,10 @@ public class Student implements Parcelable {
 
     public String getMessaging_token() {
         return messaging_token;
+    }
+
+    public void setMessaging_token(String messaging_token) {
+        this.messaging_token = messaging_token;
     }
 
     public boolean getIs_organization() {

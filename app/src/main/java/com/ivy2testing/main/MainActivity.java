@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,9 +18,11 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.home.CreatePost;
 import com.ivy2testing.R;
@@ -35,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
     // MARK: Variables and Constants
 
+    private final static int LOGIN_CODE = 1;
+
     private final static String TAG = "MainActivity";
     private DrawerLayout drawer;
     private BottomNavigationView bottom_navigation;
@@ -48,9 +53,6 @@ public class MainActivity extends AppCompatActivity {
     private Student this_student;
     private Organization this_organization;
 
-    // bubble handlers
-    private Button uni_button;
-    private Button current_button;
 
 
 
@@ -96,13 +98,6 @@ public class MainActivity extends AppCompatActivity {
         attemptLogin();
     }
 
-    private void setHandlers(){
-        bottom_navigation = findViewById(R.id.main_tab_bar);
-        bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
-        loading_layout = findViewById(R.id.main_loadingScreen);
-        post_button = findViewById(R.id.post_button);
-    }
-
     private void setUpToolbar() {
         Toolbar main_toolbar = findViewById(R.id.main_toolbar_id);
         setSupportActionBar(main_toolbar);
@@ -114,13 +109,18 @@ public class MainActivity extends AppCompatActivity {
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.interaction));
     }
 
+    private void setHandlers(){
+        bottom_navigation = findViewById(R.id.main_tab_bar);
+        bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
+        loading_layout = findViewById(R.id.main_loadingScreen);
+        post_button = findViewById(R.id.post_button);
+        post_button.setOnClickListener(view -> transToLogin());
+    }
+
     private void setUpLoggedInInteraction() { //this method will set up all the interactive elements the user has access to when logged in, by default they're hidden (tab bar + post btn)
         getSupportFragmentManager().beginTransaction().replace(R.id.main_fragmentContainer, new HomeFragment(this)).commit();
-        post_button.setVisibility(View.VISIBLE);
-        post_button.setOnClickListener(view -> {
-            Intent intent = new Intent(getApplicationContext(), CreatePost.class);
-            startActivity(intent);
-        });
+        post_button.setImageResource(R.drawable.ic_create);
+        post_button.setOnClickListener(view -> transToCreatePost());
         bottom_navigation.setVisibility(View.VISIBLE);
         bottom_navigation.setOnNavigationItemSelectedListener((menuItem) -> {
             Fragment selectedFragment = null;
@@ -140,6 +140,8 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
     }
+
+
 
 
 
@@ -200,6 +202,27 @@ public class MainActivity extends AppCompatActivity {
 
 
     // MARK: Other Methods
+
+    private void transToCreatePost(){
+        Intent intent = new Intent(getApplicationContext(), CreatePost.class);
+        startActivity(intent);
+    }
+
+    private void transToLogin(){
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivityForResult(intent, LOGIN_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == LOGIN_CODE) {
+            if(resultCode == Activity.RESULT_OK) attemptLogin();
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //TODO: user simply RTBed
+            }
+        }
+    }
 
     private void startLoading(){
         loading_layout.setVisibility(View.VISIBLE);      // Bring up view to cover entire screen

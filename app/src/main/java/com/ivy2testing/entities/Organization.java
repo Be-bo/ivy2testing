@@ -25,7 +25,7 @@ public class Organization implements Parcelable {
     private final boolean is_organization = true;
     private boolean is_club;
     private boolean is_banned = false;
-    private String registration_platform;
+    private String registration_platform = "Android";
     private List<String> post_ids = new ArrayList<>();
     private List<String> member_ids = new ArrayList<>();
     private List<String> request_ids = new ArrayList<>();
@@ -85,6 +85,8 @@ public class Organization implements Parcelable {
     public String getMessaging_token() {
         return messaging_token;
     }
+
+
 
     public boolean isIs_organization() {
         return is_organization;
