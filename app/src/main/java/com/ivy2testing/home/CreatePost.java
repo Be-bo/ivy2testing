@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -37,6 +38,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -46,6 +48,8 @@ import com.google.firebase.storage.UploadTask;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
+import com.ivy2testing.entities.Student;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -129,12 +133,17 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     private Long end_time_millis;
 
 
+
      // pinned event spinner
     final ArrayList<String>  pinned_names_array = new ArrayList<String>();
     private Spinner pinned_spinner;
     private Dictionary pinnable_events = new Hashtable();
 
+
     // firebase
+
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+
     private StorageReference db_storage = FirebaseStorage.getInstance().getReference();
     private FirebaseFirestore db_reference = FirebaseFirestore.getInstance();
     // TODO THE TIME SELECTION SETTINGS RELY ON THE CALENDAR CLASS, THEY NEED TO BE TESTED WITH DIFFERENT ON PHONE CALENDAR SETTINGS/ TIMEZONES
@@ -166,8 +175,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         setHandlers();
         setListeners();
 
-    }
 
+    }
 
 
 
@@ -218,6 +227,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         submit_progress_bar = findViewById(R.id.submit_progress_bar);
         submit_button = findViewById(R.id.submit_button);
     }
+
+
     /* ************************************************************************************************** */
     // Post handlers
     // If a button is disabled it is "selected" and therefore non clickable
@@ -282,7 +293,9 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         image_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                picSelect();
                 toggleEnabled(image_button);
+
             }
         });
         video_button.setOnClickListener(new View.OnClickListener() {
@@ -294,7 +307,9 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         gif_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                gifSelect();
                 toggleEnabled(gif_button);
+
             }
         });
 
@@ -846,9 +861,11 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     // stores pics in the db to a test repository
 
     private void storePictureInDB(byte[] jpeg_file) {
+        String path = "";
+        if (current_post!=null)
         // uses current posts random UUID
-        String path = "test_for_posts/" + current_post.getId() + "/" + current_post.getId() + ".jpg";
-        if (path.contains("null"))
+            path = "test_for_posts/" + current_post.getId() + "/" + current_post.getId() + ".jpg";
+        else if(current_event!=null)
             path = "test_for_posts/" + current_event.getId() + "/" + current_event.getId() + ".jpg";
         if (path.contains("null"))
             Log.e("CreatePost", "storePictureinDB: path contains null!");

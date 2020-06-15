@@ -13,10 +13,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,10 +36,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.authentication.LoginActivity;
+import com.ivy2testing.entities.Event;
+import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.FragCommunicator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,6 +70,18 @@ public class HomeFragment extends Fragment {
     private boolean is_organization = false;
 
 
+    private final ArrayList<Post> post_arraylist = new ArrayList<Post>();
+    private final ArrayList<Event> event_arraylist = new ArrayList<Event>();
+
+    private RecyclerView feed_recycler_view;
+    private RecyclerView.Adapter feed_adapter;
+    private RecyclerView.LayoutManager feed_layout_manager;
+
+    public HomeFragment(){
+
+        // REQUIRED no argument public constructor
+    }
+
     // Constructor
     public HomeFragment(Context context, Student student) {
         mContext = context;
@@ -80,7 +101,6 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_home, container, false);
-
         // Initialization
         uni_button = rootView.findViewById(R.id.btn_1);
         mainLoginButton = rootView.findViewById(R.id.main_loginButton);
@@ -101,9 +121,23 @@ public class HomeFragment extends Fragment {
 
         chooseDisplay(); // Login?
 
-        buildMainFeed();
+
         current_button = uni_button;
         current_button.setEnabled(false);
+
+        // recycler view
+
+       // BuildArrayList();
+
+//        Toast.makeText(mContext, ""+event_arraylist.get(0).getAuthor_name(), Toast.LENGTH_SHORT).show();
+
+        feed_recycler_view = rootView.findViewById(R.id.feed_recycler_view);
+        feed_recycler_view.setHasFixedSize(true);
+        //TODO not sure required context here
+        feed_layout_manager = new LinearLayoutManager(getContext());
+        feed_adapter = new FeedAdapter(event_arraylist);
+        feed_recycler_view.setLayoutManager(feed_layout_manager);
+        feed_recycler_view.setAdapter(feed_adapter);
 
         return rootView;
     }
@@ -266,7 +300,62 @@ public class HomeFragment extends Fragment {
 
         // insert into main view
         // currently inserts newest post last... needs better queries
-        ViewGroup insertPoint = rootView.findViewById(R.id.main_fragment_linear_layout);
-        insertPoint.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+       /* ViewGroup insertPoint = rootView.findViewById(R.id.main_fragment_linear_layout);
+        insertPoint.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));*/
     }
+    private void BuildArrayList(){
+        db_reference.collection("universities").document("testucalgary.ca").collection("posts")
+                .whereEqualTo("is_event", false)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            if(task.getResult()!=null) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    // Toast.makeText(MainActivity.this, document.getId() + " => " + document.getData(), Toast.LENGTH_SHORT).show();
+                                    post_arraylist.add(document.toObject(Post.class));
+                                }
+                            }
+                        }
+                        else {
+                            //  Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+
+        db_reference.collection("universities").document("testucalgary.ca").collection("posts")
+                .whereEqualTo("is_event", true)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            if (task.getResult() != null) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    event_arraylist.add(document.toObject(Event.class));
+                                }
+                                buildEventFeed();
+
+
+                            }
+                        }
+                         else {
+                            //  Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+
+                });
+
+    }
+    private void buildEventFeed(){
+
+        Toast.makeText(mContext, ""+event_arraylist.size(), Toast.LENGTH_SHORT).show();
+        feed_layout_manager = new LinearLayoutManager(getContext());
+        feed_adapter = new FeedAdapter(event_arraylist);
+        feed_recycler_view.setLayoutManager(feed_layout_manager);
+        feed_recycler_view.setAdapter(feed_adapter);
+    }
+
 }

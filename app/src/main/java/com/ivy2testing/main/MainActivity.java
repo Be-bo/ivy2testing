@@ -70,8 +70,8 @@ public class MainActivity extends AppCompatActivity implements FragCommunicator 
     private String this_uni_domain;
 
     // bubble handlers
-    private Button uni_button;
-    private Button current_button;
+//    private Button uni_button;
+//    private Button current_button;
 
     // On create
     /* ************************************************************************************************** */
