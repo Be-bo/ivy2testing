@@ -12,21 +12,9 @@ import java.util.List;
 * Overview: Class to store a Firebase organization user document
  * Features: firebase compatible, Parcelable (can pass as intent Extra)
 */
-public class Organization implements Parcelable {
+public class Organization extends User {
 
     // Fields
-    private String id;
-    private String email;
-    private String name;
-    private String uni_domain;
-    private long registration_millis = 0;
-    private String messaging_token;
-    private String profile_picture;
-    private final boolean is_organization = true;
-    private boolean is_club;
-    private boolean is_banned = false;
-    private String registration_platform = "Android";
-    private List<String> post_ids = new ArrayList<>();
     private List<String> member_ids = new ArrayList<>();
     private List<String> request_ids = new ArrayList<>();
 

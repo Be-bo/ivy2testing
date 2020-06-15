@@ -86,18 +86,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // Came back from Login activity (Change to a switch statement if more request codes)
         if (requestCode == Constant.LOGIN_REQUEST_CODE) {
-            Log.d(TAG, "Coming back from LoginActivity!");
-            if (resultCode == Activity.RESULT_OK && data != null) {
-                this_uni_domain = data.getStringExtra("this_uni_domain");
-                attemptLogin();
-            }
+            if (resultCode == Activity.RESULT_OK && data != null) attemptLogin();
         } else
             Log.w(TAG, "Don't know how to handle the request code, \"" + requestCode + "\" yet!");
     }
@@ -140,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpLoggedInInteraction() { //this method will set up all the interactive elements the user has access to when logged in, by default they're hidden (tab bar + post btn)
-        post_button.setImageSource(R.drawable.ic_create);
+        post_button.setImageResource(R.drawable.ic_create);
         post_button.setOnClickListener(view -> transToCreatePost());
         bottom_navigation.setVisibility(View.VISIBLE);
         bottom_navigation.setOnNavigationItemSelectedListener((menuItem) -> {
@@ -236,17 +229,6 @@ public class MainActivity extends AppCompatActivity {
     private void transToLogin(){
         Intent intent = new Intent(this, LoginActivity.class);
         startActivityForResult(intent, LOGIN_CODE);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == LOGIN_CODE) {
-            if(resultCode == Activity.RESULT_OK) attemptLogin();
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //TODO: user simply RTBed
-            }
-        }
     }
 
     private void startLoading(){

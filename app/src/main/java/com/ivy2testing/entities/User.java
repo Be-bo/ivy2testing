@@ -26,7 +26,7 @@ public class User implements Parcelable {
     protected final boolean is_organization;
     protected boolean is_club;
     protected boolean is_banned = false;
-    protected String registration_platform;
+    protected String registration_platform = "Android";
     protected List<String> post_ids = new ArrayList<>();
 
     /* Constructors
