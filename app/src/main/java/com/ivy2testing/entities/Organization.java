@@ -12,42 +12,24 @@ import java.util.List;
 * Overview: Class to store a Firebase organization user document
  * Features: firebase compatible, Parcelable (can pass as intent Extra)
 */
-public class Organization implements Parcelable {
+public class Organization extends User {
 
     // Fields
-    private String id;
-    private String email;
-    private String name;
-    private String uni_domain;
-    private long registration_millis = 0;
-    private String messaging_token;
-    private String profile_picture;
-    private final boolean is_organization = true;
-    private boolean is_club;
-    private boolean is_banned = false;
-    private String registration_platform;
-    private List<String> post_ids = new ArrayList<>();
+    private List<String> member_ids = new ArrayList<>();
+    private List<String> request_ids = new ArrayList<>();
 
 
 /* Constructors
 ***************************************************************************************************/
 
     // Requirement for FireStore
-    public Organization(){}
+    public Organization(){
+        super(true);
+    }
 
     // Use for registering new organization
     public Organization(String id, String email, boolean is_club){
-        this.id = id;
-        this.email = email;
-        this.is_club = is_club;
-
-        // Get Domain
-        String[] splitEmail = email.split("@");
-        if (splitEmail.length > 1)
-            this.uni_domain = email.split("@")[1];
-
-        this.name = splitEmail[0];      // Set a default name
-        this.registration_millis = System.currentTimeMillis();
+        super(id, email,true, is_club);
     }
 
 /* Getters
@@ -84,6 +66,8 @@ public class Organization implements Parcelable {
         return messaging_token;
     }
 
+
+
     public boolean isIs_organization() {
         return is_organization;
     }
@@ -105,84 +89,50 @@ public class Organization implements Parcelable {
         return is_club;
     }
 
+    public List<String> getMember_ids() {
+        if (member_ids == null) return new ArrayList<>();
+        else return new ArrayList<>(member_ids);          // Return copy
+    }
+
+    public List<String> getRequest_ids() {
+        if (request_ids == null) return new ArrayList<>();
+        else return new ArrayList<>(request_ids);          // Return copy
+    }
+
 /* Setters
 ***************************************************************************************************/
 
-    public void setId(String id) {
-        this.id = id;
+    public void addMemberToList(String memberId){
+        if (memberId != null && !memberId.isEmpty()) post_ids.add(memberId);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void deleteMemberFromList(String memberId){
+        member_ids.remove(memberId);
     }
 
-    public void setEmail(String email) {
-        if (email.contains("@") && email.contains("."))
-            this.email = email;
+    public void addRequestFromList(String requestId) {
+        if (requestId != null && !requestId.isEmpty()) post_ids.add(requestId);
     }
 
-    public void setUni_domain(String domain) {
-        this.uni_domain = domain;
+    public void deleteRequestFromList(String requestId) {
+        request_ids.remove(requestId);
     }
-
-    public void setProfile_picture(String profile_picture) {
-        if (profile_picture == null) this.profile_picture = null;
-        else if (profile_picture.isEmpty()) this.profile_picture = null;
-        else this.profile_picture = profile_picture;
-    }
-
-    public void setMessaging_token(String messaging_token) {
-        this.messaging_token = messaging_token;
-    }
-
-    public void setIs_banned(boolean is_banned) {
-        this.is_banned = is_banned;
-    }
-
-    public void setRegistration_platform(String registration_platform) {
-        this.registration_platform = registration_platform;
-    }
-
-    public void addPostToList(String postId){
-        post_ids.add(postId);
-    }
-
-    public void deletePostfromList(String postId){
-        post_ids.remove(postId);
-    }
-
 
 /* Parcelable Override Methods
 ***************************************************************************************************/
 
     // Must have same order as writeToParcel since it's reading in bytes
     protected Organization(Parcel in) {
-        id = in.readString();
-        email = in.readString();
-        name = in.readString();
-        uni_domain = in.readString();
-        registration_millis = in.readLong();
-        messaging_token = in.readString();
-        profile_picture = in.readString();
-        is_club = in.readByte() != 0;
-        is_banned = in.readByte() != 0;
-        registration_platform = in.readString();
-        post_ids = in.createStringArrayList();
+        super(in);
+        member_ids = in.createStringArrayList();
+        request_ids = in.createStringArrayList();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeString(email);
-        dest.writeString(name);
-        dest.writeString(uni_domain);
-        dest.writeLong(registration_millis);
-        dest.writeString(messaging_token);
-        dest.writeString(profile_picture);
-        dest.writeByte((byte) (is_club ? 1 : 0));
-        dest.writeByte((byte) (is_banned ? 1 : 0));
-        dest.writeString(registration_platform);
-        dest.writeStringList(post_ids);
+        super.writeToParcel(dest, flags);
+        dest.writeStringList(member_ids);
+        dest.writeStringList(request_ids);
     }
 
     @Override

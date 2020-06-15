@@ -21,6 +21,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@id/main_tab_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/main_toolbar_id" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -28,10 +30,13 @@
             style="@style/MainNavBar"
             android:layout_width="match_parent"
             android:layout_height="45dp"
+            android:background="@color/white"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/main_fragmentContainer"
+            app:menu="@menu/main_tab_bar">
 
         </com.google.android.material.bottomnavigation.BottomNavigationView>
 

@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
@@ -40,6 +39,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -109,7 +109,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
 
     // post class
     private Post current_post;
-    private Event current_event;
+    private boolean is_event;
 
     // event items
     private ConstraintLayout event_fields;
@@ -239,37 +239,16 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         from_scratch_button.setEnabled(false);
         nothing_button.setEnabled(false);
 
-        post_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleEnabled(post_button, event_button);
-                swap_type();
-            }
+        post_button.setOnClickListener(v -> {
+            toggleEnabled(post_button, event_button);
+            swap_type();
         });
 
 
-        event_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleEnabled(post_button, event_button);
-                swap_type();
+        event_button.setOnClickListener(v -> {
+            toggleEnabled(post_button, event_button);
+            swap_type();
 
-            }
-        });
-
-        show_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleEnabled(show_button, dont_show_button);
-                swap_campus_feed();
-            }
-        });
-        dont_show_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleEnabled(show_button, dont_show_button);
-                swap_campus_feed();
-            }
         });
 
         from_scratch_button.setOnClickListener(new View.OnClickListener() {
@@ -297,12 +276,13 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                 toggleEnabled(image_button);
 
             }
+        show_button.setOnClickListener(v -> {
+            toggleEnabled(show_button, dont_show_button);
+            swap_campus_feed();
         });
-        video_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleEnabled(video_button);
-            }
+        dont_show_button.setOnClickListener(v -> {
+            toggleEnabled(show_button, dont_show_button);
+            swap_campus_feed();
         });
         gif_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -318,75 +298,54 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
             public void onClick(View v) {
                 picSelect();
 
-            }
-        });
-        video_upload_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        from_scratch_button.setOnClickListener(v -> toggleEnabled(from_scratch_button, import_button));
+        import_button.setOnClickListener(v -> toggleEnabled(from_scratch_button, import_button));
+        nothing_button.setOnClickListener(v -> toggleEnabled(nothing_button));
+        image_button.setOnClickListener(v -> toggleEnabled(image_button));
+        video_button.setOnClickListener(v -> toggleEnabled(video_button));
+        gif_button.setOnClickListener(v -> toggleEnabled(gif_button));
 
-            }
-        });
-        gif_upload_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gifSelect();
-            }
-        });
+        image_upload_view.setOnClickListener(v -> picSelect());
+        video_upload_view.setOnClickListener(v -> {});
+        gif_upload_view.setOnClickListener(v -> gifSelect());
 
 
         /* ************************************************************************************************** */
         //events only
-        start_date_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start_or_end = true;
-                DialogFragment datePickerStart = new com.ivy2testing.home.DatePickerDialog();
-                datePickerStart.show(getSupportFragmentManager(), "start date picker");
-            }
+        start_date_button.setOnClickListener(v -> {
+            start_or_end = true;
+            DialogFragment datePickerStart = new com.ivy2testing.home.DatePickerDialog();
+            datePickerStart.show(getSupportFragmentManager(), "start date picker");
         });
 
-        end_date_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start_or_end = false;
-                DialogFragment datePickerEnd = new com.ivy2testing.home.DatePickerDialog();
-                datePickerEnd.show(getSupportFragmentManager(), "end date picker");
-            }
+        end_date_button.setOnClickListener(v -> {
+            start_or_end = false;
+            DialogFragment datePickerEnd = new com.ivy2testing.home.DatePickerDialog();
+            datePickerEnd.show(getSupportFragmentManager(), "end date picker");
         });
 
-        start_time_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start_time_or_end = true;
-                DialogFragment timePicker = new TimePickerDialog();
-                timePicker.show(getSupportFragmentManager(), "time picker start");
-            }
+        start_time_button.setOnClickListener(v -> {
+            start_time_or_end = true;
+            DialogFragment timePicker = new TimePickerDialog();
+            timePicker.show(getSupportFragmentManager(), "time picker start");
         });
 
-        end_time_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start_time_or_end = false;
-                DialogFragment timePicker = new TimePickerDialog();
-                timePicker.show(getSupportFragmentManager(), "time picker start");
-            }
+        end_time_button.setOnClickListener(v -> {
+            start_time_or_end = false;
+            DialogFragment timePicker = new TimePickerDialog();
+            timePicker.show(getSupportFragmentManager(), "time picker start");
         });
 
         /* ************************************************************************************************** */
         //submit will show progress bar, and remove the signup button,
-        submit_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        submit_button.setOnClickListener(v -> {
+            submitViewChange();
+            try {
+                if (is_event) finalizeEvent();
+                else finalizePost();
+            } catch (IOException e) {
+                e.printStackTrace();
                 submitViewChange();
-                try {
-                    if (current_post != null)
-                        finalizePost();
-                    else if (current_event != null)
-                        finalizeEvent();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    submitViewChange();
-                }
             }
         });
 
@@ -395,32 +354,18 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     /* ************************************************************************************************** */
     // event is initialized to false (its a post), this will swap if its true or not
     private void swap_type() {
-        if (current_post != null) {
-            current_event = new Event(current_post);
-            current_post = null;
-            event_fields.setVisibility(View.VISIBLE);
-        } else if (current_event != null) {
-            current_post = new Post(current_event);
-            current_event = null;
-            event_fields.setVisibility(View.GONE);
-        } else Log.e("CreatePost", "Both current_event and current_post are null!");
+        is_event = !is_event;
+
+        if (is_event) event_fields.setVisibility(View.VISIBLE);
+        else event_fields.setVisibility(View.GONE);
     }
 
 
     /* ************************************************************************************************** */
     // campus feed is initialized to false, this function swaps that
     private void swap_campus_feed() {
-        if (current_post != null) {
-            if (current_post.getMain_feed_visible())
-                current_post.setMain_feed_visible(false);
-            else
-                current_post.setMain_feed_visible(true);
-        } else if (current_event != null) {
-            if (current_event.isMain_feed_visible())
-                current_event.setMain_feed_visible(false);
-            else
-                current_event.setMain_feed_visible(true);
-        }
+        if (current_post.isMain_feed_visible()) current_post.setMain_feed_visible(false);
+        else current_post.setMain_feed_visible(true);
     }
 
     /* ************************************************************************************************** */
@@ -530,8 +475,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                     image_upload_view.setImageBitmap(compressed_bitmap);
 
                     // visual is set to "picture" until finalized and a path is set
-                    if (current_post != null) current_post.setVisual("picture");
-                    else if (current_event != null) current_event.setVisual("picture");
+                    current_post.setVisual("picture");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -548,8 +492,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                 // glide allows gif to be displayed
                 Glide.with(this).asGif().apply(myOptions).load(gif_selected).into(gif_upload_view);
                 //TODO this is the place to check sizes/ compress images also potentially clear all other views their previously chosen images
-                if (current_post != null) current_post.setVisual("gif");
-                else if (current_event != null) current_event.setVisual("gif");
+                current_post.setVisual("gif");
             } else {
                 Toast.makeText(CreatePost.this, "No Gif Selected", Toast.LENGTH_SHORT).show();
             }
@@ -686,6 +629,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     }
 
     private void finalizeEvent() throws IOException {
+        Event current_event = new Event(current_post);
+
         // if fields have appropriate input, otherwise end method
         if (fieldsOk() && timeOk()) {
             String address = "universities/" + current_event.getUni_domain() + "/posts/" + current_event.getId();
@@ -739,14 +684,14 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     // check is all the textfields are okay, sequentially
     private Boolean fieldsOk() {
         // post method
-        if (current_post != null)
+        if (!is_event)
             if (description_edit_text.getText().toString().isEmpty()) {
                 description_edit_text.setError("Please enter a description.");
                 submitViewChange();
                 return false;
             }
         // event methods
-        if (current_event != null)
+        else
                 // check title first, location, then description, same order as layout
                 // will set error as soon as one field is false, will clear error on previous fields because they are not empty
 
@@ -767,7 +712,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                 return false;
             }
         // something went wrong in either post or event creation... prompt retry
-        if (current_event == null && current_post == null) {
+        if (current_post == null) {
             Toast.makeText(this, "POST NULL, Please try again later", Toast.LENGTH_SHORT).show();
             submitViewChange();
             return false;
@@ -874,8 +819,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         StorageReference post_image_storage = db_storage.child(path);
 
         // if current post is not set here the function ends to quick for it to be set properly
-        if (current_post != null) current_post.setVisual(path);
-        else if (current_event != null) current_event.setVisual(path);
+        current_post.setVisual(path);
         post_image_storage.putBytes(jpeg_file).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -885,8 +829,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(getApplicationContext(), "photo upload failed", Toast.LENGTH_LONG).show();
-                if (current_post != null) current_post.setVisual("upload failed");
-                else if (current_event != null) current_event.setVisual("upload failed");
+                current_post.setVisual("upload failed");
             }
         });
     }

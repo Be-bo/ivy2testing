@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,9 +39,10 @@ import com.ivy2testing.R;
 import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
+import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Student;
+import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.util.Constant;
-import com.ivy2testing.util.FragCommunicator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +54,6 @@ public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
 
     // Parent activity
-    private FragCommunicator mCommunicator; // For communications to activity
     private Context mContext;
     private View rootView;
 
@@ -68,6 +69,7 @@ public class HomeFragment extends Fragment {
 
     private Student student;
     private boolean is_organization = false;
+    private UserViewModel this_user_viewmodel;
 
 
     private final ArrayList<Post> post_arraylist = new ArrayList<Post>();
@@ -83,15 +85,34 @@ public class HomeFragment extends Fragment {
     }
 
     // Constructor
-    public HomeFragment(Context context, Student student) {
-        mContext = context;
-        this.student = student;
+    public HomeFragment(Context con) {
+        mContext = con;
     }
 
-    // Setter for communicator
-    public void setCommunicator(FragCommunicator communicator) {
-        mCommunicator = communicator;
+
+
+
+    // MARK: Get User Data This Way - always stays update and doesn't require passing anything because ViewModel is connected to the Activity that manages the fragment
+    private void getUserProfile(View rootView){
+        if (getActivity() != null) {
+            this_user_viewmodel = new ViewModelProvider(getActivity()).get(UserViewModel.class);
+            student = this_user_viewmodel.getThisStudent().getValue(); //grab the initial data
+            // TODO: only start doing processes that depend on user profile here:
+            if(student != null){
+                // TODO: populate UI
+                // TODO: set up listeners
+                // TODO: etc.
+                // NOTE: everything depends on the user profile data, only execute stuff dependent on it once you 100% have it
+            }
+            this_user_viewmodel.getThisStudent().observe(getActivity(), (Student updatedProfile) -> { //listen to realtime user profile changes afterwards
+                if (updatedProfile != null) student = updatedProfile;
+                // TODO: if stuff needs to be updated whenever the user profile receives an update, DO SO HERE
+            });
+        }
     }
+    // MARK: ------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 
     /* Overridden Methods
@@ -142,23 +163,6 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Came back from Login activity (Change to a switch statement if more request codes)
-        if (requestCode == Constant.LOGIN_REQUEST_CODE) {
-            Log.d(TAG, "Coming back from LoginActivity!");
-            if (resultCode == Activity.RESULT_OK && data != null) {
-                Map<Object, Object> map = new HashMap<>();
-                map.put("this_user_id", data.getStringExtra("this_user_id"));
-                map.put("this_uni_domain", data.getStringExtra("this_uni_domain"));
-                mCommunicator.mapMessage(map);  // Tell MainActivity to log us in!
-            }
-        } else
-            Log.w(TAG, "Don't know how to handle the request code, \"" + requestCode + "\" yet!");
-    }
-
     /* OnClick Methods
      ***************************************************************************************************/
 
@@ -169,17 +173,32 @@ public class HomeFragment extends Fragment {
 
         // onActivityResult in MainActivity gets called!
         if (getActivity() != null)
-            startActivityForResult(intent, Constant.LOGIN_REQUEST_CODE);
+            getActivity().startActivityForResult(intent, Constant.LOGIN_REQUEST_CODE);
         else
             Log.e(TAG, "getActivity() was null when calling LoginActivity.");
     }
 
     // TEST For testing purposes only!
     public void mainTest() {
-        Map<Object, Object> map = new HashMap<>();
-        map.put("this_user_id", "testID");
-        map.put("this_uni_domain", "ucalgary.ca");
-        mCommunicator.mapMessage(map);  // Tell MainActivity to log us in as testID!
+        if (getActivity() != null){
+        UserViewModel user_view_model = new ViewModelProvider(getActivity()).get(UserViewModel.class);
+            user_view_model.startListening("testID", "ucalgary.ca");
+            if(user_view_model.isOrganization()){
+                user_view_model.getThisOrganization().observe(this, (Organization updatedUser) -> {
+                    if(updatedUser != null){
+                        is_organization = true;
+                        setLoggedInDisplay();
+                    }
+                });
+            } else{
+                user_view_model.getThisStudent().observe(this, (Student updatedUser) -> {
+                    if(updatedUser != null){
+                        is_organization = false;
+                        setLoggedInDisplay();
+                    }
+                });
+            }
+        }
     }
 
     /* Transition Methods

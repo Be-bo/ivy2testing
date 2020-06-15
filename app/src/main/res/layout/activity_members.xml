@@ -3,11 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<!--    <ImageView-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:src="@drawable/ivy_logo"/>-->
-
-
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/activity_members_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,14 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Toolbar
+
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/editStudent_toolBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        android:theme="@style/PostToolBarStyle"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <TextView
+            android:id="@+id/post_toolbar_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/ToolBarTitle"
+            android:text="@string/editProfile" />
+
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -38,11 +48,13 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:src="@drawable/ic_account_circle"
-            android:layout_marginVertical="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/editStudent_fields"
             app:layout_constraintStart_toStartOf="@id/editStudent_guideline1"
-            app:layout_constraintEnd_toEndOf="@id/editStudent_guideline2"/>
+            app:layout_constraintEnd_toEndOf="@id/editStudent_guideline2"
+            android:contentDescription="@string/profile_pic"/>
 
         <TextView
             android:id="@+id/editStudent_change"
@@ -72,7 +84,7 @@
                 android:inputType="textPersonName"
                 android:hint="@string/name"
                 android:autofillHints=""
-                android:layout_marginVertical="16dp"/>
+                android:layout_marginBottom="16dp"/>
 
             <Spinner
                 android:id="@+id/editStudent_degree"
@@ -87,7 +99,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/StandardText"
-                android:text="@string/birthday"/>
+                android:text="@string/birthday"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="4dp"/>
 
             <android.widget.DatePicker
                 android:id="@+id/editStudent_birthdayDatePicker"
@@ -115,10 +129,9 @@
 
         <ProgressBar
             android:id="@+id/editStudent_progressBar"
+            style="@style/StandardIndefiniteProgressBar"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
             android:visibility="gone"
-            android:indeterminateTint="@color/hint"
             app:layout_constraintTop_toBottomOf="@id/editStudent_fields"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/editStudent_guideline1"

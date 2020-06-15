@@ -1,5 +1,6 @@
 package com.ivy2testing.userProfile;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,22 +13,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ivy2testing.util.OnSelectionListener;
 import com.ivy2testing.R;
+import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImgHolder> {
 
     // Attributes
-    private List<Integer> images;
-    private ImgHolder viewHolder;
+    private List<Uri> images;
     private OnSelectionListener mSelectionListener;
 
 
-    // Constructor
-    ImageAdapter(List<Integer> images){
+    // Constructors
+    ImageAdapter(List<Uri> images){
         this.images = images;
     }
+
 
     // Listener Setter
     void setOnSelectionListener(OnSelectionListener listener){
@@ -47,8 +52,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImgHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ImgHolder holder, final int position) {
-        viewHolder = holder;
-        holder.mImageView.setImageResource(images.get(position));
+        Picasso.get().load(images.get(position)).into(holder.mImageView);
     }
 
     @Override

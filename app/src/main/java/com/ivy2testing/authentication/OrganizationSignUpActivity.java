@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Organization;
 
@@ -58,7 +59,7 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
 
     // Other Variables
     private boolean isClub = false;
-    private String currentDomain;
+    private String current_domain;
 
 
 /* Override Methods
@@ -120,11 +121,11 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
                             email_editText,
                             getString(R.string.error_invalidEmailFormat),
                             emailOk());
-                    if (emailOk())
-                        setInputErrors(
-                                email_editText,
-                                getString(R.string.error_invalidDomain),
-                                domainOk());
+//                    if (emailOk())
+//                        setInputErrors(
+//                                email_editText,
+//                                getString(R.string.error_invalidDomain),
+//                                domainOk());
                 }
             }
         });
@@ -206,23 +207,23 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         String email = email_editText.getText().toString().trim();
         if (email.length() > 5 && email.contains("@") && !email.contains(" ") && email.contains(".")){
             email_editText.setError(null);
-            currentDomain = email.substring(email.indexOf("@") + 1).trim();
+            current_domain = email.substring(email.indexOf("@") + 1).trim();
             return true;
         }
         else return false;
     }
 
     // Make sure domain exists
-    private boolean domainOk() {
-        for (String item : domain_list) {
-            if (item.equals(currentDomain)) {
-                email_editText.setError(null);
-                return true;
-            }
-        }
-        email_editText.setError(getString(R.string.error_invalidDomain));
-        return false;
-    }
+//    private boolean domainOk() {
+//        for (String item : domain_list) {
+//            if (item.equals(current_domain)) {
+//                email_editText.setError(null);
+//                return true;
+//            }
+//        }
+//        email_editText.setError(getString(R.string.error_invalidDomain));
+//        return false;
+//    }
 
     // Make sure password field is at lest 6 characters long
     private boolean passwordOk() {
@@ -281,23 +282,23 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
     private void registerInDB(){
         String id = auth.getUid();
         if (id != null){
-
-            // Make new organization object to store in db
             String email = email_editText.getText().toString().trim();
-            Organization orgUser = new Organization(id, email, isClub);
-            String domain = email.split("@")[1];
 
-            dbRef.collection("universities").document(currentDomain).collection("users").document(id).set(orgUser)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) openDialogComplete();
-                            else {
-                                Toast.makeText(getApplicationContext(), "Profile creation failed. Please try again later.", Toast.LENGTH_LONG).show();
-                                returnToLogin();
-                            }
-                        }
-                    });
+            FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> { //cascade data push by first getting the token and when received push the entire profile
+                if(task.isSuccessful() && task.getResult() != null){
+                    Organization orgUser = new Organization(id, email, isClub);
+                    orgUser.setMessaging_token(task.getResult().getToken());
+
+                    dbRef.collection("universities").document(current_domain).collection("users").document(id).set(orgUser)
+                            .addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) openDialogComplete();
+                                else {
+                                    Toast.makeText(getApplicationContext(), "Profile creation failed. Please try again later.", Toast.LENGTH_LONG).show();
+                                    returnToLogin();
+                                }
+                            });
+                }
+            });
         }
         else Log.e(TAG, "Id was null!");
     }

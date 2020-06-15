@@ -42,6 +42,7 @@
         <item name="android:layout_height">40dp</item>
         <item name="android:backgroundTint">@color/hint</item>
         <item name="android:prompt">@string/app_name</item>
+        <item name="android:textAlignment">viewStart</item>
     </style>
 
     <style name="StandardSwitch" parent="Widget.AppCompat.CompoundButton.Switch">
@@ -51,6 +52,16 @@
         <item name="android:textColor">@color/text_color</item>
         <item name="android:thumbTint">@color/switch_color</item>
         <item name="android:trackTint">@color/switch_color</item>   <!--30% transparent by default-->
+    </style>
+
+    <style name="StandardIndefiniteProgressBar" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:layout_height">50dp</item>
+        <item name="android:indeterminateTint">@color/hint</item>
+    </style>
+
+    <style name="ToolBarTitle" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_gravity">center</item>
     </style>
 
     <style name="MainNavBar" parent="Widget.Design.BottomNavigationView">
@@ -97,6 +108,11 @@
     <!-- This theme changes the color of the back button in the post activity/layout -->
     <style name="PostToolBarStyle"  parent="ThemeOverlay.AppCompat.Light">
         <item name="colorControlNormal">@color/interaction</item>
+    </style>
+
+    <!-- Use this theme for toolbars on top of images -->
+    <style name="ViewPostToolBarStyle"  parent="PostToolBarStyle">
+        <item name="android:background">@drawable/gradient_toolbar_white</item>
     </style>
 
     <!-- not currently used( check datePickerdialog etc for use in future) -->

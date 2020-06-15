@@ -16,17 +16,18 @@ import java.util.List;
 public class Post implements Parcelable {
 
     // Fields
-    private String id;
-    private String uni_domain;
-    private String author_id;
-    private String author_name;
-    private final boolean is_event = false;
-    private boolean main_feed_visible = true;
-    private long creation_millis = 0;
-    private String text;
-    private String visual;
-    private String pinned_id;
-    private List<String> views_id;
+    protected String id;
+    protected String uni_domain;
+    protected String author_id;
+    protected String author_name;
+    protected boolean is_event = false;
+    protected boolean main_feed_visible = true;
+    protected long creation_millis = 0;
+    protected String registration_platform = "Android";
+    protected String text;
+    protected String visual;
+    protected String pinned_id;
+    protected List<String> views_id;
 
 
 /* Constructors
@@ -34,6 +35,11 @@ public class Post implements Parcelable {
 
     // Requirement for FireStore
     public Post(){}
+
+    // Constructor mainly used by children
+    public Post(boolean is_event){
+        this.is_event = is_event;
+    }
 
     // Use for creating a new Post in code
     public Post(String id, String uni_domain, String author_id, String author_name,
@@ -63,6 +69,10 @@ public class Post implements Parcelable {
     @Exclude
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        if (id != null && !id.isEmpty()) this.id = id;
     }
 
     public String getUni_domain() {
@@ -96,7 +106,7 @@ public class Post implements Parcelable {
         return is_event;
     }
 
-    public Boolean getMain_feed_visible() {
+    public Boolean isMain_feed_visible() {
         return main_feed_visible;
     }
 
@@ -130,6 +140,14 @@ public class Post implements Parcelable {
 
     public void setPinned_id(String pinned_id) {
         this.pinned_id = pinned_id;
+    }
+
+    public String getRegistration_platform() {
+        return registration_platform;
+    }
+
+    public void setRegistration_platform(String registration_platform) {
+        this.registration_platform = registration_platform;
     }
 
     public List<String> getViews_id(){
