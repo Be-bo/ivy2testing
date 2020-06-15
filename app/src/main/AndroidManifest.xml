@@ -51,7 +51,7 @@
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".userProfile.StudentProfileActivity"
+            android:name=".userProfile.UserProfileActivity"
             android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
@@ -59,7 +59,8 @@
             android:name=".home.ViewPostActivity"
             android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
+            tools:ignore="LockedOrientationActivity"
+            android:exported="true"/>
         <activity
             android:name=".userProfile.MembersActivity"
             android:parentActivityName=".main.MainActivity"

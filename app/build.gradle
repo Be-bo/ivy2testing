@@ -4,7 +4,6 @@ android {
     compileSdkVersion 29
 
 
-
     defaultConfig {
         applicationId "com.ivy2testing"
         minSdkVersion 24
@@ -39,7 +38,6 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.2.2'
     implementation 'androidx.wear:wear:1.0.0'
 
-
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
@@ -64,7 +62,6 @@ dependencies {
 
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation "android.arch.lifecycle:viewmodel:1.1.1"
-    
 }
 
 apply plugin: 'com.android.application'

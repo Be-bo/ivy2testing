@@ -1,5 +1,6 @@
 package com.ivy2testing.main;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -14,8 +15,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -30,6 +33,10 @@ import com.ivy2testing.chat.ChatFragment;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.home.HomeFragment;
 import com.ivy2testing.userProfile.StudentProfileFragment;
+import com.ivy2testing.util.Constant;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -80,6 +87,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Came back from Login activity (Change to a switch statement if more request codes)
+        if (requestCode == Constant.LOGIN_REQUEST_CODE) {
+            Log.d(TAG, "Coming back from LoginActivity!");
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                this_uni_domain = data.getStringExtra("this_uni_domain");
+                attemptLogin();
+            }
+        } else
+            Log.w(TAG, "Don't know how to handle the request code, \"" + requestCode + "\" yet!");
+    }
 
 
 
@@ -93,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
     // MARK: Setup Methods
 
     private void setUp(){
+        Log.d(TAG, "Setting up main");
         setUpToolbar();
         setHandlers();
         attemptLogin();
@@ -118,8 +140,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpLoggedInInteraction() { //this method will set up all the interactive elements the user has access to when logged in, by default they're hidden (tab bar + post btn)
-        getSupportFragmentManager().beginTransaction().replace(R.id.main_fragmentContainer, new HomeFragment(this)).commit();
-        post_button.setImageResource(R.drawable.ic_create);
+        post_button.setImageSource(R.drawable.ic_create);
         post_button.setOnClickListener(view -> transToCreatePost());
         bottom_navigation.setVisibility(View.VISIBLE);
         bottom_navigation.setOnNavigationItemSelectedListener((menuItem) -> {
@@ -133,12 +154,16 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new HomeFragment(this);
                     break;
                 case R.id.tab_bar_profile:
-                    selectedFragment = new StudentProfileFragment();
+                    selectedFragment = new StudentProfileFragment(true);
                     break;
             }
             if (selectedFragment!= null) getSupportFragmentManager().beginTransaction().replace(R.id.main_fragmentContainer, selectedFragment).commit();
             return true;
         });
+
+        // Set home view if no fragments visible atm
+        if (getSupportFragmentManager().findFragmentById(R.id.main_fragmentContainer) == null)
+            bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
     }
 
 
