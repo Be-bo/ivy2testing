@@ -11,5 +11,4 @@ public final class Constant {
     public static final int EDIT_STUDENT_REQUEST_CODE = 2;
     public static final int LOGIN_REQUEST_CODE = 3;
     public static final int VIEW_POST_REQUEST_CODE = 4;
-    public static final int USER_PROFILE_REQUEST_CODE = 5;
 }

@@ -1,6 +1,7 @@
 package com.ivy2testing.userProfile;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,26 +33,28 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.home.ViewPostActivity;
 import com.ivy2testing.main.UserViewModel;
+import com.ivy2testing.util.OnSelectionListener;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.util.Constant;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /** @author Zahra Ghavasieh
  * Overview: Student Profile view fragment
- * Notes: Used for viewing both student's own profile as well as viewing other students' profiles
+ * Notes: Recycler items currently hard-coded
  */
 public class StudentProfileFragment extends Fragment {
 
     // Constants
     private final static String TAG = "StudentProfileFragment";
 
-    // Parent Final fields
-    private UserViewModel user_view_model;
-    private View root_view;
+    // Parent activity
+    private Context mContext;
 
     // Views
     private ImageView mProfileImg;
@@ -67,19 +71,53 @@ public class StudentProfileFragment extends Fragment {
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
     // Other Variables
-    private boolean my_profile;      // Don't show edit button if this is not myProfile
     private Student student;
     private ImageAdapter adapter;
-    private Uri profile_img_uri;
-    private List<Post> posts = new ArrayList<>(6);        // Load first 6 posts only
-    private List<Uri> post_img_uris = new ArrayList<>(6); // non synchronous adds!
-
+    private Uri profileImgUri;
+    private List<Post> posts = new ArrayList<>();        // Load first 6 posts only
+    private List<Uri> postImgUris = new ArrayList<>();  // non synchronous adds!
+    private UserViewModel this_user_viewmodel;
 
 
     // Constructor
-    public StudentProfileFragment(boolean my_profile) {
-        this.my_profile = my_profile;
+    public StudentProfileFragment() {
+        mContext = getContext();
+        this.profileImgUri = profileImgUri;
     }
+
+
+
+
+
+
+    // MARK: Get User Data This Way - always stays update and doesn't require passing anything because ViewModel is connected to the Activity that manages the fragment
+    private void getUserProfile(View rootView){
+        if (getActivity() != null) {
+            this_user_viewmodel = new ViewModelProvider(getActivity()).get(UserViewModel.class);
+            student = this_user_viewmodel.getThisStudent().getValue(); //grab the initial data
+            // TODO: only start doing processes that depend on user profile here:
+            if(student != null){
+                // TODO: populate UI
+                // TODO: set up listeners
+                // TODO: etc.
+                // NOTE: everything depends on the user profile data, only execute stuff dependent on it once you 100% have it
+                setupViews();
+                setUpRecycler();
+                setListeners(rootView);
+            }
+            this_user_viewmodel.getThisStudent().observe(getActivity(), (Student updatedProfile) -> { //listen to realtime user profile changes afterwards
+                if (updatedProfile != null) student = updatedProfile;
+                // TODO: if stuff needs to be updated whenever the user profile receives an update, DO SO HERE
+            });
+        }
+    }
+    // MARK: ------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
 
 
 /* Override Methods
@@ -88,56 +126,37 @@ public class StudentProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        root_view = inflater.inflate(R.layout.fragment_studentprofile, container, false);
-
+        View rootView = inflater.inflate(R.layout.fragment_studentprofile, container, false);
         // Initialization Methods
-        declareViews(root_view);
-        getUserProfile();
-        return root_view;
+        declareViews(rootView);
+        getUserProfile(rootView);
+        return rootView;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // Came back from edit student activity (Change to a switch statement if more request codes)
+        if (requestCode == Constant.EDIT_STUDENT_REQUEST_CODE) {
+            Log.d(TAG, "Coming back from EditStudent!");
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                boolean updated = data.getBooleanExtra("updated", false);
+                if (updated) reloadStudent();
+            }
+        }
         if (requestCode == Constant.VIEW_POST_REQUEST_CODE) {
             Log.d(TAG, "Coming back from ViewPost!");
             if (resultCode == Activity.RESULT_OK && data != null) {
                 boolean updated = data.getBooleanExtra("updated", false);
-                if (updated) loadPostImg(data.getParcelableExtra("post"));
+                if (updated) loadPostImg((Post)data.getParcelableExtra("post"));
             }
         } else
             Log.w(TAG, "Don't know how to handle the request code, \"" + requestCode + "\" yet!");
     }
 
-
 /* Initialization Methods
 ***************************************************************************************************/
-
-    // Get User Data - always stays update and doesn't require passing anything because ViewModel is connected to the Activity that manages the fragment
-    private void getUserProfile(){
-        if (getActivity() != null) {
-
-            user_view_model = new ViewModelProvider(getActivity()).get(UserViewModel.class);
-            student = user_view_model.getThisStudent().getValue(); //grab the initial data
-
-            // Only start doing processes that depend on user profile
-            if(student != null){
-                Log.d(TAG, "Showing student: " + student.getId() + ", name: " + student.getName());
-                setupViews();           // populate UI
-                setUpRecycler();        // set up posts recycler view
-                setListeners(root_view); // set up listeners
-            }
-
-            // listen to realtime user profile changes afterwards
-            user_view_model.getThisStudent().observe(getActivity(), (Student updatedProfile) -> {
-                if (updatedProfile != null){
-                    student = updatedProfile;   // Update student
-                    getStudentPic();            // Do Other setups
-                }
-            });
-        }
-    }
 
     private void declareViews(View v){
         mProfileImg = v.findViewById(R.id.studentProfile_circleImg);
@@ -154,7 +173,7 @@ public class StudentProfileFragment extends Fragment {
         if (student == null) return;
         mName.setText(student.getName());
         mDegree.setText(student.getDegree());
-        if (profile_img_uri != null) Picasso.get().load(profile_img_uri).into(mProfileImg);
+        if (profileImgUri!= null) Picasso.get().load(profileImgUri).into(mProfileImg);
     }
 
     // Create adapter for recycler (empty!)
@@ -162,17 +181,25 @@ public class StudentProfileFragment extends Fragment {
         loadPostsFromDB();
 
         // set LayoutManager and Adapter
-        adapter = new ImageAdapter(post_img_uris);
+        adapter = new ImageAdapter(postImgUris);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), 3, GridLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(adapter);
     }
 
     // Set up onClick Listeners
     private void setListeners(View v){
-        if (my_profile) v.findViewById(R.id.studentProfile_edit).setOnClickListener(v12 -> editProfile());
-        else    v.findViewById(R.id.studentProfile_edit).setVisibility(View.GONE);
-        v.findViewById(R.id.studentProfile_seeAll).setOnClickListener(v1 -> seeAllPosts());
-        adapter.setOnSelectionListener(this::selectPost);
+        v.findViewById(R.id.studentProfile_edit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {editProfile();}
+        });
+        v.findViewById(R.id.studentProfile_seeAll).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {seeAllPosts();}
+        });
+        adapter.setOnSelectionListener(new OnSelectionListener() {
+            @Override
+            public void onSelectionClick(int position) {selectPost(position);}
+        });
     }
 
 /* OnClick Methods
@@ -196,11 +223,9 @@ public class StudentProfileFragment extends Fragment {
 
     // A post in recycler was selected
     private void selectPost(int position) {
-
-        Intent intent = new Intent(getContext(), ViewPostActivity.class);
+        Intent intent = new Intent(getActivity(), ViewPostActivity.class);
         Log.d(TAG, "Starting ViewPost Activity for post #" + position);
-        intent.putExtra("post", posts.get(position));
-        intent.putExtra("this_user_id", student.getId());
+        intent.putExtra("post", posts.get(position)); //TODO Post class not defined yet
         startActivityForResult(intent, Constant.VIEW_POST_REQUEST_CODE);
     }
 
@@ -236,6 +261,38 @@ public class StudentProfileFragment extends Fragment {
 /* Firebase Methods
 ***************************************************************************************************/
 
+    // Reload student profile
+    private void reloadStudent() {
+        if (student == null) return;
+
+        final String this_user_id = student.getId();
+        String address = "universities/" + student.getUni_domain() + "/users/" + student.getId();
+        if (address.contains("null")){
+            Log.e(TAG, "Student Address has null values.");
+            return;
+        }
+
+        db.document(address).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot doc = task.getResult();
+                    if (doc == null){
+                        Log.e(TAG, "Document doesn't exist");
+                        return;
+                    }
+                    student = doc.toObject(Student.class);
+                    if (student == null) Log.e(TAG, "Student object obtained from database is null!");
+                    else {
+                        student.setId(this_user_id);    // Set student ID
+                        getStudentPic();                // Upload pic and update views
+                    }
+                }
+                else Log.e(TAG,"getUserInfo: unsuccessful!");
+            }
+        });
+    }
+
     // load picture from firebase storage
     // Will throw an exception if file doesn't exist in storage but app continues to work fine
     private void getStudentPic() {
@@ -244,21 +301,26 @@ public class StudentProfileFragment extends Fragment {
         // Make sure student has a profile image already
         if (student.getProfile_picture() != null){
             base_storage_ref.child(student.getProfile_picture()).getDownloadUrl()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()){
-                            profile_img_uri = task.getResult();
-                        }
-                        else {
-                            Log.w(TAG, task.getException());
-                            student.setProfile_picture(""); // image doesn't exist
-                        }
+                    .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()){
+                                profileImgUri = task.getResult();
+                            }
+                            else {
+                                Log.w(TAG, task.getException());
+                                student.setProfile_picture(""); // image doesn't exist
+                            }
 
-                        // Reload views
-                        setupViews();
+                            // Reload views
+                            setupViews();
+                            setUpRecycler();
+                        }
                     });
         } else {
             // Reload views
             setupViews();
+            setUpRecycler();
         }
     }
 
@@ -267,12 +329,6 @@ public class StudentProfileFragment extends Fragment {
         startLoading();
         if (student.getId() == null || student.getUni_domain() == null){
             Log.e(TAG, "Post Address has null values. ID:" + student.getId());
-            if (getContext() != null) postError(getString(R.string.error_noPosts));
-            return;
-        }
-
-        if (student.getPost_ids().size() == 0){
-            Log.e(TAG, "No posts for this user.");
             postError(getString(R.string.error_noPosts));
             return;
         }
@@ -280,32 +336,35 @@ public class StudentProfileFragment extends Fragment {
         String address = "universities/" + student.getUni_domain() + "/posts";
 
         db.collection(address).whereEqualTo("author_id", student.getId()).limit(6)
-                .get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()){
-                        QuerySnapshot querySnapshot = task.getResult();
-                        if (querySnapshot == null){
-                            Log.e(TAG, "No posts for this user.");
-                            postError(getString(R.string.error_noPosts));
-                            return;
-                        }
-                        int i = 0;
-                        for (QueryDocumentSnapshot doc : querySnapshot){
-                            posts.add(i, doc.toObject(Post.class));
-                            if (posts.get(i) == null) Log.e(TAG, "Post object obtained from database is null!");
-                            else {
-                                posts.get(i).setId(doc.getId());    // Set Post ID
-                                loadPostImg(posts.get(i));          // Upload pic and update views
-                            }
-                            i++;
-                        }
-                        Log.d(TAG, "There were " + i + " posts!");
-                        stopLoading();
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    QuerySnapshot querySnapshot = task.getResult();
+                    if (querySnapshot == null){
+                        Log.e(TAG, "No posts for this user.");
+                        postError(getString(R.string.error_noPosts));
+                        return;
                     }
-                    else {
-                        Log.e(TAG,"loadPostsFromDB: unsuccessful!");
-                        postError(getString(R.string.error_getPost));
+                    int i = 0;
+                    for (QueryDocumentSnapshot doc : querySnapshot){
+                        posts.add(i, doc.toObject(Post.class));
+                        if (posts.get(i) == null) Log.e(TAG, "Post object obtained from database is null!");
+                        else {
+                            posts.get(i).setId(doc.getId());    // Set Post ID
+                            loadPostImg(posts.get(i));          // Upload pic and update views
+                        }
+                        i++;
                     }
-                });
+                    Log.d(TAG, "There were " + i + " posts!");
+                    stopLoading();
+                }
+                else {
+                    Log.e(TAG,"loadPostsFromDB: unsuccessful!");
+                    postError(getString(R.string.error_getPost));
+                }
+            }
+        });
     }
 
     // Load a post's visual from Firestore Storage given post object
@@ -315,26 +374,23 @@ public class StudentProfileFragment extends Fragment {
             return;
         }
 
-        int postIndex = posts.indexOf(post);
-        if (postIndex < post_img_uris.size() && post_img_uris.get(postIndex) != null) {
-            Log.d(TAG,"Post Image already loaded!");
-            return;
-        }
-
         // Insert Image Uri to arrayList in same position as its post object
         // Then it tells Recycler adapter that it should update the view
         if (post.getVisual() != null){
             base_storage_ref.child(post.getVisual()).getDownloadUrl()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()){
-                            Uri uri = task.getResult();
-                            if (uri != null){
-                                post_img_uris.add(uri);
-                                adapter.notifyItemInserted(post_img_uris.size()-1);
-                                Log.d(TAG, "Added to position "+posts.indexOf(post)+" img " + uri);
+                    .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()){
+                                Uri uri = task.getResult();
+                                if (uri != null){
+                                    postImgUris.add(posts.indexOf(post), uri);
+                                    adapter.notifyItemInserted(posts.indexOf(post));
+                                    Log.d(TAG, "Added to position "+posts.indexOf(post)+" img " + uri);
+                                }
                             }
+                            else Log.w(TAG, "this post's image isn't here! Visual: " + post.getVisual());
                         }
-                        else Log.w(TAG, "this post's image isn't here! Visual: " + post.getVisual());
                     });
         } else Log.e(TAG, "Post had null visual! Post ID: "+ post.getId());
     }

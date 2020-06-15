@@ -31,7 +31,7 @@ public class UserViewModel extends ViewModel {
 
     // MARK: Initial Acquisition of User's Profile (with student vs organization distinction)
 
-    public void startListening(String thisUserId, String thisUniDomain){
+    void startListening(String thisUserId, String thisUniDomain){
         if(initialAcquisition){ //had problems with the listener not being up to date sometimes during the initial launch of the MainActivity so the first time is a one time query
             db_ref.collection("universities").document(thisUniDomain).collection("users").document(thisUserId).get().addOnCompleteListener(task -> {
                 if(task.isSuccessful() && task.getResult() != null && task.getResult().getData() != null){
@@ -39,17 +39,9 @@ public class UserViewModel extends ViewModel {
                     if(user.get("is_organization") instanceof Boolean){
                         if((Boolean)user.get("is_organization")){
                             isOrganization = true;
-                            Organization org = task.getResult().toObject(Organization.class);
-                            if (org != null){
-                                org.setId(thisUserId);
-                                thisOrganization.setValue(org);
-                            }
+                            thisOrganization.setValue(task.getResult().toObject(Organization.class));
                         }else{
-                            Student student = task.getResult().toObject(Student.class);
-                            if (student != null){
-                                student.setId(thisUserId);
-                                thisStudent.setValue(student);
-                            }
+                            thisStudent.setValue(task.getResult().toObject(Student.class));
                         }
                     }
                     initialAcquisition = false;
@@ -75,19 +67,8 @@ public class UserViewModel extends ViewModel {
             }
 
             if(documentSnapshot != null && documentSnapshot.exists()){
-                if(isOrganization){
-                    Organization org = documentSnapshot.toObject(Organization.class);
-                    if (org != null){
-                        org.setId(thisUserId);
-                        thisOrganization.setValue(org);
-                    }
-                } else {
-                    Student student = documentSnapshot.toObject(Student.class);
-                    if (student != null){
-                        student.setId(thisUserId);
-                        thisStudent.setValue(student);
-                    }
-                }
+                if(isOrganization) thisOrganization.setValue(documentSnapshot.toObject(Organization.class));
+                else thisStudent.setValue(documentSnapshot.toObject(Student.class));
             } else {
                 Log.d(TAG, "This user's profile: null.");
             }

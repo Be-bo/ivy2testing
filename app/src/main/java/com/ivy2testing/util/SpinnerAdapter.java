@@ -14,11 +14,8 @@ import com.ivy2testing.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-/** @author Zahra Ghavasieh
- * Overview: A Spinner adapter that uses the first item in given String[] as a "hint"
- * Notes: the "hint" item has a different colour and cannot be selected from the drop-down menu but it's still shown
- */
 public class SpinnerAdapter extends ArrayAdapter<String> {
 
     Context mContext;
@@ -48,25 +45,11 @@ public class SpinnerAdapter extends ArrayAdapter<String> {
 
     @Override
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        View view = super.getDropDownView(position, convertView, parent);
-
-        // If showing 1st item, change colour to lighter grey
-        TextView tv = (TextView) view;
-        if (position == 0)
-            tv.setTextColor(mContext.getResources().getColor(R.color.hint, mContext.getTheme()));
-        else
-            tv.setTextColor(mContext.getResources().getColor(R.color.off_black, mContext.getTheme()));
-
-        return tv;
+        return super.getDropDownView(position + 1, convertView, parent);
     }
 
     @Override
     public int getCount() {
-        return mList.length;
-    }
-
-    @Override
-    public boolean isEnabled(int position) {
-        return position != 0; // Disable item [0] from spinner
+        return mList.length - 1;
     }
 }

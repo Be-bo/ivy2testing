@@ -31,7 +31,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.authentication.LoginActivity;
-import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.util.Constant;
@@ -129,6 +128,22 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Came back from Login activity (Change to a switch statement if more request codes)
+        if (requestCode == Constant.LOGIN_REQUEST_CODE) {
+            Log.d(TAG, "Coming back from LoginActivity!");
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                Map<Object, Object> map = new HashMap<>();
+                map.put("this_user_id", data.getStringExtra("this_user_id"));
+                map.put("this_uni_domain", data.getStringExtra("this_uni_domain"));
+            }
+        } else
+            Log.w(TAG, "Don't know how to handle the request code, \"" + requestCode + "\" yet!");
+    }
+
     /* OnClick Methods
      ***************************************************************************************************/
 
@@ -139,32 +154,16 @@ public class HomeFragment extends Fragment {
 
         // onActivityResult in MainActivity gets called!
         if (getActivity() != null)
-            getActivity().startActivityForResult(intent, Constant.LOGIN_REQUEST_CODE);
+            startActivityForResult(intent, Constant.LOGIN_REQUEST_CODE);
         else
             Log.e(TAG, "getActivity() was null when calling LoginActivity.");
     }
 
     // TEST For testing purposes only!
     public void mainTest() {
-        if (getActivity() != null){
-        UserViewModel user_view_model = new ViewModelProvider(getActivity()).get(UserViewModel.class);
-            user_view_model.startListening("testID", "ucalgary.ca");
-            if(user_view_model.isOrganization()){
-                user_view_model.getThisOrganization().observe(this, (Organization updatedUser) -> {
-                    if(updatedUser != null){
-                        is_organization = true;
-                        setLoggedInDisplay();
-                    }
-                });
-            } else{
-                user_view_model.getThisStudent().observe(this, (Student updatedUser) -> {
-                    if(updatedUser != null){
-                        is_organization = false;
-                        setLoggedInDisplay();
-                    }
-                });
-            }
-        }
+        Map<Object, Object> map = new HashMap<>();
+        map.put("this_user_id", "testID");
+        map.put("this_uni_domain", "ucalgary.ca");
     }
 
     /* Transition Methods
