@@ -100,14 +100,6 @@ public class StudentProfileFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Came back from edit student activity (Change to a switch statement if more request codes)
-        if (requestCode == Constant.EDIT_STUDENT_REQUEST_CODE) {
-            Log.d(TAG, "Coming back from EditStudent!");
-            if (resultCode == Activity.RESULT_OK && data != null) {
-                boolean updated = data.getBooleanExtra("updated", false);
-                if (updated) Log.d(TAG, "updated?"); //TODO test!
-            }
-        }
         if (requestCode == Constant.VIEW_POST_REQUEST_CODE) {
             Log.d(TAG, "Coming back from ViewPost!");
             if (resultCode == Activity.RESULT_OK && data != null) {
@@ -131,6 +123,7 @@ public class StudentProfileFragment extends Fragment {
 
             // Only start doing processes that depend on user profile
             if(student != null){
+                Log.d(TAG, "Showing student: " + student.getId() + ", name: " + student.getName());
                 setupViews();           // populate UI
                 setUpRecycler();        // set up posts recycler view
                 setListeners(root_view); // set up listeners
@@ -262,12 +255,10 @@ public class StudentProfileFragment extends Fragment {
 
                         // Reload views
                         setupViews();
-                        loadPostsFromDB();
                     });
         } else {
             // Reload views
             setupViews();
-            loadPostsFromDB();
         }
     }
 
@@ -276,6 +267,12 @@ public class StudentProfileFragment extends Fragment {
         startLoading();
         if (student.getId() == null || student.getUni_domain() == null){
             Log.e(TAG, "Post Address has null values. ID:" + student.getId());
+            if (getContext() != null) postError(getString(R.string.error_noPosts));
+            return;
+        }
+
+        if (student.getPost_ids().size() == 0){
+            Log.e(TAG, "No posts for this user.");
             postError(getString(R.string.error_noPosts));
             return;
         }

@@ -39,9 +39,17 @@ public class UserViewModel extends ViewModel {
                     if(user.get("is_organization") instanceof Boolean){
                         if((Boolean)user.get("is_organization")){
                             isOrganization = true;
-                            thisOrganization.setValue(task.getResult().toObject(Organization.class));
+                            Organization org = task.getResult().toObject(Organization.class);
+                            if (org != null){
+                                org.setId(thisUserId);
+                                thisOrganization.setValue(org);
+                            }
                         }else{
-                            thisStudent.setValue(task.getResult().toObject(Student.class));
+                            Student student = task.getResult().toObject(Student.class);
+                            if (student != null){
+                                student.setId(thisUserId);
+                                thisStudent.setValue(student);
+                            }
                         }
                     }
                     initialAcquisition = false;
@@ -67,8 +75,19 @@ public class UserViewModel extends ViewModel {
             }
 
             if(documentSnapshot != null && documentSnapshot.exists()){
-                if(isOrganization) thisOrganization.setValue(documentSnapshot.toObject(Organization.class));
-                else thisStudent.setValue(documentSnapshot.toObject(Student.class));
+                if(isOrganization){
+                    Organization org = documentSnapshot.toObject(Organization.class);
+                    if (org != null){
+                        org.setId(thisUserId);
+                        thisOrganization.setValue(org);
+                    }
+                } else {
+                    Student student = documentSnapshot.toObject(Student.class);
+                    if (student != null){
+                        student.setId(thisUserId);
+                        thisStudent.setValue(student);
+                    }
+                }
             } else {
                 Log.d(TAG, "This user's profile: null.");
             }
