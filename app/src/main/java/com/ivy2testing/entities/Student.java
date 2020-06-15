@@ -18,14 +18,6 @@ public class Student extends User{
     // Child Fields
     private String degree;
     private long birth_millis = 0;
-    private String messaging_token;
-    private String profile_picture;
-    private String preview_picture;
-    private final boolean is_organization = false;
-    private final boolean is_club = false;
-    private boolean is_banned = false;
-    private String registration_platform = "Android";
-    private List<String> post_ids = new ArrayList<>();
     
 
 /* Constructors
