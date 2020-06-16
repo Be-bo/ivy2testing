@@ -19,14 +19,12 @@
     <ImageButton
         android:id="@+id/post_button"
         android:src="@drawable/ic_lock_open"
-        android:background="@color/transparent"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_gravity="right"
         android:layout_marginEnd="8dp"
         android:background="@color/transparent"
-        android:src="@drawable/ic_create_placeholder"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
 
 </androidx.appcompat.widget.Toolbar>

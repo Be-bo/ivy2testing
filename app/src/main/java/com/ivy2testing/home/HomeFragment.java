@@ -148,7 +148,7 @@ public class HomeFragment extends Fragment {
 
         // recycler view
 
-       // BuildArrayList();
+        BuildArrayList();
 
 //        Toast.makeText(mContext, ""+event_arraylist.get(0).getAuthor_name(), Toast.LENGTH_SHORT).show();
 
