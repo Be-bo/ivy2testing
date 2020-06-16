@@ -17,6 +17,7 @@
             android:id="@+id/object_imageview"
             android:layout_width="match_parent"
             android:layout_height="150dp"
+            android:background="@drawable/gradient_custom_post"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteX="0dp" />
 
@@ -51,48 +52,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/object_title" />
 
-            <TextView
-                android:id="@+id/object_posted_by_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="Posted By"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/object_body" />
-
-            <TextView
-                android:id="@+id/object_posted_by_author"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="8dp"
-                android:text="TextView"
-                android:textColor="@color/interaction"
-                app:layout_constraintStart_toEndOf="@+id/object_posted_by_text"
-                app:layout_constraintTop_toBottomOf="@+id/object_body" />
-
-            <TextView
-                android:id="@+id/object_pinned_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="Pinned:"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/object_posted_by_text" />
-
-            <TextView
-                android:id="@+id/object_pinned_event"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="8dp"
-                android:text="TextView"
-                android:textColor="@color/interaction"
-                app:layout_constraintStart_toEndOf="@+id/object_pinned_text"
-                app:layout_constraintTop_toBottomOf="@+id/object_posted_by_text" />
-
             <ImageButton
                 android:id="@+id/object_full_button"
                 android:layout_width="wrap_content"
@@ -112,6 +71,66 @@
                 android:textColor="@color/interaction"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/object_full_button" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/posted_by_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/object_body">
+
+                <TextView
+                    android:id="@+id/object_posted_by_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="TextView"
+                    android:textColor="@color/interaction"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/object_posted_by_text"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/object_posted_by_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Posted By"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/pinned_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/posted_by_container">
+
+                <TextView
+                    android:id="@+id/object_pinned_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pinned:"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/object_pinned_event"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="TextView"
+                    android:textColor="@color/interaction"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/object_pinned_text"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -70,16 +70,13 @@ public class HomeFragment extends Fragment {
 
 
     private final ArrayList<Post> post_arraylist = new ArrayList<Post>();
-    private final ArrayList<Event> event_arraylist = new ArrayList<Event>();
+
+
 
     private RecyclerView feed_recycler_view;
     private RecyclerView.Adapter feed_adapter;
     private RecyclerView.LayoutManager feed_layout_manager;
 
-    public HomeFragment(){
-
-        // REQUIRED no argument public constructor
-    }
 
     // Constructor
     public HomeFragment(Context con) {
@@ -136,13 +133,13 @@ public class HomeFragment extends Fragment {
 
         BuildArrayList();
 
-//        Toast.makeText(mContext, ""+event_arraylist.get(0).getAuthor_name(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(mContext, ""+post_arraylist.get(0).getAuthor_name(), Toast.LENGTH_SHORT).show();
 
         feed_recycler_view = rootView.findViewById(R.id.feed_recycler_view);
         feed_recycler_view.setHasFixedSize(true);
         //TODO not sure required context here
         feed_layout_manager = new LinearLayoutManager(getContext());
-        feed_adapter = new FeedAdapter(event_arraylist);
+        feed_adapter = new FeedAdapter(post_arraylist);
         feed_recycler_view.setLayoutManager(feed_layout_manager);
         feed_recycler_view.setAdapter(feed_adapter);
 
@@ -249,8 +246,7 @@ public class HomeFragment extends Fragment {
         insertPoint.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));*/
     }
     private void BuildArrayList(){
-        db_reference.collection("universities").document("testucalgary.ca").collection("posts")
-                .whereEqualTo("is_event", false)
+        db_reference.collection("universities").document("ucalgary.ca").collection("posts")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -260,7 +256,9 @@ public class HomeFragment extends Fragment {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     // Toast.makeText(MainActivity.this, document.getId() + " => " + document.getData(), Toast.LENGTH_SHORT).show();
                                     post_arraylist.add(document.toObject(Post.class));
+                                    Toast.makeText(mContext, ""+post_arraylist.size(), Toast.LENGTH_SHORT).show();
                                 }
+                                buildEventFeed();
                             }
                         }
                         else {
@@ -270,35 +268,13 @@ public class HomeFragment extends Fragment {
                 });
 
 
-        db_reference.collection("universities").document("testucalgary.ca").collection("posts")
-                .whereEqualTo("is_event", true)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            if (task.getResult() != null) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    event_arraylist.add(document.toObject(Event.class));
-                                }
-                                buildEventFeed();
-
-
-                            }
-                        }
-                         else {
-                            //  Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-
-                });
 
     }
     private void buildEventFeed(){
 
-        Toast.makeText(mContext, ""+event_arraylist.size(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, ""+post_arraylist.size(), Toast.LENGTH_SHORT).show();
         feed_layout_manager = new LinearLayoutManager(getContext());
-        feed_adapter = new FeedAdapter(event_arraylist);
+        feed_adapter = new FeedAdapter(post_arraylist);
         feed_recycler_view.setLayoutManager(feed_layout_manager);
         feed_recycler_view.setAdapter(feed_adapter);
     }

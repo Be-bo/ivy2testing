@@ -24,8 +24,8 @@ import java.util.ArrayList;
 
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder>{
-    private ArrayList<Post> post_array_list_initialized;
-    private ArrayList<Event> event_array_list_initialized;
+
+    private ArrayList<Post> post_array_list;
 
 
 
@@ -47,14 +47,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             feed_pinned_id = itemView.findViewById(R.id.object_pinned_event);
         }
     }
-    public FeedAdapter(ArrayList<Post> post_list, int i){
-        post_array_list_initialized = post_list;
-
+    public FeedAdapter(ArrayList<Post> post_list){
+        post_array_list = post_list;
     }
-    public FeedAdapter(ArrayList<Event> event_list){
-        event_array_list_initialized = event_list;
 
-    }
 
 
     @NonNull
@@ -67,40 +63,39 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull FeedViewHolder holder, int position) {
-        Post current_post = new Post();
-        Event current_event = new Event();
-       /* if(post_array_list_initialized != null)
-            current_post = post_array_list_initialized.get(position);
-            holder.feed_text.setText(current_post.getText().toString());
-            holder.feed_author.setText(current_post.getAuthor_name().toString());*/
-        if(event_array_list_initialized!=null)
-            current_event = event_array_list_initialized.get(position);
-            holder.feed_title.setText(current_event.getName().toString());
-            holder.feed_text.setText(current_event.getText().toString());
-            holder.feed_author.setText(current_event.getText().toString());
-            if(current_event.getVisual().toString().contains("/")) {
+
+   //     if(post_array_list!=null)
+
+            if(post_array_list.get(position).getVisual().toString().contains("/")){
                 holder.feed_image_view.setVisibility(View.VISIBLE);
-                grabPictureFromDB( holder, event_array_list_initialized.get(position));
+                grabPictureFromDB( holder, post_array_list.get(position));
             }
             else
                 holder.feed_image_view.setVisibility(View.GONE);
+
+/*            if(post_array_list.get(position).getIs_event()) {
+                holder.feed_title.setText(post_array_list.get(position).getName());
+
+            }*/
+
+
+           // holder.feed_title.setText(current_post.getName().toString());
+            holder.feed_text.setText(post_array_list.get(position).getText().toString());
+            holder.feed_author.setText(post_array_list.get(position).getText().toString());
+
 
     }
 
     @Override
     public int getItemCount() {
-        if(post_array_list_initialized!= null)
-            return post_array_list_initialized.size();
-        if(event_array_list_initialized!=null)
-            return event_array_list_initialized.size();
-        else
-            return 0;
+
+            return post_array_list.size();
     }
 
-    public void grabPictureFromDB(FeedViewHolder holder, Event event){
+    public void grabPictureFromDB(FeedViewHolder holder, Post post){
 
         StorageReference db_storage = FirebaseStorage.getInstance().getReference();
-        String visual_path = event.getVisual().toString();
+        String visual_path = post.getVisual().toString();
         db_storage.child(visual_path).getBytes(1500000).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
