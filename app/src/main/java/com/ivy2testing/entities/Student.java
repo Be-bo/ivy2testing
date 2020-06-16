@@ -54,6 +54,43 @@ public class Student extends User{
         return birth_millis;
     }
 
+    public String getProfile_picture() {
+        return profile_picture;
+    }
+
+    public String getMessaging_token() {
+        return messaging_token;
+    }
+
+    public void setMessaging_token(String messaging_token) {
+        this.messaging_token = messaging_token;
+    }
+
+    public boolean getIs_organization() {
+        return is_organization;
+    }
+
+    public boolean getIs_banned() {
+        return is_banned;
+    }
+
+    public String getRegistration_platform() {
+        return registration_platform;
+    }
+
+    public List<String> getPost_ids() {
+        if (post_ids == null) return new ArrayList<>();
+        else return new ArrayList<>(post_ids);          // Return copy
+    }
+
+    public boolean getIs_club() {
+        return is_club;
+    }
+
+
+    public String getPreview_picture() {
+        return preview_picture;
+    }
 
 /* Setters
 ***************************************************************************************************/

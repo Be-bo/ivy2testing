@@ -46,6 +46,7 @@ public class Event extends Post {
     public Event (Post post){
         this(post.getId(), post.getUni_domain(), post.getAuthor_id(), post.getAuthor_name(),
                 post.isMain_feed_visible(), post.getPinned_id());
+        is_event = true;
     }
 
 /* Getters

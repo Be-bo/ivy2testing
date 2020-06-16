@@ -23,6 +23,7 @@ public class Post implements Parcelable {
     protected boolean is_event = false;
     protected boolean main_feed_visible = true;
     protected long creation_millis = 0;
+    protected String registration_platform = "Android";
     protected String text;
     protected String visual;
     protected String pinned_id;
@@ -139,6 +140,14 @@ public class Post implements Parcelable {
 
     public void setPinned_id(String pinned_id) {
         this.pinned_id = pinned_id;
+    }
+
+    public String getRegistration_platform() {
+        return registration_platform;
+    }
+
+    public void setRegistration_platform(String registration_platform) {
+        this.registration_platform = registration_platform;
     }
 
     public List<String> getViews_id(){

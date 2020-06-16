@@ -140,25 +140,26 @@ public class UserProfileActivity extends AppCompatActivity {
             return;
         }
 
+        // TODO: you don't have access to the UserViewModel from the MainActivity in here, gotta determine if you're displaying an org or a stud and then pass the DATA (getThis_User().getValue() + cast), not the entire model
         // Use UserViewModel to get user info and update realtime
-        UserViewModel user_view_model = new ViewModelProvider(this).get(UserViewModel.class);
-        user_view_model.startListening(this_user_id, this_uni_domain);
-        if (user_view_model.isOrganization()) {
-            user_view_model.getThisOrganization().observe(this, (Organization updatedUser) -> {
-                if (updatedUser != null) {
-                    is_organization = true;
-                    user = updatedUser;
-                    setFragment();
-                }
-            });
-        } else {
-            user_view_model.getThisStudent().observe(this, (Student updatedUser) -> {
-                if (updatedUser != null) {
-                    is_organization = false;
-                    user = updatedUser;
-                    setFragment();
-                }
-            });
-        }
+//        UserViewModel user_view_model = new ViewModelProvider(this).get(UserViewModel.class);
+//        user_view_model.startListening(this_user_id, this_uni_domain);
+//        if (user_view_model.isOrganization()) {
+//            user_view_model.getThisOrganization().observe(this, (Organization updatedUser) -> {
+//                if (updatedUser != null) {
+//                    is_organization = true;
+//                    user = updatedUser;
+//                    setFragment();
+//                }
+//            });
+//        } else {
+//            user_view_model.getThisStudent().observe(this, (Student updatedUser) -> {
+//                if (updatedUser != null) {
+//                    is_organization = false;
+//                    user = updatedUser;
+//                    setFragment();
+//                }
+//            });
+//        }
     }
 }

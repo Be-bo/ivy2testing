@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -28,7 +29,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.ivy2testing.R;
+import com.ivy2testing.entities.Student;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,33 +41,27 @@ import static com.ivy2testing.util.StaticDomainList.domain_list;
 import static com.ivy2testing.util.StaticDegreesList.degree_array;
 
 public class StudentSignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    // Views
+
     private EditText email_editText;
     private EditText pass_editText;
     private EditText pass_confirm_editText;
     private Spinner degree_spinner;
     private Button register_button;
 
-    //Strings for registration
     private String email;
     private String password;
     private String password_confirm;
     private String domain;
     private String degree;
     private String id;
-    //
+
     private ProgressBar student_progress_bar;
-    //Adapter for spinner
-    private ArrayAdapter<CharSequence> degree_adapter;
-
-
-    //Firebase
     private FirebaseFirestore db_reference = FirebaseFirestore.getInstance();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
-    private Map<String, Object> user_info = new HashMap<String, Object>();
+    private Student this_student;
 
     //  Made By ClydeB on 5/21/2020
-    // Pictures wont be added during registration anymore, so all the picture related methods will be commented out. Leaving them at the bottom in case we need them at another point
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +71,6 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         setListeners();
     }
 
-    // Handlers + adapter for spinner are set
     private void setHandlers() {
         email_editText = findViewById(R.id.student_signup_email);
         pass_editText = findViewById(R.id.student_signup_pass);
@@ -84,11 +80,8 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         student_progress_bar = findViewById(R.id.signup_progressBar);
         register_button.setEnabled(false);
 
-
-
-
         // Creating and applying adapter to the spinner
-       // ArrayList<CharSequence> testarray = new ArrayList<CharSequence>(Arrays.asList(degree_array));
+        // ArrayList<CharSequence> testarray = new ArrayList<CharSequence>(Arrays.asList(degree_array));
         ArrayAdapter<CharSequence> degree_adapter = new ArrayAdapter<CharSequence>(this,android.R.layout.simple_spinner_dropdown_item,degree_array){
             @Override
             public boolean isEnabled(int position) {
@@ -104,9 +97,6 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         degree_spinner.setAdapter(degree_adapter);
     }
 
-
-    // Listeners are set. EditTexts each have an on text changed listener + focus changed listener
-    // Degree spinner has a special listener that is constantly firing. Be careful making methods that require it's input
     private void setListeners() {
         email_editText.addTextChangedListener(tw);
         pass_editText.addTextChangedListener(tw);
@@ -150,7 +140,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         register_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//TODO this line is causing the degree null -> degree selected issue  issue
+                //TODO this line is causing the degree null -> degree selected issue  issue
                 if(getCurrentFocus()!=null){
                     Objects.requireNonNull(getCurrentFocus()).clearFocus();
                 }
@@ -302,35 +292,20 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
                 });
     }
 
-    // Creates HashMap for Firestore
-    private void initializeProfile() {
-        user_info.put("id", id);
-        user_info.put("email", email);
-        user_info.put("degree", degree);
-        user_info.put("uni_domain", domain);
-        user_info.put("registration_millis", System.currentTimeMillis());
-        //TODO missing messaging token,
-    }
-
     // Creates a profile in FireStore with user provided info
     // Else toasts an error and returns to login page
     private void registerInDB() {
         id = auth.getUid();
         if (id != null) {
-            initializeProfile();
-            // if (picture_selected) storePictureInDB();
-            db_reference.collection("universities").document(domain).collection("users").document(id).set(user_info).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-
-                    openDialogComplete();
-
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getApplicationContext(), "Profile creation failed. Please try again later.", Toast.LENGTH_LONG).show();
-                    returnToLogin();
+            FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> { //cascade data reg by first getting the messaging token, when received, register the entire profile
+                if(task.isSuccessful() && task.getResult() != null){
+                    this_student = new Student(id, degree, email);
+                    this_student.setMessaging_token(task.getResult().getToken());
+                    Log.d("testudo", "token success, id: " + id);
+                    db_reference.collection("universities").document(domain).collection("users").document(id).set(this_student).addOnSuccessListener(aVoid -> openDialogComplete()).addOnFailureListener(e -> {
+                        Toast.makeText(getApplicationContext(), "Profile creation failed. Please try again later.", Toast.LENGTH_LONG).show();
+                        returnToLogin();
+                    });
                 }
             });
         }
@@ -382,58 +357,5 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     }
 
 }
-
-
-// Variables for picture selection
-//    private StorageReference db_storage = FirebaseStorage.getInstance().getReference();
-//    private final int PICK_IMAGE_INTERNAL = 450;
-//    private Uri user_selected_image;
-//    private boolean picture_selected;
-
-
-//These methods check if a picture is selected and prompt a user to go into their phone to choose (only) a picture
-// StorePictureInDB does exactly what its name says lol
-/*
-
-
-    private void storePictureInDB(){
-        String newUUID = UUID.randomUUID().toString();
-        final String path = "userimages/" + id + "/" + newUUID + ".jpg";
-        StorageReference user_image_storage = db_storage.child(path);
-        user_image_storage.putFile(user_selected_image).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                Toast.makeText(getApplicationContext(), "photo upload succesful", Toast.LENGTH_LONG).show();
-                user_info.put("profile_picture", path);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), "photo upload failed", Toast.LENGTH_LONG).show();
-                //
-                user_info.put("profile_picture", "upload failed");
-            }
-        });
-
-    }
-
-
-    private void selectPictureInternal(){
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_INTERNAL);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE_INTERNAL) {
-            user_selected_image = data.getData();
-            pic_select.setImageURI(user_selected_image);
-            picture_selected = true;
-        }
-    }
-    */
 
 

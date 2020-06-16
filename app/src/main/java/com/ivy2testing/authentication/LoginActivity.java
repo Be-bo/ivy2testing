@@ -1,5 +1,6 @@
 package com.ivy2testing.authentication;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -219,7 +220,7 @@ public class LoginActivity extends AppCompatActivity {
                         // Save uni domain for auto-logins and send off to MainActivity
                         barInteraction();
                         savePreferences();
-                        backToMain();
+                        transToMainLoggedIn();
                     }
                     else {
                         toastError("Email not verified yet!");
@@ -274,11 +275,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // Go back to main activity
-    private void backToMain(){
-        final Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("this_user_id", auth.getUid());
-        intent.putExtra("this_uni_domain", currentDomain);
-        setResult(RESULT_OK, intent);
+    private void transToMainLoggedIn(){
+        Intent returnIntent = new Intent();
+        setResult(Activity.RESULT_OK, returnIntent);
         finish();
         allowInteraction();
     }

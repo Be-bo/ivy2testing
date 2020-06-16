@@ -14,7 +14,7 @@ import java.util.List;
 */
 public class Organization extends User {
 
-    // Child Fields
+    // Fields
     private List<String> member_ids = new ArrayList<>();
     private List<String> request_ids = new ArrayList<>();
 
@@ -34,6 +34,60 @@ public class Organization extends User {
 
 /* Getters
 ***************************************************************************************************/
+
+    // Don't write ID in database! (redundant)
+    @Exclude
+    public String getId() {
+        return id;
+    }
+
+    public String getUni_domain() {
+        return uni_domain;
+    }
+
+    public long getRegistration_millis() {
+        return registration_millis;
+    }
+
+    public String getName() {
+        if (name == null) name = email.split("@")[0];
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getProfile_picture() {
+        return profile_picture;
+    }
+
+    public String getMessaging_token() {
+        return messaging_token;
+    }
+
+
+
+    public boolean isIs_organization() {
+        return is_organization;
+    }
+
+    public boolean isIs_banned() {
+        return is_banned;
+    }
+
+    public String getRegistration_platform() {
+        return registration_platform;
+    }
+
+    public List<String> getPost_ids() {
+        if (post_ids == null) post_ids = new ArrayList<>();
+        return new ArrayList<>(post_ids);          // Return copy
+    }
+
+    public boolean isIs_club() {
+        return is_club;
+    }
 
     public List<String> getMember_ids() {
         if (member_ids == null) return new ArrayList<>();

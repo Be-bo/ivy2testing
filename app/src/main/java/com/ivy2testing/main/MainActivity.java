@@ -21,14 +21,17 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.entities.Organization;
+import com.ivy2testing.entities.Student;
+import com.ivy2testing.entities.User;
 import com.ivy2testing.home.CreatePost;
 import com.ivy2testing.R;
 import com.ivy2testing.chat.ChatFragment;
-import com.ivy2testing.entities.Student;
 import com.ivy2testing.home.HomeFragment;
 import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.Constant;
@@ -43,22 +46,17 @@ public class MainActivity extends AppCompatActivity {
 
     // MARK: Variables and Constants
 
-    private final static String TAG = "MainActivity";
+    private final static String TAG = "MainActivityTag";
     private DrawerLayout drawer;
     private BottomNavigationView bottom_navigation;
     private FrameLayout loading_layout;
     private ImageButton post_button;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
 
-    private boolean is_organization = false;
     private String this_uni_domain;
     private UserViewModel user_view_model;
-    private Student this_student;
-    private Organization this_organization;
+    private User this_user;
 
-    // bubble handlers
-    private Button uni_button;
-    private Button current_button;
 
 
 
@@ -85,18 +83,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // Came back from Login activity (Change to a switch statement if more request codes)
         if (requestCode == Constant.LOGIN_REQUEST_CODE) {
-            Log.d(TAG, "Coming back from LoginActivity!");
-            if (resultCode == Activity.RESULT_OK && data != null) {
-                this_uni_domain = data.getStringExtra("this_uni_domain");
-                attemptLogin();
-            }
+            if (resultCode == Activity.RESULT_OK && data != null) attemptLogin();
         } else
             Log.w(TAG, "Don't know how to handle the request code, \"" + requestCode + "\" yet!");
     }
@@ -119,13 +110,6 @@ public class MainActivity extends AppCompatActivity {
         attemptLogin();
     }
 
-    private void setHandlers(){
-        bottom_navigation = findViewById(R.id.main_tab_bar);
-        bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
-        loading_layout = findViewById(R.id.main_loadingScreen);
-        post_button = findViewById(R.id.post_button);
-    }
-
     private void setUpToolbar() {
         Toolbar main_toolbar = findViewById(R.id.main_toolbar_id);
         setSupportActionBar(main_toolbar);
@@ -137,14 +121,17 @@ public class MainActivity extends AppCompatActivity {
         toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.interaction));
     }
 
-    private void setUpLoggedInInteraction() { //this method will set up all the interactive elements the user has access to when logged in, by default they're hidden (tab bar + post btn)
-        Log.d(TAG, "Setting up logged in interaction");
+    private void setHandlers(){
+        bottom_navigation = findViewById(R.id.main_tab_bar);
+        bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
+        loading_layout = findViewById(R.id.main_loadingScreen);
+        post_button = findViewById(R.id.post_button);
+        post_button.setOnClickListener(view -> transToLogin());
+    }
 
-        post_button.setVisibility(View.VISIBLE);
-        post_button.setOnClickListener(view -> {
-            Intent intent = new Intent(getApplicationContext(), CreatePost.class);
-            startActivity(intent);
-        });
+    private void setUpLoggedInInteraction() { //this method will set up all the interactive elements the user has access to when logged in, by default they're hidden (tab bar + post btn)
+        post_button.setImageResource(R.drawable.ic_create);
+        post_button.setOnClickListener(view -> transToCreatePost());
         bottom_navigation.setVisibility(View.VISIBLE);
         bottom_navigation.setOnNavigationItemSelectedListener((menuItem) -> {
             Fragment selectedFragment = null;
@@ -164,10 +151,10 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        // Set home view if no fragments visible atm
-        if (getSupportFragmentManager().findFragmentById(R.id.main_fragmentContainer) == null)
-            bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
+        if (getSupportFragmentManager().findFragmentById(R.id.main_fragmentContainer) == null) bottom_navigation.setSelectedItemId(R.id.tab_bar_home); // Set home view if no fragments visible atm
     }
+
+
 
 
 
@@ -185,29 +172,25 @@ public class MainActivity extends AppCompatActivity {
         user_view_model = new ViewModelProvider(this).get(UserViewModel.class);
         if(auth.getCurrentUser() != null && auth.getUid() != null && this_uni_domain != null){
             user_view_model.startListening(auth.getUid(), this_uni_domain);
-            if(user_view_model.isOrganization()){
-                user_view_model.getThisOrganization().observe(this, (Organization updatedUser) -> {
-                    if(updatedUser != null){
-                        //TODO: deal with banning, age update, notifications, etc.
-                        is_organization = true;
-                        this_organization = updatedUser;
-                        setUpLoggedInInteraction();
-                        endLoading();
+            user_view_model.getThis_user().observe(this, (User updatedUser) -> {
+                if(updatedUser != null){
+                    //TODO: deal with banning, age update, notifications, etc.
+                    this_user = updatedUser;
+
+                    if(this_user instanceof Student){
+                        Student stud = (Student) this_user;
+                        Log.d(TAG, "degr: " + stud.getDegree());
+                    }else if (this_user instanceof Organization){
+                        Log.d(TAG, "org: " + ((Organization) this_user).toString());
+                    }else{
+                        Log.d(TAG, "nothing");
                     }
-                });
-            }else{
-                user_view_model.getThisStudent().observe(this, (Student updatedUser) -> {
-                    if(updatedUser != null){
-                        //TODO: deal with banning, age update, notifications, etc.
-                        is_organization = false;
-                        this_student = updatedUser;
-                        setUpLoggedInInteraction();
-                        endLoading();
-                    }
-                });
-            }
+
+                    setUpLoggedInInteraction();
+                    endLoading();
+                }
+            });
         }else{
-            //TODO: set up login button (either ham menu or instead of create post)
             getSupportFragmentManager().beginTransaction().replace(R.id.main_fragmentContainer, new HomeFragment(this)).commit();
             endLoading();
         }
@@ -229,6 +212,18 @@ public class MainActivity extends AppCompatActivity {
 
     // MARK: Other Methods
 
+    private void transToCreatePost(){
+        Intent intent = new Intent(getApplicationContext(), CreatePost.class);
+        intent.putExtra("current_user", this_user);
+        startActivity(intent);
+
+    }
+
+    private void transToLogin(){
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivityForResult(intent, Constant.LOGIN_REQUEST_CODE);
+    }
+
     private void startLoading(){
         loading_layout.setVisibility(View.VISIBLE);      // Bring up view to cover entire screen
         getSupportFragmentManager().beginTransaction().replace(R.id.main_loadingScreen, new LoadingPageFragment(this)).commit();      // Populate View with loading page layout
@@ -241,52 +236,4 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // MARK: Deprecated, wasn't sure if could be deleted
-
-    // this handler will allow another fragment to be placed in the fragment container
-    // the container should be set to a frame layout to allow fragments on top of eachother
-    // it is set to a scrollview atm, but we don't call fragments yet
-
-    private void fragmentHandler() {
-        MainFragment mf = MainFragment.newInstance();
-        //Get the Fragment Manager and start a transaction
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        // add the fragment
-        // this code here allows info from other fragments to be added to the back stack
-        // pressing back will reload previous fragments, I don't think we need this for ivy, + how far back should they stack?
-        fragmentTransaction.add(R.id.main_fragmentContainer, mf).addToBackStack(null).commit();
-        closeFragment();
-    }
-
-    // Close format will close the previous fragment
-    private void closeFragment() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        // Check to see if a fragment is already showing.
-        MainFragment mf = (MainFragment) fragmentManager.findFragmentById(R.id.main_fragmentContainer);
-        if (mf != null) {
-            //create and commit the transaction to remove the fragment
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-            // i believe replace allows the previous fragment to be saved in memory, while swapping views..
-            //fragmentTransaction.replace(R.id.fragment_container, sf);
-
-            //close
-            fragmentTransaction.remove(mf).commit();
-            getSupportFragmentManager().executePendingTransactions();
-        }
-    }
 }

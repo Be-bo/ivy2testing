@@ -11,18 +11,14 @@ I am changing this to a scroll view with a linear layout to chain layouts veritc
     <include layout="@layout/bubble_bar_placeholder" />
 
 
-    <ScrollView
-        android:id="@+id/main_fragment_scrollview"
-        android:name="com.ivy2testing.mainFragmentName"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/feed_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:scrollbars="vertical"
 
-        <LinearLayout
-            android:id="@+id/main_fragment_linear_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"/>
-    </ScrollView>
+        />
 
 
 </LinearLayout>
