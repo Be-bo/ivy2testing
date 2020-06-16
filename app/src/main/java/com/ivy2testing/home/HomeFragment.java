@@ -41,6 +41,7 @@ import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Student;
+import com.ivy2testing.entities.User;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.util.Constant;
 
@@ -56,10 +57,6 @@ public class HomeFragment extends Fragment {
     // Parent activity
     private Context mContext;
     private View rootView;
-
-    // Testing buttons
-    private Button mainLoginButton;
-    private Button mainTestButton;
 
     private Button uni_button;
     private Button current_button;
@@ -96,17 +93,23 @@ public class HomeFragment extends Fragment {
     private void getUserProfile(View rootView){
         if (getActivity() != null) {
             this_user_viewmodel = new ViewModelProvider(getActivity()).get(UserViewModel.class);
-            student = this_user_viewmodel.getThisStudent().getValue(); //grab the initial data
-            // TODO: only start doing processes that depend on user profile here:
-            if(student != null){
+            User usr = this_user_viewmodel.getThis_user().getValue();
+            if(usr instanceof Student){
+                // TODO: only start doing processes that depend on user profile here:
                 // TODO: populate UI
                 // TODO: set up listeners
                 // TODO: etc.
                 // NOTE: everything depends on the user profile data, only execute stuff dependent on it once you 100% have it
+            }else if(usr instanceof Organization){
+                //TODO: -||-
             }
-            this_user_viewmodel.getThisStudent().observe(getActivity(), (Student updatedProfile) -> { //listen to realtime user profile changes afterwards
-                if (updatedProfile != null) student = updatedProfile;
-                // TODO: if stuff needs to be updated whenever the user profile receives an update, DO SO HERE
+
+            this_user_viewmodel.getThis_user().observe(getActivity(), (User updatedProfile) -> { //listen to realtime user profile changes afterwards
+                if(updatedProfile instanceof Student){
+                    // TODO: if stuff needs to be updated whenever the user profile receives an update, DO SO HERE
+                }else if(updatedProfile instanceof Organization){
+                    // TODO: if stuff needs to be updated whenever the user profile receives an update, DO SO HERE
+                }
             });
         }
     }
@@ -124,23 +127,6 @@ public class HomeFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_home, container, false);
         // Initialization
         uni_button = rootView.findViewById(R.id.btn_1);
-        mainLoginButton = rootView.findViewById(R.id.main_loginButton);
-        mainTestButton = rootView.findViewById(R.id.main_testButton);
-
-        mainLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainLogin();
-            }
-        });
-        mainTestButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainTest();
-            }
-        });
-
-        chooseDisplay(); // Login?
 
 
         current_button = uni_button;
@@ -163,67 +149,7 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
-    /* OnClick Methods
-     ***************************************************************************************************/
 
-    // Go to login screen
-    public void mainLogin() {
-        Intent intent = new Intent(getActivity(), LoginActivity.class);
-        Log.d(TAG, "Launching LoginActivity");
-
-        // onActivityResult in MainActivity gets called!
-        if (getActivity() != null)
-            getActivity().startActivityForResult(intent, Constant.LOGIN_REQUEST_CODE);
-        else
-            Log.e(TAG, "getActivity() was null when calling LoginActivity.");
-    }
-
-    // TEST For testing purposes only!
-    public void mainTest() {
-        if (getActivity() != null){
-        UserViewModel user_view_model = new ViewModelProvider(getActivity()).get(UserViewModel.class);
-            user_view_model.startListening("testID", "ucalgary.ca");
-            if(user_view_model.isOrganization()){
-                user_view_model.getThisOrganization().observe(this, (Organization updatedUser) -> {
-                    if(updatedUser != null){
-                        is_organization = true;
-                        setLoggedInDisplay();
-                    }
-                });
-            } else{
-                user_view_model.getThisStudent().observe(this, (Student updatedUser) -> {
-                    if(updatedUser != null){
-                        is_organization = false;
-                        setLoggedInDisplay();
-                    }
-                });
-            }
-        }
-    }
-
-    /* Transition Methods
-     ***************************************************************************************************/
-
-    // See if logged in (check if parent Activity gave us an actual student)
-    private void chooseDisplay() {
-
-        if (student == null) {
-            Log.w(TAG, "Not signed in yet!");
-            setLoggedOutDisplay();
-        } else setLoggedInDisplay();
-    }
-
-    // Enable bottom Navigation for a logged-in user
-    private void setLoggedInDisplay() {
-        mainLoginButton.setVisibility(View.GONE);
-        mainTestButton.setVisibility(View.GONE);
-    }
-
-    // Disable bottom Navigation for a logged-in user
-    private void setLoggedOutDisplay() {
-        mainLoginButton.setVisibility(View.VISIBLE);
-        mainTestButton.setVisibility(View.VISIBLE);
-    }
 
     /* ************************************************************************************************** */
     // resets main "Uni" button to be selected/ deselects others,

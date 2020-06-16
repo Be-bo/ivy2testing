@@ -23,7 +23,7 @@ public class User implements Parcelable {
     protected String messaging_token;
     protected String profile_picture;
     protected String preview_picture;
-    protected final boolean is_organization;
+    protected boolean is_organization;
     protected boolean is_club;
     protected boolean is_banned = false;
     protected String registration_platform = "Android";
@@ -31,6 +31,9 @@ public class User implements Parcelable {
 
     /* Constructors
      ***************************************************************************************************/
+
+    public User(){
+    }
     
     // Use for FireStore constructors!
     public User(boolean is_organization){
@@ -91,6 +94,10 @@ public class User implements Parcelable {
 
     public String getMessaging_token() {
         return messaging_token;
+    }
+
+    public void setMessaging_token(String messaging_token) {
+        this.messaging_token = messaging_token;
     }
 
     public boolean getIs_organization() {

@@ -27,10 +27,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.entities.Organization;
+import com.ivy2testing.entities.Student;
+import com.ivy2testing.entities.User;
 import com.ivy2testing.home.CreatePost;
 import com.ivy2testing.R;
 import com.ivy2testing.chat.ChatFragment;
-import com.ivy2testing.entities.Student;
 import com.ivy2testing.home.HomeFragment;
 import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.Constant;
@@ -45,20 +46,16 @@ public class MainActivity extends AppCompatActivity {
 
     // MARK: Variables and Constants
 
-    private final static int LOGIN_CODE = 1;
-
-    private final static String TAG = "MainActivity";
+    private final static String TAG = "MainActivityTag";
     private DrawerLayout drawer;
     private BottomNavigationView bottom_navigation;
     private FrameLayout loading_layout;
     private ImageButton post_button;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
 
-    private boolean is_organization = false;
     private String this_uni_domain;
     private UserViewModel user_view_model;
-    private Student this_student;
-    private Organization this_organization;
+    private User this_user;
 
 
 
@@ -154,9 +151,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        // Set home view if no fragments visible atm
-        if (getSupportFragmentManager().findFragmentById(R.id.main_fragmentContainer) == null)
-            bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
+        if (getSupportFragmentManager().findFragmentById(R.id.main_fragmentContainer) == null) bottom_navigation.setSelectedItemId(R.id.tab_bar_home); // Set home view if no fragments visible atm
     }
 
 
@@ -177,29 +172,25 @@ public class MainActivity extends AppCompatActivity {
         user_view_model = new ViewModelProvider(this).get(UserViewModel.class);
         if(auth.getCurrentUser() != null && auth.getUid() != null && this_uni_domain != null){
             user_view_model.startListening(auth.getUid(), this_uni_domain);
-            if(user_view_model.isOrganization()){
-                user_view_model.getThisOrganization().observe(this, (Organization updatedUser) -> {
-                    if(updatedUser != null){
-                        //TODO: deal with banning, age update, notifications, etc.
-                        is_organization = true;
-                        this_organization = updatedUser;
-                        setUpLoggedInInteraction();
-                        endLoading();
+            user_view_model.getThis_user().observe(this, (User updatedUser) -> {
+                if(updatedUser != null){
+                    //TODO: deal with banning, age update, notifications, etc.
+                    this_user = updatedUser;
+
+                    if(this_user instanceof Student){
+                        Student stud = (Student) this_user;
+                        Log.d(TAG, "degr: " + stud.getDegree());
+                    }else if (this_user instanceof Organization){
+                        Log.d(TAG, "org: " + ((Organization) this_user).toString());
+                    }else{
+                        Log.d(TAG, "nothing");
                     }
-                });
-            }else{
-                user_view_model.getThisStudent().observe(this, (Student updatedUser) -> {
-                    if(updatedUser != null){
-                        //TODO: deal with banning, age update, notifications, etc.
-                        is_organization = false;
-                        this_student = updatedUser;
-                        setUpLoggedInInteraction();
-                        endLoading();
-                    }
-                });
-            }
+
+                    setUpLoggedInInteraction();
+                    endLoading();
+                }
+            });
         }else{
-            //TODO: set up login button (either ham menu or instead of create post)
             getSupportFragmentManager().beginTransaction().replace(R.id.main_fragmentContainer, new HomeFragment(this)).commit();
             endLoading();
         }
@@ -228,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void transToLogin(){
         Intent intent = new Intent(this, LoginActivity.class);
-        startActivityForResult(intent, LOGIN_CODE);
+        startActivityForResult(intent, Constant.LOGIN_REQUEST_CODE);
     }
 
     private void startLoading(){

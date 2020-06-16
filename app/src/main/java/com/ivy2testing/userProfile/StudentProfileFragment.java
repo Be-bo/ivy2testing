@@ -29,6 +29,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.entities.Post;
+import com.ivy2testing.entities.User;
 import com.ivy2testing.home.ViewPostActivity;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.R;
@@ -119,10 +120,11 @@ public class StudentProfileFragment extends Fragment {
         if (getActivity() != null) {
 
             user_view_model = new ViewModelProvider(getActivity()).get(UserViewModel.class);
-            student = user_view_model.getThisStudent().getValue(); //grab the initial data
+            User usr = user_view_model.getThis_user().getValue();
+            if (usr instanceof Student) {
+                student = (Student) usr; //grab the initial data
 
-            // Only start doing processes that depend on user profile
-            if(student != null){
+                // Only start doing processes that depend on user profile
                 Log.d(TAG, "Showing student: " + student.getId() + ", name: " + student.getName());
                 setupViews();           // populate UI
                 setUpRecycler();        // set up posts recycler view
@@ -130,9 +132,9 @@ public class StudentProfileFragment extends Fragment {
             }
 
             // listen to realtime user profile changes afterwards
-            user_view_model.getThisStudent().observe(getActivity(), (Student updatedProfile) -> {
-                if (updatedProfile != null){
-                    student = updatedProfile;   // Update student
+            user_view_model.getThis_user().observe(getActivity(), (User updatedProfile) -> {
+                if (updatedProfile instanceof Student){
+                    student = (Student) updatedProfile;   // Update student
                     getStudentPic();            // Do Other setups
                 }
             });
