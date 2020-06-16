@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 import java.io.ByteArrayOutputStream;
 
-class ImageUtils {
+public final class ImageUtils {
 
     public static int IMAGE_MAX_DIMEN = 1500;
     public static int PREVIEW_IMAGE_DIVIDER = 3;

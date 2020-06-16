@@ -4,13 +4,25 @@
     <color name="hint">#802b9721</color>
     <color name="disabled">#b3b3b3</color>
     <color name="white">#ffffff</color>
-    <color name="off_white">#FAFAFA</color>
+    <color name="grey">#d0d0d0</color>
     <color name="black">#000000</color>
-    <color name="off_black">#232b2b</color>
-    <color name="accent">#FF8C00</color>
     <color name="notification">#FE3C00</color>
     <color name="transparent">#0000</color>
+
+<!--    TODO: replace in your code with the ones above please-->
+    <color name="off_white">#FAFAFA</color>
+    <color name="off_black">#232b2b</color>
+    <color name="accent">#FF8C00</color>
     <color name="android_default_bg">#FAFAFA</color>
     <color name="segmented_colour_bg">#EEEEEF</color>
 
+
+<!--    cropping library intentional override for consistency-->
+    <color name="ucrop_color_toolbar">#fff</color>
+    <color name="ucrop_color_statusbar">#696969</color>
+    <color name="ucrop_color_toolbar_widget">#2b9721</color>
+    <color name="ucrop_color_widget_active">#f5f5f5</color>
+    <color name="ucrop_color_active_controls_color">#2b9721</color>
+    <color name="ucrop_color_widget_rotate_mid_line">#fe3c00</color>
+    <color name="ucrop_color_widget_background">#000000</color>
 </resources>
