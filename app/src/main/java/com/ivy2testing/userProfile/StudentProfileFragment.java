@@ -20,16 +20,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.entities.Post;
-import com.ivy2testing.home.ViewPostActivity;
+import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
@@ -197,7 +194,7 @@ public class StudentProfileFragment extends Fragment {
     // A post in recycler was selected
     private void selectPost(int position) {
 
-        Intent intent = new Intent(getContext(), ViewPostActivity.class);
+        Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
         Log.d(TAG, "Starting ViewPost Activity for post #" + position);
         intent.putExtra("post", posts.get(position));
         intent.putExtra("this_user_id", student.getId());

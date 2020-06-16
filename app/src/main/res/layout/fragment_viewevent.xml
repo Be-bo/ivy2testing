@@ -71,7 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/general_view_margin"
         app:layout_constraintTop_toBottomOf="@id/viewEvent_eventDetails">
-        <include layout="@layout/fragment_view_post" />
+        <include layout="@layout/fragment_viewpost" />
     </FrameLayout>
 
     <HorizontalScrollView

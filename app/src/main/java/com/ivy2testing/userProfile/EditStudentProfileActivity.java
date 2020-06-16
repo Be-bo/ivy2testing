@@ -67,7 +67,6 @@ public class EditStudentProfileActivity extends AppCompatActivity {
     // Other Variables
     private Student student;
     private Uri imgUri;
-    private boolean updated = false;
 
 
 /* Override Methods
@@ -272,7 +271,6 @@ public class EditStudentProfileActivity extends AppCompatActivity {
     private void backToMain(){
         Log.d(TAG, "Going back to main");
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("updated", updated);    // Tell main to reload profile or nah
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -333,10 +331,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
 
         // Save student info in /users
         db.document(address).set(student).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Log.d(TAG, "Changes saved.");
-                updated = true;
-            }
+            if (task.isSuccessful()) Log.d(TAG, "Changes saved.");
             else Log.e(TAG, "Something went wrong when trying to save changes.\n" + task.getException());
             allowInteraction();
             backToMain();
@@ -381,11 +376,8 @@ public class EditStudentProfileActivity extends AppCompatActivity {
             }
 
             // Task was successful
-            else if (task.getResult() != null) {
+            else if (task.getResult() != null)
                 student.setProfile_picture(path);   // Save download URL of profile picture
-                updated = true;                     // Profile was updated
-            }
-
 
             // Add user profile to database
             saveStudentInfo(name_changed);

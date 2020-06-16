@@ -89,12 +89,8 @@ public class UserProfileActivity extends AppCompatActivity {
     private void setFragment() {
         Fragment selected_fragment;
 
-        if (!is_organization) {
-            selected_fragment = new StudentProfileFragment(false);
-        }
-        else {
-            selected_fragment = new OrganizationProfileFragment();
-        }
+        if (!is_organization) selected_fragment = new StudentProfileFragment(false);
+        else selected_fragment = new OrganizationProfileFragment();
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.userProfile_frameLayout, selected_fragment).commit();
