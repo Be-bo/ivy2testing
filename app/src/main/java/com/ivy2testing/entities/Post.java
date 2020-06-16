@@ -171,8 +171,10 @@ public class Post implements Parcelable {
         uni_domain = in.readString();
         author_id = in.readString();
         author_name = in.readString();
+        is_event = in.readByte() != 0;
         main_feed_visible = in.readByte() != 0;
         creation_millis = in.readLong();
+        registration_platform = in.readString();
         text = in.readString();
         visual = in.readString();
         pinned_id = in.readString();
@@ -202,8 +204,10 @@ public class Post implements Parcelable {
         dest.writeString(uni_domain);
         dest.writeString(author_id);
         dest.writeString(author_name);
+        dest.writeByte((byte) (is_event ? 1 : 0));
         dest.writeByte((byte) (main_feed_visible ? 1 : 0));
         dest.writeLong(creation_millis);
+        dest.writeString(registration_platform);
         dest.writeString(text);
         dest.writeString(visual);
         dest.writeString(pinned_id);

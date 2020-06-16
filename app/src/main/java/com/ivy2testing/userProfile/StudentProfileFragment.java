@@ -20,17 +20,15 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.home.ViewPostActivity;
+import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
@@ -49,8 +47,6 @@ public class StudentProfileFragment extends Fragment {
     // Constants
     private final static String TAG = "StudentProfileFragment";
 
-    // Parent Final fields
-    private UserViewModel user_view_model;
     private View root_view;
 
     // Views
@@ -69,6 +65,7 @@ public class StudentProfileFragment extends Fragment {
 
     // Other Variables
     private boolean my_profile;      // Don't show edit button if this is not myProfile
+    private String viewer_id;
     private Student student;
     private ImageAdapter adapter;
     private Uri profile_img_uri;
@@ -77,9 +74,14 @@ public class StudentProfileFragment extends Fragment {
 
 
 
-    // Constructor
+    // Constructors
     public StudentProfileFragment(boolean my_profile) {
         this.my_profile = my_profile;
+    }
+
+    public StudentProfileFragment(boolean my_profile, String viewer_id) {
+        this.my_profile = my_profile;
+        this.viewer_id = viewer_id;
     }
 
 
@@ -119,7 +121,8 @@ public class StudentProfileFragment extends Fragment {
     private void getUserProfile(){
         if (getActivity() != null) {
 
-            user_view_model = new ViewModelProvider(getActivity()).get(UserViewModel.class);
+            // Parent Final fields
+            UserViewModel user_view_model = new ViewModelProvider(getActivity()).get(UserViewModel.class);
             User usr = user_view_model.getThis_user().getValue();
             if (usr instanceof Student) {
                 student = (Student) usr; //grab the initial data
@@ -199,10 +202,14 @@ public class StudentProfileFragment extends Fragment {
     // A post in recycler was selected
     private void selectPost(int position) {
 
-        Intent intent = new Intent(getContext(), ViewPostActivity.class);
-        Log.d(TAG, "Starting ViewPost Activity for post #" + position);
+        if (posts.get(position) instanceof Event)
+            Log.d(TAG, "Starting ViewPost Activity for event #" + position);
+        else Log.d(TAG, "Starting ViewPost Activity for post #" + position);
+
+        Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
         intent.putExtra("post", posts.get(position));
-        intent.putExtra("this_user_id", student.getId());
+        if (viewer_id != null) intent.putExtra("viewer_id", viewer_id);
+        else intent.putExtra("viewer_id", student.getId());
         startActivityForResult(intent, Constant.VIEW_POST_REQUEST_CODE);
     }
 
@@ -292,7 +299,11 @@ public class StudentProfileFragment extends Fragment {
                         }
                         int i = 0;
                         for (QueryDocumentSnapshot doc : querySnapshot){
-                            posts.add(i, doc.toObject(Post.class));
+
+                            // Check if post or event
+                            if ((boolean) doc.get("is_event")) posts.add(i,doc.toObject(Event.class));
+                            else posts.add(i, doc.toObject(Post.class));
+
                             if (posts.get(i) == null) Log.e(TAG, "Post object obtained from database is null!");
                             else {
                                 posts.get(i).setId(doc.getId());    // Set Post ID

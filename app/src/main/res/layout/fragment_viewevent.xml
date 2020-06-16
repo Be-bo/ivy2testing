@@ -115,6 +115,7 @@
         app:layout_constraintGuide_percent="0.85" />
 
     <androidx.appcompat.widget.AppCompatToggleButton
+        android:id="@+id/viewEvent_goingButton"
         android:layout_width="0dp"
         style="@style/ToggleButton"
         android:textOn="@string/going"

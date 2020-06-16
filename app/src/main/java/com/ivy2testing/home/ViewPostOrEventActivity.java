@@ -163,7 +163,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private void getIntentExtras() {
         if (getIntent() != null) {
             post = getIntent().getParcelableExtra("post");
-            viewerId = getIntent().getStringExtra("this_user_id");
+            viewerId = getIntent().getStringExtra("viewer_id");
         }
 
         if (post == null) Log.e(TAG, "Student Parcel was null! Showing test view!");
@@ -210,6 +210,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         Intent intent = new Intent(this, UserProfileActivity.class);
         intent.putExtra("this_uni_domain", post.getUni_domain());
         intent.putExtra("this_user_id", post.getAuthor_id());
+        intent.putExtra("viewer_id", viewerId);
         startActivityForResult(intent, Constant.USER_PROFILE_REQUEST_CODE);
     }
 

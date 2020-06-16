@@ -65,14 +65,37 @@ public class ViewPostFragment extends Fragment {
         TextView tv_pinned_post = v.findViewById(R.id.viewPost_pinned);
         if (post.getPinned_id() != null){
             tv_pinned_post.setText(post.getPinned_id()); //TODO change to pin name
-            tv_pinned_post.setOnClickListener(v1 -> loadEventFromDB());
+            tv_pinned_post.setOnClickListener(v1 -> viewPinned());
         }
         else v.findViewById(R.id.viewPost_pinLayout).setVisibility(View.GONE);
     }
 
 
-/* Transition Methods
+/* Transition and OnClick Methods
 ***************************************************************************************************/
+
+    // OnClick for pinned Event:
+    // Start new Activity to view posts relating to event if pinned == event
+    // Else open the pinned event page
+    private void viewPinned(){
+        String address = "universities/" + post.getUni_domain() + "/posts";
+        if (address.contains("null")){
+            Log.e(TAG, "Event Address has null values. ID:" + post.getUni_domain());
+            return;
+        }
+
+        // Pull all posts relating to event
+        if (post.getId().equals(post.getPinned_id())){
+            Log.d(TAG, "View all posts related to this event...");
+            //TODO pass a query to seeAllActivity
+        }
+
+        // Pull pinned event page
+        else {
+            Log.d(TAG, "View Pinned Event Page...");
+            loadEventFromDB();
+        }
+    }
 
     // Start new Activity to view event
     private void viewEventPage(Event event){

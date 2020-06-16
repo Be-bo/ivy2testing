@@ -1,11 +1,13 @@
 package com.ivy2testing.home;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -18,6 +20,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
 import com.ivy2testing.util.Constant;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 /** @author Zahra Ghavasieh
  * Overview: Event view fragment
@@ -44,7 +52,8 @@ public class ViewEventFragment extends Fragment {
 
     // Other Variables
     private Event event;
-    private String viewer_id;       // Nullable!
+    private String viewer_id;           // Nullable!
+    private ArrayAdapter<Uri> adapter;  // Recycler Adapter for going_ids
 
 
     // Constructor
@@ -65,37 +74,100 @@ public class ViewEventFragment extends Fragment {
         // Initialization Methods
         declareViews(root_view);
         setFields(root_view);
-        setListeners(root_view);
+        setListeners();
         return root_view;
     }
 
-    /* Initialization Methods
-     ***************************************************************************************************/
+/* Initialization Methods
+***************************************************************************************************/
 
+    // Define and initialize views
     private void declareViews(View v){
+        tv_time = v.findViewById(R.id.viewEvent_time);
+        tv_location = v.findViewById(R.id.viewEvent_place);
+        tv_link = v.findViewById(R.id.viewEvent_link);
         tv_description = v.findViewById(R.id.viewPost_description);
-        tv_description.setText(event.getText());
-
-        // Handle Pinned Event
         tv_pinned = v.findViewById(R.id.viewPost_pinned);
-        if (event.getPinned_id() != null){
-            tv_pinned.setText(event.getPinned_id()); //TODO change to pin name
-            tv_pinned.setOnClickListener(v1 -> loadEventFromDB());
-        }
-        else v.findViewById(R.id.viewPost_pinLayout).setVisibility(View.GONE);
+        rv_going = v.findViewById(R.id.viewEvent_goingRecycler);
+        tv_seeAll = v.findViewById(R.id.viewEvent_seeAll);
+        button_going = v.findViewById(R.id.viewEvent_goingButton);
     }
 
+    // Populate views
     private void setFields(View v){
 
+        // Time
+        String time = convertMillisToReadable(event.getStart_millis())
+                + " - " + convertMillisToReadable(event.getEnd_millis());
+        tv_time.setText(time);
+
+        // Mandatory text fields
+        tv_location.setText(event.getLocation());
+        tv_description.setText(event.getText());
+
+        // Optional text Fields
+        if (event.getLink() != null) tv_link.setText(event.getLink());
+        else tv_link.setVisibility(View.GONE);
+
+        if (event.getPinned_id() != null) tv_pinned.setText(event.getPinned_id()); //TODO change to pin name
+        else v.findViewById(R.id.viewPost_pinLayout).setVisibility(View.GONE);
+
+        // Going Users' Recycler View
+        if (event.getGoing_ids().isEmpty()) {
+            rv_going.setVisibility(View.GONE);
+            tv_seeAll.setVisibility(View.VISIBLE);
+        }
+        else {
+            //TODO set adapter and recyclerView
+            //TODO add pagination for loading
+        }
     }
 
-    private void setListeners(View v){
-
+    // OnClick Listeners
+    private void setListeners(){
+        if (event.getLink() != null) tv_link.setOnClickListener(v1 -> goToLink());
+        if (event.getPinned_id() != null) tv_pinned.setOnClickListener(v1 -> viewPinned());
+        if (!event.getGoing_ids().isEmpty()) tv_seeAll.setOnClickListener(v1 -> seeAllGoingUsers());
+        button_going.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) going(); //toggle is enabled
+            else notGoing();        // toggle is disabled
+        });
     }
 
 
-    /* Transition Methods
-     ***************************************************************************************************/
+/* OnClick and Transition Methods
+***************************************************************************************************/
+
+    // OnClick for link: Go to a browser to view link
+    private void goToLink(){
+        Log.d(TAG, "Opening browser...");
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(event.getLink()));     // link not null!!
+        startActivity(intent);
+    }
+
+    // OnClick for pinned Event:
+    // Start new Activity to view posts relating to event if pinned == event
+    // Else open the pinned event page
+    private void viewPinned(){
+        String address = "universities/" + event.getUni_domain() + "/posts";
+        if (address.contains("null")){
+            Log.e(TAG, "Event Address has null values. ID:" + event.getUni_domain());
+            return;
+        }
+
+        // Pull all posts relating to event
+        if (event.getId().equals(event.getPinned_id())){
+            Log.d(TAG, "View all posts related to this event...");
+            //TODO pass a query to seeAllActivity
+        }
+
+        // Pull pinned event page
+        else {
+            Log.d(TAG, "View Pinned Event Page...");
+            loadEventFromDB();
+        }
+    }
 
     // Start new Activity to view event
     private void viewEventPage(Event event){
@@ -104,27 +176,37 @@ public class ViewEventFragment extends Fragment {
             return;
         }
 
-        if (event.getId().equals(event.getId())){
-            Log.d(TAG, "Event was pinned by itself");
-            return;
-        }
-
         Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
         Log.d(TAG, "Starting ViewPost Activity for event " + event.getId());
-        intent.putExtra("event", event);
+        intent.putExtra("post", event);
         intent.putExtra("this_user_id", viewer_id);
         startActivityForResult(intent, Constant.VIEW_POST_REQUEST_CODE);
     }
 
+    // OnClick for See All: Launch a new Activity to view users
+    private void seeAllGoingUsers(){
+        //TODO
+    }
 
-    /* Firebase Related Methods
-     ***************************************************************************************************/
+    // Add user to going list
+    private void going(){
+        //TODO
+    }
 
-    // Pull event from database
+    // Remove user from going list
+    private void notGoing(){
+        //TODO
+    }
+
+
+/* Firebase Related Methods
+***************************************************************************************************/
+
+    // Pull pinned event from database
     private void loadEventFromDB(){
         String address = "universities/" + event.getUni_domain() + "/posts/" + event.getPinned_id();
         if (address.contains("null")){
-            Log.e(TAG, "Event Address has null values. ID:" + event.getPinned_id());
+            Log.e(TAG, "Event Address has null values. ID:" + event.getUni_domain());
             return;
         }
 
@@ -140,5 +222,19 @@ public class ViewEventFragment extends Fragment {
                 Log.e(TAG, "loadEventFromDB: unsuccessful or does not exist.");
             }
         });
+    }
+
+/* Utility Methods
+***************************************************************************************************/
+
+    // Convert time in Millis to readable text
+    private String convertMillisToReadable(Long millis){
+
+        // Format string in locale timezone base on device settings
+        DateFormat formatter = new SimpleDateFormat("EEE MMM d, hh a", Locale.getDefault());
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(millis);
+
+        return formatter.format(cal.getTime());
     }
 }
