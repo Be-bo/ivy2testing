@@ -69,7 +69,7 @@ public class HomeFragment extends Fragment {
     private UserViewModel this_user_viewmodel;
 
 
-    private final ArrayList<Post> post_arraylist = new ArrayList<Post>();
+    private final ArrayList<Event> post_arraylist = new ArrayList<Event>();
 
 
 
@@ -247,6 +247,7 @@ public class HomeFragment extends Fragment {
     }
     private void BuildArrayList(){
         db_reference.collection("universities").document("ucalgary.ca").collection("posts")
+                .limit(10)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -255,8 +256,10 @@ public class HomeFragment extends Fragment {
                             if(task.getResult()!=null) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     // Toast.makeText(MainActivity.this, document.getId() + " => " + document.getData(), Toast.LENGTH_SHORT).show();
-                                    post_arraylist.add(document.toObject(Post.class));
-                                    Toast.makeText(mContext, ""+post_arraylist.size(), Toast.LENGTH_SHORT).show();
+                                   // Log.d(TAG, "onComplete: " + document.getData().toString());
+                                    //TODO THESE ARE SAVED AS EVENTS
+                                    post_arraylist.add(document.toObject(Event.class));
+
                                 }
                                 buildEventFeed();
                             }

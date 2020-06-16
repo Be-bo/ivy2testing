@@ -2,11 +2,13 @@ package com.ivy2testing.home;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,13 +21,14 @@ import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.Student;
+import com.ivy2testing.main.MainActivity;
 
 import java.util.ArrayList;
 
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder>{
 
-    private ArrayList<Post> post_array_list;
+    private ArrayList<Event> post_array_list;
 
 
 
@@ -47,7 +50,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             feed_pinned_id = itemView.findViewById(R.id.object_pinned_event);
         }
     }
-    public FeedAdapter(ArrayList<Post> post_list){
+    public FeedAdapter(ArrayList<Event> post_list){
         post_array_list = post_list;
     }
 
@@ -64,7 +67,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     @Override
     public void onBindViewHolder(@NonNull FeedViewHolder holder, int position) {
 
-   //     if(post_array_list!=null)
+            if(post_array_list.get(position).getIs_event()){
+                holder.feed_title.setText(post_array_list.get(position).getName());
+            }
+            else
+                holder.feed_title.setVisibility(View.GONE);
 
             if(post_array_list.get(position).getVisual().toString().contains("/")){
                 holder.feed_image_view.setVisibility(View.VISIBLE);
@@ -73,15 +80,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             else
                 holder.feed_image_view.setVisibility(View.GONE);
 
-/*            if(post_array_list.get(position).getIs_event()) {
-                holder.feed_title.setText(post_array_list.get(position).getName());
-
-            }*/
-
-
-           // holder.feed_title.setText(current_post.getName().toString());
             holder.feed_text.setText(post_array_list.get(position).getText().toString());
             holder.feed_author.setText(post_array_list.get(position).getText().toString());
+            holder.feed_text.setOnClickListener(v->
+                            Log.d("TAG", "onBindViewHolder: " + "CLICKED")
+
+                    );
 
 
     }
