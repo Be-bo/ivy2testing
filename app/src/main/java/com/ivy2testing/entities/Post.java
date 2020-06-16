@@ -26,7 +26,6 @@ public class Post implements Parcelable {
     protected String registration_platform = "Android";
     protected String text;
     protected String visual;
-    protected String pinned_name;
     protected String pinned_id;
     protected List<String> views_id;
 

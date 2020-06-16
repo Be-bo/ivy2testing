@@ -49,6 +49,7 @@ import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.Student;
+import com.ivy2testing.entities.User;
 
 
 import java.io.ByteArrayOutputStream;
@@ -141,9 +142,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
 
 
     // firebase
-
+    private User this_user;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
-
     private StorageReference db_storage = FirebaseStorage.getInstance().getReference();
     private FirebaseFirestore db_reference = FirebaseFirestore.getInstance();
 
@@ -152,6 +152,12 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        if( auth!=null && auth.getUid()!=null)
+            this_user = intent.getParcelableExtra("current_user");
+        else
+            finish();
 
         setContentView(R.layout.activity_post);
         // post toolbar is included as an <include>
@@ -309,6 +315,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         /* ************************************************************************************************** */
         //submit will show progress bar, and remove the signup button,
         submit_button.setOnClickListener(v -> {
+
             submitViewChange();
             try {
                 if (is_event) finalizeEvent();
@@ -406,6 +413,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     /* ************************************************************************************************** */
     // allows user to select a picture from within their phone
     // starts activity for result
+    //TODO gifs can be selected but wont upload to the db
     private void picSelect() {
         Intent intent = new Intent();
         // allows any file that is an image, with any file type to be selected
@@ -543,11 +551,11 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     private void initialize_post() {
         current_post = new Post(
                 UUID.randomUUID().toString(),
-                "testucalgary.ca",
-                "temp_id",
-                "test_user",
+                this_user.getUni_domain(),
+                this_user.getId(),
+                this_user.getName(),
                 true,
-                "null");
+                "");
     }
 
 
@@ -556,6 +564,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     // on pressing the post button, this function is called to submit in the db and end the activity
 
     private void finalizePost() throws IOException {
+
+
         // if description edit text is not blank, otherwise end the method + set error
         if (fieldsOk()) {
             String address = "universities/" + current_post.getUni_domain() + "/posts/" + current_post.getId();
@@ -651,35 +661,37 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     // check is all the textfields are okay, sequentially
     private Boolean fieldsOk() {
         // post method
-        if (!is_event)
+        if (current_post!=null) {
             if (description_edit_text.getText().toString().isEmpty()) {
                 description_edit_text.setError("Please enter a description.");
                 submitViewChange();
                 return false;
             }
+        }
             // event methods
-            else
-                // check title first, location, then description, same order as layout
-                // will set error as soon as one field is false, will clear error on previous fields because they are not empty
+        else if (current_event!=null) {
+            // check title first, location, then description, same order as layout
+            // will set error as soon as one field is false, will clear error on previous fields because they are not empty
 
-                if (title_editText.getText().toString().isEmpty()) {
-                    title_editText.setError("Please enter a description.");
-                    submitViewChange();
-                    return false;
-                } else if (location_editText.getText().toString().isEmpty()) {
-                    location_editText.setError("Please give your event a name.");
-                    title_editText.setError(null);
-                    submitViewChange();
-                    return false;
-                } else if (description_edit_text.getText().toString().isEmpty()) {
-                    description_edit_text.setError("Please enter where your event will be.");
-                    title_editText.setError(null);
-                    location_editText.setError(null);
-                    submitViewChange();
-                    return false;
-                }
+            if (title_editText.getText().toString().isEmpty()) {
+                title_editText.setError("Please enter a description.");
+                submitViewChange();
+                return false;
+            } else if (location_editText.getText().toString().isEmpty()) {
+                location_editText.setError("Please give your event a name.");
+                title_editText.setError(null);
+                submitViewChange();
+                return false;
+            } else if (description_edit_text.getText().toString().isEmpty()) {
+                description_edit_text.setError("Please enter where your event will be.");
+                title_editText.setError(null);
+                location_editText.setError(null);
+                submitViewChange();
+                return false;
+            }
+        }
         // something went wrong in either post or event creation... prompt retry
-        if (current_post == null) {
+        else {
             Toast.makeText(this, "POST NULL, Please try again later", Toast.LENGTH_SHORT).show();
             submitViewChange();
             return false;
@@ -781,9 +793,16 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         } else if (current_event != null) {
             path = "test_for_posts/" + current_event.getId() + "/" + current_event.getId() + ".jpg";
         }
-        if (path.contains("null"))
-            Log.e("CreatePost", "storePictureinDB: path contains null!");
 
+        // Error check for the db address
+        if (path.contains("null") || path.equals("")) {
+            if(current_post!=null)
+                current_post.setVisual("upload failed");
+            if(current_event!=null)
+                current_event.setVisual("upload failed");
+            Log.e("CreatePost", "storePictureinDB: path contains null!");
+            return;
+        }
 
         StorageReference post_image_storage = db_storage.child(path);
 
@@ -814,7 +833,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         pinned_spinner = findViewById(R.id.pinned_event_spinner);
 
         // create names array and hashmap to find IDs
-        db_reference.collection("universities").document("testucalgary.ca").collection("posts")
+        db_reference.collection("universities").document(this_user.getUni_domain()).collection("posts")
                 .whereEqualTo("is_event", true)
                 .whereEqualTo("is_active", true)
                 .whereEqualTo("main_feed_visible", true)
