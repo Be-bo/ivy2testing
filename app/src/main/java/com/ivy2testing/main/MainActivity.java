@@ -214,9 +214,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void transToCreatePost(){
         Intent intent = new Intent(getApplicationContext(), CreatePost.class);
-        intent.putExtra("current_user", this_user);
         startActivity(intent);
-
     }
 
     private void transToLogin(){
@@ -234,6 +232,4 @@ public class MainActivity extends AppCompatActivity {
         loading_layout.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out));  // Start fade out animation
         loading_layout.setVisibility(View.GONE);
     }
-
-
 }

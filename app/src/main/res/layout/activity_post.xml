@@ -495,7 +495,7 @@
 
                 <Spinner
                     android:id="@+id/pinned_event_spinner"
-                    style="@style/Widget.AppCompat.Spinner.Underlined"
+                    style="@style/StandardSpinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/hint"
