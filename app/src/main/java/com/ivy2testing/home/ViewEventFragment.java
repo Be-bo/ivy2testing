@@ -7,24 +7,29 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
+import com.ivy2testing.util.adapters.CircleImageAdapter;
 import com.ivy2testing.util.Constant;
+import com.ivy2testing.util.ImageUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /** @author Zahra Ghavasieh
@@ -49,12 +54,15 @@ public class ViewEventFragment extends Fragment {
 
     // FireBase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
     // Other Variables
     private Event event;
     private String viewer_id;           // Nullable!
-    private ArrayAdapter<Uri> adapter;  // Recycler Adapter for going_ids
 
+    private CircleImageAdapter adapter; // Recycler Adapter for going_ids
+    private List<Uri> going_img_uris = new ArrayList<>(6); // non synchronous adds!
+    private int lastUriPosition = 0;                // Pagination: position of last img loaded
 
     // Constructor
     public ViewEventFragment(Event event, String viewer_id){
@@ -115,23 +123,50 @@ public class ViewEventFragment extends Fragment {
         // Going Users' Recycler View
         if (event.getGoing_ids().isEmpty()) {
             rv_going.setVisibility(View.GONE);
-            tv_seeAll.setVisibility(View.VISIBLE);
+            tv_seeAll.setVisibility(View.GONE);
         }
-        else {
-            //TODO set adapter and recyclerView
-            //TODO add pagination for loading
-        }
+        else setRecycler();
+
+        // Hide button if user is not signed in
+        if (viewer_id == null) button_going.setVisibility(View.GONE);
     }
 
     // OnClick Listeners
     private void setListeners(){
         if (event.getLink() != null) tv_link.setOnClickListener(v1 -> goToLink());
         if (event.getPinned_id() != null) tv_pinned.setOnClickListener(v1 -> viewPinned());
-        if (!event.getGoing_ids().isEmpty()) tv_seeAll.setOnClickListener(v1 -> seeAllGoingUsers());
-        button_going.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) going(); //toggle is enabled
-            else notGoing();        // toggle is disabled
-        });
+        if (!event.getGoing_ids().isEmpty()){
+            tv_seeAll.setOnClickListener(v1 -> seeAllGoingUsers());
+            rv_going.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+                }
+
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                }
+            });
+        }
+        if (button_going.getVisibility() == View.VISIBLE)
+            button_going.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) going(); //toggle is enabled
+                else notGoing();        // toggle is disabled
+            });
+
+    }
+
+    // Set recycler for going users (at this point, going_ids isn't empty!)
+    private void setRecycler(){
+
+        // Set LayoutManager and Adapter
+        adapter = new CircleImageAdapter(going_img_uris);
+        rv_going.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        rv_going.setAdapter(adapter);
+
+        // Load images with pagination
+        loadUserPics();
     }
 
 
@@ -185,11 +220,12 @@ public class ViewEventFragment extends Fragment {
 
     // OnClick for See All: Launch a new Activity to view users
     private void seeAllGoingUsers(){
-        //TODO
+        //TODO pass
     }
 
     // Add user to going list
     private void going(){
+        event.addGoingIdToList(viewer_id);
         //TODO
     }
 
@@ -223,6 +259,38 @@ public class ViewEventFragment extends Fragment {
             }
         });
     }
+
+    // Use pagination to load preview pictures
+    private void loadUserPics(){
+
+        // Load 10 items at a time
+        int i;
+        for (i = lastUriPosition; i < 10; i ++){
+            if (i >= event.getGoing_ids().size()) break;
+
+            String user_id = event.getGoing_ids().get(i);
+            String address = ImageUtils.getPreviewPath(user_id);
+            if (address.contains("null")){
+                Log.e(TAG, "Address contained null! UserId: " + user_id);
+                return;
+            }
+
+            base_storage_ref.child(address).getDownloadUrl()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
+                        Uri uri = task.getResult();
+                        if (uri != null){
+                            going_img_uris.add(uri);
+                            adapter.notifyItemInserted(going_img_uris.size()-1);
+                            Log.d(TAG, "Added to position "+ event.getGoing_ids().indexOf(user_id)+" img " + uri);
+                        }
+                    }
+                    else Log.w(TAG, "this user's image doesn't exist! user: " + user_id);
+                });
+        }
+        lastUriPosition = i;    // Update last position
+    }
+
 
 /* Utility Methods
 ***************************************************************************************************/
