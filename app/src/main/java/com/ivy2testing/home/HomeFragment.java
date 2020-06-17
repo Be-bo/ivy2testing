@@ -1,12 +1,8 @@
 package com.ivy2testing.home;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,27 +24,23 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
-import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.UserViewModel;
-import com.ivy2testing.util.Constant;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder.FeedClickListener {
 
     //Constants
     private static final String TAG = "HomeFragment";
@@ -69,13 +60,17 @@ public class HomeFragment extends Fragment {
     private UserViewModel this_user_viewmodel;
 
 
-    private final ArrayList<Event> post_arraylist = new ArrayList<Event>();
-
-
+    private final ArrayList<Post> post_arraylist = new ArrayList<Post>();
 
     private RecyclerView feed_recycler_view;
     private RecyclerView.Adapter feed_adapter;
     private RecyclerView.LayoutManager feed_layout_manager;
+
+    private final ArrayList<String> bubble_arraylist = new ArrayList<String>();
+
+    private RecyclerView bubble_recycler_view;
+    private RecyclerView.Adapter bubble_adapter;
+    private RecyclerView.LayoutManager bubble_layout_manager;
 
 
     // Constructor
@@ -123,13 +118,36 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_home, container, false);
         // Initialization
-        uni_button = rootView.findViewById(R.id.btn_1);
+       // uni_button = rootView.findViewById(R.id.btn_1);
 
 
-        current_button = uni_button;
-        current_button.setEnabled(false);
+        //current_button = uni_button;
+       // current_button.setEnabled(false);
 
         // recycler view
+
+
+        bubble_arraylist.add("university");
+        bubble_arraylist.add("events");
+        bubble_arraylist.add("posts");
+        bubble_arraylist.add("for you");
+        bubble_arraylist.add("example1");
+        bubble_arraylist.add("example1");
+        bubble_arraylist.add("example1");
+        bubble_arraylist.add("example1");
+
+        bubble_recycler_view = rootView.findViewById(R.id.bubble_rv);
+        //bubble_recycler_view.setHasFixedSize(true);
+
+
+        bubble_layout_manager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        bubble_adapter = new BubbleAdapter(bubble_arraylist);
+        bubble_recycler_view.setLayoutManager(bubble_layout_manager);
+        bubble_recycler_view.setAdapter(bubble_adapter);
+
+
+
+
 
         BuildArrayList();
 
@@ -139,7 +157,7 @@ public class HomeFragment extends Fragment {
         feed_recycler_view.setHasFixedSize(true);
         //TODO not sure required context here
         feed_layout_manager = new LinearLayoutManager(getContext());
-        feed_adapter = new FeedAdapter(post_arraylist);
+        feed_adapter = new FeedAdapter(post_arraylist, this);
         feed_recycler_view.setLayoutManager(feed_layout_manager);
         feed_recycler_view.setAdapter(feed_adapter);
 
@@ -247,7 +265,7 @@ public class HomeFragment extends Fragment {
     }
     private void BuildArrayList(){
         db_reference.collection("universities").document("ucalgary.ca").collection("posts")
-                .limit(10)
+                .limit(25)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -258,8 +276,8 @@ public class HomeFragment extends Fragment {
                                     // Toast.makeText(MainActivity.this, document.getId() + " => " + document.getData(), Toast.LENGTH_SHORT).show();
                                    // Log.d(TAG, "onComplete: " + document.getData().toString());
                                     //TODO THESE ARE SAVED AS EVENTS
-                                    post_arraylist.add(document.toObject(Event.class));
-
+                                    Post event_object = document.toObject(Event.class);
+                                    post_arraylist.add(event_object);
                                 }
                                 buildEventFeed();
                             }
@@ -277,9 +295,16 @@ public class HomeFragment extends Fragment {
 
         Toast.makeText(mContext, ""+post_arraylist.size(), Toast.LENGTH_SHORT).show();
         feed_layout_manager = new LinearLayoutManager(getContext());
-        feed_adapter = new FeedAdapter(post_arraylist);
+        feed_adapter = new FeedAdapter(post_arraylist, this);
         feed_recycler_view.setLayoutManager(feed_layout_manager);
         feed_recycler_view.setAdapter(feed_adapter);
     }
 
+    @Override
+    public void onFeedClick(int position) {
+        Toast.makeText(mContext, ""+ post_arraylist.get(position).getAuthor_name(), Toast.LENGTH_SHORT).show();
+
+        // TODO THIS IS WHERE TO NAVIGATE TO NEW ACTIVITY
+        // post_array_list.get(position);
+    }
 }

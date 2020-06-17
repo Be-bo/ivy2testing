@@ -807,8 +807,10 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         if (current_post != null) {
             // uses current posts random UUID
             path = "test_for_posts/" + current_post.getId() + "/" + current_post.getId() + ".jpg";
+            current_post.setVisual(path);
         } else if (current_event != null) {
             path = "test_for_posts/" + current_event.getId() + "/" + current_event.getId() + ".jpg";
+            current_event.setVisual(path);
         }
 
         // Error check for the db address
