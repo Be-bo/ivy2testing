@@ -33,6 +33,7 @@ import com.ivy2testing.home.CreatePost;
 import com.ivy2testing.R;
 import com.ivy2testing.chat.ChatFragment;
 import com.ivy2testing.home.HomeFragment;
+import com.ivy2testing.userProfile.OrganizationProfileFragment;
 import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.Constant;
 
@@ -144,7 +145,8 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new HomeFragment(this);
                     break;
                 case R.id.tab_bar_profile:
-                    selectedFragment = new StudentProfileFragment(true);
+                    if(this_user.getIs_organization()) selectedFragment = new OrganizationProfileFragment();
+                    else selectedFragment = new StudentProfileFragment(true);
                     break;
             }
             if (selectedFragment!= null) getSupportFragmentManager().beginTransaction().replace(R.id.main_fragmentContainer, selectedFragment).commit();

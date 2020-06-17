@@ -41,6 +41,14 @@
         app:layout_constraintStart_toStartOf="@id/org_signup_guideline2"
         app:layout_constraintTop_toTopOf="parent">
 
+        <Spinner
+            android:id="@+id/org_signup_uni_spinner"
+            android:layout_width="match_parent"
+            style="@style/StandardSpinner"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/hint"
+            android:prompt="@string/app_name" />
+
         <EditText
             android:id="@+id/org_signup_email"
             style="@style/StandardEditText"
