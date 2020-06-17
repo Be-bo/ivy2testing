@@ -8,8 +8,7 @@
 
     <Button
         android:id="@+id/bubble_button"
-        style="@style/Bubble"
-        android:visibility="visible">
+        style="@style/Bubble">
 
     </Button>
 
