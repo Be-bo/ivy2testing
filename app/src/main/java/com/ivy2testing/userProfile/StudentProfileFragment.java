@@ -33,6 +33,7 @@ import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.util.Constant;
+import com.ivy2testing.util.adapters.SquareImageAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class StudentProfileFragment extends Fragment {
     private boolean my_profile;      // Don't show edit button if this is not myProfile
     private String viewer_id;
     private Student student;
-    private ImageAdapter adapter;
+    private SquareImageAdapter adapter;
     private Uri profile_img_uri;
     private List<Post> posts = new ArrayList<>(6);        // Load first 6 posts only
     private List<Uri> post_img_uris = new ArrayList<>(6); // non synchronous adds!
@@ -167,7 +168,7 @@ public class StudentProfileFragment extends Fragment {
         loadPostsFromDB();
 
         // set LayoutManager and Adapter
-        adapter = new ImageAdapter(post_img_uris);
+        adapter = new SquareImageAdapter(post_img_uris);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), 3, GridLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(adapter);
     }
