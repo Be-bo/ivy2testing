@@ -29,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -36,6 +37,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -46,6 +48,9 @@ import com.google.firebase.storage.UploadTask;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
+import com.ivy2testing.entities.Student;
+import com.ivy2testing.entities.User;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -105,7 +110,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
 
     // post class
     private Post current_post;
-    private boolean is_event;
+    private Event current_event;
+
 
     // event items
     private ConstraintLayout event_fields;
@@ -129,19 +135,29 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     private Long end_time_millis;
 
 
-     // pinned event spinner
-    final ArrayList<String>  pinned_names_array = new ArrayList<String>();
+    // pinned event spinner
+    final ArrayList<String> pinned_names_array = new ArrayList<String>();
     private Spinner pinned_spinner;
     private Dictionary pinnable_events = new Hashtable();
 
+
     // firebase
+    private User this_user;
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
     private StorageReference db_storage = FirebaseStorage.getInstance().getReference();
     private FirebaseFirestore db_reference = FirebaseFirestore.getInstance();
+
     // TODO THE TIME SELECTION SETTINGS RELY ON THE CALENDAR CLASS, THEY NEED TO BE TESTED WITH DIFFERENT ON PHONE CALENDAR SETTINGS/ TIMEZONES
     //TODO WE MUST CHANGE BACK PERMISSION SETTINGS ON THE STORAGE ( so no READ/ WRITE IF AUTH == NULL)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        if( auth!=null && auth.getUid()!=null)
+            this_user = intent.getParcelableExtra("current_user");
+        else
+            finish();
 
         setContentView(R.layout.activity_post);
         // post toolbar is included as an <include>
@@ -166,10 +182,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         setHandlers();
         setListeners();
 
+
     }
-
-
-
 
 
     /* ************************************************************************************************** */
@@ -218,6 +232,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         submit_progress_bar = findViewById(R.id.submit_progress_bar);
         submit_button = findViewById(R.id.submit_button);
     }
+
+
     /* ************************************************************************************************** */
     // Post handlers
     // If a button is disabled it is "selected" and therefore non clickable
@@ -240,6 +256,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
 
         });
 
+
         show_button.setOnClickListener(v -> {
             toggleEnabled(show_button, dont_show_button);
             swap_campus_feed();
@@ -252,12 +269,20 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         from_scratch_button.setOnClickListener(v -> toggleEnabled(from_scratch_button, import_button));
         import_button.setOnClickListener(v -> toggleEnabled(from_scratch_button, import_button));
         nothing_button.setOnClickListener(v -> toggleEnabled(nothing_button));
-        image_button.setOnClickListener(v -> toggleEnabled(image_button));
+        image_button.setOnClickListener(v -> {
+            picSelect();
+            toggleEnabled(image_button);
+
+        });
         video_button.setOnClickListener(v -> toggleEnabled(video_button));
-        gif_button.setOnClickListener(v -> toggleEnabled(gif_button));
+        gif_button.setOnClickListener(v -> {
+            gifSelect();
+            toggleEnabled(gif_button);
+        });
 
         image_upload_view.setOnClickListener(v -> picSelect());
-        video_upload_view.setOnClickListener(v -> {});
+        video_upload_view.setOnClickListener(v -> {
+        });
         gif_upload_view.setOnClickListener(v -> gifSelect());
 
 
@@ -290,10 +315,13 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         /* ************************************************************************************************** */
         //submit will show progress bar, and remove the signup button,
         submit_button.setOnClickListener(v -> {
+
             submitViewChange();
             try {
-                if (is_event) finalizeEvent();
-                else finalizePost();
+                if (current_post != null)
+                    finalizePost();
+                else if (current_event != null)
+                    finalizeEvent();
             } catch (IOException e) {
                 e.printStackTrace();
                 submitViewChange();
@@ -305,18 +333,32 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     /* ************************************************************************************************** */
     // event is initialized to false (its a post), this will swap if its true or not
     private void swap_type() {
-        is_event = !is_event;
-
-        if (is_event) event_fields.setVisibility(View.VISIBLE);
-        else event_fields.setVisibility(View.GONE);
+        if (current_post != null) {
+            current_event = new Event(current_post);
+            current_post = null;
+            event_fields.setVisibility(View.VISIBLE);
+        } else if (current_event != null) {
+            current_post = new Post(current_event);
+            current_event = null;
+            event_fields.setVisibility(View.GONE);
+        } else Log.e("CreatePost", "Both current_event and current_post are null!");
     }
 
 
     /* ************************************************************************************************** */
     // campus feed is initialized to false, this function swaps that
     private void swap_campus_feed() {
-        if (current_post.isMain_feed_visible()) current_post.setMain_feed_visible(false);
-        else current_post.setMain_feed_visible(true);
+        if (current_post != null) {
+            if (current_post.isMain_feed_visible())
+                current_post.setMain_feed_visible(false);
+            else
+                current_post.setMain_feed_visible(true);
+        } else if (current_event != null) {
+            if (current_event.isMain_feed_visible())
+                current_event.setMain_feed_visible(false);
+            else
+                current_event.setMain_feed_visible(true);
+        }
     }
 
     /* ************************************************************************************************** */
@@ -361,15 +403,15 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
             gif_upload_view.setVisibility(View.VISIBLE);
         }
     }
+
     /* ************************************************************************************************** */
     // swap around visibility of progress bar and submit button
-    private void submitViewChange(){
-        if (submit_progress_bar.getVisibility()== View.GONE){
+    private void submitViewChange() {
+        if (submit_progress_bar.getVisibility() == View.GONE) {
             barInteraction();
             submit_progress_bar.setVisibility(View.VISIBLE);
             submit_button.setVisibility(View.GONE);
-        }
-        else{
+        } else {
             submit_progress_bar.setVisibility(View.GONE);
             submit_button.setVisibility(View.VISIBLE);
             allowInteraction();
@@ -387,6 +429,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     /* ************************************************************************************************** */
     // allows user to select a picture from within their phone
     // starts activity for result
+    //TODO gifs can be selected but wont upload to the db
     private void picSelect() {
         Intent intent = new Intent();
         // allows any file that is an image, with any file type to be selected
@@ -425,8 +468,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                     compressed_bitmap = compressionHandler();
                     image_upload_view.setImageBitmap(compressed_bitmap);
 
-                    // visual is set to "picture" until finalized and a path is set
-                    current_post.setVisual("picture");
+                    if (current_post != null) current_post.setVisual("picture");
+                    else if (current_event != null) current_event.setVisual("picture");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -443,7 +486,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                 // glide allows gif to be displayed
                 Glide.with(this).asGif().apply(myOptions).load(gif_selected).into(gif_upload_view);
                 //TODO this is the place to check sizes/ compress images also potentially clear all other views their previously chosen images
-                current_post.setVisual("gif");
+                if (current_post != null) current_post.setVisual("gif");
+                else if (current_event != null) current_event.setVisual("gif");
             } else {
                 Toast.makeText(CreatePost.this, "No Gif Selected", Toast.LENGTH_SHORT).show();
             }
@@ -464,7 +508,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         c.set(Calendar.HOUR_OF_DAY, 0);
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND,0);
+        c.set(Calendar.MILLISECOND, 0);
 
 
         // set getDateInstance(DateFormat.FULL) to get weekdays
@@ -473,8 +517,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
             start_date_button.setError(null);
             start_date_button.setText(selected_date);
             start_date_millis = c.getTimeInMillis();
-        }
-        else {
+        } else {
             end_date_button.setError(null);
             end_date_button.setText(selected_date);
             end_date_millis = c.getTimeInMillis();
@@ -510,8 +553,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
             start_time_button.setError(null);
             start_time_millis = (long) (hourOfDay * 3600000) + (minute * 60000);
             start_time_button.setText(string_adjusted);
-        }
-        else {
+        } else {
             end_time_button.setError(null);
             end_time_button.setText(string_adjusted);
             end_time_millis = (long) (hourOfDay * 3600000) + (minute * 60000);
@@ -526,11 +568,11 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     private void initialize_post() {
         current_post = new Post(
                 UUID.randomUUID().toString(),
-                "testucalgary.ca",
-                "temp_id",
-                "test_user",
+                this_user.getUni_domain(),
+                this_user.getId(),
+                this_user.getName(),
                 true,
-                "null");
+                "");
     }
 
 
@@ -539,6 +581,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     // on pressing the post button, this function is called to submit in the db and end the activity
 
     private void finalizePost() throws IOException {
+
+
         // if description edit text is not blank, otherwise end the method + set error
         if (fieldsOk()) {
             String address = "universities/" + current_post.getUni_domain() + "/posts/" + current_post.getId();
@@ -580,7 +624,6 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     }
 
     private void finalizeEvent() throws IOException {
-        Event current_event = new Event(current_post);
 
         // if fields have appropriate input, otherwise end method
         if (fieldsOk() && timeOk()) {
@@ -598,9 +641,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
             current_event.setName(title_editText.getText().toString());
             current_event.setLocation(location_editText.getText().toString());
             // time functions
-            current_event.setStart_millis(start_date_millis+start_time_millis);
-            current_event.setEnd_millis(end_date_millis+end_time_millis);
-
+            current_event.setStart_millis(start_date_millis + start_time_millis);
+            current_event.setEnd_millis(end_date_millis + end_time_millis);
 
 
             if (current_event.getVisual() == null) {
@@ -635,16 +677,17 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     // check is all the textfields are okay, sequentially
     private Boolean fieldsOk() {
         // post method
-        if (!is_event)
+        if (current_post!=null) {
             if (description_edit_text.getText().toString().isEmpty()) {
                 description_edit_text.setError("Please enter a description.");
                 submitViewChange();
                 return false;
             }
-        // event methods
-        else
-                // check title first, location, then description, same order as layout
-                // will set error as soon as one field is false, will clear error on previous fields because they are not empty
+        }
+            // event methods
+        else if (current_event!=null) {
+            // check title first, location, then description, same order as layout
+            // will set error as soon as one field is false, will clear error on previous fields because they are not empty
 
             if (title_editText.getText().toString().isEmpty()) {
                 title_editText.setError("Please enter a description.");
@@ -662,8 +705,9 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                 submitViewChange();
                 return false;
             }
+        }
         // something went wrong in either post or event creation... prompt retry
-        if (current_post == null) {
+        else {
             Toast.makeText(this, "POST NULL, Please try again later", Toast.LENGTH_SHORT).show();
             submitViewChange();
             return false;
@@ -671,29 +715,30 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
 
         return true;
     }
-    private boolean timeOk(){
-        if(start_date_millis == null){
+
+    private boolean timeOk() {
+        if (start_date_millis == null) {
 
             start_date_button.setError("Please choose a start date");
             submitViewChange();
             return false;
         }
-        if(start_time_millis == null){
+        if (start_time_millis == null) {
             start_time_button.setError("Please choose a start time");
             submitViewChange();
             return false;
         }
-        if(end_date_millis == null){
+        if (end_date_millis == null) {
             end_date_button.setError("Please choose an end date");
             submitViewChange();
             return false;
         }
-        if(end_time_millis == null){
+        if (end_time_millis == null) {
             end_time_button.setError("Please choose an end time");
             submitViewChange();
             return false;
         }
-        if(start_date_millis + start_time_millis > end_date_millis + end_time_millis){
+        if (start_date_millis + start_time_millis > end_date_millis + end_time_millis) {
             Toast.makeText(this, "Your event starts after it ends!", Toast.LENGTH_LONG).show();
             submitViewChange();
             return false;
@@ -757,16 +802,31 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     // stores pics in the db to a test repository
 
     private void storePictureInDB(byte[] jpeg_file) {
-        // uses current posts random UUID
-        String path = "test_for_posts/" + current_post.getId() + "/" + current_post.getId() + ".jpg";
-        if (path.contains("null"))
-            Log.e("CreatePost", "storePictureinDB: path contains null!");
+        String path = "";
+        // if current post is not set here the function ends to quick for it to be set properly
+        if (current_post != null) {
+            // uses current posts random UUID
+            path = "test_for_posts/" + current_post.getId() + "/" + current_post.getId() + ".jpg";
+            current_post.setVisual(path);
+        } else if (current_event != null) {
+            path = "test_for_posts/" + current_event.getId() + "/" + current_event.getId() + ".jpg";
+            current_event.setVisual(path);
+        }
 
+        // Error check for the db address
+        if (path.contains("null") || path.equals("")) {
+            if(current_post!=null)
+                current_post.setVisual("upload failed");
+            if(current_event!=null)
+                current_event.setVisual("upload failed");
+            Log.e("CreatePost", "storePictureinDB: path contains null!");
+            return;
+        }
 
         StorageReference post_image_storage = db_storage.child(path);
 
-        // if current post is not set here the function ends to quick for it to be set properly
-        current_post.setVisual(path);
+
+
         post_image_storage.putBytes(jpeg_file).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
@@ -776,7 +836,10 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(getApplicationContext(), "photo upload failed", Toast.LENGTH_LONG).show();
-                current_post.setVisual("upload failed");
+                if(current_post!=null)
+                    current_post.setVisual("upload failed");
+                if(current_event!=null)
+                    current_event.setVisual("upload failed");
             }
         });
     }
@@ -787,15 +850,15 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     // first issue is how it pulls more info than it needs and passes it around sloppily
     // it fills an array list with names for the adapter, and creates a hashmap to save the ids for storage
     // TODO the on select listeners are just not working, after that the code is complete
-    private void initializePinnedSpinner(){
+    private void initializePinnedSpinner() {
         // initialize spinner
         pinned_spinner = findViewById(R.id.pinned_event_spinner);
 
         // create names array and hashmap to find IDs
-        db_reference.collection("universities").document("testucalgary.ca").collection("posts")
+        db_reference.collection("universities").document(this_user.getUni_domain()).collection("posts")
                 .whereEqualTo("is_event", true)
                 .whereEqualTo("is_active", true)
-                .whereEqualTo("main_feed_visible",true)
+                .whereEqualTo("main_feed_visible", true)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -814,7 +877,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                     }
                 });
         // create and set adapter
-        ArrayAdapter<String> pinned_adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,pinned_names_array);
+        ArrayAdapter<String> pinned_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, pinned_names_array);
         pinned_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         pinned_spinner.setAdapter(pinned_adapter);
         // on select listeners
@@ -824,7 +887,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String stre = parent.getItemAtPosition(position).toString().trim();
-        Toast.makeText(this, ""+ stre, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "" + stre, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -832,13 +895,14 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
     /* ************************************************************************************************** */
     // bar/ allow interaction is swapped with the views on submit/progress bar in submitViewChange
-    private void barInteraction(){
+    private void barInteraction() {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
-    private void allowInteraction(){
+    private void allowInteraction() {
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 

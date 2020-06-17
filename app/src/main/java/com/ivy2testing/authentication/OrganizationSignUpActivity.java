@@ -287,7 +287,8 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
             FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> { //cascade data push by first getting the token and when received push the entire profile
                 if(task.isSuccessful() && task.getResult() != null){
                     Organization orgUser = new Organization(id, email, isClub);
-                    orgUser.setMessaging_token(task.getResult().getToken());
+                    // couldnt find variable in zarahs branch, assuming it was deleted...
+                   // orgUser.setMessaging_token(task.getResult().getToken());
 
                     dbRef.collection("universities").document(current_domain).collection("users").document(id).set(orgUser)
                             .addOnCompleteListener(task1 -> {
