@@ -28,12 +28,16 @@ import java.util.ArrayList;
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder>{
 
-    private ArrayList<Event> post_array_list;
+    private ArrayList<Post> post_array_list;
+    private FeedViewHolder.FeedClickListener feed_click_listener;
 
 
 
 
-    public static class FeedViewHolder extends RecyclerView.ViewHolder {
+    public static class FeedViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        FeedClickListener feed_click_listener;
+
         public ImageView feed_image_view;
         public TextView feed_title;
         public TextView feed_text;
@@ -41,17 +45,33 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         public TextView feed_pinned_id;
 
 
-        public FeedViewHolder(@NonNull View itemView) {
+        public FeedViewHolder(@NonNull View itemView, FeedClickListener feed_click_listener) {
             super(itemView);
             feed_image_view = itemView.findViewById(R.id.object_imageview);
             feed_title = itemView.findViewById(R.id.object_title);
             feed_text = itemView.findViewById(R.id.object_body);
             feed_author = itemView.findViewById(R.id.object_posted_by_author);
             feed_pinned_id = itemView.findViewById(R.id.object_pinned_event);
+
+
+            this.feed_click_listener = feed_click_listener;
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            feed_click_listener.onFeedClick(getAdapterPosition());
+
+        }
+
+        public interface FeedClickListener{
+            void onFeedClick(int position);
         }
     }
-    public FeedAdapter(ArrayList<Event> post_list){
+    public FeedAdapter(ArrayList<Post> post_list, FeedViewHolder.FeedClickListener feed_click_listener){
         post_array_list = post_list;
+        this.feed_click_listener = feed_click_listener;
     }
 
 
@@ -60,18 +80,21 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     @Override
     public FeedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_object, parent,false);
-        FeedViewHolder fvh = new FeedViewHolder(v);
+        FeedViewHolder fvh = new FeedViewHolder(v, feed_click_listener);
         return fvh;
     }
 
     @Override
     public void onBindViewHolder(@NonNull FeedViewHolder holder, int position) {
-
             if(post_array_list.get(position).getIs_event()){
-                holder.feed_title.setText(post_array_list.get(position).getName());
+                Event current_event = (Event) post_array_list.get(position);
+                holder.feed_title.setText(current_event.getName().toString());
+                holder.feed_title.setVisibility(View.VISIBLE);
             }
-            else
-                holder.feed_title.setVisibility(View.GONE);
+            // There is a weird bug with the title disappearing from events when you scroll far enough passed them
+            // to solve this for now... just going to make titles/names View.GONE, they will only become visible if they
+            // exist. Solves the bug for now/ if similar bugs appear later
+
 
             if(post_array_list.get(position).getVisual().toString().contains("/")){
                 holder.feed_image_view.setVisibility(View.VISIBLE);
@@ -81,11 +104,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                 holder.feed_image_view.setVisibility(View.GONE);
 
             holder.feed_text.setText(post_array_list.get(position).getText().toString());
-            holder.feed_author.setText(post_array_list.get(position).getText().toString());
-            holder.feed_text.setOnClickListener(v->
-                            Log.d("TAG", "onBindViewHolder: " + "CLICKED")
+            holder.feed_author.setText(post_array_list.get(position).getAuthor_name().toString());
 
-                    );
 
 
     }
