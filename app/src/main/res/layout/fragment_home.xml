@@ -19,26 +19,46 @@ I am changing this to a scroll view with a linear layout to chain layouts veritc
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Not your campus? Change it "
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bubble_rv" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/feed_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="8dp"
-        android:scrollbars="vertical"
 
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/not_campus_container" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/not_campus_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bubble_rv">
+
+        <TextView
+            android:id="@+id/not_campus_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Not your campus? Change it "
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/change_campus_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="here."
+            android:textColor="@color/interaction"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/not_campus_text"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -127,17 +127,17 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
         // recycler view
 
 
-        bubble_arraylist.add("university");
-        bubble_arraylist.add("events");
-        bubble_arraylist.add("posts");
-        bubble_arraylist.add("for you");
-        bubble_arraylist.add("example1");
-        bubble_arraylist.add("example1");
-        bubble_arraylist.add("example1");
-        bubble_arraylist.add("example1");
+        bubble_arraylist.add("University");
+        bubble_arraylist.add("Events");
+        bubble_arraylist.add("Posts");
+        bubble_arraylist.add("For You");
+        bubble_arraylist.add("Clubs");
+        bubble_arraylist.add("University of Calgary Ski and Board Club");
+        bubble_arraylist.add("Social");
+        bubble_arraylist.add("Grind");
 
         bubble_recycler_view = rootView.findViewById(R.id.bubble_rv);
-        //bubble_recycler_view.setHasFixedSize(true);
+        bubble_recycler_view.setHasFixedSize(true);
 
 
         bubble_layout_manager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
