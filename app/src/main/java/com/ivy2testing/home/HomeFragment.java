@@ -40,7 +40,7 @@ import com.ivy2testing.main.UserViewModel;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder.FeedClickListener {
+public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder.FeedClickListener,BubbleAdapter.BubbleViewHolder.BubbleClickListener {
 
     //Constants
     private static final String TAG = "HomeFragment";
@@ -136,12 +136,12 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
         bubble_arraylist.add("Social");
         bubble_arraylist.add("Grind");
 
-        bubble_recycler_view = rootView.findViewById(R.id.bubble_rv);
+        bubble_recycler_view = rootView.findViewById(R.id.bubble_recycler_view);
         bubble_recycler_view.setHasFixedSize(true);
 
 
         bubble_layout_manager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        bubble_adapter = new BubbleAdapter(bubble_arraylist);
+        bubble_adapter = new BubbleAdapter(bubble_arraylist, this);
         bubble_recycler_view.setLayoutManager(bubble_layout_manager);
         bubble_recycler_view.setAdapter(bubble_adapter);
 
@@ -305,6 +305,16 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
         Toast.makeText(mContext, ""+ post_arraylist.get(position).getAuthor_name(), Toast.LENGTH_SHORT).show();
 
         // TODO THIS IS WHERE TO NAVIGATE TO NEW ACTIVITY
-        // post_array_list.get(position);
+        // post_array_list.get(position); <- this is the clicked event/post
+    }
+
+    @Override
+    public void onBubbleClick(int position) {
+        Toast.makeText(mContext, ""+bubble_arraylist.get(position), Toast.LENGTH_SHORT).show();
+
+        //TODO THIS IS WHERE TO HANDLE BUBBLE CLICKS
+
+        // bubble_arraylist.get(position); <- this is the clicked bubble
+
     }
 }
