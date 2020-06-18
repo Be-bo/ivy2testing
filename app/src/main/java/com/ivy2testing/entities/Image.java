@@ -10,6 +10,7 @@ import androidx.paging.PageKeyedDataSource;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.ivy2testing.util.Constant;
 
 
 /** @author Zahra Ghavasieh
@@ -23,8 +24,6 @@ public class Image implements Parcelable {
     private Uri uri;
 
     private static final String TAG = "ImageEntity";
-    private static final String DEFAULT_IMG = "android.resource://ivy2testing/app/src/main/res/drawable/ic_account_circle.xml";
-    private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
 
 /* Constructors
@@ -37,7 +36,6 @@ public class Image implements Parcelable {
 
     public Image(String address){
         this.address = address;
-        if (uri == null) loadUri();
     }
 
 /* Setters and Getters
@@ -49,7 +47,6 @@ public class Image implements Parcelable {
 
     //TODO test this
     public Uri getUri() {
-        if (uri == null) uri  = Uri.parse(DEFAULT_IMG);
         return uri;
     }
 
@@ -87,25 +84,5 @@ public class Image implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(address);
         dest.writeParcelable(uri, flags);
-    }
-
-/* Firebase Methods
-***************************************************************************************************/
-
-    // Load preview pictures
-    private void loadUri(){
-        base_storage_ref.child(address).getDownloadUrl()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()){
-                        Uri uri = task.getResult();
-                        if (uri != null){
-                            this.uri = uri;
-                        }
-                    }
-                    else{
-                        this.uri = Uri.parse(DEFAULT_IMG);
-                        Log.w(TAG, "Uri doesn't exist at address: " + address);
-                    }
-                });
     }
 }

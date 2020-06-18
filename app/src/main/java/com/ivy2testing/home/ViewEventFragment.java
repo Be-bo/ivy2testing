@@ -21,6 +21,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
+import com.ivy2testing.userProfile.UserProfileActivity;
 import com.ivy2testing.util.adapters.CircleImageAdapter;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
@@ -59,8 +60,10 @@ public class ViewEventFragment extends Fragment {
     // Other Variables
     private Event event;
     private String viewer_id;           // Nullable!
+    private Uri viewer_img;             // Nullable
 
-    private CircleImageAdapter adapter; // Recycler Adapter for going_ids
+    private CircleImageAdapter going_adapter;             // Recycler Adapter for going_ids
+    private LinearLayoutManager layout_man;         // Recycler Layout manager
     private List<Uri> going_img_uris = new ArrayList<>(6); // non synchronous adds!
     private int lastUriPosition = 0;                // Pagination: position of last img loaded
 
@@ -86,7 +89,13 @@ public class ViewEventFragment extends Fragment {
         return root_view;
     }
 
-/* Initialization Methods
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        saveEventToDB();  // Save any changes to database
+    }
+
+    /* Initialization Methods
 ***************************************************************************************************/
 
     // Define and initialize views
@@ -121,34 +130,43 @@ public class ViewEventFragment extends Fragment {
         else v.findViewById(R.id.viewPost_pinLayout).setVisibility(View.GONE);
 
         // Going Users' Recycler View
-        if (event.getGoing_ids().isEmpty()) {
-            rv_going.setVisibility(View.GONE);
-            tv_seeAll.setVisibility(View.GONE);
-        }
-        else setRecycler();
+        setRecyclerVisibility();
+        setRecycler();
 
         // Hide button if user is not signed in
-        if (viewer_id == null) button_going.setVisibility(View.GONE);
+        if (viewer_id == null){
+            button_going.setVisibility(View.GONE);
+        }
+        else if (event.getGoing_ids().contains(viewer_id)) button_going.setChecked(true);
     }
 
     // OnClick Listeners
     private void setListeners(){
         if (event.getLink() != null) tv_link.setOnClickListener(v1 -> goToLink());
         if (event.getPinned_id() != null) tv_pinned.setOnClickListener(v1 -> viewPinned());
-        if (!event.getGoing_ids().isEmpty()){
-            tv_seeAll.setOnClickListener(v1 -> seeAllGoingUsers());
-            rv_going.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                    super.onScrollStateChanged(recyclerView, newState);
-                }
+        tv_seeAll.setOnClickListener(v1 -> seeAllGoingUsers());
+        rv_going.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
 
-                @Override
-                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                    super.onScrolled(recyclerView, dx, dy);
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (lastUriPosition < event.getGoing_ids().size() - 1){
+                    int firstVisibleItem = layout_man.findFirstVisibleItemPosition();
+                    int visibleItemCount = layout_man.getChildCount();
+                    int totalItemCount = layout_man.getItemCount();
+
+                    if (firstVisibleItem + visibleItemCount == totalItemCount){
+                        loadUserPics();
+                    }
                 }
-            });
-        }
+            }
+        });
+        going_adapter.setOnSelectionListener(this::selectUser);
         if (button_going.getVisibility() == View.VISIBLE)
             button_going.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) going(); //toggle is enabled
@@ -161,12 +179,25 @@ public class ViewEventFragment extends Fragment {
     private void setRecycler(){
 
         // Set LayoutManager and Adapter
-        adapter = new CircleImageAdapter(going_img_uris);
-        rv_going.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        rv_going.setAdapter(adapter);
+        going_adapter = new CircleImageAdapter(going_img_uris);
+        layout_man = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        rv_going.setLayoutManager(layout_man);
+        rv_going.setAdapter(going_adapter);
 
         // Load images with pagination
-        loadUserPics();
+        if (!event.getGoing_ids().isEmpty()) loadUserPics();
+    }
+
+    // Set Going recycler visibility
+    private void setRecyclerVisibility(){
+        if (event.getGoing_ids().isEmpty()) {
+            rv_going.setVisibility(View.GONE);
+            tv_seeAll.setVisibility(View.GONE);
+        }
+        else {
+            rv_going.setVisibility(View.VISIBLE);
+            tv_seeAll.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -223,15 +254,41 @@ public class ViewEventFragment extends Fragment {
         //TODO pass
     }
 
+    // View a user's profile
+    private void selectUser(int i) {
+        if (getActivity() != null) {
+            Log.d(TAG, "Starting UserProfile Activity for user " + event.getGoing_ids().get(i));
+            Intent intent = new Intent(getActivity(), UserProfileActivity.class);
+            intent.putExtra("this_uni_domain", event.getUni_domain());
+            intent.putExtra("this_user_id", event.getGoing_ids().get(i));
+            intent.putExtra("viewer_id", viewer_id);
+            getActivity().startActivityForResult(intent, Constant.USER_PROFILE_REQUEST_CODE);
+        }
+        else Log.e(TAG, "Parent Activity was null!");
+    }
+
     // Add user to going list
     private void going(){
         event.addGoingIdToList(viewer_id);
-        //TODO
+        setRecyclerVisibility();
+
+        // Load viewer preview pic if not done so yet
+        if (viewer_img == null) loadUserPic(viewer_id);
+        else {
+            going_img_uris.add(0, viewer_img);
+            going_adapter.notifyItemInserted(0);
+        }
     }
 
     // Remove user from going list
     private void notGoing(){
-        //TODO
+        event.deleteGoingIdFromList(viewer_id);
+
+        // Delete viewer preview pic from recycler
+        going_img_uris.remove(viewer_img);
+        going_adapter.notifyItemRemoved(0);
+
+        setRecyclerVisibility();    // Remove Visibility if that was the last person
     }
 
 
@@ -260,35 +317,63 @@ public class ViewEventFragment extends Fragment {
         });
     }
 
+    // Save any changes to event to database
+    private void saveEventToDB() {
+        String address = "universities/" + event.getUni_domain() + "/posts/" + event.getPinned_id();
+        if (address.contains("null")){
+            Log.e(TAG, "Event Address has null values. ID:" + event.getUni_domain());
+            return;
+        }
+
+        db.document(address).set(event).addOnCompleteListener(task->{
+            if (task.isSuccessful()) Log.d(TAG, "Changes saved.");
+            else Log.e(TAG, "Something went wrong when trying to save changes.\n");
+        });
+
+    }
+
     // Use pagination to load preview pictures
     private void loadUserPics(){
-
         // Load 10 items at a time
         int i;
-        for (i = lastUriPosition; i < 10; i ++){
+        for (i = lastUriPosition; i < lastUriPosition+10; i ++){
             if (i >= event.getGoing_ids().size()) break;
-
-            String user_id = event.getGoing_ids().get(i);
-            String address = ImageUtils.getPreviewPath(user_id);
-            if (address.contains("null")){
-                Log.e(TAG, "Address contained null! UserId: " + user_id);
-                return;
-            }
-
-            base_storage_ref.child(address).getDownloadUrl()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()){
-                        Uri uri = task.getResult();
-                        if (uri != null){
-                            going_img_uris.add(uri);
-                            adapter.notifyItemInserted(going_img_uris.size()-1);
-                            Log.d(TAG, "Added to position "+ event.getGoing_ids().indexOf(user_id)+" img " + uri);
-                        }
-                    }
-                    else Log.w(TAG, "this user's image doesn't exist! user: " + user_id);
-                });
+            loadUserPic(event.getGoing_ids().get(i));
         }
         lastUriPosition = i;    // Update last position
+    }
+
+    // Load a user's preview image
+    private void loadUserPic(String user_id){
+        String address = ImageUtils.getPreviewPath(user_id);
+        if (address.contains("null")){
+            Log.e(TAG, "Address contained null! UserId: " + user_id);
+            return;
+        }
+
+        base_storage_ref.child(address).getDownloadUrl()
+                .addOnCompleteListener(task -> {
+                    Uri uri = null;
+
+                    if (task.isSuccessful()) uri = task.getResult();
+                    else Log.w(TAG, "this user's image doesn't exist! user: " + user_id);
+
+
+                    //if (uri != null){
+
+                        // Always load viewer's id first!
+                        if (user_id.equals(viewer_id)){
+                            viewer_img = uri;
+                            going_img_uris.add(0, uri);
+                            going_adapter.notifyItemInserted(0);
+                        }
+                        else {
+                            going_img_uris.add(uri);
+                            going_adapter.notifyItemInserted(going_img_uris.size()-1);
+                        }
+                        Log.d(TAG, "Added to position "+ event.getGoing_ids().indexOf(user_id)+" img " + uri);
+                    //}
+                });
     }
 
 

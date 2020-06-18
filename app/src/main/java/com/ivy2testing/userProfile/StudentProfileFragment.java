@@ -85,6 +85,10 @@ public class StudentProfileFragment extends Fragment {
         this.viewer_id = viewer_id;
     }
 
+    public void setStudent(Student student){
+        this.student = student;
+    }
+
 
 /* Override Methods
 ***************************************************************************************************/
@@ -94,9 +98,12 @@ public class StudentProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root_view = inflater.inflate(R.layout.fragment_studentprofile, container, false);
 
+        Log.d(TAG,"onCreateView!");
+
         // Initialization Methods
         declareViews(root_view);
-        getUserProfile();
+        if (student == null) getUserProfile();
+        else setUp();
         return root_view;
     }
 
@@ -129,10 +136,7 @@ public class StudentProfileFragment extends Fragment {
                 student = (Student) usr; //grab the initial data
 
                 // Only start doing processes that depend on user profile
-                Log.d(TAG, "Showing student: " + student.getId() + ", name: " + student.getName());
-                setupViews();           // populate UI
-                setUpRecycler();        // set up posts recycler view
-                setListeners(root_view); // set up listeners
+                setUp();
             }
 
             // listen to realtime user profile changes afterwards
@@ -143,6 +147,14 @@ public class StudentProfileFragment extends Fragment {
                 }
             });
         }
+    }
+
+    // General setup after acquiring student object
+    private void setUp(){
+        Log.d(TAG, "Showing student: " + student.getId() + ", name: " + student.getName());
+        setupViews();               // populate UI
+        setUpRecycler();            // set up posts recycler view
+        setListeners(root_view);    // set up listeners
     }
 
     private void declareViews(View v){
@@ -165,6 +177,12 @@ public class StudentProfileFragment extends Fragment {
 
     // Create adapter for recycler (empty!)
     private void setUpRecycler(){
+        if (student.getPost_ids().isEmpty()){
+            Log.e(TAG, "No posts for this user.");
+            postError(getString(R.string.error_noPosts));
+            return;
+        }
+
         loadPostsFromDB();
 
         // set LayoutManager and Adapter
@@ -178,7 +196,7 @@ public class StudentProfileFragment extends Fragment {
         if (my_profile) v.findViewById(R.id.studentProfile_edit).setOnClickListener(v12 -> editProfile());
         else    v.findViewById(R.id.studentProfile_edit).setVisibility(View.GONE);
         v.findViewById(R.id.studentProfile_seeAll).setOnClickListener(v1 -> seeAllPosts());
-        adapter.setOnSelectionListener(this::selectPost);
+        if (adapter != null) adapter.setOnSelectionListener(this::selectPost);
     }
 
 /* OnClick Methods

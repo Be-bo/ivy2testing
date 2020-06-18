@@ -32,24 +32,8 @@ public class CircleImageAdapter extends RecyclerView.Adapter<CircleImageAdapter.
 
     // Attributes
     private List<Uri> images;
+    private Context context;
     OnSelectionListener selection_listener;
-
-
-    // How to differentiate between old data and new data
-    private static DiffUtil.ItemCallback<Image> DIFF_CALLBACK =
-            new DiffUtil.ItemCallback<Image>() {
-                @Override
-                public boolean areItemsTheSame(@NonNull Image oldItem, @NonNull Image newItem) {
-                    if (oldItem.getAddress() == null) return false;
-                    else return oldItem.getAddress().equals(newItem.getAddress());
-                }
-
-                @Override
-                public boolean areContentsTheSame(@NonNull Image oldItem, @NonNull Image newItem) {
-                    if (oldItem.getUri() == null) return false;
-                    else return oldItem.getUri().equals(newItem.getUri());
-                }
-            };
 
 
     public CircleImageAdapter(List<Uri> images) {
@@ -68,13 +52,15 @@ public class CircleImageAdapter extends RecyclerView.Adapter<CircleImageAdapter.
     @NonNull
     @Override
     public CircleImgHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_profilepic_item, parent, false);
+        context = parent.getContext();
+        View view = LayoutInflater.from(context).inflate(R.layout.recycler_profilepic_item, parent, false);
         return new CircleImgHolder(view, selection_listener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CircleImgHolder holder, int position) {
-        Picasso.get().load(images.get(position)).into(holder.circle_img);
+        if (images.get(position) != null) Picasso.get().load(images.get(position)).into(holder.circle_img);
+        else holder.circle_img.setImageDrawable(context.getDrawable(R.drawable.ic_account_circle));
     }
 
     @Override

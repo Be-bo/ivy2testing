@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,12 +13,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.main.UserViewModel;
+
+import java.util.Map;
 
 /** @author Zahra Ghavasieh
  * Overview: 3rd party User Profile view Activity.
@@ -32,6 +37,9 @@ public class UserProfileActivity extends AppCompatActivity {
     private String this_uni_domain;
     private String this_user_id;    // User whose profile we're looking at
     private String viewer_id;       // Current user
+
+    // Firestore
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
 /* Overridden Methods
@@ -78,7 +86,10 @@ public class UserProfileActivity extends AppCompatActivity {
         Fragment selected_fragment;
 
         if (user.getIs_organization()) selected_fragment = new OrganizationProfileFragment();
-        else selected_fragment = new StudentProfileFragment(this_user_id.equals(viewer_id), viewer_id);
+        else {
+            selected_fragment = new StudentProfileFragment(this_user_id.equals(viewer_id), viewer_id);
+            ((StudentProfileFragment)selected_fragment).setStudent((Student) user);
+        }
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.userProfile_frameLayout, selected_fragment).commit();
@@ -129,11 +140,29 @@ public class UserProfileActivity extends AppCompatActivity {
             return;
         }
 
-        // Use UserViewModel to get user info and update realtime
-        UserViewModel user_view_model = new ViewModelProvider(this).get(UserViewModel.class);
-        user_view_model.startListening(this_user_id, this_uni_domain);
-        user_view_model.getThis_user().observe(this, (User updatedUser) -> {
-            if (updatedUser != null) setFragment(updatedUser);
+        db.document(address).get().addOnCompleteListener(task -> {
+            if(task.isSuccessful() && task.getResult() != null){
+                DocumentSnapshot doc = task.getResult();
+                User usr;
+                if ((boolean) doc.get("is_organization"))
+                    usr = task.getResult().toObject(Organization.class);
+                else usr = task.getResult().toObject(Student.class);
+
+                if (usr != null){
+                    usr.setId(this_user_id);
+                    setFragment(usr);
+                }
+                else {
+                    Log.e(TAG, "usr was null!");
+                    goBackToParent();
+                }
+
+            }
+            else {
+                Log.e(TAG, "There was a problem when loading user at: " + address);
+                goBackToParent();
+            }
         });
+
     }
 }

@@ -156,6 +156,7 @@ public class Post implements Parcelable {
     }
 
     public void addViewIdToList(String userId){
+        if (views_id == null) views_id = new ArrayList<>();
         if (userId != null && !userId.isEmpty()) views_id.add(userId);
     }
 
