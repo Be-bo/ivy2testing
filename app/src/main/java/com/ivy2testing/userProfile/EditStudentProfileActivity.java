@@ -48,7 +48,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Random;
 import java.util.UUID;
 
 /** @author Zahra Ghavasieh
@@ -75,7 +74,6 @@ public class EditStudentProfileActivity extends AppCompatActivity {
     // Other Variables
     private Student student;
     private Uri imgUri;
-    private boolean updated = false;
 
 
 /* Override Methods
@@ -102,7 +100,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK){
+        if (resultCode == RESULT_OK){
             switch(requestCode){
                 case Constant.PICK_IMAGE_REQUEST_CODE:
                     if(data != null && data.getData() != null){
@@ -117,17 +115,17 @@ public class EditStudentProfileActivity extends AppCompatActivity {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
                         byte[] previewBytes = ImageUtils.compressAndGetPreviewBytes(bitmap);
                         byte[] standardBytes = ImageUtils.compressAndGetBytes(bitmap);
-                        String profPicPath = "userfiles/" + student.getId() + "/" + "profileimage" + ".jpg";
-                        String previewPath = "userfiles/" + student.getId() + "/" + "previewimage" + ".jpg";
+                        String profPicPath = "userfiles/" + student.getId() + "/profileimage.jpg";
+                        String previewPath = "userfiles/" + student.getId() + "/previewimage.jpg";
                         base_storage_ref.child(profPicPath).putBytes(standardBytes).addOnCompleteListener(task -> {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 base_storage_ref.child(previewPath).putBytes(previewBytes).addOnCompleteListener(task1 -> {
                                     if(task1.isSuccessful()){
                                         Glide.with(this).load(resultUri).into(mImg);
                                         //TODO: end loading
-                                    }else Toast.makeText(this, "Failed to get image. :-(", Toast.LENGTH_LONG).show();
+                                    } else Toast.makeText(this, "Failed to get image. :-(", Toast.LENGTH_LONG).show();
                                 });
-                            }else Toast.makeText(this, "Failed to get image. :-(", Toast.LENGTH_LONG).show();
+                            } else Toast.makeText(this, "Failed to get image. :-(", Toast.LENGTH_LONG).show();
                         });
                     } catch (IOException e) {
                         Toast.makeText(this, "Failed to get image. :-(", Toast.LENGTH_LONG).show();
@@ -135,8 +133,8 @@ public class EditStudentProfileActivity extends AppCompatActivity {
                     }
                     break;
             }
-        }else {
-            if(resultCode != RESULT_CANCELED) Toast.makeText(this, "Failed to get image. :-(", Toast.LENGTH_LONG).show();
+        } else if (resultCode != RESULT_CANCELED) {
+            Toast.makeText(this, "Failed to get image. :-(", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -302,7 +300,6 @@ public class EditStudentProfileActivity extends AppCompatActivity {
     private void backToMain(){
         Log.d(TAG, "Going back to main");
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("updated", updated);    // Tell main to reload profile or nah
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -363,10 +360,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
 
         // Save student info in /users
         db.document(address).set(student).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Log.d(TAG, "Changes saved.");
-                updated = true;
-            }
+            if (task.isSuccessful()) Log.d(TAG, "Changes saved.");
             else Log.e(TAG, "Something went wrong when trying to save changes.\n" + task.getException());
             allowInteraction();
             backToMain();
@@ -411,11 +405,8 @@ public class EditStudentProfileActivity extends AppCompatActivity {
             }
 
             // Task was successful
-            else if (task.getResult() != null) {
+            else if (task.getResult() != null)
                 student.setProfile_picture(path);   // Save download URL of profile picture
-                updated = true;                     // Profile was updated
-            }
-
 
             // Add user profile to database
             saveStudentInfo(name_changed);

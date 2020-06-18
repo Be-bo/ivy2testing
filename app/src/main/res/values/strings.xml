@@ -53,6 +53,9 @@
     <string name="comments">Comments</string>
     <string name="organization_member_number">%1$i Members</string>
     <string name="organization_request_number">Member Requests (%1$i)</string>
+    <string name="link">Link:</string>
+    <string name="going">Going</string>
+    <string name="not_going">Not Going</string>
 
 
 
@@ -151,6 +154,9 @@
     <!-- Sample texts -->
     <string name="sample_views">#### Views</string>
     <string name="sample_pinnedEvent">Pinned Event</string>
+    <string name="sample_event_time">Sat Apr 20th 5am - Sun Apr 21st 1am</string>
+    <string name="sample_event_location">Main Campus</string>
+    <string name="sample_link">bit.ly/23jdw3r</string>
     <string name="sample_text_short">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. In quis iaculis lacus.
         Nunc aliquet erat eros, vel tempus sapien sagittis a. Maecenas luctus augue velit, in consectetur risus ultricies vitae.
@@ -179,7 +185,5 @@
         Nam venenatis nisl in accumsan malesuada. Integer in auctor libero. Nulla volutpat urna at metus elementum gravida. Nulla at orci libero.
         Sed at pulvinar nisl. Aenean pretium placerat elit. Aliquam nec mauris convallis ex interdum auctor a nec orci.
     </string>
-
-
 
 </resources>

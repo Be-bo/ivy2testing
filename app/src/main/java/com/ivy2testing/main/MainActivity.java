@@ -216,9 +216,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void transToCreatePost(){
         Intent intent = new Intent(getApplicationContext(), CreatePost.class);
-        intent.putExtra("current_user", this_user);
         startActivity(intent);
-
     }
 
     private void transToLogin(){

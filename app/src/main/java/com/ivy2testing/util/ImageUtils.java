@@ -58,4 +58,9 @@ public final class ImageUtils {
         scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
         return stream.toByteArray();
     }
+
+    // Return path of a user's preview image
+    public static String getPreviewPath(String user_id) {
+        return "userfiles/" + user_id + "/previewimage.jpg";
+    }
 }

@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -22,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
+import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.userProfile.UserProfileActivity;
@@ -31,10 +33,11 @@ import com.squareup.picasso.Picasso;
 import java.util.Objects;
 
 /** @author Zahra Ghavasieh
- * Overview: View a post (not an activity) WIP
+ * Overview: Holder to View a post or an event. Uses ViewPostFragment and ViewEventFragment for specific details
  * Feature: If viewer is the author, they will have the option to edit this post [not implemented yet!]
+ * WIP: comments [expandable recyclerView], edit post layout and functionality
  */
-public class ViewPostActivity extends AppCompatActivity {
+public class ViewPostOrEventActivity extends AppCompatActivity {
 
     //Constants
     private static final String TAG = "ViewPostActivity";
@@ -43,10 +46,8 @@ public class ViewPostActivity extends AppCompatActivity {
     private ImageView mPostVisual;
     private ImageView mAuthorImg;
     private TextView mAuthorName;
-    private TextView mPostDescription;
-    private TextView mPinnedEvent;
     private FloatingActionButton mFloatingEditButton;
-    // TODO contractable RecyclerView for comments
+    // TODO expandable RecyclerView for comments
 
     // Firebase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -64,15 +65,15 @@ public class ViewPostActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_post);
+        setContentView(R.layout.activity_viewpostorevent);
 
         // Initialization
         declareViews();
         getIntentExtras();
-        if (post != null) setFields();
-
-        // Set Listeners
-
+        if (post != null){
+            setFields();
+            setFragment();
+        }
     }
 
     @Override
@@ -117,8 +118,6 @@ public class ViewPostActivity extends AppCompatActivity {
         mPostVisual = findViewById(R.id.viewPost_visual);
         mAuthorImg = findViewById(R.id.viewPost_userImage);
         mAuthorName = findViewById(R.id.viewPost_userName);
-        mPostDescription = findViewById(R.id.viewPost_description);
-        mPinnedEvent = findViewById(R.id.viewPost_pinned);
         mFloatingEditButton = findViewById(R.id.viewPost_floatingEditButton);
 
         // Action bar
@@ -138,17 +137,22 @@ public class ViewPostActivity extends AppCompatActivity {
         loadComments();             // Load comments from database TODO only load when expanding comments
 
         mAuthorName.setText(post.getAuthor_name());
-        mPostDescription.setText(post.getText());       // Post description
-
-        // Pinned event
-        if (post.getPinned_id() != null) mPinnedEvent.setText(post.getPinned_id());      // Pinned Event (name or id??)
-        else findViewById(R.id.viewPost_pin).setVisibility(View.GONE);
-
 
         // Can edit if viewer is the author of the post
         if (viewerId != null && viewerId.equals(post.getAuthor_id()))
             mFloatingEditButton.setVisibility(View.VISIBLE);
         else mFloatingEditButton.setVisibility(View.GONE);
+    }
+
+    // Set up either ViewPost or ViewEvent Fragment in FrameLayout
+    private void setFragment() {
+        Fragment selected_fragment;
+
+        if (post.getIs_event()) selected_fragment = new ViewEventFragment((Event) post, viewerId);
+        else selected_fragment = new ViewPostFragment(post, viewerId);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.viewPost_contents, selected_fragment).commit();
     }
 
 
@@ -159,7 +163,7 @@ public class ViewPostActivity extends AppCompatActivity {
     private void getIntentExtras() {
         if (getIntent() != null) {
             post = getIntent().getParcelableExtra("post");
-            viewerId = getIntent().getStringExtra("this_user_id");
+            viewerId = getIntent().getStringExtra("viewer_id");
         }
 
         if (post == null) Log.e(TAG, "Student Parcel was null! Showing test view!");
@@ -206,6 +210,7 @@ public class ViewPostActivity extends AppCompatActivity {
         Intent intent = new Intent(this, UserProfileActivity.class);
         intent.putExtra("this_uni_domain", post.getUni_domain());
         intent.putExtra("this_user_id", post.getAuthor_id());
+        intent.putExtra("viewer_id", viewerId);
         startActivityForResult(intent, Constant.USER_PROFILE_REQUEST_CODE);
     }
 
@@ -213,6 +218,7 @@ public class ViewPostActivity extends AppCompatActivity {
 
     // onClick for edit Post (if viewer == author) TODO
     // collapse comments and unable its listener to expand (hide?)
+    // Load a completely different fragment/activity??
     public void editPost(View view){
         showToastError("EditPost WIP");
     }
