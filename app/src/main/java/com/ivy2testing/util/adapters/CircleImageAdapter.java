@@ -2,21 +2,15 @@ package com.ivy2testing.util.adapters;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.paging.PagedListAdapter;
-import androidx.recyclerview.widget.AsyncDifferConfig;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ivy2testing.R;
-import com.ivy2testing.entities.Image;
 import com.ivy2testing.util.OnSelectionListener;
 import com.squareup.picasso.Picasso;
 
