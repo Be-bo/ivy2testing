@@ -122,6 +122,11 @@ public class Event extends Post {
         if (userId != null && !userId.isEmpty()) going_ids.add(userId);
     }
 
+    public void addGoingIdToList( int position, String userId){
+        if (position > going_ids.size()) addGoingIdToList(userId);
+        else if (userId != null && !userId.isEmpty()) going_ids.add(position, userId);
+    }
+
     public void deleteGoingIdFromList(String userId){
         going_ids.remove(userId);
     }

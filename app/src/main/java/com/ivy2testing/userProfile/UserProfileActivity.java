@@ -4,14 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -20,9 +18,6 @@ import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.MainActivity;
-import com.ivy2testing.main.UserViewModel;
-
-import java.util.Map;
 
 /** @author Zahra Ghavasieh
  * Overview: 3rd party User Profile view Activity.
@@ -60,7 +55,7 @@ public class UserProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Handling up button for when another activity called it (it will simply go back to main otherwise)
         if (item.getItemId() == android.R.id.home && !isTaskRoot()){
-            goBackToParent(); // Tells parent if user was updated
+            goBackToParent();
             return true;
         }
         else return super.onOptionsItemSelected(item);

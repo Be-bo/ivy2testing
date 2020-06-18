@@ -10,6 +10,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
+        android:layout_margin="8dp"
         android:src="@drawable/ic_account_circle"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/studentProfile_guidelineH"

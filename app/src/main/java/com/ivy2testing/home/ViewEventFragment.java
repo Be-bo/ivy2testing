@@ -269,7 +269,7 @@ public class ViewEventFragment extends Fragment {
 
     // Add user to going list
     private void going(){
-        event.addGoingIdToList(viewer_id);
+        event.addGoingIdToList(0, viewer_id);
         setRecyclerVisibility();
 
         // Load viewer preview pic if not done so yet
