@@ -46,6 +46,7 @@ public class Event extends Post {
     public Event (Post post){
         this(post.getId(), post.getUni_domain(), post.getAuthor_id(), post.getAuthor_name(),
                 post.isMain_feed_visible(), post.getPinned_id());
+        is_event = true;
     }
 
 /* Getters
@@ -117,6 +118,7 @@ public class Event extends Post {
     }
 
     public void addGoingIdToList(String userId){
+        if (going_ids == null) going_ids = new ArrayList<>();
         if (userId != null && !userId.isEmpty()) going_ids.add(userId);
     }
 

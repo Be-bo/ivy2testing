@@ -1,4 +1,4 @@
-package com.ivy2testing.userProfile;
+package com.ivy2testing.util.adapters;
 
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -15,13 +15,13 @@ import com.ivy2testing.util.OnSelectionListener;
 import com.ivy2testing.R;
 import com.squareup.picasso.Picasso;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-
-public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImgHolder> {
+/** @author Zahra Ghavasieh
+ * Overview: an adapter that takes in a list of image Uris and constructs square images
+ * Used in: StudentProfile.Posts
+ */
+public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.SquareImgHolder> {
 
     // Attributes
     private List<Uri> images;
@@ -29,13 +29,13 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImgHolder> {
 
 
     // Constructors
-    ImageAdapter(List<Uri> images){
+    public SquareImageAdapter(List<Uri> images){
         this.images = images;
     }
 
 
     // Listener Setter
-    void setOnSelectionListener(OnSelectionListener listener){
+    public void setOnSelectionListener(OnSelectionListener listener){
         this.mSelectionListener = listener;
     }
 
@@ -45,13 +45,13 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImgHolder> {
 
     @NonNull
     @Override
-    public ImgHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public SquareImgHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_grid_item, parent, false);
-        return new ImgHolder(view, mSelectionListener);
+        return new SquareImgHolder(view, mSelectionListener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ImgHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull SquareImgHolder holder, final int position) {
         Picasso.get().load(images.get(position)).into(holder.mImageView);
     }
 
@@ -64,7 +64,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImgHolder> {
 /* View Holder subclass
 ***************************************************************************************************/
 
-    static class ImgHolder extends RecyclerView.ViewHolder{
+    static class SquareImgHolder extends RecyclerView.ViewHolder{
 
         // Attributes
         ImageView mImageView;
@@ -72,20 +72,17 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImgHolder> {
         ConstraintLayout mLayout;
 
         // Methods
-        ImgHolder(@NonNull View itemView, final OnSelectionListener listener) {
+        SquareImgHolder(@NonNull View itemView, final OnSelectionListener listener) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.recyclerGridItem_img);
             mCardView = itemView.findViewById(R.id.recyclerGridItem_cardView);
             mLayout = itemView.findViewById(R.id.recyclerGridItem_layout);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null){
-                        int position = getAdapterPosition();
-                        if(position != RecyclerView.NO_POSITION)
-                            listener.onSelectionClick(position);
-                    }
+            itemView.setOnClickListener(v -> {
+                if (listener != null){
+                    int position = getAdapterPosition();
+                    if(position != RecyclerView.NO_POSITION)
+                        listener.onSelectionClick(position);
                 }
             });
         }

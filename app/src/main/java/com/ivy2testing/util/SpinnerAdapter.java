@@ -55,7 +55,7 @@ public class SpinnerAdapter extends ArrayAdapter<String> {
         if (position == 0)
             tv.setTextColor(mContext.getResources().getColor(R.color.hint, mContext.getTheme()));
         else
-            tv.setTextColor(mContext.getResources().getColor(R.color.off_black, mContext.getTheme()));
+            tv.setTextColor(mContext.getResources().getColor(R.color.black, mContext.getTheme()));
 
         return tv;
     }

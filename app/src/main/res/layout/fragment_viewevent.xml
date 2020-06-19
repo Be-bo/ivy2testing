@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@id/viewPost_guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.02" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@id/viewPost_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.98"/>
+
+    <LinearLayout
+        android:id="@+id/viewEvent_eventDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="@id/viewPost_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/viewPost_guideline2"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/viewEvent_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/StandardText"
+            android:text="@string/sample_event_time"/>
+
+        <TextView
+            android:id="@+id/viewEvent_place"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/StandardText"
+            android:text="@string/sample_event_location"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/StandardText"
+                android:text="@string/link"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/viewEvent_link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/StandardClickableText"
+                android:text="@string/sample_link"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/viewEvent_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/general_view_margin"
+        app:layout_constraintTop_toBottomOf="@id/viewEvent_eventDetails">
+        <include layout="@layout/fragment_viewpost" />
+    </FrameLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/viewEvent_going"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/general_view_margin"
+        app:layout_constraintStart_toStartOf="@id/viewPost_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/viewPost_guideline2"
+        app:layout_constraintTop_toBottomOf="@id/viewEvent_description">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/viewEvent_goingRecycler"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </HorizontalScrollView>
+
+    <TextView
+        android:id="@+id/viewEvent_seeAll"
+        style="@style/StandardClickableText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/general_view_margin"
+        android:text="@string/see_all"
+        app:layout_constraintTop_toBottomOf="@id/viewEvent_going"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/viewEvent_guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/viewEvent_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.85" />
+
+    <androidx.appcompat.widget.AppCompatToggleButton
+        android:id="@+id/viewEvent_goingButton"
+        android:layout_width="0dp"
+        style="@style/ToggleButton"
+        android:textOff="@string/going"
+        android:textOn="@string/not_going"
+        android:layout_marginTop="@dimen/general_view_margin"
+        app:layout_constraintTop_toBottomOf="@id/viewEvent_seeAll"
+        app:layout_constraintStart_toStartOf="@id/viewEvent_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/viewEvent_guideline2"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,21 +20,20 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.home.ViewPostActivity;
+import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.util.Constant;
+import com.ivy2testing.util.adapters.SquareImageAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -49,8 +48,6 @@ public class StudentProfileFragment extends Fragment {
     // Constants
     private final static String TAG = "StudentProfileFragment";
 
-    // Parent Final fields
-    private UserViewModel user_view_model;
     private View root_view;
 
     // Views
@@ -69,17 +66,27 @@ public class StudentProfileFragment extends Fragment {
 
     // Other Variables
     private boolean my_profile;      // Don't show edit button if this is not myProfile
+    private String viewer_id;
     private Student student;
-    private ImageAdapter adapter;
+    private SquareImageAdapter adapter;
     private Uri profile_img_uri;
     private List<Post> posts = new ArrayList<>(6);        // Load first 6 posts only
     private List<Uri> post_img_uris = new ArrayList<>(6); // non synchronous adds!
 
 
 
-    // Constructor
+    // Constructors
     public StudentProfileFragment(boolean my_profile) {
         this.my_profile = my_profile;
+    }
+
+    public StudentProfileFragment(boolean my_profile, String viewer_id) {
+        this.my_profile = my_profile;
+        this.viewer_id = viewer_id;
+    }
+
+    public void setStudent(Student student){
+        this.student = student;
     }
 
 
@@ -91,9 +98,12 @@ public class StudentProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root_view = inflater.inflate(R.layout.fragment_studentprofile, container, false);
 
+        Log.d(TAG,"onCreateView!");
+
         // Initialization Methods
         declareViews(root_view);
-        getUserProfile();
+        if (student == null) getUserProfile();
+        else setUp();
         return root_view;
     }
 
@@ -119,16 +129,14 @@ public class StudentProfileFragment extends Fragment {
     private void getUserProfile(){
         if (getActivity() != null) {
 
-            user_view_model = new ViewModelProvider(getActivity()).get(UserViewModel.class);
+            // Parent Final fields
+            UserViewModel user_view_model = new ViewModelProvider(getActivity()).get(UserViewModel.class);
             User usr = user_view_model.getThis_user().getValue();
             if (usr instanceof Student) {
                 student = (Student) usr; //grab the initial data
 
                 // Only start doing processes that depend on user profile
-                Log.d(TAG, "Showing student: " + student.getId() + ", name: " + student.getName());
-                setupViews();           // populate UI
-                setUpRecycler();        // set up posts recycler view
-                setListeners(root_view); // set up listeners
+                setUp();
             }
 
             // listen to realtime user profile changes afterwards
@@ -139,6 +147,14 @@ public class StudentProfileFragment extends Fragment {
                 }
             });
         }
+    }
+
+    // General setup after acquiring student object
+    private void setUp(){
+        Log.d(TAG, "Showing student: " + student.getId() + ", name: " + student.getName());
+        setupViews();               // populate UI
+        setUpRecycler();            // set up posts recycler view
+        setListeners(root_view);    // set up listeners
     }
 
     private void declareViews(View v){
@@ -161,10 +177,16 @@ public class StudentProfileFragment extends Fragment {
 
     // Create adapter for recycler (empty!)
     private void setUpRecycler(){
+        if (student.getPost_ids().isEmpty()){
+            Log.e(TAG, "No posts for this user.");
+            postError(getString(R.string.error_noPosts));
+            return;
+        }
+
         loadPostsFromDB();
 
         // set LayoutManager and Adapter
-        adapter = new ImageAdapter(post_img_uris);
+        adapter = new SquareImageAdapter(post_img_uris);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), 3, GridLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(adapter);
     }
@@ -174,7 +196,7 @@ public class StudentProfileFragment extends Fragment {
         if (my_profile) v.findViewById(R.id.studentProfile_edit).setOnClickListener(v12 -> editProfile());
         else    v.findViewById(R.id.studentProfile_edit).setVisibility(View.GONE);
         v.findViewById(R.id.studentProfile_seeAll).setOnClickListener(v1 -> seeAllPosts());
-        adapter.setOnSelectionListener(this::selectPost);
+        if (adapter != null) adapter.setOnSelectionListener(this::selectPost);
     }
 
 /* OnClick Methods
@@ -199,10 +221,14 @@ public class StudentProfileFragment extends Fragment {
     // A post in recycler was selected
     private void selectPost(int position) {
 
-        Intent intent = new Intent(getContext(), ViewPostActivity.class);
-        Log.d(TAG, "Starting ViewPost Activity for post #" + position);
+        if (posts.get(position) instanceof Event)
+            Log.d(TAG, "Starting ViewPost Activity for event #" + position);
+        else Log.d(TAG, "Starting ViewPost Activity for post #" + position);
+
+        Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
         intent.putExtra("post", posts.get(position));
-        intent.putExtra("this_user_id", student.getId());
+        if (viewer_id != null) intent.putExtra("viewer_id", viewer_id);
+        else intent.putExtra("viewer_id", student.getId());
         startActivityForResult(intent, Constant.VIEW_POST_REQUEST_CODE);
     }
 
@@ -292,7 +318,11 @@ public class StudentProfileFragment extends Fragment {
                         }
                         int i = 0;
                         for (QueryDocumentSnapshot doc : querySnapshot){
-                            posts.add(i, doc.toObject(Post.class));
+
+                            // Check if post or event
+                            if ((boolean) doc.get("is_event")) posts.add(i,doc.toObject(Event.class));
+                            else posts.add(i, doc.toObject(Post.class));
+
                             if (posts.get(i) == null) Log.e(TAG, "Post object obtained from database is null!");
                             else {
                                 posts.get(i).setId(doc.getId());    // Set Post ID
