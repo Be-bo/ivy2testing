@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new ChatFragment();
                     break;
                 case R.id.tab_bar_home:
-                    //selectedFragment = new HomeFragment(this);
+                    selectedFragment = new HomeFragment(this);
                     break;
                 case R.id.tab_bar_profile:
                     if(this_user.getIs_organization()) selectedFragment = new OrganizationProfileFragment();
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        //if (getSupportFragmentManager().findFragmentById(R.id.main_fragmentContainer) == null) bottom_navigation.setSelectedItemId(R.id.tab_bar_home); // Set home view if no fragments visible atm
+        if (getSupportFragmentManager().findFragmentById(R.id.main_fragmentContainer) == null) bottom_navigation.setSelectedItemId(R.id.tab_bar_home); // Set home view if no fragments visible atm
     }
 
 

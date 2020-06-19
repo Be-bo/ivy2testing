@@ -3,7 +3,10 @@ package com.ivy2testing.home;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -163,6 +166,7 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
 /* OnClick Methods
 ***************************************************************************************************/
 
+    // OnClick for user name/image: view profile
     @Override
     public void onUserClick(int position) {
         Log.d(TAG, "Starting UserProfile Activity for user " + users.get(position).getId());
@@ -172,10 +176,39 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
         startActivityForResult(intent, Constant.USER_PROFILE_REQUEST_CODE);
     }
 
+    // OnClick for options button: open a popup menu
     @Override
-    public void onOptionsClick(int position) {
-        // TODO Show a spinner of options
-        Toast.makeText(this,"Options for: " + users.get(position).getName(),Toast.LENGTH_SHORT).show();
+    public void onOptionsClick(int position, View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+
+        // Hide certain items if not logged in
+        if (viewer_id == null){
+            Menu menu = popup.getMenu();
+            menu.findItem(R.id.userOptions_addFriend).setEnabled(false);
+            menu.findItem(R.id.userOptions_chat).setEnabled(false);
+        }
+
+        // TODO: Set onClick
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.userOptions_viewProfile:
+                    onUserClick(position);
+                    return true;
+
+                case R.id.userOptions_addFriend:
+                    Toast.makeText(SeeAllUsersActivity.this,"Add friend: " + user_ids.get(position),Toast.LENGTH_SHORT).show();
+                    return true;
+
+                case R.id.userOptions_chat:
+                    Toast.makeText(SeeAllUsersActivity.this,"Chat",Toast.LENGTH_SHORT).show();
+                    return true;
+
+                default:
+                    return false;
+            }
+        });
+        popup.inflate(R.menu.user_options);
+        popup.show();
     }
 
 

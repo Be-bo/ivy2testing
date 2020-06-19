@@ -131,7 +131,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 if (listener != null){
                     int position = getAdapterPosition();
                     if(position != RecyclerView.NO_POSITION)
-                        listener.onOptionsClick(position);
+                        listener.onOptionsClick(position, v);
                 }
             });
         }
@@ -143,6 +143,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     public interface OnUserItemClickListener {
         void onUserClick(int position);
-        void onOptionsClick(int position);
+        void onOptionsClick(int position, View v);
     }
 }
