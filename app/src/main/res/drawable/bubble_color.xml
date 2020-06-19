@@ -2,7 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:state_pressed="true"
-        android:color="@color/off_white" />
+        android:color="@color/white" />
     <item
         android:state_pressed="false"
         android:color="@color/interaction" />
