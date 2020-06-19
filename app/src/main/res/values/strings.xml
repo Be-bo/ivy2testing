@@ -11,12 +11,15 @@
     <string name="email">Email</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="switch_sign_up">We are a club</string>
+    <string name="switch_login_org">Organization/Club Login</string>
 
     <string name="error_invalidDomain">This domain is not recognizable.</string>
     <string name="error_invalidEmailFormat">Please enter a valid email.</string>
     <string name="error_invalidPasswordLength">Your password must be at least six characters long.</string>
     <string name="error_invalidPasswordMatch">Passwords do not match.</string>
     <string name="error_loginInvalid">Login failed, invalid email or password.</string>
+    <string name="error_chooseUni">Please choose a university.</string>
+    <string name="error_couldntGetUserData">Couldn\'t get user data. Please contact us!</string>
 
     <string name="login_gradient_desc">Green to white gradient</string>
     <string name="logo_desc">Ivy Logo</string>
@@ -51,8 +54,8 @@
     <!-- Posts and Events -->
     <string name="post_visual">Post Visual</string>
     <string name="comments">Comments</string>
-    <string name="organization_member_number">%1$i Members</string>
-    <string name="organization_request_number">Member Requests (%1$i)</string>
+    <string name="organization_member_number">%1$s Members</string>
+    <string name="organization_request_number">Member Requests (%1$s)</string>
     <string name="link">Link:</string>
     <string name="going">Going</string>
     <string name="not_going">Not Going</string>

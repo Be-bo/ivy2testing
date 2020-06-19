@@ -16,7 +16,9 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,10 +32,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Organization;
+import com.ivy2testing.util.SpinnerAdapter;
+import com.ivy2testing.util.StaticDomainList;
 
 import java.util.Objects;
 
-import static com.ivy2testing.util.StaticDomainList.domain_list;
+import static com.ivy2testing.util.StaticDomainList.available_domain_list;
 
 /** @author Zahra Ghavasieh
  * Overview: Activity for registering organizations such as clubs. Very similar to student sign up
@@ -52,6 +56,7 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
     private Switch isClub_switch;
     private Button register_button;
     private ProgressBar progress_bar;
+    private Spinner uni_spinner;
 
     // Firebase
     private FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -60,6 +65,14 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
     // Other Variables
     private boolean isClub = false;
     private String current_domain;
+    private SpinnerAdapter uni_adapter;
+
+
+
+
+
+
+
 
 
 /* Override Methods
@@ -73,7 +86,18 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         setTextWatcher();
         setFocusListener();
         setSwitchListener();
+        setUpUniSpinner();
     }
+
+
+
+
+
+
+
+
+
+
 
 
 /* Initialization Methods
@@ -87,6 +111,7 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         isClub_switch = findViewById(R.id.org_signup_switch);
         register_button = findViewById(R.id.org_signup_register_button);
         progress_bar = findViewById(R.id.org_signup_progressBar);
+        uni_spinner = findViewById(R.id.org_signup_uni_spinner);
     }
 
 
@@ -113,55 +138,42 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
     // Set up focus listener for for real time error checking
     private void setFocusListener(){
         // Check if email is correct after focus has changed
-        email_editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    setInputErrors(
-                            email_editText,
-                            getString(R.string.error_invalidEmailFormat),
-                            emailOk());
-//                    if (emailOk())
-//                        setInputErrors(
-//                                email_editText,
-//                                getString(R.string.error_invalidDomain),
-//                                domainOk());
-                }
+        email_editText.setOnFocusChangeListener((v, hasFocus) ->{
+            if (!hasFocus) {
+                setInputErrors(email_editText, getString(R.string.error_invalidEmailFormat), emailOk());
+                if (emailOk()) setInputErrors(uni_spinner, getString(R.string.error_chooseUni), uniOk());
             }
         });
         // Check if password is correct after focus change
-        pass_editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
-                    setInputErrors(
-                            pass_editText,
-                            getString(R.string.error_invalidPasswordLength),
-                            passwordOk());
-            }
+        pass_editText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) setInputErrors(pass_editText, getString(R.string.error_invalidPasswordLength), passwordOk());
         });
         // Check if password confirmation matches after focus change
-        pass_confirm_editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
-                    setInputErrors(
-                            pass_confirm_editText,
-                            getString(R.string.error_invalidPasswordMatch),
-                            passConfirmOk());
-            }
+        pass_confirm_editText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) setInputErrors(pass_confirm_editText, getString(R.string.error_invalidPasswordMatch), passConfirmOk());
         });
     }
 
     // Set up switch listener
     private void setSwitchListener(){
-        isClub_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                isClub = isChecked;
-            }
-        });
+        isClub_switch.setOnCheckedChangeListener((buttonView, isChecked) -> isClub = isChecked);
     }
+
+    private void setUpUniSpinner(){
+        uni_adapter = new SpinnerAdapter(this, available_domain_list);
+        uni_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        uni_spinner.setAdapter(uni_adapter);
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 /* OnClick Methods
@@ -173,12 +185,13 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         Objects.requireNonNull(getCurrentFocus()).clearFocus();
 
         // Set errors if any of the inputs is invalid
+        setInputErrors(uni_spinner, getString(R.string.error_chooseUni), uniOk());
         setInputErrors(email_editText, getString(R.string.error_invalidEmailFormat), emailOk());
         setInputErrors(pass_editText, getString(R.string.error_invalidPasswordLength), passwordOk());
         setInputErrors(pass_confirm_editText, getString(R.string.error_invalidPasswordMatch), passConfirmOk());
 
         // Create user if input is valid
-        if (emailOk() && passwordOk() && passConfirmOk()) createNewUser();
+        if (emailOk() && passwordOk() && passConfirmOk() && uniOk()) createNewUser();
         else {
             toastError("Registration failed. Please check your input.");
             allowInteraction();
@@ -186,12 +199,27 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
     }
 
 
+
+
+
+
+
+
+
+
 /* Input Checking Methods
 ***************************************************************************************************/
 
     // Set error on an editText view based on a condition
-    private void setInputErrors(EditText editText, String error_msg, boolean check){
-        if (!check) editText.setError(error_msg);
+    private void setInputErrors(View view, String error_msg, boolean check){
+        if(view instanceof EditText) {
+            if (!check) ((EditText)view).setError(error_msg);
+        }else if(view instanceof Spinner){
+            if (!check){
+                TextView errorText = (TextView) ((Spinner)view).getSelectedView();
+                errorText.setError(error_msg);
+            }
+        }
     }
 
     // Check to see if any of fields are empty
@@ -213,17 +241,10 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         else return false;
     }
 
-    // Make sure domain exists
-//    private boolean domainOk() {
-//        for (String item : domain_list) {
-//            if (item.equals(current_domain)) {
-//                email_editText.setError(null);
-//                return true;
-//            }
-//        }
-//        email_editText.setError(getString(R.string.error_invalidDomain));
-//        return false;
-//    }
+    // Make sure domain is good
+    private boolean uniOk() {
+        return !uni_spinner.getSelectedItem().equals("university");
+    }
 
     // Make sure password field is at lest 6 characters long
     private boolean passwordOk() {
@@ -245,6 +266,18 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         }
         else return false;
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* Firebase related Methods
@@ -287,10 +320,10 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
             FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> { //cascade data push by first getting the token and when received push the entire profile
                 if(task.isSuccessful() && task.getResult() != null){
                     Organization orgUser = new Organization(id, email, isClub);
-                    // couldnt find variable in zarahs branch, assuming it was deleted...
-                   // orgUser.setMessaging_token(task.getResult().getToken());
+                    orgUser.setUni_domain(uni_spinner.getSelectedItem().toString());
+                    orgUser.setMessaging_token(task.getResult().getToken());
 
-                    dbRef.collection("universities").document(current_domain).collection("users").document(id).set(orgUser)
+                    dbRef.collection("universities").document(orgUser.getUni_domain()).collection("users").document(id).set(orgUser)
                             .addOnCompleteListener(task1 -> {
                                 if (task1.isSuccessful()) openDialogComplete();
                                 else {
@@ -303,6 +336,12 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         }
         else Log.e(TAG, "Id was null!");
     }
+
+
+
+
+
+
 
 
 /* Transition Methods

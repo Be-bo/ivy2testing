@@ -11,9 +11,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,10 +28,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.ivy2testing.R;
-import com.ivy2testing.main.MainActivity;
+import com.ivy2testing.util.SpinnerAdapter;
+
+import static com.ivy2testing.util.StaticDomainList.available_domain_list;
 
 /** @author = Zahra Ghavasieh
  * Overview: First activity user encounters when launching app
@@ -45,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private Button mLoginButton;
     private ProgressBar mProgressBar;
+    private Spinner uni_spinner;
+    private Switch org_switch;
 
     // Firebase
     private FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -52,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // Other variables
     private String currentDomain = "";
+    private SpinnerAdapter uni_adapter;
 
 
 /* Override Methods
@@ -67,6 +74,8 @@ public class LoginActivity extends AppCompatActivity {
         allowInteraction();
         setTextWatcher();
         setFocusListener();
+        setUpSpinner();
+        setSwitchListener();
     }
 
 
@@ -79,6 +88,8 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView = findViewById(R.id.login_password);
         mLoginButton = findViewById(R.id.login_logInButton);
         mProgressBar = findViewById(R.id.login_progressBar);
+        uni_spinner = findViewById(R.id.login_uni_spinner);
+        org_switch = findViewById(R.id.login_org_switch);
         mProgressBar.setVisibility(View.GONE);
     }
 
@@ -104,26 +115,35 @@ public class LoginActivity extends AppCompatActivity {
     // Set up focus listener for for real time error checking
     private void setFocusListener(){
         // Check if email is correct after focus has changed (if format is good, check domain)
-        mEmailView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    setInputErrors(
-                            mEmailView,
-                            getString(R.string.error_invalidEmailFormat),
-                            emailOk());
-                }
-            }
+        mEmailView.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) setInputErrors(mEmailView, getString(R.string.error_invalidEmailFormat), emailOk());
         });
         // Check if password is correct after focus change
-        mPasswordView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mPasswordView.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) setInputErrors(mPasswordView, getString(R.string.error_invalidPasswordLength), passwordOk());
+        });
+    }
+
+    private void setSwitchListener(){
+        org_switch.setOnCheckedChangeListener(((compoundButton, b) -> {
+            if(b) uni_spinner.setVisibility(View.VISIBLE);
+            else uni_spinner.setVisibility(View.GONE);
+        }));
+    }
+
+    private void setUpSpinner(){
+        uni_adapter = new SpinnerAdapter(this, available_domain_list);
+        uni_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        uni_spinner.setAdapter(uni_adapter);
+        uni_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus)
-                    setInputErrors(
-                            mPasswordView,
-                            getString(R.string.error_invalidPasswordLength),
-                            passwordOk());
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mLoginButton.setEnabled(!fieldsEmpty());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                mLoginButton.setEnabled(!fieldsEmpty());
             }
         });
     }
@@ -133,10 +153,11 @@ public class LoginActivity extends AppCompatActivity {
 ***************************************************************************************************/
 
     // mLoginButton onClick method
-    public void login(View view) {
+    public void attemptLogin(View view) {
         barInteraction();
+        if(org_switch.isChecked()) currentDomain = uni_spinner.getSelectedItem().toString();
         if (getCurrentFocus() != null) getCurrentFocus().clearFocus();
-        domainExists();
+        loginToFirebaseAuth();
     }
 
     // student sign up onClick method
@@ -161,9 +182,9 @@ public class LoginActivity extends AppCompatActivity {
 
     // Check to see if any of fields are empty
     private boolean fieldsEmpty(){
-        return
-                mEmailView.getText().toString().isEmpty() ||
-                mPasswordView.getText().toString().isEmpty();
+        boolean bool = mEmailView.getText().toString().isEmpty() || mPasswordView.getText().toString().isEmpty();
+        if(!org_switch.isChecked()) return bool;
+        else return bool || uni_spinner.getSelectedItem().toString().equals("university");
     }
 
     // Make sure email has a correct format and is not empty
@@ -182,28 +203,6 @@ public class LoginActivity extends AppCompatActivity {
 
 /* Firebase related Methods
 ***************************************************************************************************/
-
-    // Get list of users' domains
-    private void domainExists(){
-
-        dbRef.collection("universities").document(currentDomain).get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot doc = task.getResult();
-                            if (doc != null && doc.exists()) loginToFirebaseAuth();     // YAY!
-                            else {
-                                mEmailView.setError(getString(R.string.error_invalidDomain)); // Domain doesn't exist in DB
-                                allowInteraction();
-                            }
-                        } else {
-                            toastError("Domain get() failed");
-                            allowInteraction();
-                        }
-                    }
-                });
-    }
 
     // Attempt to log in to Firebase Auth
     private void loginToFirebaseAuth(){

@@ -70,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/StandardClickableText"
-        android:text="Edit Profile Picture"
+        android:text="Edit Profile"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toEndOf="@id/orgprofile_guidelineV"

@@ -47,6 +47,15 @@
         app:layout_constraintStart_toStartOf="@id/login_guideline1"
         app:layout_constraintTop_toTopOf="parent">
 
+        <Spinner
+            android:id="@+id/login_uni_spinner"
+            android:layout_width="match_parent"
+            style="@style/StandardSpinner"
+            android:visibility="gone"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/hint"
+            android:prompt="@string/app_name" />
+
         <EditText
             android:id="@+id/login_email"
             style="@style/StandardEditText"
@@ -67,12 +76,20 @@
             android:hint="@string/password"
             android:inputType="textPassword" />
 
+        <Switch
+            android:id="@+id/login_org_switch"
+            style="@style/StandardSwitch"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="5dp"
+            android:text="@string/switch_login_org"/>
+
         <Button
             android:id="@+id/login_logInButton"
             style="@style/StandardButton"
             android:layout_width="match_parent"
             android:enabled="false"
-            android:onClick="login"
+            android:onClick="attemptLogin"
             android:text="@string/login" />
 
         <ProgressBar

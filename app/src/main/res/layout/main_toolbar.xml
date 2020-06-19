@@ -18,10 +18,11 @@
 
     <ImageButton
         android:id="@+id/post_button"
-        android:src="@drawable/ic_lock_open"
+        android:src="@drawable/ic_login"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_gravity="right"
+        android:scaleType="fitCenter"
         android:layout_marginEnd="8dp"
         android:background="@color/transparent"
         android:visibility="visible" />

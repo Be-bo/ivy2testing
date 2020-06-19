@@ -85,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_marginBottom="16dp"
             android:layout_marginStart="5dp"
-            android:text="@string/switch_sign_up"/>
+            android:text="@string/switch_login_org"/>
 
         <Button
             android:id="@+id/org_signup_register_button"
