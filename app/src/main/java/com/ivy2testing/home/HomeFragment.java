@@ -1,14 +1,12 @@
 package com.ivy2testing.home;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,8 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -40,7 +36,6 @@ import com.ivy2testing.entities.User;
 import com.ivy2testing.main.UserViewModel;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder.FeedClickListener,BubbleAdapter.BubbleViewHolder.BubbleClickListener {
 
@@ -60,13 +55,15 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
     private boolean is_organization = false;
     private UserViewModel this_user_viewmodel;
 
+    private TextView no_more_items_text;
+
 
     // main feed
     private final ArrayList<Post> post_arraylist = new ArrayList<Post>();
 
     private RecyclerView feed_recycler_view;
     private RecyclerView.Adapter feed_adapter;
-    private RecyclerView.LayoutManager feed_layout_manager;
+    private LinearLayoutManager feed_layout_manager;
 
 
 
@@ -76,6 +73,10 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
     private RecyclerView bubble_recycler_view;
     private RecyclerView.Adapter bubble_adapter;
     private RecyclerView.LayoutManager bubble_layout_manager;
+
+    private boolean array_list_updated;
+
+    private ProgressBar loading_progress_bar;
 
 
     // Constructor
@@ -151,6 +152,8 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
 
 
 
+
+
         // feed recycler view
         BuildArrayList();
 
@@ -163,15 +166,41 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
         feed_recycler_view.setAdapter(feed_adapter);
 */
 
+
+        array_list_updated = true;
+        no_more_items_text = rootView.findViewById(R.id.no_more_items_text);
+        loading_progress_bar = rootView.findViewById(R.id.loading_progress_bar);
+
         feed_recycler_view.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+
+            }
+
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-               // recyclerView.
-                if (!recyclerView.canScrollVertically(1)) {
-                   // Toast.makeText(getContext(), "Last" + recyclerView.computeVerticalScrollExtent(), Toast.LENGTH_LONG).show();
-                   // PullMorePosts();
+                if(array_list_updated) {
+
+                    if (feed_layout_manager.findLastCompletelyVisibleItemPosition() > (post_arraylist.size() - 3 )){
+                       // Toast.makeText(mContext, "7", Toast.LENGTH_SHORT).show();
+                       // Log.d(TAG, "onScrolled: SEVEN");
+                        array_list_updated = false;
+                        PullMorePosts();
+                    }
+                    //TODO here our outside of the above if
                 }
+                if (!recyclerView.canScrollVertically(1)) {
+                    loading_progress_bar.setVisibility(View.VISIBLE);
+                }
+                else{
+                    loading_progress_bar.setVisibility(View.GONE);
+                    no_more_items_text.setVisibility(View.GONE);
+                }
+
+
             }
         });
 
@@ -182,7 +211,7 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
 
     private void BuildArrayList(){
         db_reference.collection("universities").document("ucalgary.ca").collection("posts")
-                .limit(10)
+                .limit(15)
                 .orderBy("creation_millis", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -207,37 +236,62 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
                 });
     }
 
+
+    // Update Methods
+
     private void PullMorePosts(){
-        db_reference.collection("universities").document("ucalgary.ca").collection("posts")
-                .limit(10)
-                .orderBy("creation_millis", Query.Direction.DESCENDING)
-               // .startAt(post_arraylist.get(post_arraylist.size()-1).getCreation_millis() +1 )
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            if(task.getResult()!=null) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    // Toast.makeText(MainActivity.this, document.getId() + " => " + document.getData(), Toast.LENGTH_SHORT).show();
-                                    // Log.d(TAG, "onComplete: " + document.getData().toString());
-                                    //TODO THESE ARE SAVED AS EVENTS
-                                    Post event_object = document.toObject(Event.class);
-                                    post_arraylist.add(event_object);
+        if(post_arraylist.size() != 0) {
+            db_reference.collection("universities").document("ucalgary.ca").collection("posts")
+                    .limit(15)
+                    .orderBy("creation_millis", Query.Direction.DESCENDING)
+                    //TODO arraylist can get stumbled hup her if it gets deleted while updating
+                    .startAfter(post_arraylist.get(post_arraylist.size() - 1).getCreation_millis())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                if (task.getResult() != null) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        // Toast.makeText(MainActivity.this, document.getId() + " => " + document.getData(), Toast.LENGTH_SHORT).show();
+                                        // Log.d(TAG, "onComplete: " + document.getData().toString());
+                                        //TODO THESE ARE SAVED AS EVENTS
+                                        Post event_object = document.toObject(Event.class);
+                                        post_arraylist.add(event_object);
+                                    }
+                                    // Toast.makeText(mContext, ""+post_arraylist.size(), Toast.LENGTH_SHORT).show();
+                                    feed_adapter.notifyDataSetChanged();
+                                    feed_adapter.notifyItemRangeInserted(0, post_arraylist.size());
+                                    array_list_updated = true;
+
+
+                                    if(task.getResult().size() == 0){
+                                        Log.d(TAG, "onComplete: No more items");
+                                        no_more_items_text.setVisibility(View.VISIBLE);
+                                        loading_progress_bar.setVisibility(View.GONE);
+
+                                    }
+
                                 }
-                                Toast.makeText(mContext, ""+post_arraylist.size(), Toast.LENGTH_SHORT).show();
-                                feed_adapter.notifyDataSetChanged();
+
+                            } else {
+                                //Log.d(TAG, "onComplete: No More events");
+                                //  Log.d(TAG, "Error getting documents: ", task.getException());
                             }
                         }
-                        else {
-                            //  Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
+                    });
+        }
+        else {
+            //TODO ERROR HERE
+            Log.d(TAG, "PullMorePosts: post_array_list_size" + post_arraylist.size());
+            array_list_updated = true;
+        }
     }
+
     private void buildEventFeed(){
 
-        Toast.makeText(mContext, ""+post_arraylist.size(), Toast.LENGTH_SHORT).show();
+        // TODO The linear layout manager is not default recyclerview LLM
+       // Toast.makeText(mContext, ""+post_arraylist.size(), Toast.LENGTH_SHORT).show();
         feed_layout_manager = new LinearLayoutManager(getContext());
         feed_adapter = new FeedAdapter(post_arraylist, this);
         feed_recycler_view.setLayoutManager(feed_layout_manager);
@@ -248,7 +302,7 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
 
     @Override
     public void onFeedClick(int position) {
-        Toast.makeText(mContext, ""+ post_arraylist.get(position).getAuthor_name(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, ""+ post_arraylist.get(position).getText(), Toast.LENGTH_SHORT).show();
 
         // TODO THIS IS WHERE TO NAVIGATE TO NEW ACTIVITY
         // post_array_list.get(position); <- this is the clicked event/post
@@ -256,18 +310,24 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
 
     @Override
     public void onBubbleClick(int position) {
+        // this can be removed in the full app
+        no_more_items_text.setVisibility(View.GONE);
+
+
+        loading_progress_bar.setVisibility(View.GONE);
        // Toast.makeText(mContext, ""+bubble_arraylist.get(position), Toast.LENGTH_SHORT).show();
         post_arraylist.clear();
         feed_adapter.notifyDataSetChanged();
+        feed_adapter.notifyItemRangeInserted(0,post_arraylist.size());
         if(bubble_arraylist.get(position).equals("Posts")){
            BubbleQuery(false);
         }
         else if(bubble_arraylist.get(position).equals("Events")){
             BubbleQuery(true);
-
         }
-        else if(bubble_arraylist.get(position).equals("Univeristy")){
-            PullMorePosts();
+        else if(bubble_arraylist.get(position).equals("University")){
+            BuildArrayList();
+            feed_adapter.notifyDataSetChanged();
         }
 
         //BubbleQuery();
@@ -282,7 +342,7 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
 
 
         db_reference.collection("universities").document("ucalgary.ca").collection("posts")
-                .limit(10)
+                .limit(15)
                 .whereEqualTo("is_event",event)
                 //TODO if using the order by in this area, it requires an index to be set manually, or with (start from)
                 //.orderBy("creation_millis", Query.Direction.DESCENDING)
@@ -291,7 +351,7 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(mContext, ""+ post_arraylist.size(), Toast.LENGTH_SHORT).show();
+
                             if(task.getResult()!=null) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     // Toast.makeText(MainActivity.this, document.getId() + " => " + document.getData(), Toast.LENGTH_SHORT).show();
@@ -304,6 +364,7 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
 
 
                                 feed_adapter.notifyDataSetChanged();
+                                feed_adapter.notifyItemRangeInserted(0,post_arraylist.size());
                             }
                         }
                         else {

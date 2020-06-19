@@ -468,8 +468,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                     compressed_bitmap = compressionHandler();
                     image_upload_view.setImageBitmap(compressed_bitmap);
 
-                    if (current_post != null) current_post.setVisual("picture");
-                    else if (current_event != null) current_event.setVisual("picture");
+                    if (current_post!=null) current_post.setVisual("picture");
+                    else if (current_event!=null) current_event.setVisual("picture");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -486,8 +486,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                 // glide allows gif to be displayed
                 Glide.with(this).asGif().apply(myOptions).load(gif_selected).into(gif_upload_view);
                 //TODO this is the place to check sizes/ compress images also potentially clear all other views their previously chosen images
-                if (current_post != null) current_post.setVisual("gif");
-                else if (current_event != null) current_event.setVisual("gif");
+                if (!current_post.equals("")) current_post.setVisual("gif");
+                else if (!current_event.equals("")) current_event.setVisual("gif");
             } else {
                 Toast.makeText(CreatePost.this, "No Gif Selected", Toast.LENGTH_SHORT).show();
             }
@@ -572,6 +572,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                 this_user.getId(),
                 this_user.getName(),
                 true,
+                "",
                 "");
     }
 
@@ -598,7 +599,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
 
             // if a picture was selected, a compressed bitmap will converted to a byte array and stored in the DB
             //TODO if someone chooses a picture, then a different media but finally decides on picture this wont fire
-            if (current_post.getVisual() == null) {
+            if (current_post.getVisual().equals("")) {
                 current_post.setVisual("nothing");
 
             } else if (current_post.getVisual().equals("picture")) {
@@ -645,7 +646,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
             current_event.setEnd_millis(end_date_millis + end_time_millis);
 
 
-            if (current_event.getVisual() == null) {
+            if (current_event.getVisual().equals("")) {
                 current_event.setVisual("nothing");
             } else if (current_event.getVisual().equals("picture")) {
                 storePictureInDB(bmpToByteArray(compressed_bitmap));
