@@ -104,15 +104,26 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
         public UserViewHolder(@NonNull View itemView, final OnUserItemClickListener listener) {
             super(itemView);
+
+            // Initialize views
             circle_img = itemView.findViewById(R.id.item_members_image);
             tv_name = itemView.findViewById(R.id.item_members_name);
             button_options = itemView.findViewById(R.id.item_members_options);
+
+            //Set Listeners
+            circle_img.setOnClickListener(v -> {
+                if (listener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION)
+                        listener.onUserClick(position);
+                }
+            });
 
             tv_name.setOnClickListener(v -> {
                 if (listener != null){
                     int position = getAdapterPosition();
                     if(position != RecyclerView.NO_POSITION)
-                        listener.onNameClick(position);
+                        listener.onUserClick(position);
                 }
             });
 
@@ -131,7 +142,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 ***************************************************************************************************/
 
     public interface OnUserItemClickListener {
-        void onNameClick(int position);
+        void onUserClick(int position);
         void onOptionsClick(int position);
     }
 }

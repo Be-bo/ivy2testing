@@ -14,12 +14,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
+import com.ivy2testing.entities.Organization;
+import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.MainActivity;
+import com.ivy2testing.userProfile.UserProfileActivity;
+import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.adapters.UserAdapter;
 
 import java.util.ArrayList;
@@ -161,9 +164,12 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
 ***************************************************************************************************/
 
     @Override
-    public void onNameClick(int position) {
-        //TODO go to this user's profile
-        Toast.makeText(this,"Name: " + users.get(position).getName(),Toast.LENGTH_SHORT).show();
+    public void onUserClick(int position) {
+        Log.d(TAG, "Starting UserProfile Activity for user " + users.get(position).getId());
+        Intent intent = new Intent(this, UserProfileActivity.class);
+        intent.putExtra("user", users.get(position));
+        intent.putExtra("viewer_id", viewer_id);
+        startActivityForResult(intent, Constant.USER_PROFILE_REQUEST_CODE);
     }
 
     @Override
@@ -215,12 +221,18 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
 
         firebase_db.document(address).get().addOnCompleteListener( task->{
             if (task.isSuccessful() && task.getResult() != null) {
-                User user = task.getResult().toObject(User.class);
+                User user;
+                DocumentSnapshot doc = task.getResult();
+                if ((boolean) doc.get("is_organization"))
+                    user = task.getResult().toObject(Organization.class);
+                else user = task.getResult().toObject(Student.class);
+
                 if (user != null) {
                     user.setId(user_id);
                     users.add(user);
-                    adapter.notifyItemInserted(users.size()-1);
-                } else Log.e(TAG, "User was null!");
+                    adapter.notifyItemInserted(users.size() - 1);
+                }
+                else Log.e(TAG, "User was null!");
             }
             else {
                 Log.e(TAG, "loadUserFromDB: unsuccessful or does not exist.");
