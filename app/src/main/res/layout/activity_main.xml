@@ -41,11 +41,11 @@
         </com.google.android.material.bottomnavigation.BottomNavigationView>
 
         <FrameLayout
-        android:id="@+id/main_loadingScreen"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:translationZ="90dp"
-        android:visibility="gone" />
+            android:id="@+id/main_loadingScreen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:translationZ="90dp"
+            android:visibility="gone" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

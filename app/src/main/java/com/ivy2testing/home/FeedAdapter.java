@@ -91,6 +91,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                 holder.feed_title.setText(current_event.getName().toString());
                 holder.feed_title.setVisibility(View.VISIBLE);
             }
+            else
+                holder.feed_title.setVisibility(View.GONE);
+
+
             // There is a weird bug with the title disappearing from events when you scroll far enough passed them
             // to solve this for now... just going to make titles/names View.GONE, they will only become visible if they
             // exist. Solves the bug for now/ if similar bugs appear later
