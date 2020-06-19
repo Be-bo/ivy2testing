@@ -51,14 +51,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginHorizontal="4dp">
+                    android:layout_marginTop="8dp"
+                    android:layout_marginHorizontal="8dp">
 
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/viewPost_userImage"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:src="@drawable/ic_account_circle"
+                            android:src="@drawable/ic_profile_selected"
                             android:contentDescription="@string/profile_pic"
                             android:onClick="viewAuthorProfile"/>
 

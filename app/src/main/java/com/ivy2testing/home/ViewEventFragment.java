@@ -3,6 +3,7 @@ package com.ivy2testing.home;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
@@ -30,8 +32,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /** @author Zahra Ghavasieh
  * Overview: Event view fragment
@@ -62,7 +66,7 @@ public class ViewEventFragment extends Fragment {
     private String viewer_id;           // Nullable!
     private Uri viewer_img;             // Nullable
 
-    private CircleImageAdapter going_adapter;             // Recycler Adapter for going_ids
+    private CircleImageAdapter going_adapter;       // Recycler Adapter for going_ids
     private LinearLayoutManager layout_man;         // Recycler Layout manager
     private List<Uri> going_img_uris = new ArrayList<>(6); // non synchronous adds!
     private int lastUriPosition = 0;                // Pagination: position of last img loaded
@@ -140,17 +144,12 @@ public class ViewEventFragment extends Fragment {
         else if (event.getGoing_ids().contains(viewer_id)) button_going.setChecked(true);
     }
 
-    // OnClick Listeners
+    // OnClick and scroll Listeners
     private void setListeners(){
         if (event.getLink() != null) tv_link.setOnClickListener(v1 -> goToLink());
         if (event.getPinned_id() != null) tv_pinned.setOnClickListener(v1 -> viewPinned());
         tv_seeAll.setOnClickListener(v1 -> seeAllGoingUsers());
         rv_going.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -251,7 +250,13 @@ public class ViewEventFragment extends Fragment {
 
     // OnClick for See All: Launch a new Activity to view users
     private void seeAllGoingUsers(){
-        //TODO pass
+        Intent intent = new Intent(getContext(), SeeAllUsersActivity.class);
+        Log.d(TAG, "Starting SeeAll Activity to see all going users");
+        intent.putExtra("title", "Going Users");
+        intent.putExtra("viewer_id", viewer_id);
+        intent.putExtra("this_uni_domain", event.getUni_domain());
+        intent.putExtra("user_ids", (ArrayList<String>) event.getGoing_ids());
+        startActivityForResult(intent, Constant.SEEALL_USERS_REQUEST_CODE);
     }
 
     // View a user's profile
@@ -358,21 +363,17 @@ public class ViewEventFragment extends Fragment {
                     if (task.isSuccessful()) uri = task.getResult();
                     else Log.w(TAG, "this user's image doesn't exist! user: " + user_id);
 
-
-                    //if (uri != null){
-
-                        // Always load viewer's id first!
-                        if (user_id.equals(viewer_id)){
-                            viewer_img = uri;
-                            going_img_uris.add(0, uri);
-                            going_adapter.notifyItemInserted(0);
-                        }
-                        else {
-                            going_img_uris.add(uri);
-                            going_adapter.notifyItemInserted(going_img_uris.size()-1);
-                        }
-                        Log.d(TAG, "Added to position "+ event.getGoing_ids().indexOf(user_id)+" img " + uri);
-                    //}
+                    // Always load viewer's id first!
+                    if (user_id.equals(viewer_id)){
+                        viewer_img = uri;   // NULLABLE (adapter handles null uris)
+                        going_img_uris.add(0, uri);
+                        going_adapter.notifyItemInserted(0);
+                    }
+                    else {
+                        going_img_uris.add(uri);
+                        going_adapter.notifyItemInserted(going_img_uris.size()-1);
+                    }
+                    Log.d(TAG, "Added to position "+ event.getGoing_ids().indexOf(user_id)+" img " + uri);
                 });
     }
 

@@ -54,7 +54,7 @@ public class CircleImageAdapter extends RecyclerView.Adapter<CircleImageAdapter.
     @Override
     public void onBindViewHolder(@NonNull CircleImgHolder holder, int position) {
         if (images.get(position) != null) Picasso.get().load(images.get(position)).into(holder.circle_img);
-        else holder.circle_img.setImageDrawable(context.getDrawable(R.drawable.ic_account_circle));
+        else holder.circle_img.setImageDrawable(context.getDrawable(R.drawable.ic_profile_selected));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class CircleImageAdapter extends RecyclerView.Adapter<CircleImageAdapter.
 
 
 
-    /* View Holder subclass
+/* View Holder subclass
 ***************************************************************************************************/
 
     static class CircleImgHolder extends RecyclerView.ViewHolder {
