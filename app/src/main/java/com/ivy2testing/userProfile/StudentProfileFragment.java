@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -28,6 +29,7 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
+import com.ivy2testing.home.SeeAllPostsActivity;
 import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.R;
@@ -38,6 +40,7 @@ import com.ivy2testing.util.adapters.SquareImageAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /** @author Zahra Ghavasieh
@@ -217,8 +220,19 @@ public class StudentProfileFragment extends Fragment {
             Log.e(TAG, "getActivity() was null when calling EditProfile.");
     }
 
-    // See all posts TODO
-    private void seeAllPosts(){}
+    // See all posts
+    private void seeAllPosts(){
+        Intent intent = new Intent(getContext(), SeeAllPostsActivity.class);
+        if (my_profile) intent.putExtra("viewer_id", student.getId());
+        else intent.putExtra("viewer_id", viewer_id);
+        intent.putExtra("this_uni_domain", student.getUni_domain());
+
+        // Make "Query"
+        HashMap<String, Object> query_map = new HashMap<String, Object>() {{ put("author_id", student.getId()); }};
+        intent.putExtra("query_map", query_map);
+
+        startActivityForResult(intent, Constant.SEEALL_POSTS_REQUEST_CODE);
+    }
 
     // A post in recycler was selected
     private void selectPost(int position) {
@@ -229,8 +243,8 @@ public class StudentProfileFragment extends Fragment {
 
         Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
         intent.putExtra("post", posts.get(position));
-        if (viewer_id != null) intent.putExtra("viewer_id", viewer_id);
-        else intent.putExtra("viewer_id", student.getId());
+        if (my_profile) intent.putExtra("viewer_id", student.getId());
+        else intent.putExtra("viewer_id", viewer_id);
         startActivityForResult(intent, Constant.VIEW_POST_REQUEST_CODE);
     }
 
@@ -273,13 +287,8 @@ public class StudentProfileFragment extends Fragment {
 
         base_storage_ref.child(ImageUtils.getProfilePath(student.getId())).getDownloadUrl()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()){
-                        profile_img_uri = task.getResult();
-                    }
-                    else {
-                        Log.w(TAG, task.getException());
-                        student.setProfile_picture(""); // image doesn't exist TODO delete?
-                    }
+                    if (task.isSuccessful()) profile_img_uri = task.getResult();
+                    else Log.w(TAG, task.getException());
 
                     // Reload views
                     setupViews();
@@ -303,7 +312,8 @@ public class StudentProfileFragment extends Fragment {
 
         String address = "universities/" + student.getUni_domain() + "/posts";
 
-        db.collection(address).whereEqualTo("author_id", student.getId()).limit(6)
+        db.collection(address).whereEqualTo("author_id", student.getId())
+                .limit(6).orderBy("creation_millis", Query.Direction.DESCENDING)
                 .get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()){
                         QuerySnapshot querySnapshot = task.getResult();
@@ -342,6 +352,8 @@ public class StudentProfileFragment extends Fragment {
             Log.e(TAG, "Post was null!");
             return;
         }
+
+        //TODO fix bug: if post has no visual
 
         int postIndex = posts.indexOf(post);
         if (postIndex < post_img_uris.size() && post_img_uris.get(postIndex) != null) {

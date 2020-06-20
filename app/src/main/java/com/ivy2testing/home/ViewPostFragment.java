@@ -18,6 +18,8 @@ import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.util.Constant;
 
+import java.util.HashMap;
+
 /** @author Zahra Ghavasieh
  * Overview: Post view fragment only includes text and pinned ID
  */
@@ -87,7 +89,7 @@ public class ViewPostFragment extends Fragment {
         // Pull all posts relating to event
         if (post.getId().equals(post.getPinned_id())){
             Log.d(TAG, "View all posts related to this event...");
-            //TODO pass a query to seeAllActivity
+            seeAllPosts();  // Pass a "query" to SeeAllPostsActivity
         }
 
         // Pull pinned event page
@@ -95,6 +97,20 @@ public class ViewPostFragment extends Fragment {
             Log.d(TAG, "View Pinned Event Page...");
             loadEventFromDB();
         }
+    }
+
+    // See all posts that are pinned to the same event
+    private void seeAllPosts() {
+        Intent intent = new Intent(getContext(), SeeAllPostsActivity.class);
+        intent.putExtra("viewer_id", viewer_id);
+        intent.putExtra("this_uni_domain", post.getUni_domain());
+        intent.putExtra("title", post.getPinned_id());
+
+        // Make "Query"
+        HashMap<String, Object> query_map = new HashMap<String, Object>() {{ put("pinned_id", post.getPinned_id()); }};
+        intent.putExtra("query_map", query_map);
+
+        startActivityForResult(intent, Constant.SEEALL_POSTS_REQUEST_CODE);
     }
 
     // Start new Activity to view event
