@@ -4,14 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -20,9 +18,6 @@ import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.MainActivity;
-import com.ivy2testing.main.UserViewModel;
-
-import java.util.Map;
 
 /** @author Zahra Ghavasieh
  * Overview: 3rd party User Profile view Activity.
@@ -33,7 +28,8 @@ public class UserProfileActivity extends AppCompatActivity {
     // Constants
     private final static String TAG = "UserProfileActivity";
 
-    // User Address
+    // User Variables
+    private User user;              // NULLABLE
     private String this_uni_domain;
     private String this_user_id;    // User whose profile we're looking at
     private String viewer_id;       // Current user
@@ -51,16 +47,18 @@ public class UserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_profile);
 
         // Initialization
-        getIntentExtras();  // Get user address in database via intent
-        setUpToolBar();     // set up toolBar as an actionBar
-        getUserInfo();
+        getIntentExtras();                  // Get user address in database via intent
+        setUpToolBar();                     // set up toolBar as an actionBar
+        if (user != null) setFragment();
+        else getUserInfo();                 // Get user info from firebase if not provided in intent
+
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Handling up button for when another activity called it (it will simply go back to main otherwise)
         if (item.getItemId() == android.R.id.home && !isTaskRoot()){
-            goBackToParent(); // Tells parent if user was updated
+            goBackToParent();
             return true;
         }
         else return super.onOptionsItemSelected(item);
@@ -82,7 +80,7 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     // Set up either StudentProfile or OrganizationProfile Fragment in FrameLayout
-    private void setFragment(User user) {
+    private void setFragment() {
         Fragment selected_fragment;
 
         if (user.getIs_organization()) selected_fragment = new OrganizationProfileFragment();
@@ -99,17 +97,26 @@ public class UserProfileActivity extends AppCompatActivity {
 /* Transition Methods
 ***************************************************************************************************/
 
-    // Get student address in firebase
+    // Get user (or address in firebase)
     private void getIntentExtras(){
         if (getIntent() != null){
 
-            this_uni_domain = getIntent().getStringExtra("this_uni_domain");
-            this_user_id = getIntent().getStringExtra("this_user_id");
+            // Either give the address or user itself to view
+
+            user = getIntent().getParcelableExtra("user");
             viewer_id = getIntent().getStringExtra("viewer_id");
 
-            if (this_uni_domain == null || this_user_id == null){
-                Log.e(TAG,"User Address is null!");
-                finish();
+            if (user == null) {
+                this_uni_domain = getIntent().getStringExtra("this_uni_domain");
+                this_user_id = getIntent().getStringExtra("this_user_id");
+
+                if (this_uni_domain == null || this_user_id == null){
+                    Log.e(TAG, "User Address is null!");
+                    finish();
+                }
+            } else {
+                this_user_id = user.getId();
+                this_uni_domain = user.getUni_domain();
             }
         }
     }
@@ -143,17 +150,16 @@ public class UserProfileActivity extends AppCompatActivity {
         db.document(address).get().addOnCompleteListener(task -> {
             if(task.isSuccessful() && task.getResult() != null){
                 DocumentSnapshot doc = task.getResult();
-                User usr;
                 if ((boolean) doc.get("is_organization"))
-                    usr = task.getResult().toObject(Organization.class);
-                else usr = task.getResult().toObject(Student.class);
+                    user = task.getResult().toObject(Organization.class);
+                else user = task.getResult().toObject(Student.class);
 
-                if (usr != null){
-                    usr.setId(this_user_id);
-                    setFragment(usr);
+                if (user != null){
+                    user.setId(this_user_id);
+                    setFragment();
                 }
                 else {
-                    Log.e(TAG, "usr was null!");
+                    Log.e(TAG, "user was null!");
                     goBackToParent();
                 }
 

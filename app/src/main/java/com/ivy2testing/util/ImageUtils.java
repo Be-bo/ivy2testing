@@ -63,4 +63,9 @@ public final class ImageUtils {
     public static String getPreviewPath(String user_id) {
         return "userfiles/" + user_id + "/previewimage.jpg";
     }
+
+    // Return path of a user's profile image
+    public static String getProfilePath(String user_id) {
+        return "userfiles/" + user_id + "/profileimage.jpg";
+    }
 }

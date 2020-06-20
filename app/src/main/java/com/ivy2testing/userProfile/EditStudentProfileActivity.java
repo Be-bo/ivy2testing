@@ -4,7 +4,6 @@ package com.ivy2testing.userProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,12 +28,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.main.MainActivity;
@@ -44,20 +41,18 @@ import com.ivy2testing.util.SpinnerAdapter;
 import com.squareup.picasso.Picasso;
 import com.yalantis.ucrop.UCrop;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.UUID;
+
 
 /** @author Zahra Ghavasieh
  * Overview: Edit Student Profile from Student Profile Fragment
- * Notes: Image [crop, compression] not implemented yet
  */
 public class EditStudentProfileActivity extends AppCompatActivity {
 
     // Constants
-    private final static String TAG = "EditStudProfileActivityTag";
+    private final static String TAG = "EditStudProfileActivity";
 
     // Views
     private ImageView mImg;
@@ -102,35 +97,22 @@ public class EditStudentProfileActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK){
             switch(requestCode){
+
+                // Coming back from picking an image, on to Crop!
                 case Constant.PICK_IMAGE_REQUEST_CODE:
                     if(data != null && data.getData() != null){
                         Uri destinationUri = Uri.fromFile(new File(this.getCacheDir(), "img_" + System.currentTimeMillis()));
-                        UCrop.of(data.getData(), destinationUri).withAspectRatio(1,1).withMaxResultSize(ImageUtils.IMAGE_MAX_DIMEN, ImageUtils.IMAGE_MAX_DIMEN).start(this);
+                        UCrop.of(data.getData(), destinationUri)
+                                .withAspectRatio(1,1)
+                                .withMaxResultSize(ImageUtils.IMAGE_MAX_DIMEN, ImageUtils.IMAGE_MAX_DIMEN)
+                                .start(this);
                     }
                     break;
+
+                // Coming back from crop, save image as preview and fullsized (profile)
                 case UCrop.REQUEST_CROP:
-                    //TODO: some kinda loading
-                    final Uri resultUri = UCrop.getOutput(data);
-                    try {
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
-                        byte[] previewBytes = ImageUtils.compressAndGetPreviewBytes(bitmap);
-                        byte[] standardBytes = ImageUtils.compressAndGetBytes(bitmap);
-                        String profPicPath = "userfiles/" + student.getId() + "/profileimage.jpg";
-                        String previewPath = "userfiles/" + student.getId() + "/previewimage.jpg";
-                        base_storage_ref.child(profPicPath).putBytes(standardBytes).addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                base_storage_ref.child(previewPath).putBytes(previewBytes).addOnCompleteListener(task1 -> {
-                                    if(task1.isSuccessful()){
-                                        Glide.with(this).load(resultUri).into(mImg);
-                                        //TODO: end loading
-                                    } else Toast.makeText(this, "Failed to get image. :-(", Toast.LENGTH_LONG).show();
-                                });
-                            } else Toast.makeText(this, "Failed to get image. :-(", Toast.LENGTH_LONG).show();
-                        });
-                    } catch (IOException e) {
-                        Toast.makeText(this, "Failed to get image. :-(", Toast.LENGTH_LONG).show();
-                        e.printStackTrace();
-                    }
+                    imgUri = UCrop.getOutput(data);
+                    Picasso.get().load(imgUri).into(mImg);
                     break;
             }
         } else if (resultCode != RESULT_CANCELED) {
@@ -254,7 +236,6 @@ public class EditStudentProfileActivity extends AppCompatActivity {
             student.setName(mName.getText().toString().trim());
             student.setBirth_millis(datePickerToMillis(mBirthDay));
             if (!degree.equals("Degree")) student.setDegree(degree);
-
             saveImage(old_name.equals(student.getName()));    // Save to database
         }
         else allowInteraction(); // There was an error. So try Again!
@@ -332,22 +313,18 @@ public class EditStudentProfileActivity extends AppCompatActivity {
     // Load student profile picture
     // Will throw an exception if file doesn't exist in storage but app continues to work fine
     private void loadImage(){
-        // Make sure student has a profile image already
-        if (student.getProfile_picture() != null){
-            base_storage_ref.child(student.getProfile_picture()).getDownloadUrl()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()){
-                            Uri path = task.getResult();
-                            Picasso.get().load(path).into(mImg);
-                        }
-                        else {
-                            Log.w(TAG, task.getException());
-                            student.setProfile_picture(""); // image doesn't exist
-                        }
-                        allowInteraction();
-                    });
-        }
-        else allowInteraction();
+        base_storage_ref.child(ImageUtils.getProfilePath(student.getId())).getDownloadUrl()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
+                        Uri path = task.getResult();
+                        Picasso.get().load(path).into(mImg);
+                    }
+                    else {
+                        Log.w(TAG, task.getException());
+                        student.setProfile_picture(""); // image doesn't exist TODO delete?
+                    }
+                    allowInteraction();
+                });
     }
 
     // Rewrite old student document with new info
@@ -380,37 +357,45 @@ public class EditStudentProfileActivity extends AppCompatActivity {
             });
     }
 
-    // Rewrite old Pic adn save to storage
+    // Rewrite old Pic and save to storage
     private void saveImage(boolean name_changed){
 
         // Skip image saving if image hasn't changed
-        if (imgUri == null || getCompressedImageBytes() == null){
+        if (imgUri == null){
             saveStudentInfo(name_changed);
             return;
         }
 
-
         // Build storage path
-        final String path = "userfiles/" + student.getId() + "/" + UUID.randomUUID().toString() +"JPG";
-        StorageReference storageReference = base_storage_ref.child(path);
+        String profPicPath = ImageUtils.getProfilePath(student.getId());
+        String previewPath = ImageUtils.getPreviewPath(student.getId());
 
-        // Upload image to storage and proceed to save other user info
-        UploadTask uploadTask = storageReference.putBytes(getCompressedImageBytes());
-        uploadTask.addOnCompleteListener(task -> {
+        try {
+            // Compress image for preview and profile view
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imgUri);
+            byte[] previewBytes = ImageUtils.compressAndGetPreviewBytes(bitmap);
+            byte[] standardBytes = ImageUtils.compressAndGetBytes(bitmap);
 
-            // Task failed
-            if (!task.isSuccessful()) {
-                allowInteraction();
-                Log.e(TAG, "Profile Upload Failed.");
-            }
+            base_storage_ref.child(profPicPath).putBytes(standardBytes).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "Profile Image saved successfully.");
+                    base_storage_ref.child(previewPath).putBytes(previewBytes).addOnCompleteListener(task1 -> {
 
-            // Task was successful
-            else if (task.getResult() != null)
-                student.setProfile_picture(path);   // Save download URL of profile picture
+                        if(task1.isSuccessful()) Log.d(TAG, "Preview Image saved successfully.");
+                        else Toast.makeText(this, "Failed to save image. :-(", Toast.LENGTH_LONG).show();
 
-            // Add user profile to database
-            saveStudentInfo(name_changed);
-        });
+                        saveStudentInfo(name_changed); // Save student Info either way
+                    });
+                } else {
+                    Toast.makeText(this, "Failed to save image. :-(", Toast.LENGTH_LONG).show();
+                    saveStudentInfo(name_changed);  // Save student info either way
+                }
+            });
+        } catch (IOException e) {
+            Toast.makeText(this, "Failed to save image. :-(", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            saveStudentInfo(name_changed);  // Save student info either way
+        }
     }
 
 
@@ -439,17 +424,5 @@ public class EditStudentProfileActivity extends AppCompatActivity {
             if (array[i].trim().equals(str)) return i;
         }
         return -1; // Not found
-    }
-
-    // Compress image
-    private byte[] getCompressedImageBytes(){
-        if (mImg.getDrawable() != null) {
-            BitmapDrawable bitmapDrawable = ((BitmapDrawable) mImg.getDrawable());
-            Bitmap bitmap = bitmapDrawable.getBitmap();
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            return stream.toByteArray();
-        }
-        else return null;
     }
 }

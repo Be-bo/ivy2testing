@@ -33,6 +33,7 @@ import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.util.Constant;
+import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.adapters.SquareImageAdapter;
 import com.squareup.picasso.Picasso;
 
@@ -155,6 +156,7 @@ public class StudentProfileFragment extends Fragment {
         setupViews();               // populate UI
         setUpRecycler();            // set up posts recycler view
         setListeners(root_view);    // set up listeners
+        getStudentPic();            // Do Other setups
     }
 
     private void declareViews(View v){
@@ -269,25 +271,19 @@ public class StudentProfileFragment extends Fragment {
     private void getStudentPic() {
         if (student == null) return;
 
-        // Make sure student has a profile image already
-        if (student.getProfile_picture() != null){
-            base_storage_ref.child(student.getProfile_picture()).getDownloadUrl()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()){
-                            profile_img_uri = task.getResult();
-                        }
-                        else {
-                            Log.w(TAG, task.getException());
-                            student.setProfile_picture(""); // image doesn't exist
-                        }
+        base_storage_ref.child(ImageUtils.getProfilePath(student.getId())).getDownloadUrl()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
+                        profile_img_uri = task.getResult();
+                    }
+                    else {
+                        Log.w(TAG, task.getException());
+                        student.setProfile_picture(""); // image doesn't exist TODO delete?
+                    }
 
-                        // Reload views
-                        setupViews();
-                    });
-        } else {
-            // Reload views
-            setupViews();
-        }
+                    // Reload views
+                    setupViews();
+                });
     }
 
     // Load a maximum of 6 posts from FireStore give its id

@@ -47,6 +47,10 @@
     <string name="edit">Edit</string>
     <string name="posts">Posts</string>
 
+    <string name="view_profile">View Profile</string>
+    <string name="add_friend">Add Friend</string>
+    <string name="message">Message</string>
+
     <string name="error_invalidName">Please enter a nonempty Name</string>
     <string name="error_noPosts">No Posts to Display</string>
     <string name="error_getPost">An error occurred while retrieving posts</string>
@@ -150,10 +154,6 @@
         <item> Zoology </item>
     </string-array>
 
-    <string name="title_activity_student_profile">StudentProfileActivity</string>
-    <string name="title_activity_view_post">ViewPostActivity</string>
-
-
     <!-- Sample texts -->
     <string name="sample_views">#### Views</string>
     <string name="sample_pinnedEvent">Pinned Event</string>
@@ -165,28 +165,6 @@
         Nunc aliquet erat eros, vel tempus sapien sagittis a. Maecenas luctus augue velit, in consectetur risus ultricies vitae.
         Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
         Praesent nulla orci, aliquam porttitor molestie at, tincidunt ut sapien. Sed pharetra lobortis elit quis iaculis.
-    </string>
-    <string name="sample_text_long">
-        Vivamus non sodales urna. Curabitur aliquam pretium leo eget lobortis.
-        Curabitur volutpat, mi eu posuere rhoncus, mi nisl aliquet libero, ut porttitor turpis quam eu nisl.
-        Sed imperdiet, arcu ac iaculis euismod, odio nunc posuere justo, at condimentum purus mauris a quam.
-        Sed ornare luctus mi sed fermentum. Suspendisse rhoncus nulla a ante lobortis tincidunt.
-        Aliquam eros orci, cursus nec ultrices et, ultricies eget erat. Nam non metus venenatis, laoreet sem at, mattis enim.
-        Vivamus mattis nisi eu aliquam sagittis. Interdum et malesuada fames ac ante ipsum primis in faucibus.
-        Cras hendrerit fermentum urna, sit amet imperdiet elit ultricies at. Praesent a euismod mi.
-        Quisque non lacus urna. Ut congue commodo ipsum a pretium. Nunc pellentesque erat sem, eu pharetra diam fringilla vitae.
-        Donec sed porta magna, id fermentum lacus.
-
-        In eget risus sed orci hendrerit eleifend. Aenean nec diam nec velit consectetur dapibus quis ut massa.
-        Donec rutrum eros et metus congue ultrices. Suspendisse nisl metus, elementum ut ullamcorper nec, lobortis et turpis.
-        Vivamus molestie eros vitae lectus vehicula, in lobortis dui vulputate. Ut aliquet iaculis leo sed dapibus. Sed et vehicula magna.
-        Nullam tempor arcu consequat, sodales mi ut, semper odio. In viverra tellus ac eros faucibus, tincidunt facilisis metus sodales.
-        Cras iaculis elit sit amet libero condimentum porttitor. In a est dui. Fusce et sodales enim. Fusce tempor dui at rutrum tristique.
-        Curabitur vehicula tincidunt varius. Mauris nisi mi, maximus rutrum porta sed, ultricies vel arcu.
-
-        Integer eu ante ornare, pharetra neque sit amet, finibus enim. Quisque luctus arcu lorem, congue auctor eros sollicitudin sit amet.
-        Nam venenatis nisl in accumsan malesuada. Integer in auctor libero. Nulla volutpat urna at metus elementum gravida. Nulla at orci libero.
-        Sed at pulvinar nisl. Aenean pretium placerat elit. Aliquam nec mauris convallis ex interdum auctor a nec orci.
     </string>
 
 </resources>

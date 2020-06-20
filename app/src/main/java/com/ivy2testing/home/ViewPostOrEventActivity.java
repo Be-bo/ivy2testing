@@ -28,6 +28,7 @@ import com.ivy2testing.entities.Post;
 import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.userProfile.UserProfileActivity;
 import com.ivy2testing.util.Constant;
+import com.ivy2testing.util.ImageUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
@@ -235,28 +236,18 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         }
 
         // Get author address
-        String address = "universities/" + post.getUni_domain() + "/users/" + post.getAuthor_id();
+        String address = ImageUtils.getPreviewPath(post.getAuthor_id());
         if (address.contains("null")){
-            Log.e(TAG, "User Address has null values.");
+            Log.e(TAG, "Address contained null! UserId: " + post.getAuthor_id());
             return;
         }
 
-        // Get Profile pic from database
-        db.document(address).get().addOnCompleteListener(task -> {
-           if (task.isSuccessful()){
-               DocumentSnapshot doc = task.getResult(); // We only need image field so casting to an object not necessary
-               if (doc != null && doc.get("profile_picture") != null){
-
-                   // Get profile image from storage and load into image view
-                   String imageAddress = Objects.requireNonNull(doc.get("profile_picture")).toString();
-                   base_storage_ref.child(imageAddress).getDownloadUrl().addOnCompleteListener(task1 -> {
-                       if (task1.isSuccessful()) Picasso.get().load(task1.getResult()).into(mAuthorImg);
-                       else Log.e(TAG, "Could not get User Profile Image from storage.");
-                   });
-               }
-               else Log.e(TAG, "User " + post.getAuthor_id() + " does not exist or doesn't have a profile picture.");
-           }
+        base_storage_ref.child(address).getDownloadUrl().addOnCompleteListener(task -> {
+            if (task.isSuccessful())
+                Picasso.get().load(task.getResult()).into(mAuthorImg);
+            else Log.e(TAG, "Could not get User Profile Image from storage.");
         });
+
     }
 
     // Loads post visual (only image for now)
