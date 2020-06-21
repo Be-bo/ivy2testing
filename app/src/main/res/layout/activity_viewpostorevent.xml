@@ -33,10 +33,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/viewPost_linearRootLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/viewPost_visual"
@@ -81,21 +82,42 @@
                     android:layout_marginTop="@dimen/general_view_margin">
                 </FrameLayout>
 
-                <TextView
-                    android:id="@+id/viewPost_comment"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/StandardClickableText"
-                    android:text="@string/comments"
+                    android:orientation="horizontal"
                     android:layout_marginTop="24dp"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/StandardClickableText"
+                            android:text="@string/comments"
+                            android:onClick="expandComments"/>
+
+                        <ImageButton
+                            android:id="@+id/viewPost_commentButton"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:backgroundTint="@color/transparent"
+                            android:src="@drawable/ic_arrow_down"
+                            android:contentDescription="@string/expand_comments"
+                            android:onClick="expandComments"/>
+
+                </LinearLayout>
 
                 <View
-                    android:id="@+id/divider"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
                     android:background="?android:attr/listDivider"
                     android:layout_marginTop="2dp"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/viewPost_commentRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"/>
 
         </LinearLayout>
 

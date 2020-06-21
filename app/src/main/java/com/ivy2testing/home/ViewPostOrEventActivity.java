@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +17,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.AutoTransition;
+import androidx.transition.TransitionManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -48,7 +52,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private ImageView mAuthorImg;
     private TextView mAuthorName;
     private FloatingActionButton mFloatingEditButton;
-    // TODO expandable RecyclerView for comments
+    private ImageButton mExpandComments;
+    private RecyclerView mCommentsRecycler;
 
     // Firebase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -58,6 +63,9 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private Post post;          // Nullable!!!
     private String viewerId;    // Nullable also!!!
     private boolean updated = false;
+
+    // Recycler Variables
+
 
 
 /* Override Methods
@@ -120,6 +128,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         mAuthorImg = findViewById(R.id.viewPost_userImage);
         mAuthorName = findViewById(R.id.viewPost_userName);
         mFloatingEditButton = findViewById(R.id.viewPost_floatingEditButton);
+        mExpandComments = findViewById(R.id.viewPost_commentButton);
+        mCommentsRecycler = findViewById(R.id.viewPost_commentRV);
 
         // Action bar
         setSupportActionBar(findViewById(R.id.viewPost_toolBar));
@@ -135,7 +145,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private void setFields() {
         loadPostVisual();           // Load post visual from storage
         loadAuthorProfileImage();   // Load author profile image from storage
-        loadComments();             // Load comments from database TODO only load when expanding comments
+        setCommentRecycler();       // Set up recycler with recycler manager and adapter
 
         mAuthorName.setText(post.getAuthor_name());
 
@@ -154,6 +164,11 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.viewPost_contents, selected_fragment).commit();
+    }
+
+    // Set up comments recycler with manager and adapter
+    private void setCommentRecycler(){
+
     }
 
 
@@ -222,6 +237,20 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     // Load a completely different fragment/activity??
     public void editPost(View view){
         showToastError("EditPost WIP");
+    }
+
+
+    public void expandComments(View view){
+        if (mCommentsRecycler.getVisibility() == View.GONE){
+            TransitionManager.beginDelayedTransition(findViewById(R.id.viewPost_linearRootLayout), new AutoTransition());
+            mCommentsRecycler.setVisibility(View.VISIBLE);
+            mExpandComments.setImageResource(R.drawable.ic_arrow_up);
+        }
+        else {
+            TransitionManager.beginDelayedTransition(findViewById(R.id.viewPost_linearRootLayout), new AutoTransition());
+            mCommentsRecycler.setVisibility(View.GONE);
+            mExpandComments.setImageResource(R.drawable.ic_arrow_down);
+        }
     }
 
 

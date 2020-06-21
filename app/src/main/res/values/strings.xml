@@ -165,5 +165,6 @@
         Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
         Praesent nulla orci, aliquam porttitor molestie at, tincidunt ut sapien. Sed pharetra lobortis elit quis iaculis.
     </string>
+    <string name="expand_comments">Expand Comments</string>
 
 </resources>
