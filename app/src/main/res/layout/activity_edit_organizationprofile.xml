@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/edit_org_guideline1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.15" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/edit_org_guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.85" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/edit_org_img"
+            android:layout_width="0dp"
+            android:layout_height="300dp"
+            android:src="@drawable/ic_account_circle"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="@id/edit_org_guideline1"
+            app:layout_constraintEnd_toEndOf="@id/edit_org_guideline2"
+            android:contentDescription="@string/profile_pic"/>
+
+        <TextView
+            android:id="@+id/edit_org_change"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/StandardClickableText"
+            android:text="@string/change"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edit_org_img" />
+
+        <LinearLayout
+            android:id="@+id/edit_org_fields"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="@id/edit_org_guideline1"
+            app:layout_constraintEnd_toEndOf="@id/edit_org_guideline2"
+            app:layout_constraintTop_toBottomOf="@id/edit_org_change">
+
+            <EditText
+                android:id="@+id/edit_org_name"
+                android:layout_width="match_parent"
+                style="@style/StandardEditText"
+                android:inputType="textPersonName"
+                android:hint="@string/name"
+                android:autofillHints=""
+                android:layout_marginBottom="16dp"/>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/edit_org_saveButton"
+            android:layout_width="0dp"
+            android:layout_marginBottom="32dp"
+            style="@style/StandardButton"
+            android:text="@string/save"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/edit_org_guideline1"
+            app:layout_constraintEnd_toEndOf="@id/edit_org_guideline2" />
+
+        <ProgressBar
+            android:id="@+id/edit_org_progressBar"
+            style="@style/StandardIndefiniteProgressBar"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/edit_org_fields"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/edit_org_guideline1"
+            app:layout_constraintEnd_toEndOf="@id/edit_org_guideline2"/>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

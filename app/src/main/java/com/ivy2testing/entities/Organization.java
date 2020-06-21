@@ -67,15 +67,6 @@ public class Organization extends User {
     }
 
 
-
-    public boolean isIs_organization() {
-        return is_organization;
-    }
-
-    public boolean isIs_banned() {
-        return is_banned;
-    }
-
     public String getRegistration_platform() {
         return registration_platform;
     }
@@ -83,10 +74,6 @@ public class Organization extends User {
     public List<String> getPost_ids() {
         if (post_ids == null) post_ids = new ArrayList<>();
         return new ArrayList<>(post_ids);          // Return copy
-    }
-
-    public boolean isIs_club() {
-        return is_club;
     }
 
     public List<String> getMember_ids() {
@@ -117,6 +104,8 @@ public class Organization extends User {
     public void deleteRequestFromList(String requestId) {
         request_ids.remove(requestId);
     }
+
+
 
 /* Parcelable Override Methods
 ***************************************************************************************************/

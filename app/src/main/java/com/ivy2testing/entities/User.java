@@ -49,8 +49,7 @@ public class User implements Parcelable {
 
         // Get Domain
         String[] splitEmail = email.split("@");
-        if (splitEmail.length > 1)
-            this.uni_domain = email.split("@")[1];
+        if (splitEmail.length > 1) this.uni_domain = email.split("@")[1];
 
         this.name = splitEmail[0];      // Set a default name
         this.registration_millis = System.currentTimeMillis();
@@ -83,7 +82,6 @@ public class User implements Parcelable {
         return email;
     }
 
-
     public String getProfile_picture() {
         return profile_picture;
     }
@@ -107,6 +105,8 @@ public class User implements Parcelable {
     public boolean getIs_banned() {
         return is_banned;
     }
+
+
 
     public String getRegistration_platform() {
         return registration_platform;
