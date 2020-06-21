@@ -8,31 +8,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Organization;
-import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.util.Constant;
+import com.ivy2testing.util.adapters.SquareImageAdapter;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class OrganizationProfileFragment extends Fragment {
+public class OrganizationProfileFragment extends Fragment implements SquareImageAdapter.OnPostListener {
 
 
     // MARK: Variables and Constants
 
     private static final String TAG = "OrganizationProfileFragmentTag";
+    private static final int POST_LIMIT = 6;
     private View rootView;
     private TextView edit_button;
     private TextView member_requests_button;
@@ -44,8 +48,10 @@ public class OrganizationProfileFragment extends Fragment {
     private TextView name_text;
     private TextView member_number_text;
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
+    private FirebaseFirestore base_database_reference = FirebaseFirestore.getInstance();
     private User this_user;
     private UserViewModel this_user_viewmodel;
+    private SquareImageAdapter post_adapter;
 
 
 
@@ -100,7 +106,7 @@ public class OrganizationProfileFragment extends Fragment {
         member_requests_button.setText(getString(R.string.organization_request_number, requestNumber));
         String profPicPath = "userfiles/"+this_user.getId()+"/profileimage.jpg";
         base_storage_ref.child(profPicPath).getDownloadUrl().addOnCompleteListener(task -> {if(task.isSuccessful() && getContext() != null) Glide.with(getContext()).load(task.getResult()).into(profile_image);});
-        setUpRecyclerViews();
+        setUpPosts();
     }
 
     private void setListeners(){
@@ -110,8 +116,18 @@ public class OrganizationProfileFragment extends Fragment {
         edit_button.setOnClickListener(view -> transToEdit());
     }
 
-    private void setUpRecyclerViews(){
-        //TODO
+    private void setUpPosts(){
+        base_database_reference.collection("universities").document(this_user.getUni_domain()).collection("posts").whereEqualTo("author_id", this_user.getId()).limit(POST_LIMIT).get().addOnCompleteListener(task -> {
+
+        });
+
+//        post_adapter = new SquareImageAdapter();
+        post_recycler.setLayoutManager(new GridLayoutManager(this.getActivity(), 3, GridLayoutManager.VERTICAL, false));
+        post_recycler.setAdapter(post_adapter);
+    }
+
+    private void setUpMembers(){
+
     }
 
     private void getUserProfile(){
@@ -152,6 +168,7 @@ public class OrganizationProfileFragment extends Fragment {
     }
 
     private void transToPosts(){
+
     }
 
     private void transToEdit(){
@@ -167,5 +184,10 @@ public class OrganizationProfileFragment extends Fragment {
             if (resultCode == Activity.RESULT_OK) populateUI(); //changes were made...
         } else
             Log.w(TAG, "Don't know how to handle the request code, \"" + requestCode + "\" yet!");
+    }
+
+    @Override
+    public void onPostClick(int position) {
+        Toast.makeText(getContext(), "POST CLICKED: "+position, Toast.LENGTH_LONG).show();
     }
 }

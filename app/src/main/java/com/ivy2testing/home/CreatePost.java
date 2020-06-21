@@ -38,6 +38,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -154,10 +155,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        if( auth!=null && auth.getUid()!=null)
-            this_user = intent.getParcelableExtra("current_user");
-        else
-            finish();
+        this_user = intent.getParcelableExtra("this_user");
+        if(this_user == null) finish();
 
         setContentView(R.layout.activity_post);
         // post toolbar is included as an <include>
@@ -611,7 +610,10 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                 @Override
                 public void onSuccess(Void aVoid) {
                     Toast.makeText(CreatePost.this, "Posted!", Toast.LENGTH_SHORT).show();
-                    finish();
+
+                    //new post's id also has to be added to this user's post_ids - Robert's Addition
+                    db_reference.collection("universities").document(this_user.getUni_domain()).collection("users").document(this_user.getId()).update("post_ids", FieldValue.arrayUnion(current_post.getId()))
+                            .addOnCompleteListener(task -> {if(task.isSuccessful()) finish();});
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -830,7 +832,9 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         post_image_storage.putBytes(jpeg_file).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if(task.isSuccessful()){
 
+                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
