@@ -263,6 +263,7 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
                                         post_arraylist.add(event_object);
 
                                     }
+                                    loading_progress_bar.setVisibility(View.GONE);
                                     feed_adapter.notifyItemRangeInserted(start, post_arraylist.size());
 
                                     // notify data set changed is jerky and causes hiccups
@@ -314,6 +315,13 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
 
         // TODO THIS IS WHERE TO NAVIGATE TO NEW ACTIVITY
         // post_array_list.get(position); <- this is the clicked event/post
+    }
+
+    public static HomeFragment newInstance(Context con) {
+        HomeFragment hf = new HomeFragment(con);
+
+
+        return hf;
     }
 
 }

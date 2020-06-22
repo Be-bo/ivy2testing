@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
                     case 0:
                         if (hf == null){
-                            hf = new HomeFragment(MainActivity.this);
+                            hf = HomeFragment.newInstance(MainActivity.this);
                         }
                         selectedFragment = hf;
 
@@ -216,7 +216,10 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.tab_bar_home:
                     bubble_recycler_view.setVisibility(View.VISIBLE);
-                    selectedFragment = new HomeFragment(this);
+                    if (hf == null){
+                        hf = HomeFragment.newInstance(MainActivity.this);
+                    }
+                    selectedFragment = hf;
                     break;
                 case R.id.tab_bar_profile:
                     if(this_user.getIs_organization()) selectedFragment = new OrganizationProfileFragment();

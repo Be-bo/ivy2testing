@@ -195,8 +195,11 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
                                         Post event_object = document.toObject(Event.class);
                                         post_arraylist.add(event_object);
                                     }
+                                    loading_progress_bar.setVisibility(View.GONE);
                                     feed_adapter.notifyItemRangeInserted(start, post_arraylist.size());
                                     array_list_updated = true;
+
+
                                     if (task.getResult().size() == 0) {
                                         bottom_of_db = true;
                                     }
