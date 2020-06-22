@@ -139,6 +139,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     final ArrayList<String> pinned_names_array = new ArrayList<String>();
     private Spinner pinned_spinner;
     private Dictionary pinnable_events = new Hashtable();
+    private String pinned_event_name;
+    private String pinned_event_id;
 
 
     // firebase
@@ -573,6 +575,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                 this_user.getName(),
                 true,
                 "",
+                "",
                 "");
     }
 
@@ -594,7 +597,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                 Toast.makeText(this, "Post failed, Are you logged in? ", Toast.LENGTH_SHORT).show();
                 finish();
             }
-
+            current_post.setPinned_id(pinned_event_id);
+            current_post.setPinned_name(pinned_event_name);
             current_post.setText(description_edit_text.getText().toString());
 
             // if a picture was selected, a compressed bitmap will converted to a byte array and stored in the DB
@@ -644,6 +648,10 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
             // time functions
             current_event.setStart_millis(start_date_millis + start_time_millis);
             current_event.setEnd_millis(end_date_millis + end_time_millis);
+
+            //pinned
+            current_event.setPinned_id(pinned_event_id);
+            current_event.setPinned_name(pinned_event_name);
 
 
             if (current_event.getVisual().equals("")) {
@@ -854,6 +862,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     private void initializePinnedSpinner() {
         // initialize spinner
         pinned_spinner = findViewById(R.id.pinned_event_spinner);
+        pinned_names_array.add("None");
+        pinnable_events.put("None", "0000");
 
         // create names array and hashmap to find IDs
         db_reference.collection("universities").document(this_user.getUni_domain()).collection("posts")
@@ -872,11 +882,15 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                                     pinnable_events.put(is_post.get("name").toString(), document.getId().toString());
                                 }
                             }
+                            addArrayListToAdapter();
                         } else {
                             pinned_names_array.add("No pinnable events");
                         }
                     }
                 });
+    }
+
+    private void addArrayListToAdapter(){
         // create and set adapter
         ArrayAdapter<String> pinned_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, pinned_names_array);
         pinned_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -887,8 +901,16 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String stre = parent.getItemAtPosition(position).toString().trim();
-        Toast.makeText(this, "" + stre, Toast.LENGTH_SHORT).show();
+        if(position == 0){
+            pinned_event_name = "";
+            pinned_event_id = "";
+        }
+        else{
+            pinned_event_name = pinned_names_array.get(position);
+            pinned_event_id = (String) pinnable_events.get(pinned_names_array.get(position));
+        }
+
+        //Toast.makeText(this, ""+ pinned_names_array.get(position) + " " + pinnable_events.get(pinned_names_array.get(position)) , Toast.LENGTH_SHORT).show();
     }
 
     @Override

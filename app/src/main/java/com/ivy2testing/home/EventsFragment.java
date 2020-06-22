@@ -227,11 +227,31 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
     }
 
     @Override
-    public void onFeedClick(int position) {
-        Toast.makeText(mContext, "" + post_arraylist.get(position).getText(), Toast.LENGTH_SHORT).show();
+    public void onFeedClick(int position, int clicked_id) {
+
 
         // TODO THIS IS WHERE TO NAVIGATE TO NEW ACTIVITY
         // post_array_list.get(position); <- this is the clicked event/post
+
+        switch(clicked_id){
+            case R.id.object_full_button:
+                Toast.makeText(mContext, "BUTTON", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.object_full_text:
+                Toast.makeText(mContext, "TEXT", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.object_posted_by_author:
+                Toast.makeText(mContext, "AUTHOR", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.object_pinned_event:
+                Toast.makeText(mContext, "EVENT", Toast.LENGTH_SHORT).show();
+                break;
+
+
+        }
+
+
+
     }
 
 

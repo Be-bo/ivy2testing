@@ -91,59 +91,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setUp();
 
-        bubble_arraylist.add("University");
-        bubble_arraylist.add("Events");
-        bubble_arraylist.add("Posts");
-        bubble_arraylist.add("For You");
-        bubble_arraylist.add("Clubs");
-        bubble_arraylist.add("University of Calgary Ski and Board Club");
-        bubble_arraylist.add("Social");
-        bubble_arraylist.add("Grind");
-
-        bubble_recycler_view = findViewById(R.id.bubble_sample_rv);
-        bubble_recycler_view.setHasFixedSize(true);
-
-
-
-        bubble_layout_manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        bubble_adapter = new BubbleAdapter(bubble_arraylist, new BubbleAdapter.BubbleViewHolder.BubbleClickListener() {
-            @Override
-            public void onBubbleClick(int position) {
-
-
-
-
-                Fragment selectedFragment = null;
-                switch (position){
-
-                    case 0:
-                        if (hf == null){
-                            hf = HomeFragment.newInstance(MainActivity.this);
-                        }
-                        selectedFragment = hf;
-
-
-                        break;
-                    case 1:
-                        if(ef == null){
-                            ef = EventsFragment.newInstance(MainActivity.this);
-                        }
-                        selectedFragment = ef;
-
-                        break;
-                    case 2:
-                        if(pf == null)
-                            pf = PostsFragment.newInstance(MainActivity.this);
-                        selectedFragment = pf;
-                }
-                if (selectedFragment!= null) getSupportFragmentManager().beginTransaction().replace(R.id.main_fragmentContainer, selectedFragment).commit();
-
-
-            }
-        });
-        bubble_recycler_view.setLayoutManager(bubble_layout_manager);
-        bubble_recycler_view.setAdapter(bubble_adapter);
-
     }
 
     @Override
@@ -181,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
         setUpToolbar();
         setHandlers();
         attemptLogin();
+        bubbleBarSetup();
     }
 
     private void setUpToolbar() {
@@ -278,6 +226,65 @@ public class MainActivity extends AppCompatActivity {
     private void loadPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
         this_uni_domain = sharedPreferences.getString("domain", "");
+    }
+
+
+    private void bubbleBarSetup(){
+        bubble_arraylist.add("University");
+        bubble_arraylist.add("Events");
+        bubble_arraylist.add("Posts");
+        bubble_arraylist.add("For You");
+        bubble_arraylist.add("Clubs");
+        bubble_arraylist.add("University of Calgary Ski and Board Club");
+        bubble_arraylist.add("Social");
+        bubble_arraylist.add("Grind");
+
+        bubble_recycler_view = findViewById(R.id.bubble_sample_rv);
+        bubble_recycler_view.setHasFixedSize(true);
+
+        bubble_layout_manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        bubble_adapter = new BubbleAdapter(bubble_arraylist, new BubbleAdapter.BubbleViewHolder.BubbleClickListener() {
+            @Override
+            public void onBubbleClick(int position) {
+
+
+
+
+                Fragment selectedFragment = null;
+                switch (position){
+
+                    case 0:
+                        if (hf == null){
+                            hf = HomeFragment.newInstance(MainActivity.this);
+                        }
+                        selectedFragment = hf;
+
+
+                        break;
+                    case 1:
+                        if(ef == null){
+                            ef = EventsFragment.newInstance(MainActivity.this);
+                        }
+                        selectedFragment = ef;
+
+                        break;
+                    case 2:
+                        if(pf == null)
+                            pf = PostsFragment.newInstance(MainActivity.this);
+                        selectedFragment = pf;
+                }
+                if (selectedFragment!= null) getSupportFragmentManager().beginTransaction().replace(R.id.main_fragmentContainer, selectedFragment).commit();
+
+
+            }
+        });
+        bubble_recycler_view.setLayoutManager(bubble_layout_manager);
+        bubble_recycler_view.setAdapter(bubble_adapter);
+
+
+
+
+
     }
 
 
