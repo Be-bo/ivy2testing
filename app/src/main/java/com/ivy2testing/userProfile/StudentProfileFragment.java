@@ -20,9 +20,13 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.entities.User;
+import com.ivy2testing.home.SeeAllPostsActivity;
 import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.R;
@@ -31,6 +35,10 @@ import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.adapters.SquareImageAdapter;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /** @author Zahra Ghavasieh
  * Overview: Student Profile view fragment
@@ -151,10 +159,9 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
         mName = v.findViewById(R.id.studentProfile_name);
         mDegree = v.findViewById(R.id.studentProfile_degree);
         mRecyclerView = v.findViewById(R.id.studentProfile_posts);
-        //TODO: @Zahra, the "You ain't got no posts" thing kept staying even tho I thought I managed to hide it, so I just shotguned everything out (that could potentially still be hiding the posts)
-//        mLoadingLayout = v.findViewById(R.id.studentProfile_loading);
-//        mLoadingProgressBar = v.findViewById(R.id.studentProfile_progressBar);
-//        mPostError = v.findViewById(R.id.studentProfile_errorMsg);
+        mLoadingLayout = v.findViewById(R.id.studentProfile_loading);
+        mLoadingProgressBar = v.findViewById(R.id.studentProfile_progressBar);
+        mPostError = v.findViewById(R.id.studentProfile_errorMsg);
         mSeeAll = v.findViewById(R.id.studentProfile_seeAll);
     }
 
@@ -165,12 +172,25 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
         if (profile_img_uri != null) Picasso.get().load(profile_img_uri).into(mProfileImg);
     }
 
-    // Create adapter for recycler (empty!)
+    // Create adapter for recycler (adapter pulls posts from database)
     private void setUpRecycler(){
+        startLoading();
+
         // set LayoutManager and Adapter
         adapter = new SquareImageAdapter(student.getId(), student.getUni_domain(), 9, getContext(), this);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), 3, GridLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(adapter);
+
+        // Set a Listener for when adapter gets posts
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                Log.d(TAG, "Found " + adapter.getItemCount() + " posts!");
+                if (adapter.getItemCount() > 0) stopLoading();
+                else postError(getString(R.string.error_noPosts));
+            }
+        });
     }
 
     // Set up onClick Listeners
@@ -180,13 +200,7 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
         v.findViewById(R.id.studentProfile_seeAll).setOnClickListener(v1 -> seeAllPosts());
     }
 
-    @Override
-    public void onPostClick(int position) {
-        Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
-        intent.putExtra("viewer_id", student.getId());
-        intent.putExtra("post", adapter.getItem(position));
-        startActivity(intent);
-    }
+
 
 /* OnClick Methods
 ***************************************************************************************************/
@@ -204,8 +218,28 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
             Log.e(TAG, "getActivity() was null when calling EditProfile.");
     }
 
-    // See all posts TODO
-    private void seeAllPosts(){}
+    // See all posts
+    private void seeAllPosts(){
+        Intent intent = new Intent(getContext(), SeeAllPostsActivity.class);
+        if (my_profile) intent.putExtra("viewer_id", student.getId());
+        else intent.putExtra("viewer_id", viewer_id);
+        intent.putExtra("this_uni_domain", student.getUni_domain());
+
+        // Make "Query"
+        HashMap<String, Object> query_map = new HashMap<String, Object>() {{ put("author_id", student.getId()); }};
+        intent.putExtra("query_map", query_map);
+
+        startActivityForResult(intent, Constant.SEEALL_POSTS_REQUEST_CODE);
+    }
+
+    // A post in recycler was selected
+    @Override
+    public void onPostClick(int position) {
+        Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
+        intent.putExtra("viewer_id", student.getId());
+        intent.putExtra("post", adapter.getItem(position));
+        startActivity(intent);
+    }
 
 
 /* Transition Methods
@@ -246,13 +280,8 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
 
         base_storage_ref.child(ImageUtils.getProfilePath(student.getId())).getDownloadUrl()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()){
-                        profile_img_uri = task.getResult();
-                    }
-                    else {
-                        Log.w(TAG, task.getException());
-                        student.setProfile_picture(""); // image doesn't exist TODO delete?
-                    }
+                    if (task.isSuccessful()) profile_img_uri = task.getResult();
+                    else Log.w(TAG, task.getException());
 
                     // Reload views
                     setupViews();

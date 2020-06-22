@@ -13,6 +13,7 @@ public final class Constant {
     public static final int VIEW_POST_REQUEST_CODE = 4;
     public static final int USER_PROFILE_REQUEST_CODE = 5;
     public static final int CROP_REQUEST_CODE = 6;
-    public static final int EDIT_ORGANIZATION_REQUEST_CODE = 7;
-    public static final int SEEALL_USERS_REQUEST_CODE = 8;
+    public static final int SEEALL_USERS_REQUEST_CODE = 7;
+    public static final int SEEALL_POSTS_REQUEST_CODE = 8;
+    public static final int EDIT_ORGANIZATION_REQUEST_CODE = 9;
 }

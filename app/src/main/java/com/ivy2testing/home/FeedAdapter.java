@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +43,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         public TextView feed_title;
         public TextView feed_text;
         public TextView feed_author;
-        public TextView feed_pinned_id;
+        public TextView feed_pinned_name;
+
+        public ImageButton full_button;
+        public TextView full_text;
 
 
         public FeedViewHolder(@NonNull View itemView, FeedClickListener feed_click_listener) {
@@ -51,22 +55,29 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             feed_title = itemView.findViewById(R.id.object_title);
             feed_text = itemView.findViewById(R.id.object_body);
             feed_author = itemView.findViewById(R.id.object_posted_by_author);
-            feed_pinned_id = itemView.findViewById(R.id.object_pinned_event);
+            feed_pinned_name = itemView.findViewById(R.id.object_pinned_event);
+            full_button = itemView.findViewById(R.id.object_full_button);
+            full_text = itemView.findViewById(R.id.object_full_text);
 
 
             this.feed_click_listener = feed_click_listener;
 
-            itemView.setOnClickListener(this);
+            full_text.setOnClickListener(this);
+            full_button.setOnClickListener(this);
+
+
+            feed_author.setOnClickListener(this);
+            feed_pinned_name.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            feed_click_listener.onFeedClick(getAdapterPosition());
+            feed_click_listener.onFeedClick(getAdapterPosition(),v.getId());
 
         }
 
         public interface FeedClickListener{
-            void onFeedClick(int position);
+            void onFeedClick(int position, int clicked_id);
         }
     }
     public FeedAdapter(ArrayList<Post> post_list, FeedViewHolder.FeedClickListener feed_click_listener){
@@ -91,6 +102,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                 holder.feed_title.setText(current_event.getName().toString());
                 holder.feed_title.setVisibility(View.VISIBLE);
             }
+            else
+                holder.feed_title.setVisibility(View.GONE);
+
+
+            if(!post_array_list.get(position).getPinned_id().equals(""))
+                holder.feed_pinned_name.setText(post_array_list.get(position).getPinned_name());
+
+
+
             // There is a weird bug with the title disappearing from events when you scroll far enough passed them
             // to solve this for now... just going to make titles/names View.GONE, they will only become visible if they
             // exist. Solves the bug for now/ if similar bugs appear later

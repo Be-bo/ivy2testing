@@ -27,6 +27,7 @@ public class Post implements Parcelable {
     protected String text;
     protected String visual;
     protected String pinned_id;
+    protected String pinned_name;
     protected List<String> views_id;
 
 
@@ -43,13 +44,16 @@ public class Post implements Parcelable {
 
     // Use for creating a new Post in code
     public Post(String id, String uni_domain, String author_id, String author_name,
-                boolean main_feed_visible, String pinned_id){
+                boolean main_feed_visible, String pinned_id, String pinned_name, String visual){
         this.id = id;
         this.uni_domain = uni_domain;
         this.author_id = author_id;
         this.author_name = author_name;
         this.main_feed_visible = main_feed_visible;
         this.pinned_id = pinned_id;
+        this.pinned_name = pinned_name;
+
+        this.visual = visual;
 
         this.views_id = new ArrayList<>();
         creation_millis = System.currentTimeMillis();
@@ -58,7 +62,7 @@ public class Post implements Parcelable {
     // Make Post from Event
     public Post(Event event){
         this(event.getId(), event.getUni_domain(), event.getAuthor_id(), event.getAuthor_name(),
-                event.isMain_feed_visible(), event.getPinned_id());
+                event.isMain_feed_visible(), event.getPinned_id(), event.getPinned_name(), event.getVisual());
     }
 
 
@@ -142,6 +146,14 @@ public class Post implements Parcelable {
         this.pinned_id = pinned_id;
     }
 
+    public String getPinned_name() {
+        return pinned_name;
+    }
+
+    public void setPinned_name(String pinned_name) {
+        this.pinned_name = pinned_name;
+    }
+
     public String getRegistration_platform() {
         return registration_platform;
     }
@@ -179,6 +191,7 @@ public class Post implements Parcelable {
         text = in.readString();
         visual = in.readString();
         pinned_id = in.readString();
+        pinned_name = in.readString();
         views_id = in.createStringArrayList();
     }
 
@@ -212,6 +225,7 @@ public class Post implements Parcelable {
         dest.writeString(text);
         dest.writeString(visual);
         dest.writeString(pinned_id);
+        dest.writeString(pinned_name);
         dest.writeStringList(views_id);
     }
 }

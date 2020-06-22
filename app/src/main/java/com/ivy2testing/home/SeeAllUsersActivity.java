@@ -62,7 +62,7 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
     private int last_user_pos = 0;                  // Position of last user loaded
 
 
-    /* Overridden Methods
+/* Overridden Methods
 ***************************************************************************************************/
 
     @Override
@@ -71,7 +71,7 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
         setContentView(R.layout.activity_seeall);
 
         // Initialization
-        getIntentExtras();  // Get recycler "mode" and a query via intent
+        getIntentExtras();  // Get array for recycler
         setUpToolBar();     // set up toolBar as an actionBar
         setRecycler();
         setListeners();
@@ -111,9 +111,6 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
             viewer_id = getIntent().getStringExtra("viewer_id");            // id of currently logged in user
             this_uni_domain = getIntent().getStringExtra("this_uni_domain");
             user_ids = getIntent().getStringArrayListExtra("user_ids");     // List of user ids to be displayed
-
-            //query_map = (Map<String, Object>) getIntent().getSerializableExtra("query_map");
-            //intent.putExtra("query_map", (Serializable) this_user_profile); //TODO: use somewhere else maybe?
 
             if (user_ids == null || this_uni_domain == null) {
                 Log.e(TAG, "Must Provide a list of user ids and uni domain.");
@@ -267,9 +264,7 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
                 }
                 else Log.e(TAG, "User was null!");
             }
-            else {
-                Log.e(TAG, "loadUserFromDB: unsuccessful or does not exist.");
-            }
+            else Log.e(TAG, "loadUserFromDB: unsuccessful or does not exist.");
         });
 
     }

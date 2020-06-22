@@ -26,7 +26,7 @@
             app:layout_constraintBottom_toTopOf="@id/main_tab_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/main_toolbar_id" />
+            app:layout_constraintTop_toBottomOf="@+id/bubble_sample_rv"/>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/main_tab_bar"
@@ -44,11 +44,11 @@
         </com.google.android.material.bottomnavigation.BottomNavigationView>
 
         <FrameLayout
-        android:id="@+id/main_loadingScreen"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:translationZ="90dp"
-        android:visibility="gone" />
+            android:id="@+id/main_loadingScreen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:translationZ="90dp"
+            android:visibility="gone" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

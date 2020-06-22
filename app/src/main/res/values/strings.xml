@@ -65,7 +65,6 @@
     <string name="not_going">Not Going</string>
 
 
-
     <!-- There is a space before and after each item... using .trim in student signup -->
     <string-array name="degree_list">
         <item> Degree </item>
@@ -166,5 +165,6 @@
         Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
         Praesent nulla orci, aliquam porttitor molestie at, tincidunt ut sapien. Sed pharetra lobortis elit quis iaculis.
     </string>
+    <string name="expand_comments">Expand Comments</string>
 
 </resources>
