@@ -49,16 +49,19 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
 
     // Constructors
     public SquareImageAdapter(String id, String uniDomain, int limit, Context mrContext, OnPostListener listener){
+        Log.d(TAG, "declaring");
         this.uni_domain = uniDomain;
         this.author_id = id;
         this.context = mrContext;
         this.post_listener = listener;
         list_reg = db_ref.collection("universities").document(uni_domain).collection("posts").whereEqualTo("author_id", author_id).limit(limit).addSnapshotListener((queryDocumentSnapshots, e) -> {
+            Log.d(TAG, "inside");
             if(queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()){
                 for (int i = 0; i<queryDocumentSnapshots.getDocumentChanges().size(); i++) {
                     DocumentChange dc = queryDocumentSnapshots.getDocumentChanges().get(i);
                     switch (dc.getType()) {
                         case ADDED:
+                            Log.d(TAG, "adding");
                             posts.add(dc.getDocument().toObject(Post.class));
                             break;
                         case MODIFIED:
@@ -106,6 +109,7 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull SquareImgHolder holder, final int position) {
+        Log.d(TAG, "binding");
         Post currentPost = posts.get(position);
         if(currentPost.getVisual() != null && !currentPost.getVisual().equals("nothing"))
             stor_ref.child(currentPost.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {if(task.isSuccessful() && task.getResult()!=null)

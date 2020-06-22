@@ -69,7 +69,6 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
     private RecyclerView.LayoutManager feed_layout_manager;
 
 
-
     // bubbles
     private final ArrayList<String> bubble_arraylist = new ArrayList<String>();
 
@@ -123,13 +122,7 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
-
-
-
-
         // bubbles recycler view
-
-
         bubble_arraylist.add("University");
         bubble_arraylist.add("Events");
         bubble_arraylist.add("Posts");
@@ -142,13 +135,10 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
         bubble_recycler_view = rootView.findViewById(R.id.bubble_recycler_view);
         bubble_recycler_view.setHasFixedSize(true);
 
-
         bubble_layout_manager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         bubble_adapter = new BubbleAdapter(bubble_arraylist, this);
         bubble_recycler_view.setLayoutManager(bubble_layout_manager);
         bubble_recycler_view.setAdapter(bubble_adapter);
-
-
 
 
         // feed recycler view
@@ -167,16 +157,13 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-               // recyclerView.
+                // recyclerView.
                 if (!recyclerView.canScrollVertically(1)) {
-                   // Toast.makeText(getContext(), "Last" + recyclerView.computeVerticalScrollExtent(), Toast.LENGTH_LONG).show();
-                   // PullMorePosts();
+                    // Toast.makeText(getContext(), "Last" + recyclerView.computeVerticalScrollExtent(), Toast.LENGTH_LONG).show();
+                    // PullMorePosts();
                 }
             }
         });
-
-
-
         return rootView;
     }
 

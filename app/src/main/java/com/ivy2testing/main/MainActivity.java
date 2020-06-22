@@ -1,14 +1,10 @@
 package com.ivy2testing.main;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
@@ -18,10 +14,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,9 +30,6 @@ import com.ivy2testing.home.HomeFragment;
 import com.ivy2testing.userProfile.OrganizationProfileFragment;
 import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.Constant;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,6 +49,12 @@ public class MainActivity extends AppCompatActivity {
     private UserViewModel user_view_model;
     private User this_user;
 
+    private SectionsPageAdapter tab_adapter = new SectionsPageAdapter(getSupportFragmentManager());
+    private ChatFragment chat_fragment = new ChatFragment();
+    private HomeFragment home_fragment = new HomeFragment(this);
+    private OrganizationProfileFragment org_fragment = new OrganizationProfileFragment();
+    private StudentProfileFragment stud_fragment = new StudentProfileFragment(true);
+    private NoSwipeViewPager tab_view_pager;
 
 
 
@@ -127,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
         bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
         loading_layout = findViewById(R.id.main_loadingScreen);
         post_button = findViewById(R.id.post_button);
+        tab_view_pager = findViewById(R.id.tab_view_pager);
         post_button.setOnClickListener(view -> transToLogin());
     }
 
@@ -134,26 +132,45 @@ public class MainActivity extends AppCompatActivity {
         post_button.setImageResource(R.drawable.ic_create);
         post_button.setOnClickListener(view -> transToCreatePost());
         bottom_navigation.setVisibility(View.VISIBLE);
-        bottom_navigation.setOnNavigationItemSelectedListener((menuItem) -> {
-            Fragment selectedFragment = null;
-            switch (menuItem.getItemId()){
-                //TODO: making a new fragment each time is inefficient
-                case R.id.tab_bar_chat:
-                    selectedFragment = new ChatFragment();
-                    break;
-                case R.id.tab_bar_home:
-                    selectedFragment = new HomeFragment(this);
-                    break;
-                case R.id.tab_bar_profile:
-                    if(this_user.getIs_organization()) selectedFragment = new OrganizationProfileFragment();
-                    else selectedFragment = new StudentProfileFragment(true);
-                    break;
-            }
-            if (selectedFragment!= null) getSupportFragmentManager().beginTransaction().replace(R.id.main_fragmentContainer, selectedFragment).commit();
-            return true;
-        });
 
-        if (getSupportFragmentManager().findFragmentById(R.id.main_fragmentContainer) == null) bottom_navigation.setSelectedItemId(R.id.tab_bar_home); // Set home view if no fragments visible atm
+        Log.d(TAG, "size: "+tab_adapter.getCount());
+
+        tab_adapter.addFragment(chat_fragment, "");
+        tab_adapter.addFragment(home_fragment, "");
+        if(this_user.getIs_organization()) tab_adapter.addFragment(org_fragment, "");
+        else tab_adapter.addFragment(stud_fragment, "");
+
+        Log.d(TAG, "size: "+tab_adapter.getCount());
+
+        tab_view_pager.setAdapter(tab_adapter);
+        tab_view_pager.setOffscreenPageLimit(5);
+
+        bottom_navigation.setOnNavigationItemSelectedListener((menuItem) -> {
+            switch (menuItem.getItemId()){
+                case R.id.tab_bar_chat:
+                    tab_view_pager.setCurrentItem(0);
+                    return true;
+                case R.id.tab_bar_home:
+                    tab_view_pager.setCurrentItem(1);
+                    return true;
+                case R.id.tab_bar_profile:
+                    if(!org_fragment.isIs_set_up() && !stud_fragment.isIs_set_up()){
+                        Log.d(TAG, "inside");
+                        if(this_user.getIs_organization()){
+                            Log.d(TAG, "org");
+                            org_fragment.setUp();
+                        }
+                        else{
+                            Log.d(TAG, "student");
+                            stud_fragment.setUp();
+                        }
+                    }
+                    tab_view_pager.setCurrentItem(2);
+                    return true;
+            }
+            return false;
+        });
+        tab_view_pager.setCurrentItem(1);
     }
 
 
@@ -178,22 +195,13 @@ public class MainActivity extends AppCompatActivity {
                 if(updatedUser != null){
                     //TODO: deal with banning, age update, notifications, etc.
                     this_user = updatedUser;
-
-                    if(this_user instanceof Student){
-                        Student stud = (Student) this_user;
-                        Log.d(TAG, "degr: " + stud.getDegree());
-                    }else if (this_user instanceof Organization){
-                        Log.d(TAG, "org: " + ((Organization) this_user).toString());
-                    }else{
-                        Log.d(TAG, "nothing");
-                    }
-
-                    setUpLoggedInInteraction();
+                    if(tab_adapter.getCount() < 1) setUpLoggedInInteraction();
                     endLoading();
                 }
             });
         }else{
-            getSupportFragmentManager().beginTransaction().replace(R.id.main_fragmentContainer, new HomeFragment(this)).commit();
+            tab_adapter.addFragment(home_fragment, "");
+            tab_view_pager.setAdapter(tab_adapter);
             endLoading();
         }
     }

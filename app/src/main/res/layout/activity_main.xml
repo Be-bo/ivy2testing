@@ -16,10 +16,13 @@
             android:id="@+id/main_toolbar_id"
             layout="@layout/main_toolbar" />
 
-        <FrameLayout
-            android:id="@+id/main_fragmentContainer"
+        <com.ivy2testing.main.NoSwipeViewPager
+            android:id="@+id/tab_view_pager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_alignParentTop="true"
+            android:visibility="visible"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toTopOf="@id/main_tab_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +38,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/main_fragmentContainer"
+            app:layout_constraintTop_toBottomOf="@id/tab_view_pager"
             app:menu="@menu/main_tab_bar">
 
         </com.google.android.material.bottomnavigation.BottomNavigationView>

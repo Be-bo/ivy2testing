@@ -80,6 +80,11 @@
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity
+            android:name=".userProfile.OrganizationProfileActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBarTheme"
+            android:parentActivityName=".main.MainActivity"/>
 
     </application>
 

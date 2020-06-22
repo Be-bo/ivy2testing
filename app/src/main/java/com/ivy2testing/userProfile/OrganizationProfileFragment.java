@@ -24,6 +24,7 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.User;
+import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.adapters.SquareImageAdapter;
@@ -52,10 +53,11 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
     private User this_user;
     private UserViewModel this_user_viewmodel;
     private SquareImageAdapter post_adapter;
+    private boolean is_set_up = false;
 
-
-
-
+    public boolean isIs_set_up() {
+        return is_set_up;
+    }
 
     // MARK: Base Methods
 
@@ -64,8 +66,24 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_organizationprofile, container, false);
         declareHandles();
-        setUpFragment();
+        //TODO: reactivate and test
+//        Intent intent = new Intent(getContext(), OrganizationProfileActivity.class);
+//        intent.putExtra("this_user", this_user);
+//        intent.putExtra("org_to_display_id", "KLSyYgfHMOcOBOFURFk0ZUV0x7F3");
+//        intent.putExtra("org_to_display_uni", "ucalgary.ca");
+//        startActivity(intent);
         return rootView;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(post_adapter!=null) post_adapter.cleanUp();
+    }
+
+    public void setUp(){
+        is_set_up = true;
+        setUpFragment();
     }
 
     private void declareHandles(){
@@ -99,6 +117,7 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
     }
 
     private void populateUI(){
+        Log.d(TAG, "populating ui");
         name_text.setText(this_user.getName());
         String memberNumber = String.valueOf(((Organization)this_user).getMember_ids().size());
         String requestNumber = String.valueOf(((Organization)this_user).getRequest_ids().size());
@@ -117,13 +136,17 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
     }
 
     private void setUpPosts(){
-        base_database_reference.collection("universities").document(this_user.getUni_domain()).collection("posts").whereEqualTo("author_id", this_user.getId()).limit(POST_LIMIT).get().addOnCompleteListener(task -> {
-
-        });
-
-//        post_adapter = new SquareImageAdapter();
-        post_recycler.setLayoutManager(new GridLayoutManager(this.getActivity(), 3, GridLayoutManager.VERTICAL, false));
+        post_adapter = new SquareImageAdapter(this_user.getId(), this_user.getUni_domain(), 9, getContext(), this);
+        post_recycler.setLayoutManager(new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false));
         post_recycler.setAdapter(post_adapter);
+    }
+
+    @Override
+    public void onPostClick(int position) {
+        Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
+        intent.putExtra("viewer_id", this_user.getId());
+        intent.putExtra("post", post_adapter.getItem(position));
+        startActivity(intent);
     }
 
     private void setUpMembers(){
@@ -136,7 +159,8 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
             this_user = this_user_viewmodel.getThis_user().getValue();
             this_user_viewmodel.getThis_user().observe(getActivity(), (User updatedProfile) -> { //listen to realtime user profile changes afterwards
                 this_user = updatedProfile;
-                populateUI();
+                //TODO: must work in terms of profile edits
+//                populateUI();
             });
         }
     }
@@ -184,10 +208,5 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
             if (resultCode == Activity.RESULT_OK) populateUI(); //changes were made...
         } else
             Log.w(TAG, "Don't know how to handle the request code, \"" + requestCode + "\" yet!");
-    }
-
-    @Override
-    public void onPostClick(int position) {
-        Toast.makeText(getContext(), "POST CLICKED: "+position, Toast.LENGTH_LONG).show();
     }
 }

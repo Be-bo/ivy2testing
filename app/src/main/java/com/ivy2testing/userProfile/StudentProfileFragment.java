@@ -1,6 +1,5 @@
 package com.ivy2testing.userProfile;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,12 +20,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.ivy2testing.entities.Event;
-import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.main.UserViewModel;
@@ -37,9 +31,6 @@ import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.adapters.SquareImageAdapter;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /** @author Zahra Ghavasieh
  * Overview: Student Profile view fragment
@@ -72,6 +63,10 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
     private Student student;
     private SquareImageAdapter adapter;
     private Uri profile_img_uri;
+    private boolean is_set_up = false;
+    public boolean isIs_set_up() {
+        return is_set_up;
+    }
 
 
 
@@ -97,14 +92,16 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root_view = inflater.inflate(R.layout.fragment_studentprofile, container, false);
-
         Log.d(TAG,"onCreateView!");
-
-        // Initialization Methods
         declareViews(root_view);
+        return root_view;
+    }
+
+    public void setUp(){
+        is_set_up = true;
+        // Initialization Methods
         if (student == null) getUserProfile();
         else setUp();
-        return root_view;
     }
 
     @Override
@@ -127,7 +124,7 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
                 student = (Student) usr; //grab the initial data
 
                 // Only start doing processes that depend on user profile
-                setUp();
+                setUpElements();
             }
 
             // listen to realtime user profile changes afterwards
@@ -141,7 +138,7 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
     }
 
     // General setup after acquiring student object
-    private void setUp(){
+    private void setUpElements(){
         Log.d(TAG, "Showing student: " + student.getId() + ", name: " + student.getName());
         setupViews();               // populate UI
         setUpRecycler();            // set up posts recycler view
