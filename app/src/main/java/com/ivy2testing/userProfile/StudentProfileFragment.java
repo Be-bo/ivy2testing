@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,10 +48,10 @@ import java.util.List;
  * Overview: Student Profile view fragment
  * Notes: Used for viewing both student's own profile as well as viewing other students' profiles
  */
-public class StudentProfileFragment extends Fragment {
+public class StudentProfileFragment extends Fragment implements SquareImageAdapter.OnPostListener {
 
     // Constants
-    private final static String TAG = "StudentProfileFragment";
+    private final static String TAG = "StudentProfileFragmentTag";
 
     private View root_view;
 
@@ -74,8 +75,6 @@ public class StudentProfileFragment extends Fragment {
     private Student student;
     private SquareImageAdapter adapter;
     private Uri profile_img_uri;
-    private List<Post> posts = new ArrayList<>(6);        // Load first 6 posts only
-    private List<Uri> post_img_uris = new ArrayList<>(6); // non synchronous adds!
 
 
 
@@ -112,21 +111,12 @@ public class StudentProfileFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == Constant.VIEW_POST_REQUEST_CODE) {
-            Log.d(TAG, "Coming back from ViewPost!");
-            if (resultCode == Activity.RESULT_OK && data != null) {
-                boolean updated = data.getBooleanExtra("updated", false);
-                if (updated) loadPostImg(data.getParcelableExtra("post"));
-            }
-        } else
-            Log.w(TAG, "Don't know how to handle the request code, \"" + requestCode + "\" yet!");
+    public void onStop() {
+        super.onStop();
+        if(adapter!=null) adapter.cleanUp();
     }
 
-
-/* Initialization Methods
+    /* Initialization Methods
 ***************************************************************************************************/
 
     // Get User Data - always stays update and doesn't require passing anything because ViewModel is connected to the Activity that manages the fragment
@@ -167,6 +157,7 @@ public class StudentProfileFragment extends Fragment {
         mName = v.findViewById(R.id.studentProfile_name);
         mDegree = v.findViewById(R.id.studentProfile_degree);
         mRecyclerView = v.findViewById(R.id.studentProfile_posts);
+        //TODO: @Zahra, the "You ain't got no posts" thing kept staying even tho I thought I managed to hide it, so I just shotguned everything out (that could potentially still be hiding the posts)
         mLoadingLayout = v.findViewById(R.id.studentProfile_loading);
         mLoadingProgressBar = v.findViewById(R.id.studentProfile_progressBar);
         mPostError = v.findViewById(R.id.studentProfile_errorMsg);
@@ -182,27 +173,20 @@ public class StudentProfileFragment extends Fragment {
 
     // Create adapter for recycler (empty!)
     private void setUpRecycler(){
-        if (student.getPost_ids().isEmpty()){
-            Log.e(TAG, "No posts for this user.");
-            postError(getString(R.string.error_noPosts));
-            return;
-        }
-
-        loadPostsFromDB();
-
         // set LayoutManager and Adapter
-        adapter = new SquareImageAdapter(post_img_uris);
+        adapter = new SquareImageAdapter(student.getId(), student.getUni_domain(), 9, getContext(), this);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), 3, GridLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(adapter);
     }
 
     // Set up onClick Listeners
-    private void setListeners(View v){
+    private void setListeners(View v) {
         if (my_profile) v.findViewById(R.id.studentProfile_edit).setOnClickListener(v12 -> editProfile());
-        else    v.findViewById(R.id.studentProfile_edit).setVisibility(View.GONE);
+        else v.findViewById(R.id.studentProfile_edit).setVisibility(View.GONE);
         v.findViewById(R.id.studentProfile_seeAll).setOnClickListener(v1 -> seeAllPosts());
-        if (adapter != null) adapter.setOnSelectionListener(this::selectPost);
     }
+
+
 
 /* OnClick Methods
 ***************************************************************************************************/
@@ -235,17 +219,12 @@ public class StudentProfileFragment extends Fragment {
     }
 
     // A post in recycler was selected
-    private void selectPost(int position) {
-
-        if (posts.get(position) instanceof Event)
-            Log.d(TAG, "Starting ViewPost Activity for event #" + position);
-        else Log.d(TAG, "Starting ViewPost Activity for post #" + position);
-
+    @Override
+    public void onPostClick(int position) {
         Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
-        intent.putExtra("post", posts.get(position));
-        if (my_profile) intent.putExtra("viewer_id", student.getId());
-        else intent.putExtra("viewer_id", viewer_id);
-        startActivityForResult(intent, Constant.VIEW_POST_REQUEST_CODE);
+        intent.putExtra("viewer_id", student.getId());
+        intent.putExtra("post", adapter.getItem(position));
+        startActivity(intent);
     }
 
 
@@ -293,89 +272,5 @@ public class StudentProfileFragment extends Fragment {
                     // Reload views
                     setupViews();
                 });
-    }
-
-    // Load a maximum of 6 posts from FireStore give its id
-    private void loadPostsFromDB(){
-        startLoading();
-        if (student.getId() == null || student.getUni_domain() == null){
-            Log.e(TAG, "Post Address has null values. ID:" + student.getId());
-            if (getContext() != null) postError(getString(R.string.error_noPosts));
-            return;
-        }
-
-        if (student.getPost_ids().size() == 0){
-            Log.e(TAG, "No posts for this user.");
-            postError(getString(R.string.error_noPosts));
-            return;
-        }
-
-        String address = "universities/" + student.getUni_domain() + "/posts";
-
-        db.collection(address).whereEqualTo("author_id", student.getId())
-                .limit(6).orderBy("creation_millis", Query.Direction.DESCENDING)
-                .get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()){
-                        QuerySnapshot querySnapshot = task.getResult();
-                        if (querySnapshot == null){
-                            Log.e(TAG, "No posts for this user.");
-                            postError(getString(R.string.error_noPosts));
-                            return;
-                        }
-                        int i = 0;
-                        for (QueryDocumentSnapshot doc : querySnapshot){
-
-                            // Check if post or event
-                            if ((boolean) doc.get("is_event")) posts.add(i,doc.toObject(Event.class));
-                            else posts.add(i, doc.toObject(Post.class));
-
-                            if (posts.get(i) == null) Log.e(TAG, "Post object obtained from database is null!");
-                            else {
-                                posts.get(i).setId(doc.getId());    // Set Post ID
-                                loadPostImg(posts.get(i));          // Upload pic and update views
-                            }
-                            i++;
-                        }
-                        Log.d(TAG, "There were " + i + " posts!");
-                        stopLoading();
-                    }
-                    else {
-                        Log.e(TAG,"loadPostsFromDB: unsuccessful!");
-                        postError(getString(R.string.error_getPost));
-                    }
-                });
-    }
-
-    // Load a post's visual from Firestore Storage given post object
-    private void loadPostImg(final Post post){
-        if (post == null){
-            Log.e(TAG, "Post was null!");
-            return;
-        }
-
-        //TODO fix bug: if post has no visual
-
-        int postIndex = posts.indexOf(post);
-        if (postIndex < post_img_uris.size() && post_img_uris.get(postIndex) != null) {
-            Log.d(TAG,"Post Image already loaded!");
-            return;
-        }
-
-        // Insert Image Uri to arrayList in same position as its post object
-        // Then it tells Recycler adapter that it should update the view
-        if (post.getVisual() != null){
-            base_storage_ref.child(post.getVisual()).getDownloadUrl()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()){
-                            Uri uri = task.getResult();
-                            if (uri != null){
-                                post_img_uris.add(uri);
-                                adapter.notifyItemInserted(post_img_uris.size()-1);
-                                Log.d(TAG, "Added to position "+posts.indexOf(post)+" img " + uri);
-                            }
-                        }
-                        else Log.w(TAG, "this post's image isn't here! Visual: " + post.getVisual());
-                    });
-        } else Log.e(TAG, "Post had null visual! Post ID: "+ post.getId());
     }
 }

@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -102,14 +103,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white"
-            android:translationZ="90dp">
+            android:translationZ="90dp"
+            tools:visibility="gone">
 
             <ProgressBar
                 android:id="@+id/studentProfile_progressBar"
-                android:layout_width="wrap_content"
                 style="@style/StandardIndefiniteProgressBar"
+                android:layout_width="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/studentProfile_errorMsg"
@@ -117,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/error_noPosts"
-                android:textColor="@color/disabled"/>
+                android:textColor="@color/disabled" />
 
         </FrameLayout>
 
