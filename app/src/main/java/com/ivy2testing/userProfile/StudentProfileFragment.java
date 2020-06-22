@@ -157,7 +157,6 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
         mName = v.findViewById(R.id.studentProfile_name);
         mDegree = v.findViewById(R.id.studentProfile_degree);
         mRecyclerView = v.findViewById(R.id.studentProfile_posts);
-        //TODO: @Zahra, the "You ain't got no posts" thing kept staying even tho I thought I managed to hide it, so I just shotguned everything out (that could potentially still be hiding the posts)
         mLoadingLayout = v.findViewById(R.id.studentProfile_loading);
         mLoadingProgressBar = v.findViewById(R.id.studentProfile_progressBar);
         mPostError = v.findViewById(R.id.studentProfile_errorMsg);
@@ -171,12 +170,25 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
         if (profile_img_uri != null) Picasso.get().load(profile_img_uri).into(mProfileImg);
     }
 
-    // Create adapter for recycler (empty!)
+    // Create adapter for recycler (adapter pulls posts from database)
     private void setUpRecycler(){
+        startLoading();
+
         // set LayoutManager and Adapter
         adapter = new SquareImageAdapter(student.getId(), student.getUni_domain(), 9, getContext(), this);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), 3, GridLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(adapter);
+
+        // Set a Listener for when adapter gets posts
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                Log.d(TAG, "Found " + adapter.getItemCount() + " posts!");
+                if (adapter.getItemCount() > 0) stopLoading();
+                else postError(getString(R.string.error_noPosts));
+            }
+        });
     }
 
     // Set up onClick Listeners

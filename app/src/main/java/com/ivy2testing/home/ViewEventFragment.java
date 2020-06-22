@@ -68,6 +68,7 @@ public class ViewEventFragment extends Fragment {
     private List<Uri> going_img_uris = new ArrayList<>(6); // non synchronous adds!
     private int lastUriPosition = 0;                // Pagination: position of last img loaded
 
+
     // Constructor
     public ViewEventFragment(Event event, String viewer_id){
         this.event = event;

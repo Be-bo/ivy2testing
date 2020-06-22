@@ -133,7 +133,7 @@ public class SeeAllPostsActivity extends AppCompatActivity {
         // Load Users with pagination
         constructQuery();
     }
-    // OnClick and scroll listeners
+    // Scroll listener
     private void setListeners(){
 
         // Scroll Listener used for pagination (TODO not fully tested yet)

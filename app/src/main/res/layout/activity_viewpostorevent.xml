@@ -43,7 +43,8 @@
                     android:id="@+id/viewPost_visual"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/test_flower"
+                    android:background="@color/grey"
+                    android:src="@drawable/ic_ivy_logo_white"
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/post_visual" />
 
@@ -113,11 +114,30 @@
                     android:background="?android:attr/listDivider"
                     android:layout_marginTop="2dp"/>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/viewPost_commentRV"
+                <FrameLayout
+                    android:id="@+id/viewPost_commentLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"/>
+                    android:layout_margin="8dp"
+                    android:visibility="gone"
+                    android:background="@color/white">
+
+                        <TextView
+                            android:id="@+id/viewPost_commentErrorMsg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@string/error_noPosts"
+                            android:textColor="@color/disabled"
+                            android:visibility="gone"/>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/viewPost_commentRV"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"/>
+
+                </FrameLayout>
 
         </LinearLayout>
 

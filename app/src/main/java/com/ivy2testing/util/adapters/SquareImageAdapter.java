@@ -1,6 +1,7 @@
 package com.ivy2testing.util.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.R;
 
@@ -27,6 +30,7 @@ import java.util.ArrayList;
  * Used in: StudentProfile.Posts
  */
 public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.SquareImgHolder> {
+    private static final String TAG = "SquareImageAdapter";
 
     // Attributes
     private String author_id;
@@ -42,40 +46,13 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
     private ListenerRegistration list_reg;
 
 
-    //TODO: set up 0 post case
-
-
     // Constructors
     public SquareImageAdapter(String id, String uniDomain, int limit, Context mrContext, OnPostListener listener){
         this.uni_domain = uniDomain;
         this.author_id = id;
         this.context = mrContext;
         this.post_listener = listener;
-        list_reg = db_ref.collection("universities").document(uni_domain).collection("posts").whereEqualTo("author_id", author_id).limit(limit).addSnapshotListener((queryDocumentSnapshots, e) -> {
-            if(queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()){
-                for (int i = 0; i<queryDocumentSnapshots.getDocumentChanges().size(); i++) {
-                    DocumentChange dc = queryDocumentSnapshots.getDocumentChanges().get(i);
-                    switch (dc.getType()) {
-                        case ADDED:
-                            posts.add(dc.getDocument().toObject(Post.class));
-                            break;
-                        case MODIFIED:
-                            Post modifiedPost = dc.getDocument().toObject(Post.class);
-                            for(int j=0; j<posts.size(); j++){
-                                if(posts.get(j).getId().equals(modifiedPost.getId())){
-                                    posts.set(j, modifiedPost);
-                                    break;
-                                }
-                            }
-                            break;
-                        case REMOVED:
-                            //TODO later
-                            break;
-                    }
-                }
-                notifyDataSetChanged();
-            }
-        });
+        setPostChangeListener(limit);
     }
 
     // Listener Interface
@@ -104,17 +81,13 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull SquareImgHolder holder, final int position) {
-        Post currentPost = posts.get(position);
 
         // Input a default image in case post has no visual
         holder.image_view.setBackgroundColor(context.getColor(R.color.grey));
         holder.image_view.setImageResource(R.drawable.ic_ivy_logo_white);
 
         // Load visual from storage (will override default visual if it exists)
-        if(currentPost.getVisual() != null && !currentPost.getVisual().equals("nothing"))
-            stor_ref.child(currentPost.getVisual()).getDownloadUrl().addOnCompleteListener(
-                    task -> {if(task.isSuccessful() && task.getResult()!=null)
-                        Glide.with(context).load(task.getResult()).into(holder.image_view);});
+        loadImage(holder, posts.get(position));
     }
 
     @Override
@@ -122,7 +95,69 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
         return posts.size();
     }
 
-    /* View Holder subclass
+
+/* Firebase related Methods
+***************************************************************************************************/
+
+    // Set up listener for changes in post
+    private void setPostChangeListener(int limit){
+        String address = "universities/" + uni_domain + "/posts";
+        if (address.contains("null")){
+            Log.e(TAG, "Address has null values.");
+            return;
+        }
+
+
+        list_reg = db_ref.collection(address)
+                .whereEqualTo("author_id", author_id).limit(limit)
+                .addSnapshotListener((queryDocumentSnapshots, e) -> {
+                if(queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()){
+
+                    for (int i = 0; i<queryDocumentSnapshots.getDocumentChanges().size(); i++) {
+
+                        DocumentChange dc = queryDocumentSnapshots.getDocumentChanges().get(i);
+                        DocumentSnapshot doc = dc.getDocument();
+
+                        switch (dc.getType()) {
+                            case ADDED:
+                                if ((boolean)doc.get("is_event")) posts.add(doc.toObject(Event.class));
+                                else posts.add(doc.toObject(Post.class));
+                                break;
+
+                            case MODIFIED:
+                                Post modifiedPost;
+                                if ((boolean)doc.get("is_event")) modifiedPost = doc.toObject(Event.class);
+                                else modifiedPost = doc.toObject(Post.class);
+
+                                for(int j=0; j<posts.size(); j++){
+                                    if(posts.get(j).getId().equals(modifiedPost.getId())){
+                                        posts.set(j, modifiedPost);
+                                        break;
+                                    }
+                                }
+                                break;
+
+                            case REMOVED:
+                                //TODO later
+                                break;
+                        }
+                    }
+                    notifyDataSetChanged();
+                }
+            });
+    }
+
+
+    // Load visual from storage
+    private void loadImage(@NonNull SquareImgHolder holder, Post currentPost){
+        if(currentPost.getVisual() != null && !currentPost.getVisual().equals("nothing"))
+            stor_ref.child(currentPost.getVisual()).getDownloadUrl().addOnCompleteListener(
+                    task -> {if(task.isSuccessful() && task.getResult()!=null)
+                        Glide.with(context).load(task.getResult()).into(holder.image_view);});
+    }
+
+
+/* View Holder subclass
 ***************************************************************************************************/
 
     static class SquareImgHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
