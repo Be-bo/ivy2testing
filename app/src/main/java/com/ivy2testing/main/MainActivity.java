@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -29,14 +31,18 @@ import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
+import com.ivy2testing.home.BubbleAdapter;
 import com.ivy2testing.home.CreatePost;
 import com.ivy2testing.R;
 import com.ivy2testing.chat.ChatFragment;
+import com.ivy2testing.home.EventsFragment;
 import com.ivy2testing.home.HomeFragment;
+import com.ivy2testing.home.PostsFragment;
 import com.ivy2testing.userProfile.OrganizationProfileFragment;
 import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.Constant;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,6 +65,18 @@ public class MainActivity extends AppCompatActivity {
     private User this_user;
 
 
+    // bubbles
+
+    private final ArrayList<String> bubble_arraylist = new ArrayList<String>();
+
+    private RecyclerView bubble_recycler_view;
+    private RecyclerView.Adapter bubble_adapter;
+
+    private RecyclerView.LayoutManager bubble_layout_manager;
+
+    private HomeFragment hf = null;
+    private EventsFragment ef = null;
+    private PostsFragment pf = null;
 
 
 
@@ -72,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setUp();
+
     }
 
     @Override
@@ -109,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
         setUpToolbar();
         setHandlers();
         attemptLogin();
+        bubbleBarSetup();
     }
 
     private void setUpToolbar() {
@@ -135,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
         post_button.setOnClickListener(view -> transToCreatePost());
         bottom_navigation.setVisibility(View.VISIBLE);
         bottom_navigation.setOnNavigationItemSelectedListener((menuItem) -> {
+            bubble_recycler_view.setVisibility(View.GONE);
             Fragment selectedFragment = null;
             switch (menuItem.getItemId()){
                 //TODO: making a new fragment each time is inefficient
@@ -142,7 +163,11 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new ChatFragment();
                     break;
                 case R.id.tab_bar_home:
-                    selectedFragment = new HomeFragment(this);
+                    bubble_recycler_view.setVisibility(View.VISIBLE);
+                    if (hf == null){
+                        hf = HomeFragment.newInstance(MainActivity.this);
+                    }
+                    selectedFragment = hf;
                     break;
                 case R.id.tab_bar_profile:
                     if(this_user.getIs_organization()) selectedFragment = new OrganizationProfileFragment();
@@ -201,6 +226,65 @@ public class MainActivity extends AppCompatActivity {
     private void loadPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
         this_uni_domain = sharedPreferences.getString("domain", "");
+    }
+
+
+    private void bubbleBarSetup(){
+        bubble_arraylist.add("University");
+        bubble_arraylist.add("Events");
+        bubble_arraylist.add("Posts");
+        bubble_arraylist.add("For You");
+        bubble_arraylist.add("Clubs");
+        bubble_arraylist.add("University of Calgary Ski and Board Club");
+        bubble_arraylist.add("Social");
+        bubble_arraylist.add("Grind");
+
+        bubble_recycler_view = findViewById(R.id.bubble_sample_rv);
+        bubble_recycler_view.setHasFixedSize(true);
+
+        bubble_layout_manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        bubble_adapter = new BubbleAdapter(bubble_arraylist, new BubbleAdapter.BubbleViewHolder.BubbleClickListener() {
+            @Override
+            public void onBubbleClick(int position) {
+
+
+
+
+                Fragment selectedFragment = null;
+                switch (position){
+
+                    case 0:
+                        if (hf == null){
+                            hf = HomeFragment.newInstance(MainActivity.this);
+                        }
+                        selectedFragment = hf;
+
+
+                        break;
+                    case 1:
+                        if(ef == null){
+                            ef = EventsFragment.newInstance(MainActivity.this);
+                        }
+                        selectedFragment = ef;
+
+                        break;
+                    case 2:
+                        if(pf == null)
+                            pf = PostsFragment.newInstance(MainActivity.this);
+                        selectedFragment = pf;
+                }
+                if (selectedFragment!= null) getSupportFragmentManager().beginTransaction().replace(R.id.main_fragmentContainer, selectedFragment).commit();
+
+
+            }
+        });
+        bubble_recycler_view.setLayoutManager(bubble_layout_manager);
+        bubble_recycler_view.setAdapter(bubble_adapter);
+
+
+
+
+
     }
 
 
