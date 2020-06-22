@@ -128,7 +128,8 @@ public class ViewEventFragment extends Fragment {
         if (event.getLink() != null) tv_link.setText(event.getLink());
         else tv_link.setVisibility(View.GONE);
 
-        if (event.getPinned_id() != null) tv_pinned.setText(event.getPinned_id()); //TODO change to pin name
+        if (event.getPinned_id() != null && !event.getPinned_id().isEmpty())
+            tv_pinned.setText(event.getPinned_id()); //TODO change to pin name
         else v.findViewById(R.id.viewPost_pinLayout).setVisibility(View.GONE);
 
         // Going Users' Recycler View
@@ -166,7 +167,7 @@ public class ViewEventFragment extends Fragment {
         going_adapter.setOnSelectionListener(this::selectUser);
         if (button_going.getVisibility() == View.VISIBLE)
             button_going.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) going(); //toggle is enabled
+                if (isChecked) going(); // toggle is enabled
                 else notGoing();        // toggle is disabled
             });
 

@@ -319,10 +319,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
                         Uri path = task.getResult();
                         Picasso.get().load(path).into(mImg);
                     }
-                    else {
-                        Log.w(TAG, task.getException());
-                        student.setProfile_picture(""); // image doesn't exist TODO delete?
-                    }
+                    else Log.w(TAG, "Couldn't retrieve image!");
                     allowInteraction();
                 });
     }

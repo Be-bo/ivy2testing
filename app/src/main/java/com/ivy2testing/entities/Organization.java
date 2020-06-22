@@ -35,47 +35,6 @@ public class Organization extends User {
 /* Getters
 ***************************************************************************************************/
 
-    // Don't write ID in database! (redundant)
-    @Exclude
-    public String getId() {
-        return id;
-    }
-
-    public String getUni_domain() {
-        return uni_domain;
-    }
-
-    public long getRegistration_millis() {
-        return registration_millis;
-    }
-
-    public String getName() {
-        if (name == null) name = email.split("@")[0];
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getProfile_picture() {
-        return profile_picture;
-    }
-
-    public String getMessaging_token() {
-        return messaging_token;
-    }
-
-
-    public String getRegistration_platform() {
-        return registration_platform;
-    }
-
-    public List<String> getPost_ids() {
-        if (post_ids == null) post_ids = new ArrayList<>();
-        return new ArrayList<>(post_ids);          // Return copy
-    }
-
     public List<String> getMember_ids() {
         if (member_ids == null) return new ArrayList<>();
         else return new ArrayList<>(member_ids);          // Return copy
@@ -90,7 +49,7 @@ public class Organization extends User {
 ***************************************************************************************************/
 
     public void addMemberToList(String memberId){
-        if (memberId != null && !memberId.isEmpty()) post_ids.add(memberId);
+        if (memberId != null && !memberId.isEmpty()) member_ids.add(memberId);
     }
 
     public void deleteMemberFromList(String memberId){
@@ -98,7 +57,7 @@ public class Organization extends User {
     }
 
     public void addRequestFromList(String requestId) {
-        if (requestId != null && !requestId.isEmpty()) post_ids.add(requestId);
+        if (requestId != null && !requestId.isEmpty()) request_ids.add(requestId);
     }
 
     public void deleteRequestFromList(String requestId) {

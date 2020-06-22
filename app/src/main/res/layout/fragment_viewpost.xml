@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -39,20 +40,22 @@
         android:orientation="horizontal"
         android:layout_marginTop="@dimen/general_view_margin"
         app:layout_constraintStart_toStartOf="@id/viewPost_guideline1"
-        app:layout_constraintTop_toBottomOf="@id/viewPost_description">
+        app:layout_constraintTop_toBottomOf="@id/viewPost_description"
+        tools:ignore="UseCompoundDrawables">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="2dp"
             android:src="@drawable/ivy_logo"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:contentDescription="@string/logo_desc" />
 
         <TextView
             android:id="@+id/viewPost_pinned"
-            style="@style/StandardClickableText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/StandardClickableText"
             android:text="@string/sample_pinnedEvent"
             android:layout_gravity="center"/>
 

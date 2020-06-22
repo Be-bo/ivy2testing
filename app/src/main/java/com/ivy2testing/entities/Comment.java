@@ -26,11 +26,12 @@ public class Comment implements Parcelable {
     public Comment(){}
 
     // Use for creating new comment in java code
-    public Comment(String id, String uni_domain, String author_id, String author_name){
+    public Comment(String id, String uni_domain, String author_id, String author_name, String text){
         this.id = id;
         this.uni_domain = uni_domain;
         this.author_id = author_id;
         this.author_name = author_name;
+        this.text = text;
     }
 
 

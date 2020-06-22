@@ -1,6 +1,5 @@
 package com.ivy2testing.userProfile;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,14 +19,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.ivy2testing.entities.Event;
-import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.home.SeeAllPostsActivity;
 import com.ivy2testing.home.ViewPostOrEventActivity;
@@ -40,9 +32,7 @@ import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.adapters.SquareImageAdapter;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /** @author Zahra Ghavasieh
  * Overview: Student Profile view fragment
@@ -51,7 +41,7 @@ import java.util.List;
 public class StudentProfileFragment extends Fragment implements SquareImageAdapter.OnPostListener {
 
     // Constants
-    private final static String TAG = "StudentProfileFragmentTag";
+    private final static String TAG = "StudentProfileFragment";
 
     private View root_view;
 
@@ -66,7 +56,6 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
     private TextView mSeeAll;
 
     // Firestore
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
     // Other Variables
@@ -100,8 +89,6 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root_view = inflater.inflate(R.layout.fragment_studentprofile, container, false);
-
-        Log.d(TAG,"onCreateView!");
 
         // Initialization Methods
         declareViews(root_view);
@@ -278,7 +265,7 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
 
         base_storage_ref.child(ImageUtils.getProfilePath(student.getId())).getDownloadUrl()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) profile_img_uri = task.getResult();
+                    if (task.isSuccessful() && task.getResult() != null) profile_img_uri = task.getResult();
                     else Log.w(TAG, task.getException());
 
                     // Reload views

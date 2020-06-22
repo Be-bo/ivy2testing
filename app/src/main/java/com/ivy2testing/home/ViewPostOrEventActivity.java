@@ -4,14 +4,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.AutoTransition;
 import androidx.transition.TransitionManager;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -44,6 +45,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 /** @author Zahra Ghavasieh
@@ -60,17 +62,14 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private ImageView mPostVisual;
     private ImageView mAuthorImg;
     private TextView mAuthorName;
-    private FloatingActionButton mFloatingEditButton;
     private ImageButton mExpandComments;
     private RecyclerView mCommentsRecycler;
+    private EditText mWriteComment;
+    private ImageButton mPostComment;
 
     // Firebase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
-
-    // Other Variables
-    private Post post;          // Nullable!!!
-    private String viewerId;    // Nullable also!!!
 
     // Comments Recycler Variables
     private List<Comment> comments = new ArrayList<>();
@@ -79,6 +78,10 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private final static int MIN_COMMENTS_LOADED = 15;
     private DocumentSnapshot last_doc;                  // Snapshot of last comment loaded
     private boolean comment_list_updated;
+
+    // Other Variables
+    private Post post;          // Nullable!!!
+    private String viewerId;    // Nullable also!!!
 
 
 
@@ -141,9 +144,10 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         mPostVisual = findViewById(R.id.viewPost_visual);
         mAuthorImg = findViewById(R.id.viewPost_userImage);
         mAuthorName = findViewById(R.id.viewPost_userName);
-        mFloatingEditButton = findViewById(R.id.viewPost_floatingEditButton);
         mExpandComments = findViewById(R.id.viewPost_commentButton);
         mCommentsRecycler = findViewById(R.id.viewPost_commentRV);
+        mWriteComment = findViewById(R.id.writeComment_commentText);
+        mPostComment = findViewById(R.id.writeComment_commentButton);
 
         // Action bar
         setSupportActionBar(findViewById(R.id.viewPost_toolBar));
@@ -162,10 +166,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
         mAuthorName.setText(post.getAuthor_name());
 
-        // Can edit if viewer is the author of the post
-        if (viewerId != null && viewerId.equals(post.getAuthor_id()))
-            mFloatingEditButton.setVisibility(View.VISIBLE);
-        else mFloatingEditButton.setVisibility(View.GONE);
+        // Can comment if logged in
+        if (viewerId != null) setupWriteComment();
     }
 
     // Set up either ViewPost or ViewEvent Fragment in FrameLayout
@@ -199,6 +201,22 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
                     }
                 }
             }
+        });
+    }
+
+    // Set up write comment functionality for a logged in user
+    private void setupWriteComment(){
+        findViewById(R.id.viewPost_writeComment).setVisibility(View.VISIBLE);
+        mWriteComment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mPostComment.setEnabled(!mWriteComment.getText().toString().trim().isEmpty());
+                //if (mPostComment.isEnabled()) mPostComment.setColorFilter(getColor()); //TODO figure out colour
+            }
+            @Override
+            public void afterTextChanged(Editable s) {}
         });
     }
 
@@ -269,32 +287,64 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         startActivityForResult(intent, Constant.USER_PROFILE_REQUEST_CODE);
     }
 
-    // onClick for edit Post (if viewer == author) TODO
-    // collapse comments and unable its listener to expand (hide?)
-    // Load a completely different fragment/activity??
-    public void editPost(View view){
-        String message = "EditPost WIP";
-        Log.e(TAG, message);
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
-
-    // TODO new comment?
-
     // Load comments only when clicked on
     public void expandComments(View view){
-        if (findViewById(R.id.viewPost_commentLayout).getVisibility() == View.GONE){
+        if (findViewById(R.id.viewPost_commentsLayout).getVisibility() == View.GONE){
             TransitionManager.beginDelayedTransition(findViewById(R.id.viewPost_linearRootLayout), new AutoTransition());
-            findViewById(R.id.viewPost_commentLayout).setVisibility(View.VISIBLE);
+            findViewById(R.id.viewPost_commentsLayout).setVisibility(View.VISIBLE);
             mExpandComments.setImageResource(R.drawable.ic_arrow_up);
 
             // Set up recycler with recycler manager and adapter if not done yet
             if (layout_man == null) setCommentRecycler();
+
+            // Scroll down a bit
+            ScrollView scrollView = findViewById(R.id.viewPost_scrollView);
+            scrollView.scrollTo(0, scrollView.getBottom()); //TODO scroll down a bit
+
         }
         else {
             TransitionManager.beginDelayedTransition(findViewById(R.id.viewPost_linearRootLayout), new AutoTransition());
-            findViewById(R.id.viewPost_commentLayout).setVisibility(View.GONE);
+            findViewById(R.id.viewPost_commentsLayout).setVisibility(View.GONE);
             mExpandComments.setImageResource(R.drawable.ic_arrow_down);
         }
+    }
+
+    // OnClick for post a comment
+    public void postComment(View view){
+        String commentText = mWriteComment.getText().toString().trim();
+        if (commentText.isEmpty()){
+            Log.d(TAG, "Can't post empty comment!");
+            return;
+        }
+
+        String address = "universities/" + post.getUni_domain() + "/users/" + viewerId;
+        //address = "universities/" + post.getUni_domain() + "/posts/" + post.getId() +"/comments";
+        if (address.contains("null")){
+            Log.e(TAG, "Address has null values.");
+            return;
+        }
+
+        // Get Author name and create new comment
+        db.document(address).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                String authorName = "guest";
+                if (task.getResult().get("name") != null)
+                    authorName = Objects.requireNonNull(task.getResult().get("name")).toString();
+
+                // Create Comment
+                String commentId = "" + System.currentTimeMillis();
+                Comment newComment = new Comment(commentId, post.getUni_domain(), viewerId, authorName, commentText);
+                db.document("universities/" + post.getUni_domain() + "/posts/" + post.getId() +"/comments/"+commentId)
+                        .set(newComment)
+                        .addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()){
+                                comments.add(0, newComment);
+                                adapter.notifyItemInserted(0);
+                            }
+                            else Log.e(TAG, "Comment not saved in database.", task1.getException());
+                        });
+            } else Log.e(TAG, "Couldn't get author name from database.", task.getException());
+        });
     }
 
 

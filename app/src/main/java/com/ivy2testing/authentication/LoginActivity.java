@@ -28,8 +28,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.ivy2testing.R;
+import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.util.SpinnerAdapter;
 
 import static com.ivy2testing.util.StaticDomainList.available_domain_list;
@@ -54,14 +54,12 @@ public class LoginActivity extends AppCompatActivity {
 
     // Firebase
     private FirebaseAuth auth = FirebaseAuth.getInstance();
-    private FirebaseFirestore dbRef = FirebaseFirestore.getInstance();
 
     // Other variables
     private String currentDomain = "";
-    private SpinnerAdapter uni_adapter;
 
 
-/* Override Methods
+    /* Override Methods
 ***************************************************************************************************/
 
     @Override
@@ -101,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mLoginButton.setEnabled(!fieldsEmpty());
+                mLoginButton.setEnabled(fieldsNotEmpty());
             }
             @Override
             public void afterTextChanged(Editable s) {}
@@ -132,18 +130,18 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setUpSpinner(){
-        uni_adapter = new SpinnerAdapter(this, available_domain_list);
+        SpinnerAdapter uni_adapter = new SpinnerAdapter(this, available_domain_list);
         uni_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         uni_spinner.setAdapter(uni_adapter);
         uni_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                mLoginButton.setEnabled(!fieldsEmpty());
+                mLoginButton.setEnabled(fieldsNotEmpty());
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                mLoginButton.setEnabled(!fieldsEmpty());
+                mLoginButton.setEnabled(fieldsNotEmpty());
             }
         });
     }
@@ -181,10 +179,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // Check to see if any of fields are empty
-    private boolean fieldsEmpty(){
+    private boolean fieldsNotEmpty(){
         boolean bool = mEmailView.getText().toString().isEmpty() || mPasswordView.getText().toString().isEmpty();
-        if(!org_switch.isChecked()) return bool;
-        else return bool || uni_spinner.getSelectedItem().toString().equals("university");
+        if(!org_switch.isChecked()) return !bool;
+        else return !bool && !uni_spinner.getSelectedItem().toString().equals("university");
     }
 
     // Make sure email has a correct format and is not empty
@@ -210,25 +208,23 @@ public class LoginActivity extends AppCompatActivity {
         String email = mEmailView.getText().toString().trim();
         String password = mPasswordView.getText().toString();
 
-        auth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()){
-                    FirebaseUser user = auth.getCurrentUser();
-                    if(user!=null && user.isEmailVerified()){
-                        // Save uni domain for auto-logins and send off to MainActivity
-                        barInteraction();
-                        savePreferences();
-                        transToMainLoggedIn();
-                    }
-                    else {
-                        toastError("Email not verified yet!");
-                        allowInteraction();
-                    }
-                } else {
-                    mLoginButton.setError(getString(R.string.error_loginInvalid));
+        auth.signInWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                FirebaseUser user = auth.getCurrentUser();
+                if(user!=null && user.isEmailVerified()){
+                    // Save uni domain for auto-logins and send off to MainActivity
+                    barInteraction();
+                    savePreferences();
+                    transToMainLoggedIn();
+                }
+                else {
+                    toastError("Email not verified yet!");
                     allowInteraction();
                 }
+            } else {
+                mLoginButton.setError(getString(R.string.error_loginInvalid));
+                toastError(getString(R.string.error_loginInvalid));
+                allowInteraction();
             }
         });
     }
@@ -275,8 +271,9 @@ public class LoginActivity extends AppCompatActivity {
 
     // Go back to main activity
     private void transToMainLoggedIn(){
-        Intent returnIntent = new Intent();
-        setResult(Activity.RESULT_OK, returnIntent);
+        Log.d(TAG, "Going back to main");
+        Intent intent = new Intent(this, MainActivity.class);
+        setResult(RESULT_OK, intent);
         finish();
         allowInteraction();
     }

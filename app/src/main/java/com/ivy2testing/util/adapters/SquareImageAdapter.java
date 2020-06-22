@@ -111,7 +111,7 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
         list_reg = db_ref.collection(address)
                 .whereEqualTo("author_id", author_id).limit(limit)
                 .addSnapshotListener((queryDocumentSnapshots, e) -> {
-                if(queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()){
+                if(queryDocumentSnapshots != null){
 
                     for (int i = 0; i<queryDocumentSnapshots.getDocumentChanges().size(); i++) {
 
@@ -144,6 +144,7 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
                     }
                     notifyDataSetChanged();
                 }
+                else Log.e(TAG, "There was a problem in retrieving posts!");
             });
     }
 

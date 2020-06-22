@@ -15,6 +15,7 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Student;
+import com.ivy2testing.util.ImageUtils;
 
 class MembersAdapter extends RecyclerView.Adapter<MembersViewHolder>{
 
@@ -59,7 +60,7 @@ class MembersAdapter extends RecyclerView.Adapter<MembersViewHolder>{
                 Student pulledProfile = task.getResult().toObject(Student.class);
                 if(pulledProfile != null){
                     holder.name.setText(pulledProfile.getName());
-                    baseStorageReference.child(pulledProfile.getPreview_picture()).getDownloadUrl().addOnCompleteListener(uri -> { Glide.with(context).load(uri).into(holder.hodendofWeirdEuropeanNameCircleImageView); });
+                    baseStorageReference.child(ImageUtils.getProfilePath(pulledProfile.getId())).getDownloadUrl().addOnCompleteListener(uri -> { Glide.with(context).load(uri).into(holder.hodendofWeirdEuropeanNameCircleImageView); });
                     if(itemsEditable) {
                         holder.options.setVisibility(View.VISIBLE);
                         holder.options.setOnClickListener(view -> {
