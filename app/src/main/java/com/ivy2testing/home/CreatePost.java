@@ -889,7 +889,6 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String stre = parent.getItemAtPosition(position).toString().trim();
         Toast.makeText(this, "" + stre, Toast.LENGTH_SHORT).show();
-
     }
 
     @Override
