@@ -125,7 +125,7 @@ public class SeeAllPostsActivity extends AppCompatActivity {
         recycler_view = findViewById(R.id.seeAll_recycler);
 
         // Set LayoutManager and Adapter
-        adapter = new FeedAdapter(posts, this::onSelectListener);
+       // adapter = new FeedAdapter(posts, this::onSelectListener);
         layout_man = new LinearLayoutManager(this);
         recycler_view.setLayoutManager(layout_man);
         recycler_view.setAdapter(adapter);

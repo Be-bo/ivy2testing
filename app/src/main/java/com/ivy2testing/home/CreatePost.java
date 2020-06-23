@@ -19,9 +19,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,7 +29,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -40,7 +39,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -49,8 +47,8 @@ import com.google.firebase.storage.UploadTask;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
-import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
+import com.ivy2testing.util.ImageUtils;
 
 
 import java.io.ByteArrayOutputStream;
@@ -62,8 +60,6 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.UUID;
-
-import static com.ivy2testing.util.StaticDegreesList.degree_array;
 
 public class CreatePost extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, android.app.TimePickerDialog.OnTimeSetListener, AdapterView.OnItemSelectedListener {
 
@@ -90,7 +86,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
 
     // visual uploads
     private ImageView image_upload_view;
-    private VideoView video_upload_view;
+    private TextView video_upload_view;
     private ImageView gif_upload_view;
 
     // edit text
@@ -217,7 +213,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
 
         //media views
         image_upload_view = findViewById(R.id.image_imageview);
-        video_upload_view = findViewById(R.id.video_imageview);
+        video_upload_view = findViewById(R.id.video_coming_soon_textview);
         gif_upload_view = findViewById(R.id.gif_imageview);
 
         // event fields
@@ -466,7 +462,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                 // try's and catch's might not be required anymore, best to just rewrite function later
                 try {
                     //TODO  this is the place to check sizes/ compress images also potentially clear all other views of their previously chosen images
-                    compressed_bitmap = compressionHandler();
+                    compressed_bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), pic_selected);
                     image_upload_view.setImageBitmap(compressed_bitmap);
 
                     if (current_post!=null) current_post.setVisual("picture");
@@ -606,7 +602,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                 current_post.setVisual("nothing");
 
             } else if (current_post.getVisual().equals("picture")) {
-                storePictureInDB(bmpToByteArray(compressed_bitmap));
+                storePictureInDB(ImageUtils.compressAndGetBytes(compressed_bitmap), ImageUtils.compressAndGetPreviewBytes(compressed_bitmap));
             }
 
 
@@ -659,7 +655,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
             if (current_event.getVisual().equals("")) {
                 current_event.setVisual("nothing");
             } else if (current_event.getVisual().equals("picture")) {
-                storePictureInDB(bmpToByteArray(compressed_bitmap));
+                storePictureInDB(ImageUtils.compressAndGetBytes(compressed_bitmap), ImageUtils.compressAndGetPreviewBytes(compressed_bitmap));
             }
 
 
@@ -759,68 +755,24 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     }
 
 
-    //compression methods
-    // https://stackoverflow.com/questions/51919925/compress-bitmap-to-a-specific-byte-size-in-android
-    /* ************************************************************************************************** */
-    private Bitmap compressionHandler() throws IOException {
-        // restructures uri to bitmap
-        Bitmap initial_bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), pic_selected);
-        //Toast.makeText(this, "initial" +initial_bitmap.getByteCount(), Toast.LENGTH_LONG).show();
 
-        // currently checks if images are larger than 1mb, resizes if so
-        //TODO WHAT IF STILL OVER 1.5 MEGS WHEN RESIZED
-        if (initial_bitmap.getByteCount() > 1000000) {
-            // reusing initial bitmap memory... but it is resized to be max 500 px
-            initial_bitmap = getResizedBitmap(initial_bitmap, 500);
-            //Toast.makeText(this, "Resized" +initial_bitmap.getByteCount(), Toast.LENGTH_LONG).show();
-        }
-        return initial_bitmap;
-    }
-
-    //temporary compression methods
-
-    public static Bitmap getResizedBitmap(Bitmap image, int maxSize) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        float bitmapRatio = (float) width / (float) height;
-        if (bitmapRatio > 1) {
-            width = maxSize;
-            height = (int) (width / bitmapRatio);
-        } else {
-            height = maxSize;
-            width = (int) (height * bitmapRatio);
-        }
-        return Bitmap.createScaledBitmap(image,
-                width,
-                height,
-                true);
-    }
-
-    // converts a bitmap to to a byte array, and format JPEG, quality remains at 100 to prevent further loss
-    //https://stackoverflow.com/questions/4989182/converting-java-bitmap-to-byte-array
-    private byte[] bmpToByteArray(Bitmap bmp) throws IOException {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-        bmp.recycle();
-        stream.close();
-
-        return byteArray;
-    }
 
     /* ************************************************************************************************** */
     // stores pics in the db to a test repository
 
-    private void storePictureInDB(byte[] jpeg_file) {
+    private void storePictureInDB(byte[] jpeg_file, byte [] preview_file) {
         String path = "";
+        String preview_path = "";
         // if current post is not set here the function ends to quick for it to be set properly
         if (current_post != null) {
             // uses current posts random UUID
-            path = "test_for_posts/" + current_post.getId() + "/" + current_post.getId() + ".jpg";
+            path = "postfiles/" + current_post.getId() + "/" + current_post.getId() + ".jpg";
+            preview_path = "postfiles/" + current_post.getId() + "/previewimage.jpg";
             current_post.setVisual(path);
+
         } else if (current_event != null) {
-            path = "test_for_posts/" + current_event.getId() + "/" + current_event.getId() + ".jpg";
+            path = "postfiles/" + current_event.getId() + "/" + current_event.getId() + ".jpg";
+            preview_path = "postfiles/" + current_event.getId() + "/previewimage.jpg";
             current_event.setVisual(path);
         }
 
@@ -835,6 +787,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         }
 
         StorageReference post_image_storage = db_storage.child(path);
+        StorageReference post_preview_storage = db_storage.child(preview_path);
 
 
 
@@ -842,7 +795,6 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if(task.isSuccessful()){
-
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -853,6 +805,17 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                     current_post.setVisual("upload failed");
                 if(current_event!=null)
                     current_event.setVisual("upload failed");
+            }
+        });
+        post_preview_storage.putBytes(preview_file).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
             }
         });
     }
@@ -933,3 +896,58 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     }
 
 }
+
+
+
+
+// previous compression methods/ bitmap to byte array method
+
+/*   //compression methods
+    // https://stackoverflow.com/questions/51919925/compress-bitmap-to-a-specific-byte-size-in-android
+    *//* ************************************************************************************************** *//*
+    private Bitmap compressionHandler() throws IOException {
+        // restructures uri to bitmap
+        Bitmap initial_bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), pic_selected);
+        //Toast.makeText(this, "initial" +initial_bitmap.getByteCount(), Toast.LENGTH_LONG).show();
+
+        // currently checks if images are larger than 1mb, resizes if so
+        // WHAT IF STILL OVER 1.5 MEGS WHEN RESIZED
+        if (initial_bitmap.getByteCount() > 1000000) {
+            // reusing initial bitmap memory... but it is resized to be max 500 px
+            initial_bitmap = getResizedBitmap(initial_bitmap, 500);
+            //Toast.makeText(this, "Resized" +initial_bitmap.getByteCount(), Toast.LENGTH_LONG).show();
+        }
+        return initial_bitmap;
+    }
+
+    //temporary compression methods
+
+    public static Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image,
+                width,
+                height,
+                true);
+    }
+
+    // converts a bitmap to to a byte array, and format JPEG, quality remains at 100 to prevent further loss
+    //https://stackoverflow.com/questions/4989182/converting-java-bitmap-to-byte-array
+    private byte[] bmpToByteArray(Bitmap bmp) throws IOException {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        bmp.recycle();
+        stream.close();
+
+        return byteArray;
+    }*/

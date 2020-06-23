@@ -234,11 +234,8 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
         // post_array_list.get(position); <- this is the clicked event/post
 
         switch(clicked_id){
-            case R.id.object_full_button:
-                Toast.makeText(mContext, "BUTTON", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.object_full_text:
-                Toast.makeText(mContext, "TEXT", Toast.LENGTH_SHORT).show();
+            case R.id.full_constraint_view:
+                Toast.makeText(mContext, "FULL", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.object_posted_by_author:
                 Toast.makeText(mContext, "AUTHOR", Toast.LENGTH_SHORT).show();
@@ -246,8 +243,6 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
             case R.id.object_pinned_event:
                 Toast.makeText(mContext, "EVENT", Toast.LENGTH_SHORT).show();
                 break;
-
-
         }
 
 

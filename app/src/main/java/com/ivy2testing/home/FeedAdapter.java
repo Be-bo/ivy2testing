@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -45,8 +46,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         public TextView feed_author;
         public TextView feed_pinned_name;
 
-        public ImageButton full_button;
-        public TextView full_text;
+        public ConstraintLayout full_constraint_layout;
 
 
         public FeedViewHolder(@NonNull View itemView, FeedClickListener feed_click_listener) {
@@ -56,14 +56,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             feed_text = itemView.findViewById(R.id.object_body);
             feed_author = itemView.findViewById(R.id.object_posted_by_author);
             feed_pinned_name = itemView.findViewById(R.id.object_pinned_event);
-            full_button = itemView.findViewById(R.id.object_full_button);
-            full_text = itemView.findViewById(R.id.object_full_text);
+            full_constraint_layout = itemView.findViewById(R.id.full_constraint_view);
 
 
             this.feed_click_listener = feed_click_listener;
 
-            full_text.setOnClickListener(this);
-            full_button.setOnClickListener(this);
+            full_constraint_layout.setOnClickListener(this);
 
 
             feed_author.setOnClickListener(this);
