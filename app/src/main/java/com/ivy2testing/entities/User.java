@@ -56,8 +56,6 @@ public class User implements Parcelable {
 /* Getters
 ***************************************************************************************************/
 
-    // Don't write ID in database! (redundant)
-    @Exclude
     public String getId() {
         return id;
     }

@@ -1,9 +1,6 @@
 package com.ivy2testing.entities;
 
 import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.google.firebase.database.Exclude;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +32,8 @@ public class Event extends Post {
 
     // Use for creating a new Event in code TODO change parameters depending on createEvent page
     public Event(String id, String uni_domain, String author_id, String author_name,
-                boolean main_feed_visible, String pinned_id, String visual){
-        super(id, uni_domain, author_id, author_name, main_feed_visible, pinned_id, visual);
+                boolean main_feed_visible, String pinned_id, String pinned_name, String visual){
+        super(id, uni_domain, author_id, author_name, main_feed_visible, pinned_id, pinned_name, visual);
 
         // going IDs needs to be instantiated for it to go in the database with the constructor...
         this.going_ids = new ArrayList<>();
@@ -45,8 +42,9 @@ public class Event extends Post {
     // Make Event from Post
     public Event (Post post){
         this(post.getId(), post.getUni_domain(), post.getAuthor_id(), post.getAuthor_name(),
-                post.isMain_feed_visible(), post.getPinned_id(), post.getVisual());
+                post.isMain_feed_visible(), post.getPinned_id(), post.getPinned_name(), post.getVisual());
         is_event = true;
+        this.author_is_organization = post.getAuthor_is_organization();
     }
 
 /* Getters

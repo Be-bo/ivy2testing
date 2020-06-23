@@ -21,7 +21,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
-import com.ivy2testing.userProfile.UserProfileActivity;
+import com.ivy2testing.entities.User;
+import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.adapters.CircleImageAdapter;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
@@ -60,7 +61,7 @@ public class ViewEventFragment extends Fragment {
 
     // Other Variables
     private Event event;
-    private String viewer_id;           // Nullable!
+    private User this_user;             // Nullable!
     private Uri viewer_img;             // Nullable
 
     private CircleImageAdapter going_adapter;       // Recycler Adapter for going_ids
@@ -70,9 +71,9 @@ public class ViewEventFragment extends Fragment {
 
 
     // Constructor
-    public ViewEventFragment(Event event, String viewer_id){
+    public ViewEventFragment(Event event, User this_user){
         this.event = event;
-        this.viewer_id = viewer_id;
+        this.this_user = this_user;
     }
 
 
@@ -137,10 +138,10 @@ public class ViewEventFragment extends Fragment {
         setRecycler();
 
         // Hide button if user is not signed in
-        if (viewer_id == null){
+        if (this_user == null){
             button_going.setVisibility(View.GONE);
         }
-        else if (event.getGoing_ids().contains(viewer_id)) button_going.setChecked(true);
+        else if (event.getGoing_ids().contains(this_user.getId())) button_going.setChecked(true);
     }
 
     // OnClick and scroll Listeners
@@ -236,7 +237,7 @@ public class ViewEventFragment extends Fragment {
     // See all posts that are pinned to the same event
     private void seeAllPosts() {
         Intent intent = new Intent(getContext(), SeeAllPostsActivity.class);
-        intent.putExtra("viewer_id", viewer_id);
+        intent.putExtra("this_user", this_user);
         intent.putExtra("this_uni_domain", event.getUni_domain());
         intent.putExtra("title", event.getPinned_id());
 
@@ -257,7 +258,7 @@ public class ViewEventFragment extends Fragment {
         Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
         Log.d(TAG, "Starting ViewPost Activity for event " + event.getId());
         intent.putExtra("post", event);
-        intent.putExtra("this_user_id", viewer_id);
+        intent.putExtra("this_user", this_user);
         startActivityForResult(intent, Constant.VIEW_POST_REQUEST_CODE);
     }
 
@@ -266,7 +267,7 @@ public class ViewEventFragment extends Fragment {
         Intent intent = new Intent(getContext(), SeeAllUsersActivity.class);
         Log.d(TAG, "Starting SeeAll Activity to see all going users");
         intent.putExtra("title", "Going Users");
-        intent.putExtra("viewer_id", viewer_id);
+        intent.putExtra("this_user", this_user);
         intent.putExtra("this_uni_domain", event.getUni_domain());
         intent.putExtra("user_ids", (ArrayList<String>) event.getGoing_ids());
         startActivityForResult(intent, Constant.SEEALL_USERS_REQUEST_CODE);
@@ -275,23 +276,26 @@ public class ViewEventFragment extends Fragment {
     // View a user's profile
     private void selectUser(int i) {
         if (getActivity() != null) {
-            Log.d(TAG, "Starting UserProfile Activity for user " + event.getGoing_ids().get(i));
-            Intent intent = new Intent(getActivity(), UserProfileActivity.class);
-            intent.putExtra("this_uni_domain", event.getUni_domain());
-            intent.putExtra("this_user_id", event.getGoing_ids().get(i));
-            intent.putExtra("viewer_id", viewer_id);
-            getActivity().startActivityForResult(intent, Constant.USER_PROFILE_REQUEST_CODE);
+
+            // We don't know if it is a student but StudentProfile will automatically
+            // transition to OrganizationProfile if user is not a student.
+            Log.d(TAG, "Starting StudentProfile Activity for user " + event.getGoing_ids().get(i));
+            Intent intent = new Intent(getActivity(), StudentProfileActivity.class);
+            intent.putExtra("student_to_display_id", event.getGoing_ids().get(i));
+            intent.putExtra("student_to_display_uni", event.getUni_domain());
+            intent.putExtra("this_user", this_user);
+            startActivity(intent);
         }
         else Log.e(TAG, "Parent Activity was null!");
     }
 
     // Add user to going list
     private void going(){
-        event.addGoingIdToList(0, viewer_id);
+        event.addGoingIdToList(0, this_user.getId());
         setRecyclerVisibility();
 
         // Load viewer preview pic if not done so yet
-        if (viewer_img == null) loadUserPic(viewer_id);
+        if (viewer_img == null) loadUserPic(this_user.getId());
         else {
             going_img_uris.add(0, viewer_img);
             going_adapter.notifyItemInserted(0);
@@ -300,7 +304,7 @@ public class ViewEventFragment extends Fragment {
 
     // Remove user from going list
     private void notGoing(){
-        event.deleteGoingIdFromList(viewer_id);
+        event.deleteGoingIdFromList(this_user.getId());
 
         // Delete viewer preview pic from recycler
         going_img_uris.remove(viewer_img);
@@ -377,7 +381,7 @@ public class ViewEventFragment extends Fragment {
                     else Log.w(TAG, "this user's image doesn't exist! user: " + user_id);
 
                     // Always load viewer's id first!
-                    if (user_id.equals(viewer_id)){
+                    if (user_id.equals(this_user.getId())){
                         viewer_img = uri;   // NULLABLE (adapter handles null uris)
                         going_img_uris.add(0, uri);
                         going_adapter.notifyItemInserted(0);

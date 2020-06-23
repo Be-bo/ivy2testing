@@ -48,6 +48,7 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
 
     // Constructors
     public SquareImageAdapter(String id, String uniDomain, int limit, Context mrContext, OnPostListener listener){
+        Log.d(TAG, "declaring");
         this.uni_domain = uniDomain;
         this.author_id = id;
         this.context = mrContext;

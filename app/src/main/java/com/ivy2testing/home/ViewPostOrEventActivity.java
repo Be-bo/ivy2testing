@@ -35,9 +35,12 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Comment;
 import com.ivy2testing.entities.Event;
+import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Post;
+import com.ivy2testing.entities.User;
 import com.ivy2testing.main.MainActivity;
-import com.ivy2testing.userProfile.UserProfileActivity;
+import com.ivy2testing.userProfile.OrganizationProfileActivity;
+import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.adapters.CommentAdapter;
@@ -79,9 +82,9 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private DocumentSnapshot last_doc;                  // Snapshot of last comment loaded
     private boolean comment_list_updated;
 
-    // Other Variables
-    private Post post;          // Nullable!!!
-    private String viewerId;    // Nullable also!!!
+    // Other Variables (Nullable)
+    private Post post;
+    private User this_user;     // Currently logged in user
 
 
 
@@ -167,15 +170,15 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         mAuthorName.setText(post.getAuthor_name());
 
         // Can comment if logged in
-        if (viewerId != null) setupWriteComment();
+        if (this_user != null) setupWriteComment();
     }
 
     // Set up either ViewPost or ViewEvent Fragment in FrameLayout
     private void setFragment() {
         Fragment selected_fragment;
 
-        if (post.getIs_event()) selected_fragment = new ViewEventFragment((Event) post, viewerId);
-        else selected_fragment = new ViewPostFragment(post, viewerId);
+        if (post.getIs_event()) selected_fragment = new ViewEventFragment((Event) post, this_user);
+        else selected_fragment = new ViewPostFragment(post, this_user);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.viewPost_contents, selected_fragment).commit();
@@ -228,12 +231,14 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private void getIntentExtras() {
         if (getIntent() != null) {
             post = getIntent().getParcelableExtra("post");
-            viewerId = getIntent().getStringExtra("viewer_id");
+            this_user = getIntent().getParcelableExtra("this_user");
         }
 
-        if (post == null) Log.e(TAG, "Student Parcel was null! Showing test view!");
-        else if (viewerId != null) {
-            post.addViewIdToList(viewerId);
+        if (post == null){
+            Log.d(TAG, "Post Parcel was null! Showing test view!");
+        }
+        else if (this_user != null) {
+            post.addViewIdToList(this_user.getId());
         }
     }
 
@@ -269,22 +274,34 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         } // Do nothing if viewer == author
         */
 
-        viewUserProfile(post.getAuthor_id(), post.getUni_domain());
+        viewUserProfile(post.getAuthor_id(), post.getUni_domain(), post.getAuthor_is_organization());
     }
 
    // onClick for Comments
     private void onCommentAuthorClicked(int position) {
-        viewUserProfile(comments.get(position).getAuthor_id(), comments.get(position).getUni_domain());
+        Comment clicked_comment = comments.get(position);
+        viewUserProfile(clicked_comment.getAuthor_id(),
+                clicked_comment.getUni_domain(),
+                clicked_comment.getAuthor_is_organization());
     }
 
     // View a user's profile
-    private void viewUserProfile(String userId, String uniDomain){
-        Log.d(TAG, "Starting UserProfile Activity for user " + userId);
-        Intent intent = new Intent(this, UserProfileActivity.class);
-        intent.putExtra("this_uni_domain", uniDomain);
-        intent.putExtra("this_user_id", userId);
-        intent.putExtra("viewer_id", viewerId);
-        startActivityForResult(intent, Constant.USER_PROFILE_REQUEST_CODE);
+    private void viewUserProfile(String user_id, String uni_domain, boolean is_organization){
+        Intent intent;
+        if (is_organization){
+            Log.d(TAG, "Starting OrganizationProfile Activity for organization " + user_id);
+            intent = new Intent(this, OrganizationProfileActivity.class);
+            intent.putExtra("org_to_display_id", user_id);
+            intent.putExtra("org_to_display_uni", uni_domain);
+        }
+        else {
+            Log.d(TAG, "Starting StudentProfile Activity for student " + user_id);
+            intent = new Intent(this, StudentProfileActivity.class);
+            intent.putExtra("student_to_display_id", user_id);
+            intent.putExtra("student_to_display_uni", uni_domain);
+        }
+        intent.putExtra("this_user", this_user);
+        startActivity(intent);
     }
 
     // Load comments only when clicked on
@@ -317,33 +334,29 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             return;
         }
 
-        String address = "universities/" + post.getUni_domain() + "/users/" + viewerId;
-        //address = "universities/" + post.getUni_domain() + "/posts/" + post.getId() +"/comments";
+        // Create Comment object
+        String commentId = "" + System.currentTimeMillis();
+        Comment newComment = new Comment(
+                commentId,
+                post.getUni_domain(),
+                this_user.getId(),
+                this_user.getName(),
+                this_user.getIs_organization(),
+                commentText);
+
+        // Write to database
+        String address = "universities/" + post.getUni_domain() + "/posts/" + post.getId() +"/comments/"+commentId;
         if (address.contains("null")){
             Log.e(TAG, "Address has null values.");
             return;
         }
 
-        // Get Author name and create new comment
-        db.document(address).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                String authorName = "guest";
-                if (task.getResult().get("name") != null)
-                    authorName = Objects.requireNonNull(task.getResult().get("name")).toString();
-
-                // Create Comment
-                String commentId = "" + System.currentTimeMillis();
-                Comment newComment = new Comment(commentId, post.getUni_domain(), viewerId, authorName, commentText);
-                db.document("universities/" + post.getUni_domain() + "/posts/" + post.getId() +"/comments/"+commentId)
-                        .set(newComment)
-                        .addOnCompleteListener(task1 -> {
-                            if (task1.isSuccessful()){
-                                comments.add(0, newComment);
-                                adapter.notifyItemInserted(0);
-                            }
-                            else Log.e(TAG, "Comment not saved in database.", task1.getException());
-                        });
-            } else Log.e(TAG, "Couldn't get author name from database.", task.getException());
+        db.document(address).set(newComment).addOnCompleteListener(task1 -> {
+            if (task1.isSuccessful()){
+                comments.add(0, newComment);
+                adapter.notifyItemInserted(0);
+            }
+            else Log.e(TAG, "Comment not saved in database.", task1.getException());
         });
     }
 

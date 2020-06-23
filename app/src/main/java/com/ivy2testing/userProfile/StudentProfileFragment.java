@@ -36,9 +36,9 @@ import java.util.HashMap;
 
 /** @author Zahra Ghavasieh
  * Overview: Student Profile view fragment
- * Notes: Used for viewing both student's own profile as well as viewing other students' profiles
+ * Notes:Only used for viewing student's own profile
  */
-public class StudentProfileFragment extends Fragment implements SquareImageAdapter.OnPostListener {
+public class StudentProfileFragment extends Fragment {
 
     // Constants
     private final static String TAG = "StudentProfileFragment";
@@ -59,26 +59,14 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
     // Other Variables
-    private boolean my_profile;      // Don't show edit button if this is not myProfile
-    private String viewer_id;
     private Student student;
     private SquareImageAdapter adapter;
     private Uri profile_img_uri;
+    private boolean is_set_up = false;
 
 
-
-    // Constructors
-    public StudentProfileFragment(boolean my_profile) {
-        this.my_profile = my_profile;
-    }
-
-    public StudentProfileFragment(boolean my_profile, String viewer_id) {
-        this.my_profile = my_profile;
-        this.viewer_id = viewer_id;
-    }
-
-    public void setStudent(Student student){
-        this.student = student;
+    public boolean isIs_set_up() {
+        return is_set_up;
     }
 
 
@@ -89,12 +77,14 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root_view = inflater.inflate(R.layout.fragment_studentprofile, container, false);
-
-        // Initialization Methods
         declareViews(root_view);
-        if (student == null) getUserProfile();
-        else setUp();
         return root_view;
+    }
+
+    public void setUpProfile(){
+        is_set_up = true;
+        if (student == null) getUserProfile();
+        else setUpElements();
     }
 
     @Override
@@ -103,7 +93,7 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
         if(adapter!=null) adapter.cleanUp();
     }
 
-    /* Initialization Methods
+/* Initialization Methods
 ***************************************************************************************************/
 
     // Get User Data - always stays update and doesn't require passing anything because ViewModel is connected to the Activity that manages the fragment
@@ -117,7 +107,7 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
                 student = (Student) usr; //grab the initial data
 
                 // Only start doing processes that depend on user profile
-                setUp();
+                setUpElements();
             }
 
             // listen to realtime user profile changes afterwards
@@ -131,9 +121,9 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
     }
 
     // General setup after acquiring student object
-    private void setUp(){
+    private void setUpElements(){
         Log.d(TAG, "Showing student: " + student.getId() + ", name: " + student.getName());
-        setupViews();               // populate UI
+        setUpViews();               // populate UI
         setUpRecycler();            // set up posts recycler view
         setListeners(root_view);    // set up listeners
         getStudentPic();            // Do Other setups
@@ -150,7 +140,7 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
         mSeeAll = v.findViewById(R.id.studentProfile_seeAll);
     }
 
-    private void setupViews(){
+    private void setUpViews(){
         if (student == null) return;
         mName.setText(student.getName());
         mDegree.setText(student.getDegree());
@@ -162,7 +152,7 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
         startLoading();
 
         // set LayoutManager and Adapter
-        adapter = new SquareImageAdapter(student.getId(), student.getUni_domain(), 9, getContext(), this);
+        adapter = new SquareImageAdapter(student.getId(), student.getUni_domain(), 9, getContext(), this::onPostClick);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), 3, GridLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(adapter);
 
@@ -180,8 +170,7 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
 
     // Set up onClick Listeners
     private void setListeners(View v) {
-        if (my_profile) v.findViewById(R.id.studentProfile_edit).setOnClickListener(v12 -> editProfile());
-        else v.findViewById(R.id.studentProfile_edit).setVisibility(View.GONE);
+        v.findViewById(R.id.studentProfile_edit).setOnClickListener(v12 -> editProfile());
         v.findViewById(R.id.studentProfile_seeAll).setOnClickListener(v1 -> seeAllPosts());
     }
 
@@ -206,9 +195,8 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
     // See all posts
     private void seeAllPosts(){
         Intent intent = new Intent(getContext(), SeeAllPostsActivity.class);
-        if (my_profile) intent.putExtra("viewer_id", student.getId());
-        else intent.putExtra("viewer_id", viewer_id);
-        intent.putExtra("this_uni_domain", student.getUni_domain());
+        intent.putExtra("this_user", student);
+        intent.putExtra("uni_domain", student.getUni_domain());
 
         // Make "Query"
         HashMap<String, Object> query_map = new HashMap<String, Object>() {{ put("author_id", student.getId()); }};
@@ -218,10 +206,10 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
     }
 
     // A post in recycler was selected
-    @Override
     public void onPostClick(int position) {
         Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
-        intent.putExtra("viewer_id", student.getId());
+        intent.putExtra("this_user", student);
+        intent.putExtra("uni_domain", student.getUni_domain());
         intent.putExtra("post", adapter.getItem(position));
         startActivity(intent);
     }
@@ -269,7 +257,7 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
                     else Log.w(TAG, task.getException());
 
                     // Reload views
-                    setupViews();
+                    setUpViews();
                 });
     }
 }

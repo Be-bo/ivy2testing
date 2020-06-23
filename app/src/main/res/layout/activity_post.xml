@@ -498,7 +498,6 @@
                     android:id="@+id/pinned_event_spinner"
                     style="@style/StandardSpinner"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:backgroundTint="@color/hint"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
