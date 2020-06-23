@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -60,23 +61,19 @@ public class MainActivity extends AppCompatActivity {
 
     private SectionsPageAdapter tab_adapter = new SectionsPageAdapter(getSupportFragmentManager());
     private ChatFragment chat_fragment = new ChatFragment();
-    private HomeFragment home_fragment = new HomeFragment(this);
     private OrganizationProfileFragment org_fragment = new OrganizationProfileFragment();
     private StudentProfileFragment stud_fragment = new StudentProfileFragment(true);
     private NoSwipeViewPager tab_view_pager;
 
-    // bubbles
-
     private final ArrayList<String> bubble_arraylist = new ArrayList<String>();
-
     private RecyclerView bubble_recycler_view;
     private RecyclerView.Adapter bubble_adapter;
-
     private RecyclerView.LayoutManager bubble_layout_manager;
+    private HomeFragment campus_fragment = new HomeFragment(this);
+    private EventsFragment event_fragment = null;
+    private PostsFragment post_fragment = null;
+    private String selected_bubble = "campus";
 
-    private HomeFragment hf = null;
-    private EventsFragment ef = null;
-    private PostsFragment pf = null;
 
 
 
@@ -124,11 +121,9 @@ public class MainActivity extends AppCompatActivity {
     // MARK: Setup Methods
 
     private void setUp(){
-        Log.d(TAG, "Setting up main");
         setUpToolbar();
         setHandlers();
         attemptLogin();
-        bubbleBarSetup();
     }
 
     private void setUpToolbar() {
@@ -156,47 +151,36 @@ public class MainActivity extends AppCompatActivity {
         post_button.setOnClickListener(view -> transToCreatePost());
         bottom_navigation.setVisibility(View.VISIBLE);
 
-        Log.d(TAG, "size: "+tab_adapter.getCount());
-
-        tab_adapter.addFragment(chat_fragment, "");
-        tab_adapter.addFragment(home_fragment, "");
-        if(this_user.getIs_organization()) tab_adapter.addFragment(org_fragment, "");
-        else tab_adapter.addFragment(stud_fragment, "");
-
-        Log.d(TAG, "size: "+tab_adapter.getCount());
+        tab_adapter.addFragment(chat_fragment, "chat");
+        tab_adapter.addFragment(campus_fragment, "campus");
+        if(this_user.getIs_organization()) tab_adapter.addFragment(org_fragment, "organization");
+        else tab_adapter.addFragment(stud_fragment, "student");
 
         tab_view_pager.setAdapter(tab_adapter);
-        tab_view_pager.setOffscreenPageLimit(5);
+        //TODO: Not ideal, all the bubbles essentially act as separate tabs -> limit 6 so that we can keep everything in mem, will have to be reworked in the future:
+        //TODO: i.e. killing old bubbles when we reach the limit we decide on, instead of killing starting from 0th index (which will start killing actual tabs)
+        tab_view_pager.setOffscreenPageLimit(6);
 
         bottom_navigation.setOnNavigationItemSelectedListener((menuItem) -> {
-            bubble_recycler_view.setVisibility(View.GONE);
-            Fragment selectedFragment = null;
             switch (menuItem.getItemId()){
                 case R.id.tab_bar_chat:
-                    tab_view_pager.setCurrentItem(0);
+                    bubble_recycler_view.setVisibility(View.GONE);
+                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("chat"));
                     return true;
                 case R.id.tab_bar_home:
-                    tab_view_pager.setCurrentItem(1);
-                    return true;
                     bubble_recycler_view.setVisibility(View.VISIBLE);
-                    if (hf == null){
-                        hf = HomeFragment.newInstance(MainActivity.this);
-                    }
-                    selectedFragment = hf;
-                    break;
+                    tab_view_pager.setCurrentItem(tab_adapter.getPosition(selected_bubble));
+                    return true;
                 case R.id.tab_bar_profile:
-                    if(!org_fragment.isIs_set_up() && !stud_fragment.isIs_set_up()){
-                        Log.d(TAG, "inside");
-                        if(this_user.getIs_organization()){
-                            Log.d(TAG, "org");
-                            org_fragment.setUp();
-                        }
-                        else{
-                            Log.d(TAG, "student");
-                            stud_fragment.setUp();
-                        }
+                    bubble_recycler_view.setVisibility(View.GONE);
+                    if(this_user.getIs_organization()){
+                        if(!org_fragment.isIs_set_up()) org_fragment.setUp();
+                        tab_view_pager.setCurrentItem(tab_adapter.getPosition("organization"));
                     }
-                    tab_view_pager.setCurrentItem(2);
+                    else{
+                        if(!stud_fragment.isIs_set_up()) stud_fragment.setUp();
+                        tab_view_pager.setCurrentItem(tab_adapter.getPosition("student"));
+                    }
                     return true;
             }
             return false;
@@ -226,12 +210,14 @@ public class MainActivity extends AppCompatActivity {
                 if(updatedUser != null){
                     //TODO: deal with banning, age update, notifications, etc.
                     this_user = updatedUser;
+                    bubbleBarSetup();
                     if(tab_adapter.getCount() < 1) setUpLoggedInInteraction();
                     endLoading();
                 }
             });
         }else{
-            tab_adapter.addFragment(home_fragment, "");
+            bubbleBarSetup();
+            tab_adapter.addFragment(campus_fragment, "campus");
             tab_view_pager.setAdapter(tab_adapter);
             endLoading();
         }
@@ -242,63 +228,39 @@ public class MainActivity extends AppCompatActivity {
         this_uni_domain = sharedPreferences.getString("domain", "");
     }
 
-
     private void bubbleBarSetup(){
-        bubble_arraylist.add("University");
+        bubble_arraylist.add("Campus");
         bubble_arraylist.add("Events");
         bubble_arraylist.add("Posts");
-        bubble_arraylist.add("For You");
-        bubble_arraylist.add("Clubs");
-        bubble_arraylist.add("University of Calgary Ski and Board Club");
-        bubble_arraylist.add("Social");
-        bubble_arraylist.add("Grind");
-
         bubble_recycler_view = findViewById(R.id.bubble_sample_rv);
         bubble_recycler_view.setHasFixedSize(true);
-
         bubble_layout_manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        bubble_adapter = new BubbleAdapter(bubble_arraylist, new BubbleAdapter.BubbleViewHolder.BubbleClickListener() {
-            @Override
-            public void onBubbleClick(int position) {
-
-
-
-
-                Fragment selectedFragment = null;
-                switch (position){
-
-                    case 0:
-                        if (hf == null){
-                            hf = HomeFragment.newInstance(MainActivity.this);
-                        }
-                        selectedFragment = hf;
-
-
-                        break;
-                    case 1:
-                        if(ef == null){
-                            ef = EventsFragment.newInstance(MainActivity.this);
-                        }
-                        selectedFragment = ef;
-
-                        break;
-                    case 2:
-                        if(pf == null)
-                            pf = PostsFragment.newInstance(MainActivity.this);
-                        selectedFragment = pf;
-                }
-                if (selectedFragment!= null) getSupportFragmentManager().beginTransaction().replace(R.id.main_fragmentContainer, selectedFragment).commit();
-
-
+        bubble_adapter = new BubbleAdapter(bubble_arraylist, position -> {
+            switch (position){
+                case 0:
+                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("campus"));
+                    selected_bubble = "campus";
+                    break;
+                case 1:
+                    if(event_fragment == null){
+                        event_fragment = new EventsFragment(this);
+                        tab_adapter.addFragment(event_fragment, "event");
+                    }
+                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("event"));
+                    selected_bubble = "event";
+                    break;
+                case 2:
+                    if(post_fragment == null){
+                        post_fragment = new PostsFragment(this);
+                        tab_adapter.addFragment(post_fragment, "post");
+                    }
+                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("post"));
+                    selected_bubble = "post";
+                    break;
             }
         });
         bubble_recycler_view.setLayoutManager(bubble_layout_manager);
         bubble_recycler_view.setAdapter(bubble_adapter);
-
-
-
-
-
     }
 
 

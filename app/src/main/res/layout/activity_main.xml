@@ -16,6 +16,14 @@
             android:id="@+id/main_toolbar_id"
             layout="@layout/main_toolbar" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/bubble_sample_rv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/main_toolbar_id" />
+
         <com.ivy2testing.main.NoSwipeViewPager
             android:id="@+id/tab_view_pager"
             android:layout_width="match_parent"

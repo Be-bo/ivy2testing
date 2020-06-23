@@ -13,8 +13,8 @@ import java.util.List;
 
 public class SectionsPageAdapter extends FragmentPagerAdapter {
 
-    private final List<Fragment> fragments = new ArrayList<>();
-    private final List<String> fragmentTitles = new ArrayList<>();
+    private List<Fragment> fragments = new ArrayList<>();
+    private List<String> fragmentTitles = new ArrayList<>();
 
     SectionsPageAdapter(FragmentManager fm) {
         super(fm);
@@ -23,6 +23,7 @@ public class SectionsPageAdapter extends FragmentPagerAdapter {
     void addFragment(Fragment fragment, String title){
         fragments.add(fragment);
         fragmentTitles.add(title);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -30,8 +31,13 @@ public class SectionsPageAdapter extends FragmentPagerAdapter {
         return fragmentTitles.get(position);
     }
 
+    public int getPosition(String title){
+        if(fragmentTitles.contains(title)) return fragmentTitles.indexOf(title);
+        else return 0;
+    }
+
     @Override
-    public Fragment getItem(int position) {
+    public Fragment getItem( int position) {
         return fragments.get(position);
     }
 
