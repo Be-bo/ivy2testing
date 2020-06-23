@@ -208,7 +208,6 @@ public class SeeAllPostsActivity extends AppCompatActivity {
             Log.d(TAG, "Viewer is author. Might want to change behaviour.");
         } // Do nothing if viewer == author
 
-
         Intent intent;
         if (is_organization){
             Log.d(TAG, "Starting OrganizationProfile Activity for organization " + user_id);

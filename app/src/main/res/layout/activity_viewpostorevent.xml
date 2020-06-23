@@ -107,18 +107,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:orientation="vertical">
 
                         <androidx.cardview.widget.CardView
-                            android:id="@+id/viewPost_writeComment"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="8dp"
                             app:cardCornerRadius="10dp"
                             android:elevation="2dp"
-                            app:cardBackgroundColor="@color/grey"
-                            android:visibility="visible">
+                            app:cardBackgroundColor="@color/grey">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
@@ -145,6 +143,16 @@
                                     android:src="@drawable/ic_send"
                                     android:onClick="postComment"
                                     android:contentDescription="@string/write_comment"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                                <ProgressBar
+                                    android:id="@+id/writeComment_loading"
+                                    android:layout_width="20dp"
+                                    android:layout_height="0dp"
+                                    android:visibility="gone"
+                                    style="@style/StandardIndefiniteProgressBar"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintTop_toTopOf="parent"
                                     app:layout_constraintBottom_toBottomOf="parent"/>

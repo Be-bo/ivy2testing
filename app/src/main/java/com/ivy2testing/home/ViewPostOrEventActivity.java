@@ -1,6 +1,7 @@
 package com.ivy2testing.home;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,11 +10,13 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,7 +38,6 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Comment;
 import com.ivy2testing.entities.Event;
-import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.MainActivity;
@@ -48,7 +50,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 /** @author Zahra Ghavasieh
@@ -192,7 +193,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         mCommentsRecycler.setAdapter(adapter);
         loadComments();
 
-        // Scroll Listener used for pagination (TODO not fully tested yet)
+        // Scroll Listener used for pagination
         mCommentsRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -209,14 +210,14 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
     // Set up write comment functionality for a logged in user
     private void setupWriteComment(){
-        findViewById(R.id.viewPost_writeComment).setVisibility(View.VISIBLE);
         mWriteComment.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mPostComment.setEnabled(!mWriteComment.getText().toString().trim().isEmpty());
-                //if (mPostComment.isEnabled()) mPostComment.setColorFilter(getColor()); //TODO figure out colour
+                mPostComment.setClickable(!mWriteComment.getText().toString().trim().isEmpty());
+                if (mPostComment.isClickable()) mPostComment.setColorFilter(getColor(R.color.interaction));
+                else mPostComment.setColorFilter(getColor(R.color.disabled));
             }
             @Override
             public void afterTextChanged(Editable s) {}
@@ -256,6 +257,28 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         finish();
     }
 
+    // Don't let user make another comment while comment is going to database
+    private void startCommentLoading(){
+        closeKeyboard();
+        mPostComment.setClickable(false);
+        mPostComment.setVisibility(View.INVISIBLE);
+        findViewById(R.id.writeComment_loading).setVisibility(View.VISIBLE);
+    }
+
+    private void stopCommentLoading(){
+        mPostComment.setVisibility(View.VISIBLE);
+        findViewById(R.id.writeComment_loading).setVisibility(View.GONE);
+    }
+
+    // Successfully made comment
+    private void closeKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if(imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
 
 /* OnClick Methods
 ***************************************************************************************************/
@@ -267,12 +290,10 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             return;
         } // author field wasn't define
 
-        /* TODO Uncomment for final version!!!
-        if (viewerId != null && viewerId.equals(post.getAuthor_id())) {
+        if (this_user != null && this_user.getId().equals(post.getAuthor_id())) {
             Log.d(TAG, "Viewer is author. Doesn't make sense to view your own profile this way.");
-            return;
         } // Do nothing if viewer == author
-        */
+
 
         viewUserProfile(post.getAuthor_id(), post.getUni_domain(), post.getAuthor_is_organization());
     }
@@ -313,11 +334,11 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
             // Set up recycler with recycler manager and adapter if not done yet
             if (layout_man == null) setCommentRecycler();
-
-            // Scroll down a bit
-            ScrollView scrollView = findViewById(R.id.viewPost_scrollView);
-            scrollView.scrollTo(0, scrollView.getBottom()); //TODO scroll down a bit
-
+            else {
+                // Scroll down a bit
+                ScrollView scrollView = findViewById(R.id.viewPost_scrollView);
+                scrollView.scrollTo(0, scrollView.getBottom()); //TODO scroll down a bit
+            }
         }
         else {
             TransitionManager.beginDelayedTransition(findViewById(R.id.viewPost_linearRootLayout), new AutoTransition());
@@ -334,6 +355,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             return;
         }
 
+        startCommentLoading();
+
         // Create Comment object
         String commentId = "" + System.currentTimeMillis();
         Comment newComment = new Comment(
@@ -348,6 +371,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         String address = "universities/" + post.getUni_domain() + "/posts/" + post.getId() +"/comments/"+commentId;
         if (address.contains("null")){
             Log.e(TAG, "Address has null values.");
+            stopCommentLoading();
             return;
         }
 
@@ -355,10 +379,17 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             if (task1.isSuccessful()){
                 comments.add(0, newComment);
                 adapter.notifyItemInserted(0);
+                mWriteComment.setText(null);
             }
-            else Log.e(TAG, "Comment not saved in database.", task1.getException());
+            else {
+                Log.e(TAG, "Comment not saved in database.", task1.getException());
+                Toast.makeText(this,"Could not post comment", Toast.LENGTH_LONG).show();
+            }
+            stopCommentLoading();
         });
     }
+
+
 
 
 /* Firebase Related Methods
@@ -440,10 +471,16 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             if (comments.size() > 0){
                 mCommentsRecycler.setVisibility(View.VISIBLE);
                 findViewById(R.id.viewPost_commentErrorMsg).setVisibility(View.GONE);
+                // Scroll down a bit
+                ScrollView scrollView = findViewById(R.id.viewPost_scrollView);
+                scrollView.scrollTo(0, (int)mCommentsRecycler.getY()); //TODO scroll down a bit
             }
             else {
                 mCommentsRecycler.setVisibility(View.GONE);
                 findViewById(R.id.viewPost_commentErrorMsg).setVisibility(View.VISIBLE);
+                // Scroll down a bit
+                ScrollView scrollView = findViewById(R.id.viewPost_scrollView);
+                scrollView.scrollTo(0, (int)findViewById(R.id.viewPost_commentErrorMsg).getY()); //TODO scroll down a bit
             }
         });
     }

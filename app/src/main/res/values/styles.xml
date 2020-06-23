@@ -21,8 +21,7 @@
 
     <style name="StandardImageButton" parent="Widget.AppCompat.ImageButton">
         <item name="android:background">@color/transparent</item>
-        <item name="android:enabled">false</item>
-        <item name="android:tint">@color/image_button</item>
+        <item name="android:clickable">true</item>
     </style>
 
     <style name="ToggleButton" parent="Widget.AppCompat.Button">
