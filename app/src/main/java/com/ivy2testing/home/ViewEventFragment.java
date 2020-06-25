@@ -21,7 +21,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
-import com.ivy2testing.userProfile.UserProfileActivity;
+import com.ivy2testing.entities.User;
+import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.adapters.CircleImageAdapter;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
@@ -61,7 +62,7 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
 
     // Other Variables
     private Event event;
-    private String viewer_id;           // Nullable!
+    private User this_user;             // Nullable!
     private Uri viewer_img;             // Nullable
 
     private CircleImageAdapter going_adapter;       // Recycler Adapter for going_ids
@@ -71,9 +72,9 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
 
 
     // Constructor
-    public ViewEventFragment(Event event, String viewer_id){
+    public ViewEventFragment(Event event, User this_user){
         this.event = event;
-        this.viewer_id = viewer_id;
+        this.this_user = this_user;
     }
 
 
@@ -127,9 +128,10 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
 
         // Optional text Fields
         if (event.getLink() != null) tv_link.setText(event.getLink());
-        else tv_link.setVisibility(View.GONE);
+        else v.findViewById(R.id.viewEvent_linkLayout).setVisibility(View.GONE);
 
-        if (event.getPinned_id() != null) tv_pinned.setText(event.getPinned_id()); //TODO change to pin name
+        if (event.getPinned_id() != null && !event.getPinned_id().isEmpty())
+            tv_pinned.setText(event.getPinned_id()); //TODO change to pin name
         else v.findViewById(R.id.viewPost_pinLayout).setVisibility(View.GONE);
 
         // Going Users' Recycler View
@@ -137,10 +139,10 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
         setRecycler();
 
         // Hide button if user is not signed in
-        if (viewer_id == null){
+        if (this_user == null){
             button_going.setVisibility(View.GONE);
         }
-        else if (event.getGoing_ids().contains(viewer_id)) button_going.setChecked(true);
+        else if (event.getGoing_ids().contains(this_user.getId())) button_going.setChecked(true);
     }
 
     // OnClick and scroll Listeners
@@ -167,7 +169,7 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
         });
         if (button_going.getVisibility() == View.VISIBLE)
             button_going.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) going(); //toggle is enabled
+                if (isChecked) going(); // toggle is enabled
                 else notGoing();        // toggle is disabled
             });
 
@@ -191,10 +193,12 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
     // Set Going recycler visibility
     private void setRecyclerVisibility(){
         if (event.getGoing_ids().isEmpty()) {
+            Log.d(TAG, "going list is empty!"); //TODO there is a bug
             rv_going.setVisibility(View.GONE);
             tv_seeAll.setVisibility(View.GONE);
         }
         else {
+            Log.d(TAG, "going list is not empty."); //TODO there is a bug
             rv_going.setVisibility(View.VISIBLE);
             tv_seeAll.setVisibility(View.VISIBLE);
         }
@@ -238,7 +242,7 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
     // See all posts that are pinned to the same event
     private void seeAllPosts() {
         Intent intent = new Intent(getContext(), SeeAllPostsActivity.class);
-        intent.putExtra("viewer_id", viewer_id);
+        intent.putExtra("this_user", this_user);
         intent.putExtra("this_uni_domain", event.getUni_domain());
         intent.putExtra("title", event.getPinned_id());
 
@@ -259,7 +263,7 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
         Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
         Log.d(TAG, "Starting ViewPost Activity for event " + event.getId());
         intent.putExtra("post", event);
-        intent.putExtra("this_user_id", viewer_id);
+        intent.putExtra("this_user", this_user);
         startActivityForResult(intent, Constant.VIEW_POST_REQUEST_CODE);
     }
 
@@ -268,8 +272,8 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
         Intent intent = new Intent(getContext(), SeeAllUsersActivity.class);
         Log.d(TAG, "Starting SeeAll Activity to see all going users");
         intent.putExtra("title", "Going Users");
-        intent.putExtra("viewer_id", viewer_id);
-        intent.putExtra("this_uni_domain", event.getUni_domain());
+        intent.putExtra("this_user", this_user);
+        intent.putExtra("uni_domain", event.getUni_domain());
         intent.putExtra("user_ids", (ArrayList<String>) event.getGoing_ids());
         startActivityForResult(intent, Constant.SEEALL_USERS_REQUEST_CODE);
     }
@@ -278,19 +282,22 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
     @Override
     public void onPersonClicked(int position) {
         if (getActivity() != null) {
-            Log.d(TAG, "Starting UserProfile Activity for user " + event.getGoing_ids().get(position));
-            Intent intent = new Intent(getActivity(), UserProfileActivity.class);
-            intent.putExtra("this_uni_domain", event.getUni_domain());
-            intent.putExtra("this_user_id", event.getGoing_ids().get(position));
-            intent.putExtra("viewer_id", viewer_id);
-            getActivity().startActivityForResult(intent, Constant.USER_PROFILE_REQUEST_CODE);
+
+            // We don't know if it is a student but StudentProfile will automatically
+            // transition to OrganizationProfile if user is not a student.
+            Log.d(TAG, "Starting StudentProfile Activity for user " + event.getGoing_ids().get(i));
+            Intent intent = new Intent(getActivity(), StudentProfileActivity.class);
+            intent.putExtra("student_to_display_id", event.getGoing_ids().get(i));
+            intent.putExtra("student_to_display_uni", event.getUni_domain());
+            intent.putExtra("this_user", this_user);
+            startActivity(intent);
         }
         else Log.e(TAG, "Parent Activity was null!");
     }
 
     // Add user to going list
     private void going(){
-        event.addGoingIdToList(0, viewer_id);
+        event.addGoingIdToList(0, this_user.getId());
         setRecyclerVisibility();
 
         // Load viewer preview pic if not done so yet
@@ -305,7 +312,7 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
 
     // Remove user from going list
     private void notGoing(){
-        event.deleteGoingIdFromList(viewer_id);
+        event.deleteGoingIdFromList(this_user.getId());
 
         // Delete viewer preview pic from recycler
         going_img_uris.remove(viewer_img);
@@ -342,14 +349,14 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
 
     // Save any changes to event to database
     private void saveEventToDB() {
-        String address = "universities/" + event.getUni_domain() + "/posts/" + event.getPinned_id();
+        String address = "universities/" + event.getUni_domain() + "/posts/" + event.getId();
         if (address.contains("null")){
-            Log.e(TAG, "Event Address has null values. ID:" + event.getUni_domain());
+            Log.e(TAG, "Event Address has null values. ID:" + event.getId());
             return;
         }
 
         db.document(address).set(event).addOnCompleteListener(task->{
-            if (task.isSuccessful()) Log.d(TAG, "Changes saved.");
+            if (task.isSuccessful()) Log.d(TAG, "Changes saved to event: " + event.getId());
             else Log.e(TAG, "Something went wrong when trying to save changes.\n");
         });
 

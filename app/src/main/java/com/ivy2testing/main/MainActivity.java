@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,8 +22,6 @@ import android.widget.ImageButton;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.ivy2testing.authentication.LoginActivity;
-import com.ivy2testing.entities.Organization;
-import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.home.BubbleAdapter;
 import com.ivy2testing.home.CreatePost;
@@ -38,8 +35,6 @@ import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.Constant;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private SectionsPageAdapter tab_adapter = new SectionsPageAdapter(getSupportFragmentManager());
     private ChatFragment chat_fragment = new ChatFragment();
     private OrganizationProfileFragment org_fragment = new OrganizationProfileFragment();
-    private StudentProfileFragment stud_fragment = new StudentProfileFragment(true);
+    private StudentProfileFragment stud_fragment = new StudentProfileFragment();
     private NoSwipeViewPager tab_view_pager;
 
     private final ArrayList<String> bubble_arraylist = new ArrayList<String>();
@@ -178,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                         tab_view_pager.setCurrentItem(tab_adapter.getPosition("organization"));
                     }
                     else{
-                        if(!stud_fragment.isIs_set_up()) stud_fragment.setUp();
+                        if(!stud_fragment.isIs_set_up()) stud_fragment.setUpProfile();
                         tab_view_pager.setCurrentItem(tab_adapter.getPosition("student"));
                     }
                     return true;
@@ -244,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
                 case 1:
                     if(event_fragment == null){
                         event_fragment = new EventsFragment(this);
+                        event_fragment.setThisUser(this_user);
                         tab_adapter.addFragment(event_fragment, "event");
                     }
                     tab_view_pager.setCurrentItem(tab_adapter.getPosition("event"));
@@ -252,6 +248,7 @@ public class MainActivity extends AppCompatActivity {
                 case 2:
                     if(post_fragment == null){
                         post_fragment = new PostsFragment(this);
+                        post_fragment.setThisUser(this_user);
                         tab_adapter.addFragment(post_fragment, "post");
                     }
                     tab_view_pager.setCurrentItem(tab_adapter.getPosition("post"));

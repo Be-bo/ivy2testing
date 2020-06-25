@@ -1,12 +1,13 @@
 package com.ivy2testing.home;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
+import com.ivy2testing.entities.User;
+import com.ivy2testing.userProfile.OrganizationProfileActivity;
+import com.ivy2testing.userProfile.StudentProfileActivity;
+import com.ivy2testing.util.Constant;
 
 import java.util.ArrayList;
 
@@ -48,9 +53,16 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
     private TextView no_more_items_text;
     private TextView loading_progress_bar;
 
+    private User this_user;
+
 
     public PostsFragment(Context con) {
         mContext = con;
+    }
+
+    // Get currently logged in user for transitions to other activities
+    public void setThisUser(User user){
+        this_user = user;
     }
 
 
@@ -228,32 +240,88 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
         feed_recycler_view.setAdapter(feed_adapter);
     }
 
+    // Handles clicks on a post item
     @Override
     public void onFeedClick(int position, int clicked_id) {
 
-
-        // TODO THIS IS WHERE TO NAVIGATE TO NEW ACTIVITY
-        // post_array_list.get(position); <- this is the clicked event/post
+        Post clickedPost = post_arraylist.get(position); //<- this is the clicked event/post
 
         switch(clicked_id){
             case R.id.object_full_button:
-                Toast.makeText(mContext, "BUTTON", Toast.LENGTH_SHORT).show();
-                break;
             case R.id.object_full_text:
-                Toast.makeText(mContext, "TEXT", Toast.LENGTH_SHORT).show();
+                viewPost(clickedPost);
                 break;
+
             case R.id.object_posted_by_author:
-                Toast.makeText(mContext, "AUTHOR", Toast.LENGTH_SHORT).show();
+                viewUserProfile(clickedPost.getAuthor_id(), clickedPost.getUni_domain(), clickedPost.getAuthor_is_organization());
                 break;
+
             case R.id.object_pinned_event:
-                Toast.makeText(mContext, "EVENT", Toast.LENGTH_SHORT).show();
+                loadPostFromDB(clickedPost.getPinned_id(), clickedPost.getUni_domain());
                 break;
+        }
+    }
+
+    // Transition to a post/event
+    private void viewPost(Post post) {
+        Log.d("PostsFragment", "Launching ViewPostOrEventActivity...");
+        Intent intent = new Intent(getActivity(), ViewPostOrEventActivity.class);
+        intent.putExtra("this_user", this_user);
+        intent.putExtra("post", post);
+        startActivity(intent);
+    }
+
+    // Transition to a user profile
+    private void viewUserProfile(String user_id, String user_uni, boolean is_organization){
+        if (user_id == null || user_uni == null){
+            Log.e("PostsFragment", "User not properly defined! Cannot view author's profile");
+            return;
+        } // author field wasn't defined
 
 
+        if (this_user != null && user_id.equals(this_user.getId())) {
+            Log.d("PostsFragment", "Viewer is author. Might want to change behaviour.");
+        } // Do nothing if viewer == author
+
+
+        Intent intent;
+        if (is_organization){
+            Log.d("PostsFragment", "Starting OrganizationProfile Activity for organization " + user_id);
+            intent = new Intent(getActivity(), OrganizationProfileActivity.class);
+            intent.putExtra("org_to_display_id", user_id);
+            intent.putExtra("org_to_display_uni", user_uni);
+        }
+        else {
+            Log.d("PostsFragment", "Starting StudentProfile Activity for student " + user_id);
+            intent = new Intent(getActivity(), StudentProfileActivity.class);
+            intent.putExtra("student_to_display_id", user_id);
+            intent.putExtra("student_to_display_uni", user_uni);
+        }
+        intent.putExtra("this_user", this_user);
+        startActivity(intent);
+    }
+
+    // Load a post from database
+    private void loadPostFromDB(String post_id, String post_uni_domain) {
+        String address = "universities/" + post_uni_domain + "/posts/" + post_id;
+        if (address.contains("null")){
+            Log.e("PostsFragment", "Address has null values.");
+            return;
         }
 
-
-
+        db_reference.document(address).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                Post post;
+                if ((boolean)task.getResult().get("is_event")) post = task.getResult().toObject(Event.class);
+                else post = task.getResult().toObject(Post.class);
+                if (post != null){
+                    post.setId(post_id);
+                    viewPost(post);
+                }
+                else Log.e("PostsFragment", "Post retrieved was null.");
+            }
+            else Log.e("PostsFragment", "Something went wrong when retrieving Post.", task.getException());
+        });
     }
 
 

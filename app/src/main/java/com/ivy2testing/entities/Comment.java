@@ -16,6 +16,7 @@ public class Comment implements Parcelable {
     private String uni_domain;
     private String author_id;
     private String author_name;
+    private boolean author_is_organization = false;
     private String text = "";
 
 
@@ -26,11 +27,13 @@ public class Comment implements Parcelable {
     public Comment(){}
 
     // Use for creating new comment in java code
-    public Comment(String id, String uni_domain, String author_id, String author_name){
+    public Comment(String id, String uni_domain, String author_id, String author_name, boolean author_is_organization, String text){
         this.id = id;
         this.uni_domain = uni_domain;
         this.author_id = author_id;
         this.author_name = author_name;
+        this.author_is_organization = author_is_organization;
+        this.text = text;
     }
 
 
@@ -55,6 +58,10 @@ public class Comment implements Parcelable {
         return author_name;
     }
 
+    public boolean getAuthor_is_organization() {
+        return author_is_organization;
+    }
+
     public String getText() {
         return text;
     }
@@ -76,6 +83,7 @@ public class Comment implements Parcelable {
         uni_domain = in.readString();
         author_id = in.readString();
         author_name = in.readString();
+        author_is_organization = in.readByte() != 0;
         text = in.readString();
     }
 
@@ -102,6 +110,7 @@ public class Comment implements Parcelable {
         dest.writeString(uni_domain);
         dest.writeString(author_id);
         dest.writeString(author_name);
+        dest.writeByte((byte) (author_is_organization ? 1 : 0));
         dest.writeString(text);
     }
 

@@ -16,6 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
+import com.ivy2testing.entities.User;
 import com.ivy2testing.util.Constant;
 
 import java.util.HashMap;
@@ -32,13 +33,13 @@ public class ViewPostFragment extends Fragment {
 
     // Other Variables
     private Post post;
-    private String viewer_id;   // Nullable!
+    private User this_user;   // Nullable!
 
 
     // Constructor
-    public ViewPostFragment(Post post, String viewer_id){
+    public ViewPostFragment(Post post, User this_user){
         this.post = post;
-        this.viewer_id = viewer_id;
+        this.this_user = this_user;
     }
 
 
@@ -102,7 +103,7 @@ public class ViewPostFragment extends Fragment {
     // See all posts that are pinned to the same event
     private void seeAllPosts() {
         Intent intent = new Intent(getContext(), SeeAllPostsActivity.class);
-        intent.putExtra("viewer_id", viewer_id);
+        intent.putExtra("this_user", this_user);
         intent.putExtra("this_uni_domain", post.getUni_domain());
         intent.putExtra("title", post.getPinned_id());
 
@@ -128,7 +129,7 @@ public class ViewPostFragment extends Fragment {
         Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
         Log.d(TAG, "Starting ViewPost Activity for event " + event.getId());
         intent.putExtra("post", event);
-        intent.putExtra("this_user_id", viewer_id);
+        intent.putExtra("this_user", this_user);
         startActivityForResult(intent, Constant.VIEW_POST_REQUEST_CODE);
     }
 

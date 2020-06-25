@@ -21,13 +21,10 @@ public class User implements Parcelable {
     protected String uni_domain;
     protected long registration_millis = 0;
     protected String messaging_token;
-    protected String profile_picture;
-    protected String preview_picture;
     protected boolean is_organization;
     protected boolean is_club;
     protected boolean is_banned = false;
     protected String registration_platform = "Android";
-    protected List<String> post_ids = new ArrayList<>();
 
     /* Constructors
      ***************************************************************************************************/
@@ -80,14 +77,6 @@ public class User implements Parcelable {
         return email;
     }
 
-    public String getProfile_picture() {
-        return profile_picture;
-    }
-
-    public String getPreview_picture() {
-        return preview_picture;
-    }
-
     public String getMessaging_token() {
         return messaging_token;
     }
@@ -108,11 +97,6 @@ public class User implements Parcelable {
 
     public String getRegistration_platform() {
         return registration_platform;
-    }
-
-    public List<String> getPost_ids() {
-        if (post_ids == null) return new ArrayList<>();
-        else return new ArrayList<>(post_ids);          // Return copy
     }
 
     public boolean getIs_club() {
@@ -140,25 +124,6 @@ public class User implements Parcelable {
         this.uni_domain = domain;
     }
 
-    public void setProfile_picture(String profile_picture) {
-        if (profile_picture != null && profile_picture.isEmpty()) this.profile_picture = null;
-        else this.profile_picture = profile_picture;
-    }
-
-    public void setPreview_picture(String preview_picture) {
-        if (preview_picture!= null && preview_picture.isEmpty()) this.preview_picture = null;
-        else this.preview_picture = preview_picture;
-    }
-
-    public void addPostToList(String postId){
-        if (post_ids == null) post_ids = new ArrayList<>();
-        if (postId != null && !postId.isEmpty()) post_ids.add(postId);
-    }
-
-    public void deletePostFromList(String postId){
-        post_ids.remove(postId);
-    }
-
 
 /* Parcelable Methods
  ***************************************************************************************************/
@@ -170,13 +135,10 @@ public class User implements Parcelable {
         uni_domain = in.readString();
         registration_millis = in.readLong();
         messaging_token = in.readString();
-        profile_picture = in.readString();
-        preview_picture = in.readString();
         is_organization = in.readByte() != 0;
         is_club = in.readByte() != 0;
         is_banned = in.readByte() != 0;
         registration_platform = in.readString();
-        post_ids = in.createStringArrayList();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -204,12 +166,9 @@ public class User implements Parcelable {
         dest.writeString(uni_domain);
         dest.writeLong(registration_millis);
         dest.writeString(messaging_token);
-        dest.writeString(profile_picture);
-        dest.writeString(preview_picture);
         dest.writeByte((byte) (is_organization ? 1 : 0));
         dest.writeByte((byte) (is_club ? 1 : 0));
         dest.writeByte((byte) (is_banned ? 1 : 0));
         dest.writeString(registration_platform);
-        dest.writeStringList(post_ids);
     }
 }

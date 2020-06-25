@@ -1,10 +1,12 @@
 package com.ivy2testing.util.adapters;
 
 import android.content.Context;
+import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -88,6 +90,9 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull SquareImgHolder holder, final int position) {
+        // Banner
+        if (posts.get(position) instanceof Event) holder.banner.setVisibility(View.VISIBLE);
+        else holder.banner.setVisibility(View.GONE);
 
         // Input a default image in case post has no visual
         holder.image_view.setBackgroundColor(context.getColor(R.color.grey));
@@ -118,12 +123,13 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
         list_reg = db_ref.collection(address)
                 .whereEqualTo("author_id", author_id).limit(limit)
                 .addSnapshotListener((queryDocumentSnapshots, e) -> {
-                if(queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()){
+                if(queryDocumentSnapshots != null){
 
                     for (int i = 0; i<queryDocumentSnapshots.getDocumentChanges().size(); i++) {
 
                         DocumentChange dc = queryDocumentSnapshots.getDocumentChanges().get(i);
                         DocumentSnapshot doc = dc.getDocument();
+                        Log.d(TAG, "Adding post: " + doc.getId());
 
                         switch (dc.getType()) {
                             case ADDED:
@@ -138,6 +144,7 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
                                 Post modifiedPost;
                                 if ((boolean)doc.get("is_event")) modifiedPost = doc.toObject(Event.class);
                                 else modifiedPost = doc.toObject(Post.class);
+                                posts.get(posts.size()-1).setId(doc.getId());
 
                                 for(int j=0; j<posts.size(); j++){
                                     if(posts.get(j).getId().equals(modifiedPost.getId())){
@@ -154,6 +161,7 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
                     }
                     notifyDataSetChanged();
                 }
+                else Log.e(TAG, "There was a problem in retrieving posts!");
             });
     }
 
@@ -181,14 +189,16 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
     static class SquareImgHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         // Attributes
+        ImageView banner;
         ImageView image_view;
         CardView card_view;
-        ConstraintLayout whole_layout;
+        FrameLayout whole_layout;
         OnPostListener post_listener;
 
         // Methods
         SquareImgHolder(@NonNull View itemView, final OnPostListener listener) {
             super(itemView);
+            banner = itemView.findViewById(R.id.recyclerCircleItem_banner);
             image_view = itemView.findViewById(R.id.recyclerGridItem_img);
             card_view = itemView.findViewById(R.id.recyclerGridItem_cardView);
             whole_layout = itemView.findViewById(R.id.recyclerGridItem_layout);

@@ -7,12 +7,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,8 +22,8 @@ import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.MainActivity;
-import com.ivy2testing.userProfile.UserProfileActivity;
-import com.ivy2testing.util.Constant;
+import com.ivy2testing.userProfile.OrganizationProfileActivity;
+import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.adapters.UserAdapter;
 
 import java.util.ArrayList;
@@ -48,8 +46,8 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
 
     // Variables passed by intent
     private String appbar_title;    // Optional title
-    private String viewer_id;       // Current user
-    private String this_uni_domain; // Uni Domain
+    private User this_user;         // Current user
+    private String uni_domain;      // Uni Domain of users to view
     private List<String> user_ids;  // List of user_ids
 
     // Recycler variables
@@ -71,8 +69,8 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
         setContentView(R.layout.activity_seeall);
 
         // Initialization
-        getIntentExtras();  // Get array for recycler
-        setUpToolBar();     // set up toolBar as an actionBar
+        getIntentExtras();          // Get array for recycler
+        setTitle(appbar_title);     // set up actionBar
         setRecycler();
         setListeners();
     }
@@ -91,28 +89,16 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
 /* Initialization Methods
 ***************************************************************************************************/
 
-    // Set toolbar as actionBar
-    private void setUpToolBar(){
-        setSupportActionBar(findViewById(R.id.seeAll_toolbar));
-        ActionBar action_bar = getSupportActionBar();
-        if (action_bar != null){
-            action_bar.setTitle(null);
-            action_bar.setDisplayHomeAsUpEnabled(true);
-            if (appbar_title != null) ((TextView) findViewById(R.id.seeAll_toolbarTitle)).setText(appbar_title);
-        }
-        else Log.e(TAG, "No actionBar");
-    }
-
     // Get a list of user ids to display
     private void getIntentExtras(){
         if (getIntent() != null){
 
             appbar_title = getIntent().getStringExtra("title");             // Optional activity title
-            viewer_id = getIntent().getStringExtra("viewer_id");            // id of currently logged in user
-            this_uni_domain = getIntent().getStringExtra("this_uni_domain");
+            this_user = getIntent().getParcelableExtra("this_user");        // currently logged in user
+            uni_domain = getIntent().getStringExtra("uni_domain");
             user_ids = getIntent().getStringArrayListExtra("user_ids");     // List of user ids to be displayed
 
-            if (user_ids == null || this_uni_domain == null) {
+            if (user_ids == null || uni_domain == null) {
                 Log.e(TAG, "Must Provide a list of user ids and uni domain.");
                 finish();
             }
@@ -139,7 +125,7 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
         // Check onNameClick and onOptionClick methods
         adapter.setOnUserItemClickListener(this);
 
-        // Scroll Listener used for pagination (TODO not fully tested yet)
+        // Scroll Listener used for pagination
         recycler_view.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -166,11 +152,22 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
     // OnClick for user name/image: view profile
     @Override
     public void onUserClick(int position) {
-        Log.d(TAG, "Starting UserProfile Activity for user " + users.get(position).getId());
-        Intent intent = new Intent(this, UserProfileActivity.class);
-        intent.putExtra("user", users.get(position));
-        intent.putExtra("viewer_id", viewer_id);
-        startActivityForResult(intent, Constant.USER_PROFILE_REQUEST_CODE);
+        User user = users.get(position);
+        Intent intent;
+
+        if (user.getIs_organization()) {
+            Log.d(TAG, "Starting OrganizationProfile Activity for organization " + user.getId());
+            intent = new Intent(this, OrganizationProfileActivity.class);
+            // TODO @Robert, pass user as a parcel instead?
+            intent.putExtra("org_to_display_id", user.getId());
+            intent.putExtra("org_to_display_uni", user.getUni_domain());
+        } else {
+            Log.d(TAG, "Starting StudentProfile Activity for student " + user.getId());
+            intent = new Intent(this, StudentProfileActivity.class);
+            intent.putExtra("student_to_display", user);
+        }
+        intent.putExtra("this_user", this_user);
+        startActivity(intent);
     }
 
     // OnClick for options button: open a popup menu
@@ -179,7 +176,7 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
         PopupMenu popup = new PopupMenu(this, v);
 
         // Hide certain items if not logged in
-        if (viewer_id == null){
+        if (this_user == null){
             Menu menu = popup.getMenu();
             menu.findItem(R.id.userOptions_addFriend).setEnabled(false);
             menu.findItem(R.id.userOptions_chat).setEnabled(false);
@@ -243,7 +240,7 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
 
     // Load a user given its id (assuming they all share same uni domain)
     private void loadUser(String user_id){
-        String address = "universities/" + this_uni_domain + "/users/" + user_id;
+        String address = "universities/" + uni_domain + "/users/" + user_id;
         if (address.contains("null")){
             Log.e(TAG, "User Address has null values. ID:" + user_id);
             return;

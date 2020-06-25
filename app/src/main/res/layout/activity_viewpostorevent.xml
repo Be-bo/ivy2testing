@@ -5,31 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.Toolbar
-        android:id="@+id/viewPost_toolBar"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:elevation="4dp"
-        android:theme="@style/ViewPostToolBarStyle"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/viewPost_floatingEditButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            app:srcCompat="@drawable/ic_baseline_edit"
-            android:backgroundTint="@color/interaction"
-            android:layout_margin="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:onClick="editPost"/>
-
         <ScrollView
+            android:id="@+id/viewPost_scrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -114,20 +91,77 @@
                     android:background="?android:attr/listDivider"
                     android:layout_marginTop="2dp"/>
 
-                <FrameLayout
-                    android:id="@+id/viewPost_commentLayout"
+                <LinearLayout
+                    android:id="@+id/viewPost_commentsLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:visibility="gone"
-                    android:background="@color/white">
+                    android:orientation="vertical">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dp"
+                            app:cardCornerRadius="10dp"
+                            android:elevation="2dp"
+                            app:cardBackgroundColor="@color/grey">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_margin="8dp">
+
+                                <EditText
+                                    android:id="@+id/writeComment_commentText"
+                                    android:layout_width="0dp"
+                                    style="@style/StandardEditText"
+                                    android:hint="@string/write_comment"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toStartOf="@id/writeComment_commentButton"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    android:autofillHints=""
+                                    android:inputType="text" />
+
+                                <ImageButton
+                                    android:id="@+id/writeComment_commentButton"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="0dp"
+                                    style="@style/StandardImageButton"
+                                    android:src="@drawable/ic_send"
+                                    android:onClick="postComment"
+                                    android:contentDescription="@string/write_comment"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                                <ProgressBar
+                                    android:id="@+id/writeComment_loading"
+                                    android:layout_width="20dp"
+                                    android:layout_height="0dp"
+                                    android:visibility="gone"
+                                    style="@style/StandardIndefiniteProgressBar"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <FrameLayout
+                            android:id="@+id/viewPost_listCommentsLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white">
 
                         <TextView
                             android:id="@+id/viewPost_commentErrorMsg"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="@string/error_noPosts"
+                            android:text="@string/error_noComments"
                             android:textColor="@color/disabled"
                             android:visibility="gone"/>
 
@@ -135,9 +169,12 @@
                             android:id="@+id/viewPost_commentRV"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:visibility="gone"/>
+                            android:visibility="gone"
+                            android:nestedScrollingEnabled="false"/>
 
-                </FrameLayout>
+                        </FrameLayout>
+
+                </LinearLayout>
 
         </LinearLayout>
 

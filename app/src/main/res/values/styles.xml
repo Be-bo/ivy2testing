@@ -1,12 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@color/white</item>
     </style>
 
     <style name="AppBarTheme" parent="Theme.AppCompat.Light">
+        <item name="android:homeAsUpIndicator">@drawable/ic_back_arrow</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="actionBarStyle">@style/SolidAppBarStyle</item>
     </style>
 
+
+    <!-- AppBar Styles -->
+
+    <!-- This theme changes the color of the back button in the post activity/layout -->
+    <style name="SolidAppBarStyle"  parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
+        <item name="titleTextStyle">@style/AppBarTitle</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <!-- May want to use this instead for ViewPostOrEventActivity -->
+    <style name="GradientAppBarStyle"  parent="SolidAppBarStyle">
+        <item name="android:background">@drawable/gradient_toolbar_white</item>
+    </style>
+
+
+
+
+    <!-- Widget Styles -->
 
     <style name="StandardButton" parent="Widget.AppCompat.Button">
         <item name="android:layout_height">40dp</item>
@@ -17,6 +41,11 @@
         <item name="android:enabled">false</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="StandardImageButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:clickable">true</item>
     </style>
 
     <style name="ToggleButton" parent="Widget.AppCompat.Button">
@@ -72,8 +101,9 @@
         <item name="android:indeterminateTint">@color/hint</item>
     </style>
 
-    <style name="ToolBarTitle" parent="Widget.AppCompat.TextView">
+    <style name="AppBarTitle" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/hint</item>
         <item name="android:layout_gravity">center</item>
     </style>
 
@@ -116,16 +146,6 @@
         <item name="android:selectable">true</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">15sp</item>
-    </style>
-
-    <!-- This theme changes the color of the back button in the post activity/layout -->
-    <style name="PostToolBarStyle"  parent="ThemeOverlay.AppCompat.Light">
-        <item name="colorControlNormal">@color/interaction</item>
-    </style>
-
-    <!-- Use this theme for toolbars on top of images -->
-    <style name="ViewPostToolBarStyle"  parent="PostToolBarStyle">
-        <item name="android:background">@drawable/gradient_toolbar_white</item>
     </style>
 
     <!-- not currently used( check datePickerdialog etc for use in future) -->

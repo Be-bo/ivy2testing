@@ -1,9 +1,6 @@
 package com.ivy2testing.entities;
 
 import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.google.firebase.database.Exclude;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +44,7 @@ public class Event extends Post {
         this(post.getId(), post.getUni_domain(), post.getAuthor_id(), post.getAuthor_name(),
                 post.isMain_feed_visible(), post.getPinned_id(), post.getPinned_name(), post.getVisual());
         is_event = true;
+        this.author_is_organization = post.getAuthor_is_organization();
     }
 
 /* Getters

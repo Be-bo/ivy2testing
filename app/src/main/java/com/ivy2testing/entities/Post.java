@@ -20,6 +20,7 @@ public class Post implements Parcelable {
     protected String uni_domain;
     protected String author_id;
     protected String author_name;
+    protected boolean author_is_organization = false;
     protected boolean is_event = false;
     protected boolean main_feed_visible = true;
     protected long creation_millis = 0;
@@ -63,6 +64,7 @@ public class Post implements Parcelable {
     public Post(Event event){
         this(event.getId(), event.getUni_domain(), event.getAuthor_id(), event.getAuthor_name(),
                 event.isMain_feed_visible(), event.getPinned_id(), event.getPinned_name(), event.getVisual());
+        this.author_is_organization = event.getAuthor_is_organization();
     }
 
 
@@ -104,6 +106,14 @@ public class Post implements Parcelable {
     public void setAuthor_name(String author_name) {
         if (author_name != null && !author_name.isEmpty())
             this.author_name = author_name;
+    }
+
+    public boolean getAuthor_is_organization() {
+        return author_is_organization;
+    }
+
+    public void setAuthor_is_organization(boolean author_is_organization) {
+        this.author_is_organization = author_is_organization;
     }
 
     public Boolean getIs_event() {
@@ -184,6 +194,7 @@ public class Post implements Parcelable {
         uni_domain = in.readString();
         author_id = in.readString();
         author_name = in.readString();
+        author_is_organization = in.readByte() != 0;
         is_event = in.readByte() != 0;
         main_feed_visible = in.readByte() != 0;
         creation_millis = in.readLong();
@@ -218,6 +229,7 @@ public class Post implements Parcelable {
         dest.writeString(uni_domain);
         dest.writeString(author_id);
         dest.writeString(author_name);
+        dest.writeByte((byte) (author_is_organization ? 1 : 0));
         dest.writeByte((byte) (is_event ? 1 : 0));
         dest.writeByte((byte) (main_feed_visible ? 1 : 0));
         dest.writeLong(creation_millis);

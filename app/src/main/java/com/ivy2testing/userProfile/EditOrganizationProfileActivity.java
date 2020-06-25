@@ -70,7 +70,7 @@ public class EditOrganizationProfileActivity extends AppCompatActivity {
         change_pic_button = findViewById(R.id.edit_org_change);
         bafe_sutton = findViewById(R.id.edit_org_saveButton);
         progress_bar = findViewById(R.id.edit_org_progressBar);
-        setTitle("Edit Profile");
+        setTitle(getString(R.string.editProfile));
     }
 
     private void setUpActivity(){

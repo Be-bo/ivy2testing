@@ -1,17 +1,15 @@
 package com.ivy2testing.home;
 
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -21,8 +19,6 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
-import com.ivy2testing.entities.Student;
-import com.ivy2testing.main.MainActivity;
 
 import java.util.ArrayList;
 
@@ -39,6 +35,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
         FeedClickListener feed_click_listener;
 
+        public ImageView banner;
         public ImageView feed_image_view;
         public TextView feed_title;
         public TextView feed_text;
@@ -51,6 +48,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
         public FeedViewHolder(@NonNull View itemView, FeedClickListener feed_click_listener) {
             super(itemView);
+            banner = itemView.findViewById(R.id.object_banner);
             feed_image_view = itemView.findViewById(R.id.object_imageview);
             feed_title = itemView.findViewById(R.id.object_title);
             feed_text = itemView.findViewById(R.id.object_body);
@@ -90,7 +88,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     @NonNull
     @Override
     public FeedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_object, parent,false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_post_object, parent,false);
         FeedViewHolder fvh = new FeedViewHolder(v, feed_click_listener);
         return fvh;
     }
@@ -99,7 +97,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     public void onBindViewHolder(@NonNull FeedViewHolder holder, int position) {
             if(post_array_list.get(position).getIs_event()){
                 Event current_event = (Event) post_array_list.get(position);
-                holder.feed_title.setText(current_event.getName().toString());
+                holder.feed_title.setText(current_event.getName());
                 holder.feed_title.setVisibility(View.VISIBLE);
             }
             else
@@ -116,9 +114,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             // exist. Solves the bug for now/ if similar bugs appear later
 
 
-            if(post_array_list.get(position).getVisual().toString().contains("/")){
+            if(post_array_list.get(position).getVisual().contains("/")){
                 holder.feed_image_view.setVisibility(View.VISIBLE);
-                grabPictureFromDB( holder, post_array_list.get(position));
+                grabPictureFromDB(holder, post_array_list.get(position));
             }
             else
                 holder.feed_image_view.setVisibility(View.GONE);
@@ -147,6 +145,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                 // bytes is an byte [] returned from storage,
                 // set the image to be visible
                 holder.feed_image_view.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+
+                // banner
+                if (post instanceof Event) holder.banner.setVisibility(View.VISIBLE);
+                else holder.banner.setVisibility(View.GONE);
 
             }
         }).addOnFailureListener(new OnFailureListener() {
