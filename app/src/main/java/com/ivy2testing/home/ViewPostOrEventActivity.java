@@ -3,7 +3,6 @@ package com.ivy2testing.home;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -21,7 +20,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -272,6 +270,25 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         }
     }
 
+    // Show different views if there are no comments
+    private void viewComments(){
+        // Put a no Comments available sign
+        if (comments.size() > 0){
+            mCommentsRecycler.setVisibility(View.VISIBLE);
+            findViewById(R.id.viewPost_commentErrorMsg).setVisibility(View.GONE);
+            // Scroll down a bit
+            ScrollView scrollView = findViewById(R.id.viewPost_scrollView);
+            scrollView.smoothScrollBy(0, getResources().getDisplayMetrics().heightPixels); //TODO scroll down a bit
+        }
+        else {
+            mCommentsRecycler.setVisibility(View.GONE);
+            findViewById(R.id.viewPost_commentErrorMsg).setVisibility(View.VISIBLE);
+            // Scroll down a bit
+            ScrollView scrollView = findViewById(R.id.viewPost_scrollView);
+            scrollView.smoothScrollBy(0, getResources().getDisplayMetrics().heightPixels); //TODO scroll down a bit
+        }
+    }
+
 
 /* OnClick Methods
 ***************************************************************************************************/
@@ -372,6 +389,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             if (task1.isSuccessful()){
                 comments.add(0, newComment);
                 adapter.notifyItemInserted(0);
+                if (mCommentsRecycler.getVisibility() == View.GONE) viewComments();
                 mWriteComment.setText(null);
             }
             else {
@@ -464,21 +482,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             }
             else Log.e(TAG, "loadComments: unsuccessful or do not exist.", task.getException());
 
-            // Put a no Comments available sign
-            if (comments.size() > 0){
-                mCommentsRecycler.setVisibility(View.VISIBLE);
-                findViewById(R.id.viewPost_commentErrorMsg).setVisibility(View.GONE);
-                // Scroll down a bit
-                ScrollView scrollView = findViewById(R.id.viewPost_scrollView);
-                scrollView.smoothScrollBy(0, getResources().getDisplayMetrics().heightPixels); //TODO scroll down a bit
-            }
-            else {
-                mCommentsRecycler.setVisibility(View.GONE);
-                findViewById(R.id.viewPost_commentErrorMsg).setVisibility(View.VISIBLE);
-                // Scroll down a bit
-                ScrollView scrollView = findViewById(R.id.viewPost_scrollView);
-                scrollView.smoothScrollBy(0, getResources().getDisplayMetrics().heightPixels); //TODO scroll down a bit
-            }
+            viewComments();
         });
     }
 }

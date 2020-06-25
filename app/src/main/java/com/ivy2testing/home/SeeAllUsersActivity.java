@@ -7,12 +7,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -127,7 +125,7 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
         // Check onNameClick and onOptionClick methods
         adapter.setOnUserItemClickListener(this);
 
-        // Scroll Listener used for pagination (TODO not fully tested yet)
+        // Scroll Listener used for pagination
         recycler_view.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
