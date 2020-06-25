@@ -30,12 +30,12 @@ import java.util.ArrayList;
  * Used in: StudentProfile.Posts
  */
 public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.SquareImgHolder> {
-    private static final String TAG = "SquareImageAdapter";
+    private static final String TAG = "SquareImageAdapterTag";
 
     // Attributes
     private String author_id;
     private String uni_domain;
-
+    private int pull_limit = 0;
     private ArrayList<Post> posts = new ArrayList<>();
 
     private FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
@@ -48,12 +48,17 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
 
     // Constructors
     public SquareImageAdapter(String id, String uniDomain, int limit, Context mrContext, OnPostListener listener){
-        Log.d(TAG, "declaring");
         this.uni_domain = uniDomain;
         this.author_id = id;
         this.context = mrContext;
         this.post_listener = listener;
-        setPostChangeListener(limit);
+        this.pull_limit = limit;
+        startListening();
+    }
+
+    public void startListening(){
+        Log.d(TAG, "start listening");
+        setPostChangeListener(pull_limit);
     }
 
     // Listener Interface
@@ -65,7 +70,8 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
         return posts.get(position);
     }
 
-    public void cleanUp(){
+    public void stopListening(){
+        Log.d(TAG, "stop listening");
         list_reg.remove();
     }
 
@@ -121,8 +127,11 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
 
                         switch (dc.getType()) {
                             case ADDED:
-                                if ((boolean)doc.get("is_event")) posts.add(doc.toObject(Event.class));
-                                else posts.add(doc.toObject(Post.class));
+                                if(!postAlreadyAdded(doc.getId())){
+                                    Log.d(TAG, "adding: "+doc.getId());
+                                    if ((boolean)doc.get("is_event")) posts.add(doc.toObject(Event.class));
+                                    else if(!posts.contains(doc.toObject(Post.class))) posts.add(doc.toObject(Post.class));
+                                }
                                 break;
 
                             case MODIFIED:
@@ -146,6 +155,14 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
                     notifyDataSetChanged();
                 }
             });
+    }
+
+    private boolean postAlreadyAdded(String id){
+        for(int i = 0; i<posts.size(); i++){
+            Log.d(TAG, "checking: "+posts.get(i).getId());
+            if(posts.get(i).getId().equals(id)) return true;
+        }
+        return false;
     }
 
 

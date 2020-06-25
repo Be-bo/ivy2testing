@@ -11,7 +11,7 @@
         android:id="@+id/recyclerCircleItem_image"
         android:layout_width="@dimen/preview_circular_profile_image_width_height"
         android:layout_height="@dimen/preview_circular_profile_image_width_height"
-        android:src="@drawable/ic_account_circle"
+        android:src="@drawable/ic_profile_selected"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -38,11 +38,12 @@ import java.util.Locale;
  * Overview: Event view fragment
  * Note: Includes text, pinned ID, and event only views
  */
-public class ViewEventFragment extends Fragment {
+public class ViewEventFragment extends Fragment implements CircleImageAdapter.OnPersonListener {
 
 
     // Constants
     private final static String TAG = "ViewPostFragment";
+    private final static int GOING_LIMIT = 5;
 
     // Views
     private TextView tv_time;
@@ -152,18 +153,18 @@ public class ViewEventFragment extends Fragment {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                if (lastUriPosition < event.getGoing_ids().size() - 1){
-                    int firstVisibleItem = layout_man.findFirstVisibleItemPosition();
-                    int visibleItemCount = layout_man.getChildCount();
-                    int totalItemCount = layout_man.getItemCount();
-
-                    if (firstVisibleItem + visibleItemCount == totalItemCount){
-                        loadUserPics();
-                    }
-                }
+                //TODO: ?
+//                if (lastUriPosition < event.getGoing_ids().size() - 1){
+//                    int firstVisibleItem = layout_man.findFirstVisibleItemPosition();
+//                    int visibleItemCount = layout_man.getChildCount();
+//                    int totalItemCount = layout_man.getItemCount();
+//
+//                    if (firstVisibleItem + visibleItemCount == totalItemCount){
+//                        loadUserPics();
+//                    }
+//                }
             }
         });
-        going_adapter.setOnSelectionListener(this::selectUser);
         if (button_going.getVisibility() == View.VISIBLE)
             button_going.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) going(); //toggle is enabled
@@ -176,13 +177,15 @@ public class ViewEventFragment extends Fragment {
     private void setRecycler(){
 
         // Set LayoutManager and Adapter
-        going_adapter = new CircleImageAdapter(going_img_uris);
+        //TODO: make sure not all going ids are displayed (i.e. a limit)
+        going_adapter = new CircleImageAdapter(event.getGoing_ids(),event.getUni_domain(),getContext(),this);
         layout_man = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rv_going.setLayoutManager(layout_man);
         rv_going.setAdapter(going_adapter);
 
         // Load images with pagination
-        if (!event.getGoing_ids().isEmpty()) loadUserPics();
+        //TODO: what do you need pagination for with "going ppl"? we only show some and then and if they wanna see all of'em just click "see all", the comments should be paginated if anything
+//        if (!event.getGoing_ids().isEmpty()) loadUserPics();
     }
 
     // Set Going recycler visibility
@@ -272,12 +275,13 @@ public class ViewEventFragment extends Fragment {
     }
 
     // View a user's profile
-    private void selectUser(int i) {
+    @Override
+    public void onPersonClicked(int position) {
         if (getActivity() != null) {
-            Log.d(TAG, "Starting UserProfile Activity for user " + event.getGoing_ids().get(i));
+            Log.d(TAG, "Starting UserProfile Activity for user " + event.getGoing_ids().get(position));
             Intent intent = new Intent(getActivity(), UserProfileActivity.class);
             intent.putExtra("this_uni_domain", event.getUni_domain());
-            intent.putExtra("this_user_id", event.getGoing_ids().get(i));
+            intent.putExtra("this_user_id", event.getGoing_ids().get(position));
             intent.putExtra("viewer_id", viewer_id);
             getActivity().startActivityForResult(intent, Constant.USER_PROFILE_REQUEST_CODE);
         }
@@ -290,11 +294,13 @@ public class ViewEventFragment extends Fragment {
         setRecyclerVisibility();
 
         // Load viewer preview pic if not done so yet
-        if (viewer_img == null) loadUserPic(viewer_id);
-        else {
-            going_img_uris.add(0, viewer_img);
-            going_adapter.notifyItemInserted(0);
-        }
+
+        //TODO: has to be resolved
+//        if (viewer_img == null) loadUserPic(viewer_id);
+//        else {
+//            going_img_uris.add(0, viewer_img);
+//            going_adapter.notifyItemInserted(0);
+//        }
     }
 
     // Remove user from going list
@@ -349,47 +355,6 @@ public class ViewEventFragment extends Fragment {
 
     }
 
-    // Use pagination to load preview pictures
-    private void loadUserPics(){
-        // Load 10 items at a time
-        int i;
-        for (i = lastUriPosition; i < lastUriPosition+10; i ++){
-            if (i >= event.getGoing_ids().size()) break;
-            loadUserPic(event.getGoing_ids().get(i));
-        }
-        lastUriPosition = i;    // Update last position
-    }
-
-    // Load a user's preview image
-    private void loadUserPic(String user_id){
-        String address = ImageUtils.getPreviewPath(user_id);
-        if (address.contains("null")){
-            Log.e(TAG, "Address contained null! UserId: " + user_id);
-            return;
-        }
-
-        base_storage_ref.child(address).getDownloadUrl()
-                .addOnCompleteListener(task -> {
-                    Uri uri = null;
-
-                    if (task.isSuccessful()) uri = task.getResult();
-                    else Log.w(TAG, "this user's image doesn't exist! user: " + user_id);
-
-                    // Always load viewer's id first!
-                    if (user_id.equals(viewer_id)){
-                        viewer_img = uri;   // NULLABLE (adapter handles null uris)
-                        going_img_uris.add(0, uri);
-                        going_adapter.notifyItemInserted(0);
-                    }
-                    else {
-                        going_img_uris.add(uri);
-                        going_adapter.notifyItemInserted(going_img_uris.size()-1);
-                    }
-                    Log.d(TAG, "Added to position "+ event.getGoing_ids().indexOf(user_id)+" img " + uri);
-                });
-    }
-
-
 /* Utility Methods
 ***************************************************************************************************/
 
@@ -403,4 +368,6 @@ public class ViewEventFragment extends Fragment {
 
         return formatter.format(cal.getTime());
     }
+
+
 }

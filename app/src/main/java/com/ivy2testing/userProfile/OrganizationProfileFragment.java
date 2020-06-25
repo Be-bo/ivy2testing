@@ -8,17 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
@@ -27,37 +26,46 @@ import com.ivy2testing.entities.User;
 import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.util.Constant;
+import com.ivy2testing.util.adapters.CircleImageAdapter;
 import com.ivy2testing.util.adapters.SquareImageAdapter;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class OrganizationProfileFragment extends Fragment implements SquareImageAdapter.OnPostListener {
+public class OrganizationProfileFragment extends Fragment implements SquareImageAdapter.OnPostListener, CircleImageAdapter.OnPersonListener {
 
 
     // MARK: Variables and Constants
 
     private static final String TAG = "OrganizationProfileFragmentTag";
     private static final int POST_LIMIT = 6;
+
     private View rootView;
     private TextView edit_button;
     private TextView member_requests_button;
     private TextView see_all_posts_button;
     private TextView see_all_members_button;
-    private RecyclerView post_recycler;
-    private RecyclerView members_recycler;
     private CircleImageView profile_image;
     private TextView name_text;
     private TextView member_number_text;
-    private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
-    private FirebaseFirestore base_database_reference = FirebaseFirestore.getInstance();
+
+    private SquareImageAdapter post_adapter;
+    private CircleImageAdapter person_adapter;
+    private RecyclerView post_recycler;
+    private RecyclerView members_recycler;
+
+    private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
     private User this_user;
     private UserViewModel this_user_viewmodel;
-    private SquareImageAdapter post_adapter;
     private boolean is_set_up = false;
-
     public boolean isIs_set_up() {
         return is_set_up;
     }
+
+
+
+
+
+
 
     // MARK: Base Methods
 
@@ -66,19 +74,19 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_organizationprofile, container, false);
         declareHandles();
-        //TODO: reactivate and test
-//        Intent intent = new Intent(getContext(), OrganizationProfileActivity.class);
-//        intent.putExtra("this_user", this_user);
-//        intent.putExtra("org_to_display_id", "KLSyYgfHMOcOBOFURFk0ZUV0x7F3");
-//        intent.putExtra("org_to_display_uni", "ucalgary.ca");
-//        startActivity(intent);
         return rootView;
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if(post_adapter!=null) post_adapter.cleanUp();
+        if(post_adapter!=null) post_adapter.stopListening();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(is_set_up && post_adapter != null) post_adapter.startListening();
     }
 
     public void setUp(){
@@ -117,15 +125,14 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
     }
 
     private void populateUI(){
-        Log.d(TAG, "populating ui");
         name_text.setText(this_user.getName());
         String memberNumber = String.valueOf(((Organization)this_user).getMember_ids().size());
         String requestNumber = String.valueOf(((Organization)this_user).getRequest_ids().size());
         member_number_text.setText(getString(R.string.organization_member_number, memberNumber));
         member_requests_button.setText(getString(R.string.organization_request_number, requestNumber));
         String profPicPath = "userfiles/"+this_user.getId()+"/profileimage.jpg";
-        base_storage_ref.child(profPicPath).getDownloadUrl().addOnCompleteListener(task -> {if(task.isSuccessful() && getContext() != null) Glide.with(getContext()).load(task.getResult()).into(profile_image);});
-        setUpPosts();
+        stor_ref.child(profPicPath).getDownloadUrl().addOnCompleteListener(task -> {if(task.isSuccessful() && getContext() != null) Glide.with(getContext()).load(task.getResult()).into(profile_image);});
+        setUpRecyclers();
     }
 
     private void setListeners(){
@@ -135,10 +142,14 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
         edit_button.setOnClickListener(view -> transToEdit());
     }
 
-    private void setUpPosts(){
+    private void setUpRecyclers(){
         post_adapter = new SquareImageAdapter(this_user.getId(), this_user.getUni_domain(), 9, getContext(), this);
         post_recycler.setLayoutManager(new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false));
         post_recycler.setAdapter(post_adapter);
+
+        person_adapter = new CircleImageAdapter(((Organization)this_user).getMember_ids(), this_user.getUni_domain(), getContext(), this);
+        members_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
+        members_recycler.setAdapter(person_adapter);
     }
 
     @Override
@@ -147,6 +158,11 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
         intent.putExtra("viewer_id", this_user.getId());
         intent.putExtra("post", post_adapter.getItem(position));
         startActivity(intent);
+    }
+
+    @Override
+    public void onPersonClicked(int position) {
+        //TODO
     }
 
     private void setUpMembers(){

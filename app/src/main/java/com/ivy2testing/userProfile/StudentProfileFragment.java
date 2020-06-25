@@ -20,9 +20,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.entities.User;
@@ -36,9 +33,7 @@ import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.adapters.SquareImageAdapter;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /** @author Zahra Ghavasieh
  * Overview: Student Profile view fragment
@@ -107,15 +102,20 @@ public class StudentProfileFragment extends Fragment implements SquareImageAdapt
 
     public void setUp(){
         is_set_up = true;
-        // Initialization Methods
         if (student == null) getUserProfile();
         else setUp();
+//        Log.d(TAG, "setting up");
+//        Intent intent = new Intent(getContext(), OrganizationProfileActivity.class);
+//        intent.putExtra("this_user", student);
+//        intent.putExtra("org_to_display_id", "Z2xem5pMPsQzQqA27ZMpNJ6dcP82");
+//        intent.putExtra("org_to_display_uni", "ucalgary.ca");
+//        startActivity(intent);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if(adapter!=null) adapter.cleanUp();
+        if(adapter!=null) adapter.stopListening();
     }
 
     /* Initialization Methods

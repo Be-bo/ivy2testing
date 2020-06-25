@@ -17,6 +17,7 @@
     <!-- Space between most views (paragraphs, buttons etc) -->
     <dimen name="general_view_margin">16dp</dimen>
 
-    <dimen name="preview_circular_profile_image_width_height">40dp</dimen>
+    <dimen name="preview_circular_profile_image_width_height">80dp</dimen>
     <dimen name="image_button_width_height">40dp</dimen>
+    <dimen name="preview_square_post_image_width_height">80dp</dimen>
 </resources>

@@ -56,11 +56,18 @@
         <Button
             android:id="@+id/activity_orgprofile_join_button"
             style="@style/StandardButton"
-            android:layout_marginTop="8dp"
             android:layout_width="100dp"
             android:layout_height="30dp"
+            android:layout_marginTop="8dp"
             android:text="Join"
             />
+
+        <TextView
+            android:id="@+id/activity_orgprofile_member_status"
+            style="@style/StandardText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible" />
 
     </LinearLayout>
 
