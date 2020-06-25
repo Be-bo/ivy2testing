@@ -36,7 +36,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         FeedClickListener feed_click_listener;
 
         public ImageView banner;
-        public ConstraintLayout image_view_layout;
         public ImageView feed_image_view;
         public TextView feed_title;
         public TextView feed_text;
@@ -50,7 +49,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         public FeedViewHolder(@NonNull View itemView, FeedClickListener feed_click_listener) {
             super(itemView);
             banner = itemView.findViewById(R.id.object_banner);
-            image_view_layout = itemView.findViewById(R.id.object_imageview_layout);
             feed_image_view = itemView.findViewById(R.id.object_imageview);
             feed_title = itemView.findViewById(R.id.object_title);
             feed_text = itemView.findViewById(R.id.object_body);
@@ -90,7 +88,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     @NonNull
     @Override
     public FeedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_object, parent,false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_post_object, parent,false);
         FeedViewHolder fvh = new FeedViewHolder(v, feed_click_listener);
         return fvh;
     }
@@ -117,11 +115,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
 
             if(post_array_list.get(position).getVisual().contains("/")){
-                holder.image_view_layout.setVisibility(View.VISIBLE);
+                holder.feed_image_view.setVisibility(View.VISIBLE);
                 grabPictureFromDB(holder, post_array_list.get(position));
             }
             else
-                holder.image_view_layout.setVisibility(View.GONE);
+                holder.feed_image_view.setVisibility(View.GONE);
 
             holder.feed_text.setText(post_array_list.get(position).getText().toString());
             holder.feed_author.setText(post_array_list.get(position).getAuthor_name().toString());

@@ -12,9 +12,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/object_imageview_layout"
-            layout="@layout/post_image"/>
+        <ImageView
+            android:id="@+id/object_imageview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_ivy_logo_white"
+            android:background="@drawable/gradient_custom_post"
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/post_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -22,7 +31,7 @@
             android:background="@color/segmented_colour_bg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/object_imageview_layout">
+            app:layout_constraintTop_toBottomOf="@+id/object_imageview">
 
             <TextView
                 android:id="@+id/object_title"
