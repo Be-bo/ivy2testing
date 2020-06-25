@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/recyclerGridItem_layout"
@@ -7,12 +7,22 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp">
 
+    <ImageView
+        android:id="@+id/recyclerCircleItem_banner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_banner"
+        android:elevation="4dp"
+        android:layout_gravity="end"
+        android:contentDescription="@string/event" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/recyclerGridItem_cardView"
         android:layout_width="80dp"
         android:layout_height="80dp"
         app:cardCornerRadius="10dp"
         android:elevation="2dp"
+        android:layout_marginTop="6dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -22,8 +32,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:srcCompat="@drawable/test_flower"
-            android:contentDescription="Post"/>
+            android:contentDescription="@string/post"/>
 
     </androidx.cardview.widget.CardView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

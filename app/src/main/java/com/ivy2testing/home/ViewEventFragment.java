@@ -127,7 +127,7 @@ public class ViewEventFragment extends Fragment {
 
         // Optional text Fields
         if (event.getLink() != null) tv_link.setText(event.getLink());
-        else tv_link.setVisibility(View.GONE);
+        else v.findViewById(R.id.viewEvent_linkLayout).setVisibility(View.GONE);
 
         if (event.getPinned_id() != null && !event.getPinned_id().isEmpty())
             tv_pinned.setText(event.getPinned_id()); //TODO change to pin name
@@ -190,10 +190,12 @@ public class ViewEventFragment extends Fragment {
     // Set Going recycler visibility
     private void setRecyclerVisibility(){
         if (event.getGoing_ids().isEmpty()) {
+            Log.d(TAG, "going list is empty!"); //TODO there is a bug
             rv_going.setVisibility(View.GONE);
             tv_seeAll.setVisibility(View.GONE);
         }
         else {
+            Log.d(TAG, "going list is not empty."); //TODO there is a bug
             rv_going.setVisibility(View.VISIBLE);
             tv_seeAll.setVisibility(View.VISIBLE);
         }
@@ -341,14 +343,14 @@ public class ViewEventFragment extends Fragment {
 
     // Save any changes to event to database
     private void saveEventToDB() {
-        String address = "universities/" + event.getUni_domain() + "/posts/" + event.getPinned_id();
+        String address = "universities/" + event.getUni_domain() + "/posts/" + event.getId();
         if (address.contains("null")){
-            Log.e(TAG, "Event Address has null values. ID:" + event.getUni_domain());
+            Log.e(TAG, "Event Address has null values. ID:" + event.getId());
             return;
         }
 
         db.document(address).set(event).addOnCompleteListener(task->{
-            if (task.isSuccessful()) Log.d(TAG, "Changes saved.");
+            if (task.isSuccessful()) Log.d(TAG, "Changes saved to event: " + event.getId());
             else Log.e(TAG, "Something went wrong when trying to save changes.\n");
         });
 

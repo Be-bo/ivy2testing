@@ -171,6 +171,9 @@
     </string>
     <string name="comment">Comment</string>
     <string name="cancel">Cancel</string>
+    <string name="post">Post</string>
+    <string name="event">Event</string>
+    <string name="post_image">Post Image</string>
 
 
 </resources>

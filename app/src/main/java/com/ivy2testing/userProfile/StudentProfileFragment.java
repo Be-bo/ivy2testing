@@ -207,6 +207,7 @@ public class StudentProfileFragment extends Fragment {
 
     // A post in recycler was selected
     public void onPostClick(int position) {
+        Log.d(TAG, "Getting post: " + adapter.getItem(position).getId());
         Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
         intent.putExtra("this_user", student);
         intent.putExtra("uni_domain", student.getUni_domain());

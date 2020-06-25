@@ -174,6 +174,7 @@ public class StudentProfileActivity extends AppCompatActivity {
 
     // A post in recycler was selected
     public void onPostClick(int position) {
+        Log.d(TAG, "Getting post: " + adapter.getItem(position).getId());
         Intent intent = new Intent(this, ViewPostOrEventActivity.class);
         intent.putExtra("this_user", this_user);
         intent.putExtra("uni_domain", student_toDisplay.getUni_domain());

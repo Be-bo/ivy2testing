@@ -337,7 +337,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             else {
                 // Scroll down a bit
                 ScrollView scrollView = findViewById(R.id.viewPost_scrollView);
-                scrollView.scrollTo(0, scrollView.getBottom()); //TODO scroll down a bit
+                scrollView.smoothScrollBy(0, getResources().getDisplayMetrics().heightPixels); //TODO scroll down a bit
             }
         }
         else {
@@ -473,14 +473,14 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
                 findViewById(R.id.viewPost_commentErrorMsg).setVisibility(View.GONE);
                 // Scroll down a bit
                 ScrollView scrollView = findViewById(R.id.viewPost_scrollView);
-                scrollView.scrollTo(0, (int)mCommentsRecycler.getY()); //TODO scroll down a bit
+                scrollView.smoothScrollBy(0, getResources().getDisplayMetrics().heightPixels); //TODO scroll down a bit
             }
             else {
                 mCommentsRecycler.setVisibility(View.GONE);
                 findViewById(R.id.viewPost_commentErrorMsg).setVisibility(View.VISIBLE);
                 // Scroll down a bit
                 ScrollView scrollView = findViewById(R.id.viewPost_scrollView);
-                scrollView.scrollTo(0, (int)findViewById(R.id.viewPost_commentErrorMsg).getY()); //TODO scroll down a bit
+                scrollView.smoothScrollBy(0, getResources().getDisplayMetrics().heightPixels); //TODO scroll down a bit
             }
         });
     }
