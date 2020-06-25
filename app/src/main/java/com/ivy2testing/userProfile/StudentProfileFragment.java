@@ -85,7 +85,7 @@ public class StudentProfileFragment extends Fragment {
     public void setUpProfile(){
         is_set_up = true;
         if (student == null) getUserProfile();
-        else setUp();
+        else setUpElements();
 //        Log.d(TAG, "setting up");
 //        Intent intent = new Intent(getContext(), OrganizationProfileActivity.class);
 //        intent.putExtra("this_user", student);

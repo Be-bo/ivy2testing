@@ -88,10 +88,10 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
     @Override
     public void onPersonClicked(int position) {
         //TODO: reconcile with Zahra's
-        Intent intent = new Intent(this, UserProfileActivity.class);
-        intent.putExtra("viewer_id", org_to_display_id);
-        intent.putExtra("person", person_adapter.getItem(position));
-        startActivity(intent);
+//        Intent intent = new Intent(this, UserProfileActivity.class);
+//        intent.putExtra("viewer_id", org_to_display_id);
+//        intent.putExtra("person", person_adapter.getItem(position));
+//        startActivity(intent);
     }
 
     @Override

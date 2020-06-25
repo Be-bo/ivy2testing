@@ -285,9 +285,9 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
 
             // We don't know if it is a student but StudentProfile will automatically
             // transition to OrganizationProfile if user is not a student.
-            Log.d(TAG, "Starting StudentProfile Activity for user " + event.getGoing_ids().get(i));
+            Log.d(TAG, "Starting StudentProfile Activity for user " + event.getGoing_ids().get(position));
             Intent intent = new Intent(getActivity(), StudentProfileActivity.class);
-            intent.putExtra("student_to_display_id", event.getGoing_ids().get(i));
+            intent.putExtra("student_to_display_id", event.getGoing_ids().get(position));
             intent.putExtra("student_to_display_uni", event.getUni_domain());
             intent.putExtra("this_user", this_user);
             startActivity(intent);
