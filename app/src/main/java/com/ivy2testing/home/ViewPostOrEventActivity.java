@@ -3,6 +3,7 @@ package com.ivy2testing.home;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -152,15 +153,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         mCommentsRecycler = findViewById(R.id.viewPost_commentRV);
         mWriteComment = findViewById(R.id.writeComment_commentText);
         mPostComment = findViewById(R.id.writeComment_commentButton);
-
-        // Action bar
-        setSupportActionBar(findViewById(R.id.viewPost_toolBar));
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null){
-            actionBar.setTitle(null);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        else Log.e(TAG, "no actionbar");
+        setTitle(null);
     }
 
     // Populate fields with Post info
@@ -420,6 +413,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     // Loads post visual (only image for now)
     private void loadPostVisual() {
         if (post == null || post.getVisual() == null) {
+            mPostVisual.setVisibility(View.GONE);
             Log.e(TAG, "Either Post or its visual field is null!");
             return;
         }
@@ -427,7 +421,10 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         // Get Visual from storage and load into image view
         base_storage_ref.child(post.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
             if (task.isSuccessful()) Picasso.get().load(task.getResult()).into(mPostVisual);
-            else Log.e(TAG, "Could not get post Visual from storage.");
+            else {
+                mPostVisual.setVisibility(View.GONE);
+                Log.e(TAG, "Could not get post Visual from storage.");
+            }
         });
     }
 

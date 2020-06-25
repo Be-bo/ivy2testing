@@ -142,21 +142,13 @@ public class EditStudentProfileActivity extends AppCompatActivity {
         mBirthDay = findViewById(R.id.editStudent_birthdayDatePicker);
         mSaveButton = findViewById(R.id.editStudent_saveButton);
         mProgressBar = findViewById(R.id.editStudent_progressBar);
+        setTitle(R.string.editProfile);     // ActionBar Title
 
         // Create and apply a degree adapter to the spinner
         SpinnerAdapter degree_adapter = new SpinnerAdapter(this, getResources().getStringArray(R.array.degree_list));
             ArrayAdapter.createFromResource(this, R.array.degree_list, android.R.layout.simple_spinner_item);
         degree_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mDegree.setAdapter(degree_adapter);
-
-        // Action bar
-        setSupportActionBar(findViewById(R.id.editStudent_toolBar));
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null){
-            actionBar.setTitle(null);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-        else Log.e(TAG, "no actionbar");
     }
 
     // Preset fields with current Student info

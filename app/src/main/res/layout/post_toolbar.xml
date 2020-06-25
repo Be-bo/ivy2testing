@@ -5,7 +5,7 @@
     android:layout_height="?attr/actionBarSize"
     android:background="@color/android_default_bg"
     android:minHeight="?attr/actionBarSize"
-    android:theme="@style/PostToolBarStyle"
+    android:theme="@style/SolidAppBarStyle"
      >
 
     <TextView

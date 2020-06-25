@@ -25,8 +25,8 @@ import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
 
@@ -61,9 +61,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class CreatePost extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, android.app.TimePickerDialog.OnTimeSetListener, AdapterView.OnItemSelectedListener {
-
-    //toolbar
-    private Toolbar post_toolbar;
+    private static final String TAG = "CreatePostActivity";
 
     //type
     private Button post_button;
@@ -156,21 +154,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         if(this_user == null) finish();
 
         setContentView(R.layout.activity_post);
-        // post toolbar is included as an <include>
-        // this toolbar has a custom theme applied to change the color of the back button
-        // https://stackoverflow.com/questions/34581408/change-toolbar-back-arrow-color
-        post_toolbar = findViewById(R.id.post_toolbar_reference_id);
-        setSupportActionBar(post_toolbar);
-
-        // this adds the back button to the toolbar
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-            // this is required to nullify title, title will be sent to blank character in xml too
-            getSupportActionBar().setTitle(null);
-        }
-
+        setTitle(R.string.new_post);            // App Bar Title
 
         // pinned event spinner wont allow selection for some reason, but it can pull from the db properly
         initializePinnedSpinner();

@@ -270,7 +270,7 @@ public class ViewEventFragment extends Fragment {
         Log.d(TAG, "Starting SeeAll Activity to see all going users");
         intent.putExtra("title", "Going Users");
         intent.putExtra("this_user", this_user);
-        intent.putExtra("this_uni_domain", event.getUni_domain());
+        intent.putExtra("uni_domain", event.getUni_domain());
         intent.putExtra("user_ids", (ArrayList<String>) event.getGoing_ids());
         startActivityForResult(intent, Constant.SEEALL_USERS_REQUEST_CODE);
     }

@@ -75,8 +75,8 @@ public class StudentProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
-        getIntentExtras();          // Get student (via intent or database) and set up elements
-        setUpToolBar();             // set up toolBar as an actionBar
+        getIntentExtras();      // Get student (via intent or database) and set up elements
+        setTitle(null);         // set up toolBar as an actionBar
     }
 
     @Override
@@ -92,17 +92,6 @@ public class StudentProfileActivity extends AppCompatActivity {
 
 /* Initialization Methods
 ***************************************************************************************************/
-
-    // Set toolbar as actionBar
-    private void setUpToolBar(){
-        setSupportActionBar(findViewById(R.id.userProfile_toolBar));
-        ActionBar action_bar = getSupportActionBar();
-        if (action_bar != null){
-            action_bar.setTitle(null);
-            action_bar.setDisplayHomeAsUpEnabled(true);
-        }
-        else Log.e(TAG, "No actionBar");
-    }
 
     // General setup after acquiring student object
     private void setUpElements(){

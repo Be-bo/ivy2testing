@@ -71,8 +71,8 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
         setContentView(R.layout.activity_seeall);
 
         // Initialization
-        getIntentExtras();  // Get array for recycler
-        setUpToolBar();     // set up toolBar as an actionBar
+        getIntentExtras();          // Get array for recycler
+        setTitle(appbar_title);     // set up actionBar
         setRecycler();
         setListeners();
     }
@@ -90,18 +90,6 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
 
 /* Initialization Methods
 ***************************************************************************************************/
-
-    // Set toolbar as actionBar
-    private void setUpToolBar(){
-        setSupportActionBar(findViewById(R.id.seeAll_toolbar));
-        ActionBar action_bar = getSupportActionBar();
-        if (action_bar != null){
-            action_bar.setTitle(null);
-            action_bar.setDisplayHomeAsUpEnabled(true);
-            if (appbar_title != null) ((TextView) findViewById(R.id.seeAll_toolbarTitle)).setText(appbar_title);
-        }
-        else Log.e(TAG, "No actionBar");
-    }
 
     // Get a list of user ids to display
     private void getIntentExtras(){

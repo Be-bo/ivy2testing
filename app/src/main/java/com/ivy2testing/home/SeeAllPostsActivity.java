@@ -2,7 +2,7 @@ package com.ivy2testing.home;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -26,7 +25,6 @@ import com.ivy2testing.entities.User;
 import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.userProfile.OrganizationProfileActivity;
 import com.ivy2testing.userProfile.StudentProfileActivity;
-import com.ivy2testing.util.Constant;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,8 +71,8 @@ public class SeeAllPostsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_seeall);
 
         // Initialization
-        if (getIntentExtras()) {  // Get recycler a "query" via intent (returns its success)
-            setUpToolBar();     // set up toolBar as an actionBar
+        if (getIntentExtras()) {        // Get recycler a "query" via intent (returns its success)
+            setTitle(appbar_title);     // set up toolBar as an actionBar
             setRecycler();
             setListeners();
         }
@@ -93,19 +91,6 @@ public class SeeAllPostsActivity extends AppCompatActivity {
 
 /* Initialization Methods
 ***************************************************************************************************/
-
-
-    // Set toolbar as actionBar
-    private void setUpToolBar(){
-        setSupportActionBar(findViewById(R.id.seeAll_toolbar));
-        ActionBar action_bar = getSupportActionBar();
-        if (action_bar != null){
-            action_bar.setTitle(null);
-            action_bar.setDisplayHomeAsUpEnabled(true);
-            if (appbar_title != null) ((TextView) findViewById(R.id.seeAll_toolbarTitle)).setText(appbar_title);
-        }
-        else Log.e(TAG, "No actionBar");
-    }
 
     // Get a list of user ids to display
     @SuppressWarnings("unchecked")
@@ -139,9 +124,6 @@ public class SeeAllPostsActivity extends AppCompatActivity {
 
         // Load Users with pagination
         constructQuery();
-    }
-
-    private void onSelectListener(int i, int i1) {
     }
 
     // Scroll listener

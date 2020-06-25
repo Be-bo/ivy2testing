@@ -10,7 +10,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/general_view_margin">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/left_guideline"
@@ -26,18 +27,13 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.85" />
 
-        <!-- toolbar is locked to top and added as support action bar in java code -->
-        <include
-            android:id="@+id/post_toolbar_reference_id"
-            layout="@layout/post_toolbar" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/button_container_constraint"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toStartOf="@+id/right_guideline"
             app:layout_constraintStart_toStartOf="@+id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@id/post_toolbar_reference_id">
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/type_text"
