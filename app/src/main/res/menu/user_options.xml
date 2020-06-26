@@ -4,10 +4,16 @@
     <item android:id="@+id/userOptions_viewProfile"
         android:title="@string/view_profile"/>
 
-    <item android:id="@+id/userOptions_addFriend"
-        android:title="@string/add_friend"/>
+    <item android:id="@+id/userOptions_accept_member_request"
+        android:title="Accept Member Request"/>
 
-    <item android:id="@+id/userOptions_chat"
-        android:title="@string/message"/>
+    <item android:id="@+id/userOptions_reject_member_request"
+        android:title="Reject Member Request"/>
+
+<!--    <item android:id="@+id/userOptions_addFriend"-->
+<!--        android:title="@string/add_friend"/>-->
+
+<!--    <item android:id="@+id/userOptions_chat"-->
+<!--        android:title="@string/message"/>-->
 
 </menu>

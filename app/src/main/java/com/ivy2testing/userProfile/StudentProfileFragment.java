@@ -86,12 +86,12 @@ public class StudentProfileFragment extends Fragment {
         is_set_up = true;
         if (student == null) getUserProfile();
         else setUpElements();
-//        Log.d(TAG, "setting up");
-//        Intent intent = new Intent(getContext(), OrganizationProfileActivity.class);
-//        intent.putExtra("this_user", student);
-//        intent.putExtra("org_to_display_id", "Z2xem5pMPsQzQqA27ZMpNJ6dcP82");
-//        intent.putExtra("org_to_display_uni", "ucalgary.ca");
-//        startActivity(intent);
+        Log.d(TAG, "setting up");
+        Intent intent = new Intent(getContext(), OrganizationProfileActivity.class);
+        intent.putExtra("this_user", student);
+        intent.putExtra("org_to_display_id", "Z2xem5pMPsQzQqA27ZMpNJ6dcP82");
+        intent.putExtra("org_to_display_uni", "ucalgary.ca");
+        startActivity(intent);
     }
 
     @Override

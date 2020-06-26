@@ -21,9 +21,14 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.User;
+import com.ivy2testing.home.SeeAllPostsActivity;
+import com.ivy2testing.home.SeeAllUsersActivity;
 import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.util.adapters.CircleImageAdapter;
 import com.ivy2testing.util.adapters.SquareImageAdapter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -87,11 +92,11 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
 
     @Override
     public void onPersonClicked(int position) {
-        //TODO: reconcile with Zahra's
-//        Intent intent = new Intent(this, UserProfileActivity.class);
-//        intent.putExtra("viewer_id", org_to_display_id);
-//        intent.putExtra("person", person_adapter.getItem(position));
-//        startActivity(intent);
+        Intent intent = new Intent(this, StudentProfileActivity.class);
+        intent.putExtra("this_user", this_user);
+        intent.putExtra("student_to_display_id", person_adapter.getItem(position));
+        intent.putExtra("student_to_display_uni", org_to_display_uni);
+        startActivity(intent);
     }
 
     @Override
@@ -171,8 +176,8 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
         post_recycler.setLayoutManager(new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false));
         post_recycler.setAdapter(post_adapter);
 
-        //TODO: limit with outofbounds check
-        person_adapter = new CircleImageAdapter(org_to_display.getMember_ids(), org_to_display_uni, this, this);
+        if(org_to_display.getMember_ids().size() < MEMBER_LIMIT) person_adapter = new CircleImageAdapter(org_to_display.getMember_ids(), org_to_display_uni, this, this);
+        else person_adapter = new CircleImageAdapter(org_to_display.getMember_ids().subList(0, MEMBER_LIMIT), org_to_display_uni, this, this);
         members_recycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
         members_recycler.setAdapter(person_adapter);
     }
@@ -200,10 +205,21 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
     }
 
     private void transToMembers(){
-        //TODO
+        Intent intent = new Intent(this, SeeAllUsersActivity.class);
+        intent.putExtra("this_user", this_user);
+        intent.putExtra("title", org_to_display.getName()+"'s Members");
+        intent.putExtra("uni_domain", org_to_display_uni);
+        intent.putExtra("user_ids", new ArrayList<>(org_to_display.getMember_ids()));
+        startActivity(intent);
     }
 
     private void transToPosts(){
-        //TODO
+        Intent intent = new Intent(this, SeeAllPostsActivity.class);
+        intent.putExtra("title", org_to_display.getName()+"'s Posts");
+        intent.putExtra("this_user", this_user);
+        intent.putExtra("uni_domain", org_to_display_uni);
+        HashMap<String, Object> query_map = new HashMap<String, Object>() {{ put("author_id", org_to_display_id); }};
+        intent.putExtra("query_map", query_map);
+        startActivity(intent);
     }
 }

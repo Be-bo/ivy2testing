@@ -23,11 +23,16 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.User;
+import com.ivy2testing.home.SeeAllPostsActivity;
+import com.ivy2testing.home.SeeAllUsersActivity;
 import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.adapters.CircleImageAdapter;
 import com.ivy2testing.util.adapters.SquareImageAdapter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -165,10 +170,6 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
         //TODO
     }
 
-    private void setUpMembers(){
-
-    }
-
     private void getUserProfile(){
         if (getActivity() != null) {
             this_user_viewmodel = new ViewModelProvider(getActivity()).get(UserViewModel.class);
@@ -192,23 +193,32 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
     // MARK: Transition Methods
 
     private void transToMembers(){
-        Intent intent = new Intent(getContext(), MembersActivity.class);
+        Intent intent = new Intent(getContext(), SeeAllUsersActivity.class);
         intent.putExtra("this_user", this_user);
-        intent.putExtra("isEditable", true);
-        intent.putExtra("isRequests", false);
+        intent.putExtra("title", this_user.getName()+"'s Members");
+        intent.putExtra("uni_domain", this_user.getUni_domain());
+        intent.putExtra("user_ids", new ArrayList<>(((Organization)this_user).getMember_ids()));
         startActivity(intent);
     }
 
     private void transToRequests(){
-        Intent intent = new Intent(getContext(), MembersActivity.class);
+        Intent intent = new Intent(getContext(), SeeAllUsersActivity.class);
         intent.putExtra("this_user", this_user);
-        intent.putExtra("isEditable", true);
-        intent.putExtra("isRequests", true);
+        intent.putExtra("title", this_user.getName()+"'s Member Requests");
+        intent.putExtra("uni_domain", this_user.getUni_domain());
+        intent.putExtra("user_ids", new ArrayList<>(((Organization)this_user).getRequest_ids()));
+        intent.putExtra("shows_member_requests", true);
         startActivity(intent);
     }
 
     private void transToPosts(){
-
+        Intent intent = new Intent(getContext(), SeeAllPostsActivity.class);
+        intent.putExtra("title", this_user.getName()+"'s Posts");
+        intent.putExtra("this_user", this_user);
+        intent.putExtra("uni_domain", this_user.getUni_domain());
+        HashMap<String, Object> query_map = new HashMap<String, Object>() {{ put("author_id", this_user.getId()); }};
+        intent.putExtra("query_map", query_map);
+        startActivity(intent);
     }
 
     private void transToEdit(){

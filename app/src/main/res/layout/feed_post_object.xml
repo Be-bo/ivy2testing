@@ -20,15 +20,31 @@
         app:layout_constraintGuide_percent="0.7" />
 
     <ImageView
-            android:id="@+id/object_banner"
-            android:layout_width="60dp"
-            android:layout_height="80dp"
-            android:src="@drawable/ic_banner"
-            android:elevation="4dp"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/event"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+        android:id="@+id/object_banner"
+        android:layout_width="40dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="4dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/event"
+        android:elevation="4dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_banner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/feed_post_object_banner_text"
+        style="@style/StandardText"
+        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:text="Event"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="4dp"
+        android:elevation="5dp"
+        android:rotation="90"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <include
         layout="@layout/feed_post_card"

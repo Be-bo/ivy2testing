@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Organization;
@@ -49,6 +50,7 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
     private User this_user;         // Current user
     private String uni_domain;      // Uni Domain of users to view
     private List<String> user_ids;  // List of user_ids
+    private boolean shows_member_requests = false;
 
     // Recycler variables
     private UserAdapter adapter;
@@ -97,6 +99,7 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
             this_user = getIntent().getParcelableExtra("this_user");        // currently logged in user
             uni_domain = getIntent().getStringExtra("uni_domain");
             user_ids = getIntent().getStringArrayListExtra("user_ids");     // List of user ids to be displayed
+            shows_member_requests = getIntent().getBooleanExtra("shows_member_requests", false);
 
             if (user_ids == null || uni_domain == null) {
                 Log.e(TAG, "Must Provide a list of user ids and uni domain.");
@@ -176,25 +179,24 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
         PopupMenu popup = new PopupMenu(this, v);
 
         // Hide certain items if not logged in
-        if (this_user == null){
+        if (this_user == null || !shows_member_requests){
             Menu menu = popup.getMenu();
-            menu.findItem(R.id.userOptions_addFriend).setEnabled(false);
-            menu.findItem(R.id.userOptions_chat).setEnabled(false);
+            menu.findItem(R.id.userOptions_accept_member_request).setVisible(false);
+            menu.findItem(R.id.userOptions_reject_member_request).setVisible(false);
         }
 
-        // TODO: Set onClick
         popup.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.userOptions_viewProfile:
                     onUserClick(position);
                     return true;
 
-                case R.id.userOptions_addFriend:
-                    Toast.makeText(SeeAllUsersActivity.this,"Add friend: " + user_ids.get(position),Toast.LENGTH_SHORT).show();
+                case R.id.userOptions_accept_member_request:
+                    acceptMemberRequest(position);
                     return true;
 
-                case R.id.userOptions_chat:
-                    Toast.makeText(SeeAllUsersActivity.this,"Chat",Toast.LENGTH_SHORT).show();
+                case R.id.userOptions_reject_member_request:
+                    rejectMemberRequest(position);
                     return true;
 
                 default:
@@ -203,6 +205,30 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
         });
         popup.inflate(R.menu.user_options);
         popup.show();
+    }
+
+    private void acceptMemberRequest(int pos){
+        User user = users.get(pos);
+        firebase_db.collection("universities").document(this_user.getUni_domain()).collection("users").document(this_user.getId())
+                .update("member_ids", FieldValue.arrayUnion(user.getId()), "request_ids", FieldValue.arrayRemove(user.getId())).addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                Toast.makeText(this, "Member added!", Toast.LENGTH_LONG).show();
+                adapter.removeUser(pos);
+            }
+            else Toast.makeText(this, "Failed to add the user. Try restarting the app. :-(", Toast.LENGTH_LONG).show();
+        });
+    }
+
+    private void rejectMemberRequest(int pos){
+        User user = users.get(pos);
+        firebase_db.collection("universities").document(this_user.getUni_domain()).collection("users").document(this_user.getId())
+                .update("request_ids", FieldValue.arrayRemove(user.getId())).addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                        Toast.makeText(this, "Request removed!", Toast.LENGTH_LONG).show();
+                        adapter.removeUser(pos);
+                    }
+                    else Toast.makeText(this, "Failed to remove the user. Try restarting the app. :-(", Toast.LENGTH_LONG).show();
+        });
     }
 
 

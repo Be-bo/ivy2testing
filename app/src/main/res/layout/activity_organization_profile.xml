@@ -101,11 +101,12 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/activity_orgprofile_members_recycler"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:layout_margin="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/activity_orgprofile_members_header" />
+        app:layout_constraintTop_toBottomOf="@id/activity_orgprofile_members_header"
+        app:layout_constraintBottom_toTopOf="@id/activity_orgprofile_members_see_all"/>
 
     <TextView
         android:id="@+id/activity_orgprofile_members_see_all"
@@ -142,11 +143,12 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/activity_orgprofile_post_recycler"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="wrap_content"
         android:layout_margin="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/activity_orgprofile_posts_header">
+        app:layout_constraintTop_toBottomOf="@id/activity_orgprofile_posts_header"
+        app:layout_constraintBottom_toTopOf="@id/activity_orgprofile_post_see_all">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -158,6 +160,7 @@
         android:layout_margin="16dp"
         android:text="See All"
         app:layout_constraintTop_toBottomOf="@id/activity_orgprofile_post_recycler"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

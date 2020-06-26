@@ -69,12 +69,6 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".userProfile.MembersActivity"
-            android:theme="@style/AppBarTheme"
-            android:parentActivityName=".main.MainActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity
             android:name=".home.SeeAllUsersActivity"
             android:theme="@style/AppBarTheme"
             android:parentActivityName=".main.MainActivity"

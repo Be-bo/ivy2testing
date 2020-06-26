@@ -8,13 +8,29 @@
     android:layout_margin="8dp">
 
     <ImageView
-        android:id="@+id/recyclerCircleItem_banner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/grid_item_banner"
+        android:layout_width="40dp"
+        android:layout_height="70dp"
+        android:scaleType="fitXY"
         android:src="@drawable/ic_banner"
         android:elevation="4dp"
+        android:layout_marginTop="-4dp"
+        android:layout_marginEnd="-3dp"
         android:layout_gravity="end"
         android:contentDescription="@string/event" />
+
+    <TextView
+        android:id="@+id/grid_item_banner_text"
+        style="@style/StandardText"
+        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:text="Event"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="1dp"
+        android:elevation="5dp"
+        android:rotation="90"
+        android:layout_gravity="end" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/recyclerGridItem_cardView"

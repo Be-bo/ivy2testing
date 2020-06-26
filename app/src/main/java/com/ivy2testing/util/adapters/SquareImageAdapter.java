@@ -1,17 +1,16 @@
 package com.ivy2testing.util.adapters;
 
 import android.content.Context;
-import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -19,6 +18,7 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.entities.Event;
@@ -91,8 +91,14 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
     @Override
     public void onBindViewHolder(@NonNull SquareImgHolder holder, final int position) {
         // Banner
-        if (posts.get(position) instanceof Event) holder.banner.setVisibility(View.VISIBLE);
-        else holder.banner.setVisibility(View.GONE);
+        if (posts.get(position) instanceof Event){
+            holder.banner.setVisibility(View.VISIBLE);
+            holder.banner_text.setVisibility(View.VISIBLE);
+        }
+        else{
+            holder.banner.setVisibility(View.GONE);
+            holder.banner_text.setVisibility(View.GONE);
+        }
 
         // Input a default image in case post has no visual
         holder.image_view.setBackgroundColor(context.getColor(R.color.grey));
@@ -121,19 +127,18 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
 
 
         list_reg = db_ref.collection(address)
-                .whereEqualTo("author_id", author_id).limit(limit)
+                .whereEqualTo("author_id", author_id).orderBy("creation_millis", Query.Direction.DESCENDING)
+                .limit(limit)
                 .addSnapshotListener((queryDocumentSnapshots, e) -> {
                 if(queryDocumentSnapshots != null){
 
                     for (int i = 0; i<queryDocumentSnapshots.getDocumentChanges().size(); i++) {
-
                         DocumentChange dc = queryDocumentSnapshots.getDocumentChanges().get(i);
                         DocumentSnapshot doc = dc.getDocument();
-                        Log.d(TAG, "Adding post: " + doc.getId());
 
                         switch (dc.getType()) {
                             case ADDED:
-                                if(!postAlreadyAdded(doc.getId())){
+                                if(posts.size() < limit && !postAlreadyAdded(doc.getId())){
                                     Log.d(TAG, "adding: "+doc.getId());
                                     if ((boolean)doc.get("is_event")) posts.add(doc.toObject(Event.class));
                                     else if(!posts.contains(doc.toObject(Post.class))) posts.add(doc.toObject(Post.class));
@@ -190,6 +195,7 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
 
         // Attributes
         ImageView banner;
+        TextView banner_text;
         ImageView image_view;
         CardView card_view;
         FrameLayout whole_layout;
@@ -198,10 +204,11 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
         // Methods
         SquareImgHolder(@NonNull View itemView, final OnPostListener listener) {
             super(itemView);
-            banner = itemView.findViewById(R.id.recyclerCircleItem_banner);
+            banner = itemView.findViewById(R.id.grid_item_banner);
             image_view = itemView.findViewById(R.id.recyclerGridItem_img);
             card_view = itemView.findViewById(R.id.recyclerGridItem_cardView);
             whole_layout = itemView.findViewById(R.id.recyclerGridItem_layout);
+            banner_text = itemView.findViewById(R.id.grid_item_banner_text);
             post_listener = listener;
 
             itemView.setOnClickListener(this);

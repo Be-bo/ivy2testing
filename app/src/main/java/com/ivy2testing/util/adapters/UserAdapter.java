@@ -68,6 +68,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         return users.size();
     }
 
+    public void removeUser(int position){
+        users.remove(position);
+        notifyDataSetChanged();
+    }
+
 
 /* Firebase Methods
 ***************************************************************************************************/

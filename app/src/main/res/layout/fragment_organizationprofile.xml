@@ -106,7 +106,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/orgprofile_members_recycler"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="0dp"
         android:layout_margin="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -147,7 +147,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/orgprofile_post_recycler"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="0dp"
         android:layout_margin="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -163,6 +163,7 @@
         android:layout_margin="16dp"
         android:text="See All"
         app:layout_constraintTop_toBottomOf="@id/orgprofile_post_recycler"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
