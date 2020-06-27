@@ -106,6 +106,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
             if(!post_array_list.get(position).getPinned_id().equals(""))
                 holder.feed_pinned_name.setText(post_array_list.get(position).getPinned_name());
+            else
+                holder.feed_pinned_name.setText("None");
 
 
 
