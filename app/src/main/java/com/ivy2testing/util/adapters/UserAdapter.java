@@ -53,7 +53,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
-        View view = LayoutInflater.from(context).inflate(R.layout.item_members, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_seeall_users, parent, false);
         return new UserViewHolder(view, selection_listener);
     }
 

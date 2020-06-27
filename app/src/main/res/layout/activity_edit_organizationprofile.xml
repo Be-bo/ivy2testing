@@ -14,20 +14,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.15" />
+            app:layout_constraintGuide_percent="0.1" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/edit_org_guideline2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.85" />
+            app:layout_constraintGuide_percent="0.9" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/edit_org_img"
             android:layout_width="0dp"
-            android:layout_height="300dp"
-            android:src="@drawable/ic_account_circle"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1"
+            android:src="@drawable/ic_profile_selected"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="@id/edit_org_guideline1"
             app:layout_constraintEnd_toEndOf="@id/edit_org_guideline2"
@@ -47,7 +48,7 @@
             android:id="@+id/edit_org_fields"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/large_margin"
             android:orientation="vertical"
             app:layout_constraintStart_toStartOf="@id/edit_org_guideline1"
             app:layout_constraintEnd_toEndOf="@id/edit_org_guideline2"
@@ -59,18 +60,17 @@
                 style="@style/StandardEditText"
                 android:inputType="textPersonName"
                 android:hint="@string/name"
-                android:autofillHints=""
-                android:layout_marginBottom="16dp"/>
+                android:autofillHints=""/>
 
         </LinearLayout>
 
         <Button
             android:id="@+id/edit_org_saveButton"
             android:layout_width="0dp"
-            android:layout_marginBottom="32dp"
             style="@style/StandardButton"
             android:text="@string/save"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="@dimen/large_margin"
+            app:layout_constraintTop_toBottomOf="@id/edit_org_fields"
             app:layout_constraintStart_toStartOf="@id/edit_org_guideline1"
             app:layout_constraintEnd_toEndOf="@id/edit_org_guideline2" />
 

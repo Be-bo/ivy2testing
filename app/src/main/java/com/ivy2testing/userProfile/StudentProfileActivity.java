@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -32,7 +30,9 @@ import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.adapters.SquareImageAdapter;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /** @author Zahra Ghavasieh
  * Overview: 3rd party Student Profile view Activity.
@@ -48,10 +48,8 @@ public class StudentProfileActivity extends AppCompatActivity {
     private TextView mName;
     private TextView mDegree;
     private RecyclerView mRecyclerView;
-    private FrameLayout mLoadingLayout;
-    private ProgressBar mLoadingProgressBar;
-    private TextView mPostError;
     private TextView mSeeAll;
+    private TextView post_title;
 
     // Firestore
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -72,7 +70,7 @@ public class StudentProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_profile);
+        setContentView(R.layout.activity_student_profile);
 
         getIntentExtras();      // Get student (via intent or database) and set up elements
         setTitle(null);         // set up toolBar as an actionBar
@@ -106,10 +104,8 @@ public class StudentProfileActivity extends AppCompatActivity {
         mName = findViewById(R.id.studentProfile_name);
         mDegree = findViewById(R.id.studentProfile_degree);
         mRecyclerView = findViewById(R.id.studentProfile_posts);
-        mLoadingLayout = findViewById(R.id.studentProfile_loading);
-        mLoadingProgressBar = findViewById(R.id.studentProfile_progressBar);
-        mPostError = findViewById(R.id.studentProfile_errorMsg);
         mSeeAll = findViewById(R.id.studentProfile_seeAll);
+        post_title = findViewById(R.id.studentProfile_header);
 
         findViewById(R.id.studentProfile_edit).setVisibility(View.GONE);
         findViewById(R.id.studentProfile_seeAll).setOnClickListener(v -> seeAllPosts());
@@ -124,23 +120,20 @@ public class StudentProfileActivity extends AppCompatActivity {
 
     // Create adapter for recycler (adapter pulls posts from database)
     private void setUpRecycler(){
-        startLoading();
-
         // set LayoutManager and Adapter
-        adapter = new SquareImageAdapter(student_toDisplay.getId(), student_toDisplay.getUni_domain(), 9, this, this::onPostClick);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false));
-        mRecyclerView.setAdapter(adapter);
-
-        // Set a Listener for when adapter gets posts
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+        List<View> allViews = new ArrayList<>();
+        allViews.add(mRecyclerView);
+        allViews.add(mSeeAll);
+        allViews.add(post_title);
+        adapter = new SquareImageAdapter(student_toDisplay.getId(), student_toDisplay.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, this, this::onPostClick, allViews);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
             @Override
-            public void onChanged() {
-                super.onChanged();
-                Log.d(TAG, "Found " + adapter.getItemCount() + " posts!");
-                if (adapter.getItemCount() > 0) stopLoading();
-                else postError(getString(R.string.error_noPosts));
+            public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
+                lp.width = getWidth() / Constant.PROFILE_POST_GRID_ROW_COUNT;
+                return true;
             }
         });
+        mRecyclerView.setAdapter(adapter);
     }
 
 
@@ -211,30 +204,6 @@ public class StudentProfileActivity extends AppCompatActivity {
 
         setResult(RESULT_OK, intent);
         finish();
-    }
-
-    // Loading Post images Animation
-    private void startLoading(){
-        mRecyclerView.setVisibility(View.GONE);
-        mPostError.setVisibility(View.GONE);
-        mLoadingProgressBar.setVisibility(View.VISIBLE);
-        mLoadingLayout.setVisibility(View.VISIBLE);
-    }
-
-    // Stop loading Animation
-    private void stopLoading(){
-        mLoadingLayout.setVisibility(View.GONE);
-        mRecyclerView.setVisibility(View.VISIBLE);
-    }
-
-    // Display blank screen with an error message instead of posts
-    private void postError(String error_msg){
-        mRecyclerView.setVisibility(View.GONE);
-        mLoadingProgressBar.setVisibility(View.GONE);
-        mSeeAll.setVisibility(View.GONE);
-        mPostError.setVisibility(View.VISIBLE);
-        mPostError.setText(error_msg);
-        mLoadingLayout.setVisibility(View.VISIBLE);
     }
 
     // In case of mistake, go to Organization Profile Activity

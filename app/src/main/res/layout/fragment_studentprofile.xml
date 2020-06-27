@@ -1,143 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/studentProfile_circleImg"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="1:1"
-        android:layout_margin="8dp"
-        android:src="@drawable/ic_profile_selected"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/studentProfile_guidelineH"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/studentProfile_guidelineV"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/studentProfile_circleImg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            android:layout_margin="@dimen/standard_margin"
+            android:src="@drawable/ic_profile_selected"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/studentProfile_guidelineH"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/studentProfile_guidelineV"/>
 
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/studentProfile_guidelineV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.40" />
-
-    <LinearLayout
-        android:id="@+id/studentProfile_info"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/studentProfile_guidelineH"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/studentProfile_guidelineV"
-        android:layout_margin="@dimen/general_view_margin">
-
-        <TextView
-            android:id="@+id/studentProfile_name"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/studentProfile_guidelineV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/StandardText"
-            android:text="@string/userName"
-            app:layout_constraintTop_toTopOf="parent"/>
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.35" />
 
-        <TextView
-            android:id="@+id/studentProfile_degree"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/studentProfile_info"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="@style/StandardText"
-            android:text="@string/degree" />
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/studentProfile_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/StandardClickableText"
-        android:text="@string/edit"
-        android:layout_marginStart="@dimen/general_view_margin"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toEndOf="@id/studentProfile_guidelineV"
-        app:layout_constraintTop_toBottomOf="@id/studentProfile_info"/>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/studentProfile_guidelineH"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.2" />
-
-    <View
-        android:id="@+id/studentProfile_divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/disabled"
-        app:layout_constraintTop_toTopOf="@id/studentProfile_guidelineH"/>
-
-    <TextView
-        android:id="@+id/studentProfile_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/StandardText"
-        android:text="@string/posts"
-        app:layout_constraintTop_toBottomOf="@id/studentProfile_divider"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_margin="@dimen/general_view_margin"/>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="8dp"
-        app:layout_constraintBottom_toTopOf="@id/studentProfile_seeAll"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/studentProfile_header">
-
-        <FrameLayout
-            android:id="@+id/studentProfile_loading"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:translationZ="90dp"
-            tools:visibility="gone">
-
-            <ProgressBar
-                android:id="@+id/studentProfile_progressBar"
-                style="@style/StandardIndefiniteProgressBar"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="gone" />
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/studentProfile_guidelineV"
+            android:layout_margin="@dimen/standard_margin">
 
             <TextView
-                android:id="@+id/studentProfile_errorMsg"
+                android:id="@+id/studentProfile_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/error_noPosts"
-                android:textColor="@color/disabled" />
+                style="@style/LargeText"
+                android:text="@string/name"
+                app:layout_constraintTop_toTopOf="parent"/>
 
-        </FrameLayout>
+            <TextView
+                android:id="@+id/studentProfile_degree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
+                style="@style/StandardText"
+                android:text="@string/degree" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/studentProfile_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/StandardClickableText"
+            android:text="@string/edit"
+            android:layout_margin="@dimen/standard_margin"
+            app:layout_constraintStart_toEndOf="@id/studentProfile_guidelineV"
+            app:layout_constraintTop_toBottomOf="@id/studentProfile_info"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/studentProfile_guidelineH"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.2" />
+
+        <View
+            android:id="@+id/studentProfile_divider"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_height"
+            android:background="@color/black"
+            app:layout_constraintTop_toTopOf="@id/studentProfile_guidelineH"/>
+
+        <TextView
+            android:id="@+id/studentProfile_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/StandardText"
+            android:text="@string/posts"
+            app:layout_constraintTop_toBottomOf="@id/studentProfile_divider"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_margin="@dimen/standard_margin"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/studentProfile_posts"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/studentProfile_header"/>
 
-    </FrameLayout>
+        <TextView
+            android:id="@+id/studentProfile_seeAll"
+            style="@style/StandardClickableText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            android:text="@string/see_all"
+            app:layout_constraintTop_toBottomOf="@id/studentProfile_posts"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/studentProfile_seeAll"
-        style="@style/StandardClickableText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/general_view_margin"
-        android:text="@string/see_all"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,4 +16,8 @@ public final class Constant {
     public static final int SEEALL_USERS_REQUEST_CODE = 7;
     public static final int SEEALL_POSTS_REQUEST_CODE = 8;
     public static final int EDIT_ORGANIZATION_REQUEST_CODE = 9;
+    public static final int PROFILE_POST_GRID_ROW_COUNT = 3;
+    public static final int PROFILE_MEMBER_LIMIT = 5;
+    public static final int PROFILE_POST_LIMIT_STUDENT = 9;
+    public static final int PROFILE_POST_LIMIT_ORG = 6;
 }

@@ -25,7 +25,7 @@
                 android:radius="25dp"
                 />
             <solid
-                android:color="@color/grey"
+                android:color="@color/light_grey"
                 />
             <padding
                 android:left="0dp"

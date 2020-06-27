@@ -10,14 +10,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.15" />
+        app:layout_constraintGuide_percent="0.1" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/org_signup_guideline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.85" />
+        app:layout_constraintGuide_percent="0.9" />
 
     <ImageView
         android:id="@+id/org_signup_logo"
@@ -85,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_marginBottom="16dp"
             android:layout_marginStart="5dp"
-            android:text="@string/switch_login_org"/>
+            android:text="@string/we_club_switch"/>
 
         <Button
             android:id="@+id/org_signup_register_button"
