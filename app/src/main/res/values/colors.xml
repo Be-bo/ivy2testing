@@ -2,10 +2,10 @@
 <resources>
     <color name="interaction">#2b9721</color>
     <color name="hint">#802b9721</color>
-    <color name="disabled">#b3b3b3</color>
+    <color name="grey">#b3b3b3</color>
+    <color name="light_grey">#d0d0d0</color>
     <color name="white">#ffffff</color>
     <color name="black">#232b2b</color>
-    <color name="grey">#d0d0d0</color>
     <color name="notification">#FE3C00</color>
     <color name="transparent">#0000</color>
     <color name="android_default_bg">@color/white</color>

@@ -259,14 +259,9 @@ public class LoginActivity extends AppCompatActivity {
     private void savePreferences(){
         SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("domain", currentDomain);
+        editor.putString("user_domain", currentDomain);
+        editor.putString("campus_domain", currentDomain);
         editor.apply();
-    }
-
-    // Load the university domain for auto login
-    private void loadPreferences() {
-        SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
-        currentDomain = sharedPreferences.getString("domain", "");
     }
 
     // Go back to main activity

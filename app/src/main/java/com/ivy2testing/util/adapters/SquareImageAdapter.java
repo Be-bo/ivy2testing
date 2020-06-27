@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -26,6 +27,7 @@ import com.ivy2testing.entities.Post;
 import com.ivy2testing.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /** @author Zahra Ghavasieh, Robert
  * Overview: an adapter that takes in a list of post ids and constructs square images per post
@@ -39,6 +41,7 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
     private String uni_domain;
     private int pull_limit = 0;
     private ArrayList<Post> posts = new ArrayList<>();
+    private List<View> all_layout_elements;
 
     private FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
     private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
@@ -49,12 +52,13 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
 
 
     // Constructors
-    public SquareImageAdapter(String id, String uniDomain, int limit, Context mrContext, OnPostListener listener){
+    public SquareImageAdapter(String id, String uniDomain, int limit, Context mrContext, OnPostListener listener, List<View> allElems){
         this.uni_domain = uniDomain;
         this.author_id = id;
         this.context = mrContext;
         this.post_listener = listener;
         this.pull_limit = limit;
+        this.all_layout_elements = allElems;
         startListening();
     }
 
@@ -84,7 +88,7 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
     @NonNull
     @Override
     public SquareImgHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_grid_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post_grid, parent, false);
         return new SquareImgHolder(view, post_listener);
     }
 
@@ -101,7 +105,7 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
         }
 
         // Input a default image in case post has no visual
-        holder.image_view.setBackgroundColor(context.getColor(R.color.grey));
+        holder.image_view.setBackgroundColor(context.getColor(R.color.light_grey));
         holder.image_view.setImageResource(R.drawable.ic_ivy_logo_white);
 
         // Load visual from storage (will override default visual if it exists)
@@ -165,9 +169,23 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
                         }
                     }
                     notifyDataSetChanged();
+                    if(posts.size() < 1) hideLayout();
+                    else showLayout();
                 }
                 else Log.e(TAG, "There was a problem in retrieving posts!");
             });
+    }
+
+    private void hideLayout(){
+        for(View view: all_layout_elements){
+            if(view != null) view.setVisibility(View.GONE);
+        }
+    }
+
+    private void showLayout(){
+        for(View view: all_layout_elements){
+            if(view != null) view.setVisibility(View.VISIBLE);
+        }
     }
 
     private boolean postAlreadyAdded(String id){
@@ -198,7 +216,7 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
         TextView banner_text;
         ImageView image_view;
         CardView card_view;
-        FrameLayout whole_layout;
+        ConstraintLayout whole_layout;
         OnPostListener post_listener;
 
         // Methods

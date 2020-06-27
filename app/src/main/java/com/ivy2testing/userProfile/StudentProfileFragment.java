@@ -33,7 +33,9 @@ import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.adapters.SquareImageAdapter;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /** @author Zahra Ghavasieh
  * Overview: Student Profile view fragment
@@ -51,10 +53,8 @@ public class StudentProfileFragment extends Fragment {
     private TextView mName;
     private TextView mDegree;
     private RecyclerView mRecyclerView;
-    private FrameLayout mLoadingLayout;
-    private ProgressBar mLoadingProgressBar;
-    private TextView mPostError;
     private TextView mSeeAll;
+    private TextView post_title;
 
     // Firestore
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
@@ -86,6 +86,8 @@ public class StudentProfileFragment extends Fragment {
         is_set_up = true;
         if (student == null) getUserProfile();
         else setUpElements();
+
+        //TODO: remove
         Log.d(TAG, "setting up");
         Intent intent = new Intent(getContext(), OrganizationProfileActivity.class);
         intent.putExtra("this_user", student);
@@ -141,10 +143,8 @@ public class StudentProfileFragment extends Fragment {
         mName = v.findViewById(R.id.studentProfile_name);
         mDegree = v.findViewById(R.id.studentProfile_degree);
         mRecyclerView = v.findViewById(R.id.studentProfile_posts);
-        mLoadingLayout = v.findViewById(R.id.studentProfile_loading);
-        mLoadingProgressBar = v.findViewById(R.id.studentProfile_progressBar);
-        mPostError = v.findViewById(R.id.studentProfile_errorMsg);
         mSeeAll = v.findViewById(R.id.studentProfile_seeAll);
+        post_title = v.findViewById(R.id.studentProfile_header);
     }
 
     private void setUpViews(){
@@ -156,23 +156,21 @@ public class StudentProfileFragment extends Fragment {
 
     // Create adapter for recycler (adapter pulls posts from database)
     private void setUpRecycler(){
-        startLoading();
 
         // set LayoutManager and Adapter
-        adapter = new SquareImageAdapter(student.getId(), student.getUni_domain(), 9, getContext(), this::onPostClick);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), 3, GridLayoutManager.VERTICAL, false));
-        mRecyclerView.setAdapter(adapter);
-
-        // Set a Listener for when adapter gets posts
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+        List<View> allViews = new ArrayList<>();
+        allViews.add(mRecyclerView);
+        allViews.add(mSeeAll);
+        allViews.add(post_title);
+        adapter = new SquareImageAdapter(student.getId(), student.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, getContext(), this::onPostClick, allViews);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
             @Override
-            public void onChanged() {
-                super.onChanged();
-                Log.d(TAG, "Found " + adapter.getItemCount() + " posts!");
-                if (adapter.getItemCount() > 0) stopLoading();
-                else postError(getString(R.string.error_noPosts));
+            public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
+                lp.width = getWidth() / Constant.PROFILE_POST_GRID_ROW_COUNT;
+                return true;
             }
         });
+        mRecyclerView.setAdapter(adapter);
     }
 
     // Set up onClick Listeners
@@ -221,35 +219,6 @@ public class StudentProfileFragment extends Fragment {
         intent.putExtra("post", adapter.getItem(position));
         startActivity(intent);
     }
-
-
-/* Transition Methods
-***************************************************************************************************/
-
-    // Loading Post images Animation
-    private void startLoading(){
-        mRecyclerView.setVisibility(View.GONE);
-        mPostError.setVisibility(View.GONE);
-        mLoadingProgressBar.setVisibility(View.VISIBLE);
-        mLoadingLayout.setVisibility(View.VISIBLE);
-    }
-
-    // Stop loading Animation
-    private void stopLoading(){
-        mLoadingLayout.setVisibility(View.GONE);
-        mRecyclerView.setVisibility(View.VISIBLE);
-    }
-
-    // Display blank screen with an error message instead of posts
-    private void postError(String error_msg){
-        mRecyclerView.setVisibility(View.GONE);
-        mLoadingProgressBar.setVisibility(View.GONE);
-        mSeeAll.setVisibility(View.GONE);
-        mPostError.setVisibility(View.VISIBLE);
-        mPostError.setText(error_msg);
-        mLoadingLayout.setVisibility(View.VISIBLE);
-    }
-
 
 /* Firebase Methods
 ***************************************************************************************************/

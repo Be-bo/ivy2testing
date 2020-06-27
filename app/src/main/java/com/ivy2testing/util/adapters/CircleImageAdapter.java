@@ -4,19 +4,16 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.util.ImageUtils;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -34,6 +31,7 @@ public class CircleImageAdapter extends RecyclerView.Adapter<CircleImageAdapter.
     private Context context;
     private OnPersonListener person_listener;
     private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
+    private View recycler_layout;
 
 
     public CircleImageAdapter(List<String> ids, String domain, Context con, OnPersonListener listener) {
@@ -59,7 +57,7 @@ public class CircleImageAdapter extends RecyclerView.Adapter<CircleImageAdapter.
     @NonNull
     @Override
     public CircleImgHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.recycler_profilepic_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_horizontal_people, parent, false);
         return new CircleImgHolder(view, person_listener);
     }
 

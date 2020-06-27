@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
-        android:layout_marginBottom="@dimen/general_view_margin"
+        android:layout_marginBottom="@dimen/large_margin"
         android:text="@string/sample_text_short"
         app:layout_constraintEnd_toEndOf="@id/viewPost_guideline2"
         app:layout_constraintStart_toStartOf="@id/viewPost_guideline1"
@@ -38,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="@dimen/general_view_margin"
+        android:layout_marginTop="@dimen/large_margin"
         app:layout_constraintStart_toStartOf="@id/viewPost_guideline1"
         app:layout_constraintTop_toBottomOf="@id/viewPost_description"
         tools:ignore="UseCompoundDrawables">

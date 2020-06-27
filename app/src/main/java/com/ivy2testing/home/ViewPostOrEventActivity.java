@@ -172,8 +172,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         if (post.getIs_event()) selected_fragment = new ViewEventFragment((Event) post, this_user);
         else selected_fragment = new ViewPostFragment(post, this_user);
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.viewPost_contents, selected_fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.viewPost_contents, selected_fragment).commit();
     }
 
     // Set up comments recycler with manager and adapter
@@ -208,7 +207,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mPostComment.setClickable(!mWriteComment.getText().toString().trim().isEmpty());
                 if (mPostComment.isClickable()) mPostComment.setColorFilter(getColor(R.color.interaction));
-                else mPostComment.setColorFilter(getColor(R.color.disabled));
+                else mPostComment.setColorFilter(getColor(R.color.grey));
             }
             @Override
             public void afterTextChanged(Editable s) {}

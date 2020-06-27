@@ -180,6 +180,7 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
 
         // Hide certain items if not logged in
         if (this_user == null || !shows_member_requests){
+            //TODO: menu is null
             Menu menu = popup.getMenu();
             menu.findItem(R.id.userOptions_accept_member_request).setVisible(false);
             menu.findItem(R.id.userOptions_reject_member_request).setVisible(false);

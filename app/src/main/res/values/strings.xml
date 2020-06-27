@@ -12,6 +12,7 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="switch_sign_up">We are a club</string>
     <string name="switch_login_org">Organization/Club Login</string>
+    <string name="we_club_switch">We\'re a club</string>
 
     <string name="error_invalidDomain">This domain is not recognizable.</string>
     <string name="error_invalidEmailFormat">Please enter a valid email.</string>
@@ -46,6 +47,7 @@
     <string name="degree">Degree</string>
     <string name="edit">Edit</string>
     <string name="posts">Posts</string>
+    <string name="member_requests">Member Requests</string>
 
     <string name="view_profile">View Profile</string>
     <string name="add_friend">Add Friend</string>
@@ -57,6 +59,7 @@
 
     <string name="you_are_a_member">You are a member!</string>
     <string name="request_pending">Request Pending</string>
+    <string name="join">Join</string>
 
     <!-- Posts and Events -->
     <string name="post_visual">Post Visual</string>
@@ -64,6 +67,7 @@
     <string name="expand_comments">Expand Comments</string>
     <string name="write_comment">Write a Comment…</string>
     <string name="organization_member_number">%1$s Members</string>
+    <string name="members">Members</string>
     <string name="organization_request_number">Member Requests (%1$s)</string>
     <string name="link">Link:</string>
     <string name="going">Going</string>

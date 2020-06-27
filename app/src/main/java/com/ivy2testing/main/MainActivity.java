@@ -50,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton post_button;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
 
-    private String this_uni_domain;
+    private String campus_domain;
+    private String user_domain;
     private UserViewModel user_view_model;
     private User this_user;
 
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private OrganizationProfileFragment org_fragment = new OrganizationProfileFragment();
     private StudentProfileFragment stud_fragment = new StudentProfileFragment();
     private NoSwipeViewPager tab_view_pager;
+    private boolean login_setup = false;
 
     private final ArrayList<String> bubble_arraylist = new ArrayList<String>();
     private RecyclerView bubble_recycler_view;
@@ -68,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private EventsFragment event_fragment = null;
     private PostsFragment post_fragment = null;
     private String selected_bubble = "campus";
+    private boolean home_setup = false;
 
 
 
@@ -82,16 +85,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setUp();
-
     }
 
+    //TODO: remove (if possible)
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
-            //resetMainBubble();
         }
     }
 
@@ -147,17 +149,13 @@ public class MainActivity extends AppCompatActivity {
         bottom_navigation.setVisibility(View.VISIBLE);
 
         tab_adapter.addFragment(chat_fragment, "chat");
-        tab_adapter.addFragment(campus_fragment, "campus");
-        if(this_user.getIs_organization()) tab_adapter.addFragment(org_fragment, "organization");
+        if (this_user.getIs_organization()) tab_adapter.addFragment(org_fragment, "organization");
         else tab_adapter.addFragment(stud_fragment, "student");
 
-        tab_view_pager.setAdapter(tab_adapter);
-        //TODO: Not ideal, all the bubbles essentially act as separate tabs -> limit 6 so that we can keep everything in mem, will have to be reworked in the future:
-        //TODO: i.e. killing old bubbles when we reach the limit we decide on, instead of killing starting from 0th index (which will start killing actual tabs)
-        tab_view_pager.setOffscreenPageLimit(6);
+        if(!home_setup) homeSetup();
 
         bottom_navigation.setOnNavigationItemSelectedListener((menuItem) -> {
-            switch (menuItem.getItemId()){
+            switch (menuItem.getItemId()) {
                 case R.id.tab_bar_chat:
                     bubble_recycler_view.setVisibility(View.GONE);
                     tab_view_pager.setCurrentItem(tab_adapter.getPosition("chat"));
@@ -168,20 +166,31 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 case R.id.tab_bar_profile:
                     bubble_recycler_view.setVisibility(View.GONE);
-                    if(this_user.getIs_organization()){
-                        if(!org_fragment.isIs_set_up()) org_fragment.setUp();
+                    if (this_user.getIs_organization()) {
+                        if (!org_fragment.isIs_set_up()) org_fragment.setUp();
                         tab_view_pager.setCurrentItem(tab_adapter.getPosition("organization"));
-                    }
-                    else{
-                        if(!stud_fragment.isIs_set_up()) stud_fragment.setUpProfile();
+                    } else {
+                        if (!stud_fragment.isIs_set_up()) stud_fragment.setUpProfile();
                         tab_view_pager.setCurrentItem(tab_adapter.getPosition("student"));
                     }
                     return true;
             }
             return false;
         });
-        tab_view_pager.setCurrentItem(1);
+        tab_view_pager.setCurrentItem(tab_adapter.getPosition("campus"));
+        login_setup = true;
     }
+
+    private void homeSetup(){
+        //TODO: Not ideal, all the bubbles essentially act as separate tabs -> limit 6 so that we can keep everything in mem, will have to be reworked in the future:
+        //TODO: i.e. killing old bubbles when we reach the limit we decide on, instead of killing starting from 0th index (which will start killing actual tabs)
+        bubbleBarSetup();
+        tab_adapter.addFragment(campus_fragment, "campus");
+        tab_view_pager.setAdapter(tab_adapter);
+        tab_view_pager.setOffscreenPageLimit(6);
+        home_setup = true;
+    }
+
 
 
 
@@ -199,28 +208,27 @@ public class MainActivity extends AppCompatActivity {
         startLoading();
         loadPreferences();
         user_view_model = new ViewModelProvider(this).get(UserViewModel.class);
-        if(auth.getCurrentUser() != null && auth.getUid() != null && this_uni_domain != null){
-            user_view_model.startListening(auth.getUid(), this_uni_domain);
+        if(auth.getCurrentUser() != null && auth.getUid() != null && user_domain != null){
+            user_view_model.startListening(auth.getUid(), user_domain);
             user_view_model.getThis_user().observe(this, (User updatedUser) -> {
                 if(updatedUser != null){
                     //TODO: deal with banning, age update, notifications, etc.
+                    Log.d(TAG, "updating profile");
                     this_user = updatedUser;
-                    bubbleBarSetup();
-                    if(tab_adapter.getCount() < 1) setUpLoggedInInteraction();
+                    if(!login_setup) setUpLoggedInInteraction();
                     endLoading();
                 }
             });
         }else{
-            bubbleBarSetup();
-            tab_adapter.addFragment(campus_fragment, "campus");
-            tab_view_pager.setAdapter(tab_adapter);
+            homeSetup();
             endLoading();
         }
     }
 
     private void loadPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
-        this_uni_domain = sharedPreferences.getString("domain", "");
+        user_domain = sharedPreferences.getString("user_domain", "");
+        campus_domain = sharedPreferences.getString("campus_domain", "");
     }
 
     private void bubbleBarSetup(){

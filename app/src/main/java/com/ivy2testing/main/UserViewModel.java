@@ -26,36 +26,12 @@ public class UserViewModel extends ViewModel {
 
 
 
-    // MARK: Initial Acquisition of User's Profile
-
-    public void startListening(String thisUserId, String thisUniDomain){
-        if(initialAcquisition){ //had problems with the listener not being up to date sometimes during the initial launch of the MainActivity so the first time is a one time query
-            db_ref.collection("universities").document(thisUniDomain).collection("users").document(thisUserId).get().addOnCompleteListener(task -> {
-                if(task.isSuccessful() && task.getResult() != null && task.getResult().getData() != null){
-                    Map<String, Object> mashHap = task.getResult().getData();
-                    User usr;
-                    if(mashHap.get("is_organization") instanceof Boolean && (Boolean) mashHap.get("is_organization")) usr = task.getResult().toObject(Organization.class);
-                    else usr = task.getResult().toObject(Student.class);
-
-                    if(usr != null) usr.setId(thisUserId);
-                    this_user.setValue(usr);
-                    initialAcquisition = false;
-                    setUpListener(thisUserId, thisUniDomain); //once we've acquired the profile initially start listening
-                }
-            });
-        }else{
-            setUpListener(thisUserId, thisUniDomain); //if not the initial acquisition simply start listening
-        }
-    }
-
-
-
 
 
 
     // MARK: Active Listening to User's Profile in the DB
 
-    private void setUpListener(String thisUserId, String thisUniDomain){ //listen to this user's profile updates in Firestore
+    public void startListening(String thisUserId, String thisUniDomain){ //listen to this user's profile updates in Firestore
         listenerRegistration = db_ref.collection("universities").document(thisUniDomain).collection("users").document(thisUserId).addSnapshotListener((documentSnapshot, e) -> {
             if(e != null){
                 Log.d(TAG, "Listening for this user's profile failed: ", e);

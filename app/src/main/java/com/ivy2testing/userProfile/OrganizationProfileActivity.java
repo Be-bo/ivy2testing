@@ -24,11 +24,13 @@ import com.ivy2testing.entities.User;
 import com.ivy2testing.home.SeeAllPostsActivity;
 import com.ivy2testing.home.SeeAllUsersActivity;
 import com.ivy2testing.home.ViewPostOrEventActivity;
+import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.adapters.CircleImageAdapter;
 import com.ivy2testing.util.adapters.SquareImageAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -50,6 +52,10 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
     private CircleImageView profile_image;
     private TextView name_text;
     private TextView member_number_text;
+    private TextView post_title;
+    private TextView member_title;
+    private View post_divider;
+    private View member_divider;
 
     private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
     private FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
@@ -127,6 +133,10 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
         name_text = findViewById(R.id.activity_orgprofile_name);
         member_number_text = findViewById(R.id.activity_orgprofile_members);
         member_status_text = findViewById(R.id.activity_orgprofile_member_status);
+        post_title = findViewById(R.id.activity_orgprofile_posts_header);
+        post_divider = findViewById(R.id.activity_orgprofile_divider1);
+        member_title = findViewById(R.id.activity_orgprofile_members_header);
+        member_divider = findViewById(R.id.activity_orgprofile_divider2);
     }
 
     private void getIncomingData(){
@@ -166,20 +176,51 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
         String profPicPath = "userfiles/"+org_to_display_id+"/profileimage.jpg";
         stor_ref.child(profPicPath).getDownloadUrl().addOnCompleteListener(task -> { if(task.getResult() != null)Glide.with(this).load(task.getResult()).into(profile_image);});
         setUpRecyclers();
+        setUpMembers();
         join_button.setOnClickListener(view -> requestMembership());
         see_all_members_button.setOnClickListener(view -> transToMembers());
         see_all_posts_button.setOnClickListener(view -> transToPosts());
     }
 
     private void setUpRecyclers(){
-        post_adapter = new SquareImageAdapter(org_to_display_id, org_to_display_uni, POST_LIMIT, this, this);
-        post_recycler.setLayoutManager(new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false));
+        List<View> allViews = new ArrayList<>();
+        allViews.add(post_recycler);
+        allViews.add(see_all_posts_button);
+        allViews.add(post_divider);
+        allViews.add(post_title);
+        post_adapter = new SquareImageAdapter(org_to_display_id, org_to_display_uni, POST_LIMIT, this, this, allViews);
+        post_recycler.setLayoutManager(new GridLayoutManager(this, Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
+            @Override
+            public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
+                lp.width = getWidth() / Constant.PROFILE_POST_GRID_ROW_COUNT;
+                return true;
+            }
+        });
         post_recycler.setAdapter(post_adapter);
+    }
 
-        if(org_to_display.getMember_ids().size() < MEMBER_LIMIT) person_adapter = new CircleImageAdapter(org_to_display.getMember_ids(), org_to_display_uni, this, this);
-        else person_adapter = new CircleImageAdapter(org_to_display.getMember_ids().subList(0, MEMBER_LIMIT), org_to_display_uni, this, this);
-        members_recycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
-        members_recycler.setAdapter(person_adapter);
+    private void setUpMembers(){
+        if(org_to_display.getMember_ids().size() > 0){
+            member_title.setVisibility(View.VISIBLE);
+            members_recycler.setVisibility(View.VISIBLE);
+            see_all_members_button.setVisibility(View.VISIBLE);
+            member_divider.setVisibility(View.VISIBLE);
+            if(org_to_display.getMember_ids().size() < MEMBER_LIMIT) person_adapter = new CircleImageAdapter(org_to_display.getMember_ids(), org_to_display_uni, this, this);
+            else person_adapter = new CircleImageAdapter(org_to_display.getMember_ids().subList(0, MEMBER_LIMIT), org_to_display_uni, this, this);
+            members_recycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false){
+                @Override
+                public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
+                    lp.width = getWidth() / Constant.PROFILE_MEMBER_LIMIT;
+                    return true;
+                }
+            });
+            members_recycler.setAdapter(person_adapter);
+        }else{
+            member_title.setVisibility(View.GONE);
+            members_recycler.setVisibility(View.GONE);
+            see_all_members_button.setVisibility(View.GONE);
+            member_divider.setVisibility(View.GONE);
+        }
     }
 
 

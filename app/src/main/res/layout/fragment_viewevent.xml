@@ -70,7 +70,7 @@
         android:id="@+id/viewEvent_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/general_view_margin"
+        android:layout_marginTop="@dimen/large_margin"
         app:layout_constraintTop_toBottomOf="@id/viewEvent_eventDetails">
         <include layout="@layout/fragment_viewpost" />
     </FrameLayout>
@@ -80,7 +80,7 @@
         android:id="@+id/viewEvent_goingRecycler"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/general_view_margin"
+        android:layout_marginTop="@dimen/large_margin"
         app:layout_constraintStart_toStartOf="@id/viewPost_guideline1"
         app:layout_constraintEnd_toEndOf="@id/viewPost_guideline2"
         app:layout_constraintTop_toBottomOf="@id/viewEvent_description"/>
@@ -91,7 +91,7 @@
         style="@style/StandardClickableText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/general_view_margin"
+        android:layout_margin="@dimen/large_margin"
         android:text="@string/see_all"
         app:layout_constraintTop_toBottomOf="@id/viewEvent_goingRecycler"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -101,14 +101,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.15" />
+        app:layout_constraintGuide_percent="0.1" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/viewEvent_guideline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.85" />
+        app:layout_constraintGuide_percent="0.9" />
 
     <androidx.appcompat.widget.AppCompatToggleButton
         android:id="@+id/viewEvent_goingButton"
@@ -116,7 +116,7 @@
         style="@style/ToggleButton"
         android:textOff="@string/going"
         android:textOn="@string/not_going"
-        android:layout_marginTop="@dimen/general_view_margin"
+        android:layout_marginTop="@dimen/large_margin"
         app:layout_constraintTop_toBottomOf="@id/viewEvent_seeAll"
         app:layout_constraintStart_toStartOf="@id/viewEvent_guideline1"
         app:layout_constraintEnd_toEndOf="@id/viewEvent_guideline2"/>

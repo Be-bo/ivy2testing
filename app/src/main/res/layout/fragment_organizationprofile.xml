@@ -1,169 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/orgprofile_image"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_profile_selected"
-        app:layout_constraintBottom_toTopOf="@id/orgprofile_guidelineH"
-        app:layout_constraintEnd_toEndOf="@id/orgprofile_guidelineV"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/orgprofile_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            android:layout_margin="@dimen/standard_margin"
+            android:src="@drawable/ic_profile_selected"
+            app:layout_constraintBottom_toTopOf="@id/orgprofile_guidelineH"
+            app:layout_constraintEnd_toEndOf="@id/orgprofile_guidelineV"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/orgprofile_guidelineV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.40" />
-
-    <LinearLayout
-        android:id="@+id/orgprofile_info_layout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/orgprofile_guidelineH"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.20"
-        app:layout_constraintStart_toEndOf="@id/orgprofile_guidelineV"
-        android:layout_margin="16dp">
-
-        <TextView
-            android:id="@+id/orgprofile_name"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/orgprofile_guidelineV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/StandardText"
-            android:text="U of C Ski and Board Club"
-            app:layout_constraintTop_toTopOf="parent"/>
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.35" />
+
+        <LinearLayout
+            android:id="@+id/orgprofile_info_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/orgprofile_guidelineV"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.20">
+
+            <TextView
+                android:id="@+id/orgprofile_name"
+                style="@style/LargeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/orgprofile_members"
+                style="@style/StandardText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
+                android:text="@string/members" />
+
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/orgprofile_members"
+            android:id="@+id/orgprofile_members_button"
+            style="@style/StandardClickableText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_margin="@dimen/standard_margin"
+            android:text="@string/member_requests"
+            app:layout_constraintStart_toEndOf="@id/orgprofile_guidelineV"
+            app:layout_constraintTop_toBottomOf="@id/orgprofile_info_layout" />
+
+        <TextView
+            android:id="@+id/orgprofile_edit_button"
+            style="@style/StandardClickableText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            android:text="@string/edit"
+            app:layout_constraintStart_toEndOf="@id/orgprofile_guidelineV"
+            app:layout_constraintTop_toBottomOf="@id/orgprofile_members_button" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/orgprofile_guidelineH"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.2" />
+
+
+        <View
+            android:id="@+id/orgprofile_divider2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_height"
+            android:background="@color/black"
+            app:layout_constraintTop_toTopOf="@id/orgprofile_guidelineH" />
+
+        <TextView
+            android:id="@+id/orgprofile_members_header"
             style="@style/StandardText"
-            android:text="873 Members" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            android:text="@string/members"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/orgprofile_divider2" />
 
-    </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/orgprofile_members_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/orgprofile_members_header" />
 
-    <TextView
-        android:id="@+id/orgprofile_members_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/StandardClickableText"
-        android:text="Member Requests (3)"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toEndOf="@id/orgprofile_guidelineV"
-        app:layout_constraintTop_toBottomOf="@id/orgprofile_info_layout"/>
-
-    <TextView
-        android:id="@+id/orgprofile_edit_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/StandardClickableText"
-        android:text="Edit Profile"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toEndOf="@id/orgprofile_guidelineV"
-        app:layout_constraintTop_toBottomOf="@id/orgprofile_members_button"/>
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/orgprofile_guidelineH"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.25" />
+        <TextView
+            android:id="@+id/orgprofile_members_see_all"
+            style="@style/StandardClickableText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            android:text="@string/see_all"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/orgprofile_members_recycler" />
 
 
+        <View
+            android:id="@+id/orgprofile_divider1"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_height"
+            android:background="@color/black"
+            app:layout_constraintTop_toBottomOf="@id/orgprofile_members_see_all" />
 
+        <TextView
+            android:id="@+id/orgprofile_posts_header"
+            style="@style/StandardText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            android:text="@string/posts"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/orgprofile_divider1" />
 
-    <View
-        android:id="@+id/orgprofile_divider2"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/disabled"
-        app:layout_constraintTop_toTopOf="@id/orgprofile_guidelineH"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/orgprofile_post_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/orgprofile_posts_header">
 
-    <TextView
-        android:id="@+id/orgprofile_members_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/StandardText"
-        android:text="Members"
-        app:layout_constraintTop_toBottomOf="@id/orgprofile_divider2"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_margin="16dp"/>
+        </androidx.recyclerview.widget.RecyclerView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/orgprofile_members_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/orgprofile_members_header" />
+        <TextView
+            android:id="@+id/orgprofile_post_see_all"
+            style="@style/StandardClickableText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            android:text="@string/see_all"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/orgprofile_post_recycler" />
 
-    <TextView
-        android:id="@+id/orgprofile_members_see_all"
-        style="@style/StandardClickableText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="See All"
-        app:layout_constraintTop_toBottomOf="@id/orgprofile_members_recycler"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-
-
-
-
-    <View
-        android:id="@+id/orgprofile_divider1"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/disabled"
-        app:layout_constraintTop_toBottomOf="@id/orgprofile_members_see_all"/>
-
-    <TextView
-        android:id="@+id/orgprofile_posts_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/StandardText"
-        android:text="Posts"
-        app:layout_constraintTop_toBottomOf="@id/orgprofile_divider1"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_margin="16dp"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/orgprofile_post_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/orgprofile_posts_header">
-
-    </androidx.recyclerview.widget.RecyclerView>
-
-    <TextView
-        android:id="@+id/orgprofile_post_see_all"
-        style="@style/StandardClickableText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="See All"
-        app:layout_constraintTop_toBottomOf="@id/orgprofile_post_recycler"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
