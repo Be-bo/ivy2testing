@@ -21,6 +21,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ivy2testing.R;
@@ -97,11 +98,11 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
                 refresh_layout.setRefreshing(false);
             }, 2000);
 
-            //  post_arraylist.clear();
-            //     feed_adapter.notifyItemRangeInserted(0,post_arraylist.size());
-            //      feed_adapter.notifyDataSetChanged();
-            //   array_list_updated = false;
-            //    BuildArrayList();
+            post_arraylist.clear();
+            feed_adapter.notifyItemRangeInserted(0, post_arraylist.size());
+            feed_adapter.notifyDataSetChanged();
+            array_list_updated = false;
+            BuildArrayList();
             bottom_of_db = false;
         });
     }
@@ -133,9 +134,11 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
 
                     if (feed_layout_manager.findLastVisibleItemPosition() > (post_arraylist.size() - 4)) {
                         // Log.d(TAG, "onScrolled: SEVEN");
-                        array_list_updated = false;
-                        // pullMorePosts();
-                        bottom_of_db = true;
+                        if(!bottom_of_db) {
+                            array_list_updated = false;
+                            pullMorePosts();
+                        }
+
                     }
                     //TODO here our outside of the above if
                 }
@@ -161,8 +164,8 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
         db_reference.collection("universities").document("ucalgary.ca").collection("posts")
                 .limit(15)
                 .whereEqualTo("is_event", false)
-
-                //.orderBy("creation_millis", Query.Direction.DESCENDING)
+                .whereEqualTo("main_feed_visible", true)
+                .orderBy("creation_millis", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -192,7 +195,8 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
             db_reference.collection("universities").document("ucalgary.ca").collection("posts")
                     .limit(15)
                     .whereEqualTo("is_event", false)
-                    // .orderBy("creation_millis", Query.Direction.DESCENDING)
+                    .whereEqualTo("main_feed_visible", true)
+                    .orderBy("creation_millis", Query.Direction.DESCENDING)
                     .startAfter(post_arraylist.get(post_arraylist.size() - 1).getCreation_millis())
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -246,9 +250,8 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
 
         Post clickedPost = post_arraylist.get(position); //<- this is the clicked event/post
 
-        switch(clicked_id){
-            case R.id.object_full_button:
-            case R.id.object_full_text:
+        switch (clicked_id) {
+            case R.id.full_constraint_view:
                 viewPost(clickedPost);
                 break;
 

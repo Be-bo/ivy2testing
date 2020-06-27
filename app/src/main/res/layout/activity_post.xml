@@ -227,11 +227,15 @@
             app:layout_constraintStart_toStartOf="@+id/left_guideline"
             app:layout_constraintTop_toBottomOf="@+id/button_container_constraint">
 
-            <VideoView
-                android:id="@+id/video_imageview"
-                android:layout_width="150dp"
+            <TextView
+                android:id="@+id/video_coming_soon_textview"
+                android:layout_width="wrap_content"
                 android:layout_height="150dp"
                 android:layout_marginBottom="16dp"
+                android:gravity="center"
+                android:text="Coming in Fall 2020!"
+                android:textColor="@color/text_color"
+                android:textSize="32sp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

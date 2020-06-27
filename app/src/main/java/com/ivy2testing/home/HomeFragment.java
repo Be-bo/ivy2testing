@@ -191,9 +191,11 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
 
                     if (feed_layout_manager.findLastVisibleItemPosition() > (post_arraylist.size() - 4 )){
                        // Toast.makeText(mContext, "7", Toast.LENGTH_SHORT).show();
-                        // Log.d(TAG, "onScrolled: SEVEN");
-                        array_list_updated = false;
-                        pullMorePosts();
+                        if(!bottom_of_db) {
+                            Log.d(TAG, "onScrolled: SEVEN");
+                            array_list_updated = false;
+                            pullMorePosts();
+                        }
                     }
                     //TODO here our outside of the above if
                 }
@@ -217,6 +219,7 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
     private void BuildArrayList(){
         db_reference.collection("universities").document("ucalgary.ca").collection("posts")
                 .limit(15)
+                .whereEqualTo("main_feed_visible",true)
                 .orderBy("creation_millis", Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -251,6 +254,7 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
         if(post_arraylist.size() != 0) {
             db_reference.collection("universities").document("ucalgary.ca").collection("posts")
                     .limit(15)
+                    .whereEqualTo("main_feed_visible",true)
                     .orderBy("creation_millis", Query.Direction.DESCENDING)
                     //TODO arraylist can get stumbled hup her if it gets deleted while updating
                     .startAfter(post_arraylist.get(post_arraylist.size() - 1).getCreation_millis())
@@ -321,8 +325,7 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedViewHolder
         Post clickedPost = post_arraylist.get(position); //<- this is the clicked event/post
 
         switch(clicked_id){
-            case R.id.object_full_button:
-            case R.id.object_full_text:
+            case R.id.full_constraint_view:
                 viewPost(clickedPost);
                 break;
 
