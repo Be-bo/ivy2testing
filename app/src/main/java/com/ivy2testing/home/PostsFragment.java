@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,31 +31,30 @@ import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.userProfile.OrganizationProfileActivity;
 import com.ivy2testing.userProfile.StudentProfileActivity;
-import com.ivy2testing.util.Constant;
 
 import java.util.ArrayList;
 
 public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolder.FeedClickListener {
 
+    // Parent activity
     private Context mContext;
     private View rootView;
-    private SwipeRefreshLayout refresh_layout;
 
+    private User this_user;
+    private SwipeRefreshLayout refresh_layout;
     private FirebaseFirestore db_reference = FirebaseFirestore.getInstance();
 
+    // feed recyclerview
     private final ArrayList<Post> post_arraylist = new ArrayList<Post>();
-
     private RecyclerView feed_recycler_view;
     private RecyclerView.Adapter feed_adapter;
     private LinearLayoutManager feed_layout_manager;
 
+    // onScroll
     private boolean array_list_updated;
     private boolean bottom_of_db = false;
-
     private TextView no_more_items_text;
-    private TextView loading_progress_bar;
-
-    private User this_user;
+    private ProgressBar loading_progress_bar;
 
 
     public PostsFragment(Context con) {
@@ -62,11 +62,11 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
     }
 
     // Get currently logged in user for transitions to other activities
-    public void setThisUser(User user){
+    public void setThisUser(User user) {
         this_user = user;
     }
 
-
+    // This entire fragment is basically home fragment with modified querys
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -76,10 +76,8 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
 
         if (post_arraylist.size() == 0)
             initializeFeedView();
-
         else
             resumeFeedView();
-
 
         setRecyclerViewListener();
 
@@ -92,11 +90,13 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
 
 
         refresh_layout.setOnRefreshListener(() -> {
-            Toast.makeText(mContext, "REFRESH ME", Toast.LENGTH_SHORT).show();
             new Handler().postDelayed(() -> {
 
                 refresh_layout.setRefreshing(false);
             }, 2000);
+
+
+            no_more_items_text.setVisibility(View.GONE);
 
             post_arraylist.clear();
             feed_adapter.notifyItemRangeInserted(0, post_arraylist.size());
@@ -123,7 +123,7 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
 
     private void setRecyclerViewListener() {
         no_more_items_text = rootView.findViewById(R.id.no_more_items_text);
-        loading_progress_bar = rootView.findViewById(R.id.loading_more_items_text);
+        loading_progress_bar = rootView.findViewById(R.id.loading_more_items_progressbar);
 
 
         feed_recycler_view.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -133,14 +133,13 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
                 if (array_list_updated) {
 
                     if (feed_layout_manager.findLastVisibleItemPosition() > (post_arraylist.size() - 4)) {
-                        // Log.d(TAG, "onScrolled: SEVEN");
-                        if(!bottom_of_db) {
+
+                        if (!bottom_of_db) {
                             array_list_updated = false;
                             pullMorePosts();
                         }
 
                     }
-                    //TODO here our outside of the above if
                 }
                 if (!recyclerView.canScrollVertically(1)) {
                     if (bottom_of_db)
@@ -152,16 +151,12 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
                     loading_progress_bar.setVisibility(View.GONE);
                     no_more_items_text.setVisibility(View.GONE);
                 }
-
-
             }
         });
-
-
     }
 
     private void BuildArrayList() {
-        db_reference.collection("universities").document("ucalgary.ca").collection("posts")
+        db_reference.collection("universities").document(this_user.getUni_domain()).collection("posts")
                 .limit(15)
                 .whereEqualTo("is_event", false)
                 .whereEqualTo("main_feed_visible", true)
@@ -174,7 +169,6 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
                             if (task.getResult() != null) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
 
-                                    //TODO THESE ARE SAVED AS EVENTS
                                     Post event_object = document.toObject(Event.class);
                                     post_arraylist.add(event_object);
                                 }
@@ -192,7 +186,7 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
     private void pullMorePosts() {
         int start = post_arraylist.size();
         if (post_arraylist.size() != 0) {
-            db_reference.collection("universities").document("ucalgary.ca").collection("posts")
+            db_reference.collection("universities").document(this_user.getUni_domain()).collection("posts")
                     .limit(15)
                     .whereEqualTo("is_event", false)
                     .whereEqualTo("main_feed_visible", true)
@@ -205,9 +199,7 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
                             if (task.isSuccessful()) {
                                 if (task.getResult() != null) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
-                                        // Toast.makeText(MainActivity.this, document.getId() + " => " + document.getData(), Toast.LENGTH_SHORT).show();
-                                        // Log.d(TAG, "onComplete: " + document.getData().toString());
-                                        //TODO THESE ARE SAVED AS EVENTS
+
                                         Post event_object = document.toObject(Event.class);
                                         post_arraylist.add(event_object);
                                     }
@@ -236,8 +228,7 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
 
     private void buildEventFeed() {
 
-        // TODO The linear layout manager is not default recyclerview LLM
-        // Toast.makeText(mContext, ""+post_arraylist.size(), Toast.LENGTH_SHORT).show();
+
         feed_layout_manager = new LinearLayoutManager(getContext());
         feed_adapter = new FeedAdapter(post_arraylist, this);
         feed_recycler_view.setLayoutManager(feed_layout_manager);
@@ -275,8 +266,8 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
     }
 
     // Transition to a user profile
-    private void viewUserProfile(String user_id, String user_uni, boolean is_organization){
-        if (user_id == null || user_uni == null){
+    private void viewUserProfile(String user_id, String user_uni, boolean is_organization) {
+        if (user_id == null || user_uni == null) {
             Log.e("PostsFragment", "User not properly defined! Cannot view author's profile");
             return;
         } // author field wasn't defined
@@ -288,13 +279,12 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
 
 
         Intent intent;
-        if (is_organization){
+        if (is_organization) {
             Log.d("PostsFragment", "Starting OrganizationProfile Activity for organization " + user_id);
             intent = new Intent(getActivity(), OrganizationProfileActivity.class);
             intent.putExtra("org_to_display_id", user_id);
             intent.putExtra("org_to_display_uni", user_uni);
-        }
-        else {
+        } else {
             Log.d("PostsFragment", "Starting StudentProfile Activity for student " + user_id);
             intent = new Intent(getActivity(), StudentProfileActivity.class);
             intent.putExtra("student_to_display_id", user_id);
@@ -307,7 +297,7 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
     // Load a post from database
     private void loadPostFromDB(String post_id, String post_uni_domain) {
         String address = "universities/" + post_uni_domain + "/posts/" + post_id;
-        if (address.contains("null")){
+        if (address.contains("null")) {
             Log.e("PostsFragment", "Address has null values.");
             return;
         }
@@ -315,15 +305,15 @@ public class PostsFragment extends Fragment implements FeedAdapter.FeedViewHolde
         db_reference.document(address).get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 Post post;
-                if ((boolean)task.getResult().get("is_event")) post = task.getResult().toObject(Event.class);
+                if ((boolean) task.getResult().get("is_event"))
+                    post = task.getResult().toObject(Event.class);
                 else post = task.getResult().toObject(Post.class);
-                if (post != null){
+                if (post != null) {
                     post.setId(post_id);
                     viewPost(post);
-                }
-                else Log.e("PostsFragment", "Post retrieved was null.");
-            }
-            else Log.e("PostsFragment", "Something went wrong when retrieving Post.", task.getException());
+                } else Log.e("PostsFragment", "Post retrieved was null.");
+            } else
+                Log.e("PostsFragment", "Something went wrong when retrieving Post.", task.getException());
         });
     }
 

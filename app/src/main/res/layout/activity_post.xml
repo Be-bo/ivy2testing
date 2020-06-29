@@ -319,7 +319,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="24dp"
                 android:ems="10"
-                android:hint="Where  will your event take place..."
+                android:hint="Where will your event take place..."
                 android:inputType="textShortMessage"
                 app:layout_constraintBottom_toTopOf="@id/start_times_constraint"
                 app:layout_constraintEnd_toEndOf="parent"
