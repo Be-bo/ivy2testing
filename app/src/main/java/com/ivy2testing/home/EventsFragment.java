@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,10 +45,9 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
 
     private FirebaseFirestore db_reference = FirebaseFirestore.getInstance();
 
-
     private final ArrayList<Post> post_arraylist = new ArrayList<Post>();
 
-
+    // array lists and adapters
     private final ArrayList<Post> happening_arraylist = new ArrayList<Post>();
     private final ArrayList<Post> upcoming_arraylist = new ArrayList<Post>();
     private final ArrayList<Post> past_arraylist = new ArrayList<Post>();
@@ -58,25 +58,28 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
     private RecyclerView.Adapter past_adapter;
 
 
-
+    // recycler view
     private RecyclerView feed_recycler_view;
     private RecyclerView.Adapter feed_adapter;
     private LinearLayoutManager feed_layout_manager;
 
+    // onScroll
     private boolean array_list_updated;
     private boolean bottom_of_db = false;
 
     private TextView no_more_items_text;
-    private TextView loading_progress_bar;
+    private ProgressBar loading_progress_bar;
 
     private User this_user;
 
+    // sortby buttons
     private Button happening_now_button;
     private Button starting_soon_button;
     private Button past_events_button;
 
+    // Search By meethod
     private final int HAPPENING_NOW = 1;
-    private final int STARTING_SOON = 2;
+    private final int UPCOMING = 2;
     private final int PAST_EVENTS = 3;
     public QueryDocumentSnapshot last;
 
@@ -95,6 +98,7 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
 
 
 
+    // this fragment is a modified events feed to handle different queries. It has a custom layout
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -117,24 +121,22 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
         return rootView;
     }
 
+    // functions similarly to home fragment, just uses switch query instead
     private void refreshLayoutSetup() {
         refresh_layout = rootView.findViewById(R.id.feed_swipe_refresh_layout);
         refresh_layout.setOnRefreshListener(() -> {
-            Toast.makeText(mContext, "REFRESH ME", Toast.LENGTH_SHORT).show();
             new Handler().postDelayed(() -> {
 
                 refresh_layout.setRefreshing(false);
             }, 2000);
 
-            //post_arraylist.clear();
-        //    feed_adapter.notifyItemRangeInserted(0, post_arraylist.size());
-          //  feed_adapter.notifyDataSetChanged();
             array_list_updated = false;
             switchQuery();
             bottom_of_db = false;
         });
     }
 
+    // method set to display the custom event
     private void featuredEventBuilder() {
         CardView cv = rootView.findViewById(R.id.feed_obj_reference);
         TextView title = cv.findViewById(R.id.object_title);
@@ -149,7 +151,9 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
         pinned_event.setText("last pinned event");
 
     }
-
+    // each button will swap which ies clicked,
+    // then each will swap the arraylist/ adapter the recyclerview uses
+    // or build the arraylist/ adapter if it doesn't exist yet
     private void buttonMethods() {
         happening_now_button = rootView.findViewById(R.id.happening_now_button);
         happening_now_button.setOnClickListener(v -> {
@@ -179,7 +183,7 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
 
         starting_soon_button = rootView.findViewById(R.id.upcoming_button);
         starting_soon_button.setOnClickListener(v -> {
-            search_method = STARTING_SOON;
+            search_method = UPCOMING;
             current_arraylist = upcoming_arraylist;
             clearEnabled(starting_soon_button);
             if (upcoming_arraylist.size()!= 0){
@@ -191,6 +195,8 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
         });
     }
 
+    // handles which button appears clicked
+    // bottom of db is set here so progress bars/ you reached the bottom text doesn't display when swapping adapters
     private void clearEnabled(Button b) {
         bottom_of_db = false;
         happening_now_button.setEnabled(true);
@@ -225,7 +231,7 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
 
     private void setRecyclerViewListener() {
           no_more_items_text = rootView.findViewById(R.id.no_more_items_text);
-            loading_progress_bar = rootView.findViewById(R.id.loading_more_items_text);
+            loading_progress_bar = rootView.findViewById(R.id.loading_more_items_progressbar);
 
 
         feed_recycler_view.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -264,8 +270,9 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
     }
 
     //queries
+    // not used in this method, check switchQuery
     private void BuildArrayList() {
-        db_reference.collection("universities").document("ucalgary.ca").collection("posts")
+        db_reference.collection("universities").document(this_user.getUni_domain()).collection("posts")
                 .limit(15)
                 .whereEqualTo("is_event", true)
                 //TODO
@@ -292,11 +299,11 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
                 });
         array_list_updated = true;
     }
-
+    // not used, check switchPull
     private void pullMorePosts() {
         int start = post_arraylist.size();
         if (post_arraylist.size() != 0) {
-            db_reference.collection("universities").document("ucalgary.ca").collection("posts")
+            db_reference.collection("universities").document(this_user.getUni_domain()).collection("posts")
                     .limit(15)
                     .whereEqualTo("is_event", true)
                     // .orderBy("creation_millis", Query.Direction.DESCENDING)
@@ -334,13 +341,14 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
             array_list_updated = true;
         }
     }
+    // clears the arraylists, called when using swipe refresh
     private void switchErase(){
         switch (search_method){
             case HAPPENING_NOW:
                 happening_arraylist.clear();
                 happening_adapter.notifyDataSetChanged();
                 break;
-            case STARTING_SOON:
+            case UPCOMING:
                 upcoming_arraylist.clear();
                 upcoming_adapter.notifyDataSetChanged();
                 break;
@@ -351,14 +359,15 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
 
 
     }
-
+    // this is the version of buildArrayList for this method, 
+    // it erases data when called because this method is called from swipe to refresh
     private void switchQuery() {
         switchErase();
-      //  feed_adapter.notifyDataSetChanged();
+      
         switch (search_method) {
 
             case HAPPENING_NOW:
-                db_reference.collection("universities").document("ucalgary.ca").collection("posts")
+                db_reference.collection("universities").document(this_user.getUni_domain()).collection("posts")
                         .limit(15)
                         .whereEqualTo("is_event", true)
                         .whereEqualTo("main_feed_visible", true)
@@ -372,15 +381,14 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
                                 if (task.isSuccessful()) {
                                     if (task.getResult() != null) {
                                         for (QueryDocumentSnapshot document : task.getResult()) {
-
-                                            //TODO THESE ARE SAVED AS EVENTS
+                                            
                                             Post event_object = document.toObject(Event.class);
+                                            
+                                            // if the event hasn't happened yet, it is not added to the arraylist
                                             if (((Event) event_object).getStart_millis() > System.currentTimeMillis()) {
 
                                             } else happening_arraylist.add(event_object);
                                         }
-
-
                                         happening_adapter.notifyDataSetChanged();
                                         happening_adapter.notifyItemRangeChanged(0, happening_arraylist.size());
                                     }
@@ -394,9 +402,10 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
                 array_list_updated = true;
                 feed_recycler_view.swapAdapter(happening_adapter, true);
                 break;
-            case STARTING_SOON:
+                
+            case UPCOMING:
 
-                db_reference.collection("universities").document("ucalgary.ca").collection("posts")
+                db_reference.collection("universities").document(this_user.getUni_domain()).collection("posts")
                         .limit(15)
                         .whereEqualTo("is_event", true)
                         .whereEqualTo("main_feed_visible", true)
@@ -410,7 +419,6 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
                                     if (task.getResult() != null) {
                                         for (QueryDocumentSnapshot document : task.getResult()) {
 
-                                            //TODO THESE ARE SAVED AS EVENTS
                                             Post event_object = document.toObject(Event.class);
                                             upcoming_arraylist.add(event_object);
                                         }
@@ -425,8 +433,9 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
                 array_list_updated = true;
                 feed_recycler_view.swapAdapter(upcoming_adapter, true);
                 break;
+
             case PAST_EVENTS:
-                db_reference.collection("universities").document("ucalgary.ca").collection("posts")
+                db_reference.collection("universities").document(this_user.getUni_domain()).collection("posts")
                         .limit(15)
                         .whereEqualTo("is_event", true)
                         .whereEqualTo("main_feed_visible", true)
@@ -440,9 +449,10 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
                                     if (task.getResult() != null) {
                                         for (QueryDocumentSnapshot document : task.getResult()) {
 
-                                            //TODO THESE ARE SAVED AS EVENTS
+
                                             Post event_object = document.toObject(Event.class);
                                             past_arraylist.add(event_object);
+                                            // last is saved for pulling more posts in switchpull
                                             last = document;
                                         }
                                         past_adapter.notifyDataSetChanged();
@@ -458,17 +468,17 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
                 break;
         }
     }
-
+    // makes sure arraylists aren't in the middle of being updated,
+    // also returns their current size to smoothly insert into adapter
     private int pullCheck(){
         switch (search_method){
             case HAPPENING_NOW:
                 return happening_arraylist.size();
-            case STARTING_SOON:
+            case UPCOMING:
                 return upcoming_arraylist.size();
             case PAST_EVENTS:
                 return past_arraylist.size();
         }
-
         return 0;
     }
 
@@ -480,7 +490,7 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
             switch (search_method) {
 
                 case HAPPENING_NOW:
-                    db_reference.collection("universities").document("ucalgary.ca").collection("posts")
+                    db_reference.collection("universities").document(this_user.getUni_domain()).collection("posts")
                             .limit(15)
                             .whereEqualTo("is_event", true)
                             .whereEqualTo("main_feed_visible", true)
@@ -496,7 +506,7 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
                                         if (task.getResult() != null) {
                                             for (QueryDocumentSnapshot document : task.getResult()) {
 
-                                                //TODO THESE ARE SAVED AS EVENTS
+
                                                 Post event_object = document.toObject(Event.class);
                                                 if (((Event) event_object).getStart_millis() > System.currentTimeMillis()) {
 
@@ -504,12 +514,13 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
                                             }
                                             loading_progress_bar.setVisibility(View.GONE);
                                             happening_adapter.notifyItemRangeInserted(start, happening_arraylist.size());
+
+                                            // if the arraylist size didn't update after the query, there are no more events to be called
+                                            // ** query might be succesful, but the events havent started yet
                                             if (start == happening_arraylist.size()) {
                                                 Log.d("Events", "onComplete: No more items");
                                                 bottom_of_db = true;
                                             }
-
-
                                         }
                                     } else {
                                         //  Log.d(TAG, "Error getting documents: ", task.getException());
@@ -517,14 +528,16 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
                                 }
                             });
 
-
                     array_list_updated = true;
 
                     break;
-                //TODO this query will not find events starting at the same time, must be tested further
-                case STARTING_SOON:
 
-                    db_reference.collection("universities").document("ucalgary.ca").collection("posts")
+
+                //TODO this query may not find events starting at the same time, must be tested further
+
+                case UPCOMING:
+
+                    db_reference.collection("universities").document(this_user.getUni_domain()).collection("posts")
                             .limit(15)
                             .whereEqualTo("is_event", true)
                             .whereEqualTo("main_feed_visible", true)
@@ -539,15 +552,19 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
                                         if (task.getResult() != null) {
                                             for (QueryDocumentSnapshot document : task.getResult()) {
 
-                                                //TODO THESE ARE SAVED AS EVENTS
+
                                                 Post event_object = document.toObject(Event.class);
+                                                // if the ID's are different, then add the event, otherwise the event is already in the array list
                                                 if (!event_object.getId().equals(upcoming_arraylist.get(upcoming_arraylist.size() - 1).getId())) {
                                                     upcoming_arraylist.add(event_object);
                                                 }
-
                                             }
+
                                             loading_progress_bar.setVisibility(View.GONE);
                                             upcoming_adapter.notifyItemRangeInserted(start, upcoming_arraylist.size());
+
+                                            // if the arraylist size didn't update after the query, there are no more events to be called
+                                            // ** query might be successful, but the events is already pulled
                                             if (start == upcoming_arraylist.size()) {
                                                 Log.d("Events", "onComplete: No more items");
                                                 bottom_of_db = true;
@@ -561,15 +578,13 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
                     array_list_updated = true;
                     break;
                 case PAST_EVENTS:
-                    db_reference.collection("universities").document("ucalgary.ca").collection("posts")
+                    db_reference.collection("universities").document(this_user.getUni_domain()).collection("posts")
                             .limit(15)
                             .whereEqualTo("is_event", true)
                             .whereEqualTo("main_feed_visible", true)
                             .whereLessThan("end_millis", System.currentTimeMillis())
                              .orderBy("end_millis", Query.Direction.DESCENDING)
-                            .startAfter(last)
-                            //TODO HERE
-                           // .startAfter(((Event) past_arraylist.get(past_arraylist.size()-1)).getEnd_millis())
+                            .startAfter(last) // last is stored above to know where to continue querying from
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
@@ -579,7 +594,6 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
                                             for (QueryDocumentSnapshot document : task.getResult()) {
                                                 Toast.makeText(mContext, ""+task.getResult().size(), Toast.LENGTH_SHORT).show();
 
-                                                //TODO THESE ARE SAVED AS EVENTS
                                                 Post event_object = document.toObject(Event.class);
                                                 past_arraylist.add(event_object);
                                             }
@@ -620,7 +634,7 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedViewHold
     @Override
     public void onFeedClick(int position, int clicked_id) {
 
-        Post clickedPost = post_arraylist.get(position); //<- this is the clicked event/post
+        Post clickedPost = current_arraylist.get(position); //<- this is the clicked event/post
 
         switch (clicked_id) {
             case R.id.full_constraint_view:

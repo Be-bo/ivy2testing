@@ -7,9 +7,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<androidx.core.widget.NestedScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/events_feed_container"
@@ -29,7 +29,7 @@
 
         <include
             android:id="@+id/feed_obj_reference"
-            layout="@layout/feed_object"
+            layout="@layout/feed_post_card"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -103,14 +103,13 @@
                 android:text="Past events" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/loading_more_items_text"
+        <ProgressBar
+            android:id="@+id/loading_more_items_progressbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:background="@color/transparent"
-            android:text="Loading more posts..."
-            android:textColor="@color/interaction"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -121,6 +120,7 @@
             android:id="@+id/no_more_items_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
             android:text="You reached the Bottom!"
             android:textColor="@color/interaction"
