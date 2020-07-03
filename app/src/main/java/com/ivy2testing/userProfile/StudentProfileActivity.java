@@ -86,13 +86,18 @@ public class StudentProfileActivity extends AppCompatActivity {
         else return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(adapter!=null) adapter.stopListening();
+    }
 
-/* Initialization Methods
+    /* Initialization Methods
 ***************************************************************************************************/
 
     // General setup after acquiring student object
     private void setUpElements(){
-        Log.d(TAG, "Showing student: " + student_toDisplay.getId() + ", name: " + student_toDisplay.getName());
+        setTitle("Profile");
         declareViews();
         setUpViews();               // populate UI
         setUpRecycler();            // set up posts recycler view
@@ -143,6 +148,7 @@ public class StudentProfileActivity extends AppCompatActivity {
     // See all posts
     private void seeAllPosts(){
         Intent intent = new Intent(this, SeeAllPostsActivity.class);
+        intent.putExtra("title", student_toDisplay.getName()+"'s Posts");
         intent.putExtra("this_user", this_user);
         intent.putExtra("uni_domain", student_toDisplay.getUni_domain());
 
@@ -241,8 +247,7 @@ public class StudentProfileActivity extends AppCompatActivity {
                 if (student_toDisplay != null){
                     student_toDisplay.setId(user_id);
                     setUpElements();
-                }
-                else {
+                } else {
                     Log.e(TAG, "user was null!");
                     goBackToParent();
                 }

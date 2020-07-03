@@ -32,11 +32,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
+import com.ivy2testing.util.SpinnerAdapter;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.ivy2testing.util.StaticDomainList.available_domain_list;
 import static com.ivy2testing.util.StaticDomainList.domain_list;
 import static com.ivy2testing.util.StaticDegreesList.degree_array;
 
@@ -80,20 +82,8 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         student_progress_bar = findViewById(R.id.signup_progressBar);
         register_button.setEnabled(false);
 
-        // Creating and applying adapter to the spinner
-        // ArrayList<CharSequence> testarray = new ArrayList<CharSequence>(Arrays.asList(degree_array));
-        ArrayAdapter<CharSequence> degree_adapter = new ArrayAdapter<CharSequence>(this,android.R.layout.simple_spinner_dropdown_item,degree_array){
-            @Override
-            public boolean isEnabled(int position) {
-                if (position == 0) {
-                    // Disable the first item from Spinner
-                    // First item will be use for hint
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-        };
+        SpinnerAdapter degree_adapter = new SpinnerAdapter(this, degree_array);
+        degree_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         degree_spinner.setAdapter(degree_adapter);
     }
 

@@ -13,21 +13,16 @@
         android:id="@+id/hamburger_menu_imageview"
         android:layout_width="75dp"
         android:layout_height="75dp"
-        android:src="@drawable/ivy_logo" />
+        android:layout_gravity="center"
+        android:src="@drawable/ic_interlock_uc" />
 
     <TextView
-        android:id="@+id/hamburger_menu_toptext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:text="Name: Test_User"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/accent" />
-
-    <TextView
+        style="@style/StandardText"
         android:id="@+id/hamburger_menu_bottomtext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="University: University of Testing"
-        android:textColor="@color/hint" />
+        android:layout_marginTop="@dimen/standard_margin"
+        android:layout_gravity="center"
+        android:text="University of Calgary"
+        />
 </LinearLayout>

@@ -1,108 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_green_reverse">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/org_signup_guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.1" />
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/org_signup_guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.9" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/org_signup_guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
 
-    <ImageView
-        android:id="@+id/org_signup_logo"
-        android:layout_width="0dp"
-        android:layout_height="130dp"
-        android:contentDescription="@string/logo_desc"
-        app:layout_constraintBottom_toTopOf="@id/org_signup_linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.36"
-        app:srcCompat="@drawable/ivy_logo" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/org_signup_guideline3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
 
-    <LinearLayout
-        android:id="@+id/org_signup_linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/org_signup_guideline3"
-        app:layout_constraintStart_toStartOf="@id/org_signup_guideline2"
-        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/org_signup_logo"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/authentication_logo_height"
+            android:contentDescription="@string/logo_desc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.36"
+            app:srcCompat="@drawable/ivy_logo" />
 
-        <Spinner
-            android:id="@+id/org_signup_uni_spinner"
-            android:layout_width="match_parent"
-            style="@style/StandardSpinner"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/hint"
-            android:prompt="@string/app_name" />
+        <LinearLayout
+            android:id="@+id/org_signup_linearLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/xxl_margin"
+            app:layout_constraintEnd_toStartOf="@id/org_signup_guideline3"
+            app:layout_constraintStart_toStartOf="@id/org_signup_guideline2"
+            app:layout_constraintTop_toBottomOf="@id/org_signup_logo">
 
-        <EditText
-            android:id="@+id/org_signup_email"
-            style="@style/StandardEditText"
-            android:layout_width="match_parent"
-            android:layout_marginBottom="16dp"
-            android:ems="10"
-            android:hint="@string/email"
-            android:inputType="textEmailAddress"
-            android:autofillHints="" />
+            <Spinner
+                android:id="@+id/org_signup_uni_spinner"
+                style="@style/StandardSpinner"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:backgroundTint="@color/hint"
+                android:prompt="@string/app_name" />
 
-        <EditText
-            android:id="@+id/org_signup_pass"
-            style="@style/StandardEditText"
-            android:layout_width="match_parent"
-            android:layout_marginBottom="16dp"
-            android:ems="10"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:autofillHints="" />
+            <EditText
+                android:id="@+id/org_signup_email"
+                style="@style/StandardEditText"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="16dp"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress" />
 
-        <EditText
-            android:id="@+id/org_signup_pass_confirm"
-            style="@style/StandardEditText"
-            android:layout_width="match_parent"
-            android:layout_marginBottom="16dp"
-            android:ems="10"
-            android:hint="@string/confirm_password"
-            android:inputType="textPassword"
-            android:autofillHints="" />
+            <EditText
+                android:id="@+id/org_signup_pass"
+                style="@style/StandardEditText"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="16dp"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/password"
+                android:inputType="textPassword" />
 
-        <Switch
-            android:id="@+id/org_signup_switch"
-            style="@style/StandardSwitch"
-            android:layout_width="match_parent"
-            android:layout_marginBottom="16dp"
-            android:layout_marginStart="5dp"
-            android:text="@string/we_club_switch"/>
+            <EditText
+                android:id="@+id/org_signup_pass_confirm"
+                style="@style/StandardEditText"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="16dp"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/confirm_password"
+                android:inputType="textPassword" />
 
-        <Button
-            android:id="@+id/org_signup_register_button"
-            android:layout_width="match_parent"
-            style ="@style/StandardButton"
-            android:background="@drawable/button_shape"
-            android:text="@string/sign_up_org"
-            android:onClick="signUp"/>
+            <Switch
+                android:id="@+id/org_signup_switch"
+                style="@style/StandardSwitch"
+                android:layout_width="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/we_club_switch" />
 
-        <ProgressBar
-            android:id="@+id/org_signup_progressBar"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:visibility="gone"
-            android:indeterminateTint="@color/hint"/>
+            <Button
+                android:id="@+id/org_signup_register_button"
+                style="@style/StandardButton"
+                android:layout_width="match_parent"
+                android:background="@drawable/button_shape"
+                android:onClick="signUp"
+                android:text="@string/org_sign_up" />
 
-    </LinearLayout>
+            <ProgressBar
+                android:id="@+id/org_signup_progressBar"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:indeterminateTint="@color/hint"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

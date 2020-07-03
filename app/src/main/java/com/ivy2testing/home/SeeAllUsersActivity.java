@@ -94,14 +94,13 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
     // Get a list of user ids to display
     private void getIntentExtras(){
         if (getIntent() != null){
-
             appbar_title = getIntent().getStringExtra("title");             // Optional activity title
             this_user = getIntent().getParcelableExtra("this_user");        // currently logged in user
             uni_domain = getIntent().getStringExtra("uni_domain");
             user_ids = getIntent().getStringArrayListExtra("user_ids");     // List of user ids to be displayed
             shows_member_requests = getIntent().getBooleanExtra("shows_member_requests", false);
 
-            if (user_ids == null || uni_domain == null) {
+            if (user_ids == null || uni_domain == null || this_user == null) {
                 Log.e(TAG, "Must Provide a list of user ids and uni domain.");
                 finish();
             }
@@ -177,15 +176,6 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
     @Override
     public void onOptionsClick(int position, View v) {
         PopupMenu popup = new PopupMenu(this, v);
-
-        // Hide certain items if not logged in
-        if (this_user == null || !shows_member_requests){
-            //TODO: menu is null
-            Menu menu = popup.getMenu();
-            menu.findItem(R.id.userOptions_accept_member_request).setVisible(false);
-            menu.findItem(R.id.userOptions_reject_member_request).setVisible(false);
-        }
-
         popup.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.userOptions_viewProfile:
@@ -205,6 +195,14 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
             }
         });
         popup.inflate(R.menu.user_options);
+
+        // Hide certain items if not logged in
+        if (this_user == null || !shows_member_requests){
+            Menu menu = popup.getMenu();
+            menu.findItem(R.id.userOptions_accept_member_request).setVisible(false);
+            menu.findItem(R.id.userOptions_reject_member_request).setVisible(false);
+        }
+
         popup.show();
     }
 

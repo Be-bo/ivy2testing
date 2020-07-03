@@ -96,13 +96,12 @@ public class SeeAllPostsActivity extends AppCompatActivity {
     @SuppressWarnings("unchecked")
     private boolean getIntentExtras(){
         if (getIntent() != null){
-
-            appbar_title = getIntent().getStringExtra("title");             // Optional activity title
+            appbar_title = getIntent().getStringExtra("title");
             this_user = getIntent().getParcelableExtra("this_user");        // Currently logged in user
             uni_domain = getIntent().getStringExtra("uni_domain");          // Uni_domain of posts to display
             query_map = (HashMap<String, Object>) getIntent().getSerializableExtra("query_map");    // Used to make a query to firestore
 
-            if (query_map == null || uni_domain == null) {
+            if (query_map == null || uni_domain == null || this_user == null) {
                 Log.e(TAG, "Must Provide a query map and uni domain.");
                 finish();
             }

@@ -1,72 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- either groups  or menus are able to launch fragments or items, can...will need to check online again
-    i believe its groups -->
-    <item
-        android:id="@+id/search_placeholder"
-        android:title="Search">
-        <menu>
-            <item
-                android:id="@+id/hamburger_menu_search_bar_"
-                android:icon="@drawable/ic_search_placeholder"
-                android:title="Search"
-                app:actionViewClass="android.widget.SearchView" />
-        </menu>
-
-    </item>
-    <group
-        android:id="@+id/hamburger_menu_fragment_group"
-        android:checkableBehavior="single">
-        <item
-            android:id="@+id/hamburger_menu_settings_placeholder"
-            android:icon="@drawable/ic_settings_placeholder"
-            android:title="Settings" />
-    </group>
-    <item
-        android:id="@+id/privacy_and_security_placeholder"
-        android:title = "Privacy and Security">
-        <menu>
-            <item
-                android:id="@+id/change_pass_button"
-                android:icon="@drawable/ic_baseline_lock_placeholder"
-                android:title="Change Password"/>
-            <item
-                android:id="@+id/blocked_accounts_button"
-                android:icon="@drawable/ic_baseline_block_placeholder"
-                android:title="Blocked Accounts"/>
-        </menu>
-    </item>
-    <item
-        android:id="@+id/support_placeholder"
-        android:title = "Support">
-        <menu>
-            <item
-                android:id="@+id/contact_us_button"
-                android:icon="@drawable/ic_baseline_contact_support_placeholder"
-                android:title="Contact Us"/>
-        </menu>
-    </item>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/other_placeholder"
-        android:title = "Other">
-        <menu>
-            <item
-                android:id="@+id/hamburger_menu_terms_placeholder"
-                android:icon="@drawable/ic_subject_placeholder"
-                android:title="Terms of Use" />
+        android:id="@+id/drawer_contact_us_item"
+        android:icon="@drawable/ic_baseline_contact_support_placeholder"
+        android:title="Contact Us"/>
 
-            <item
-                android:id="@+id/signout_button_placeholder"
-                android:icon="@drawable/ic_baseline_exit_to_app_placeholder"
-                android:title="Sign Out"/>
-            <item
-                android:id="@+id/delete_account_placeholder"
-                android:icon="@drawable/ic_baseline_delete_forever_placeholder"
-                android:title="Delete Account"/>
+    <item
+        android:id="@+id/drawer_terms_item"
+        android:icon="@drawable/ic_subject_placeholder"
+        android:title="Terms of Use" />
 
-        </menu>
-    </item>
+    <item
+        android:id="@+id/drawer_sign_out_item"
+        android:title="Sign Out"/>
 
 </menu>

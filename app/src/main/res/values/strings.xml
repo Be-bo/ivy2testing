@@ -1,12 +1,16 @@
 <resources>
     <string name="app_name">ivy2testing</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="empty_string"></string>
+    <string name="send">Send</string>
+    <string name="contact_us_hint">Feedback, suggestion,...</string>
 
     <!--Authentication-->
     <string name="login">Log In</string>
     <string name="sign_up">Sign Up</string>
-    <string name="sign_up_org">Organization Sign Up</string>
-    <string name="student_sign_up">Student Sign Up</string>
     <string name="org_sign_up">Organization Sign Up</string>
+    <string name="student_sign_up">Student Sign Up</string>
+    <string name="resend_verification">Resend Verification Email</string>
     <string name="password">Password</string>
     <string name="email">Email</string>
     <string name="confirm_password">Confirm Password</string>
@@ -60,6 +64,7 @@
     <string name="you_are_a_member">You are a member!</string>
     <string name="request_pending">Request Pending</string>
     <string name="join">Join</string>
+    <string name="leave_org">Leave</string>
 
     <!-- Posts and Events -->
     <string name="post_visual">Post Visual</string>

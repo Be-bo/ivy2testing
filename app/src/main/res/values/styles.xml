@@ -19,7 +19,12 @@
     <!-- This theme changes the color of the back button in the post activity/layout -->
     <style name="SolidAppBarStyle"  parent="@style/Widget.AppCompat.Light.ActionBar.Solid">
         <item name="titleTextStyle">@style/AppBarTitle</item>
-        <item name="android:background">@color/white</item>
+        <item name="android:background">@color/interaction</item>
+    </style>
+
+    <style name="AppBarTitle" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <!-- May want to use this instead for ViewPostOrEventActivity -->
@@ -104,12 +109,6 @@
     <style name="StandardIndefiniteProgressBar" parent="Widget.AppCompat.ProgressBar">
         <item name="android:layout_height">50dp</item>
         <item name="android:indeterminateTint">@color/hint</item>
-    </style>
-
-    <style name="AppBarTitle" parent="Widget.AppCompat.TextView">
-        <item name="android:textSize">20sp</item>
-        <item name="android:textColor">@color/hint</item>
-        <item name="android:layout_gravity">center</item>
     </style>
 
     <style name="MainNavBar" parent="Widget.Design.BottomNavigationView">

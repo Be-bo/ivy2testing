@@ -42,6 +42,7 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
     private int pull_limit = 0;
     private ArrayList<Post> posts = new ArrayList<>();
     private List<View> all_layout_elements;
+    private boolean initial_acquisition = true;
 
     private FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
     private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
@@ -94,6 +95,8 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull SquareImgHolder holder, final int position) {
+        Post current = posts.get(position);
+
         // Banner
         if (posts.get(position) instanceof Event){
             holder.banner.setVisibility(View.VISIBLE);
@@ -104,12 +107,16 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
             holder.banner_text.setVisibility(View.GONE);
         }
 
-        // Input a default image in case post has no visual
-        holder.image_view.setBackgroundColor(context.getColor(R.color.light_grey));
-        holder.image_view.setImageResource(R.drawable.ic_ivy_logo_white);
-
-        // Load visual from storage (will override default visual if it exists)
-        loadImage(holder, posts.get(position));
+        if(current.getVisual() == null || current.getVisual().equals("nothing")){
+            holder.image_view.setVisibility(View.GONE);
+            holder.info_text.setVisibility(View.VISIBLE);
+            if(current.getIs_event()) holder.info_text.setText(((Event)current).getName());
+            else holder.info_text.setText(current.getText());
+        }else{
+            holder.info_text.setVisibility(View.GONE);
+            holder.image_view.setVisibility(View.VISIBLE);
+            loadImage(holder, posts.get(position));
+        }
     }
 
     @Override
@@ -136,16 +143,25 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
                 .addSnapshotListener((queryDocumentSnapshots, e) -> {
                 if(queryDocumentSnapshots != null){
 
+                    Log.d(TAG, "loading");
+
                     for (int i = 0; i<queryDocumentSnapshots.getDocumentChanges().size(); i++) {
                         DocumentChange dc = queryDocumentSnapshots.getDocumentChanges().get(i);
                         DocumentSnapshot doc = dc.getDocument();
 
                         switch (dc.getType()) {
                             case ADDED:
-                                if(posts.size() < limit && !postAlreadyAdded(doc.getId())){
-                                    Log.d(TAG, "adding: "+doc.getId());
-                                    if ((boolean)doc.get("is_event")) posts.add(doc.toObject(Event.class));
-                                    else if(!posts.contains(doc.toObject(Post.class))) posts.add(doc.toObject(Post.class));
+                                if(!postAlreadyAdded(doc.getId())){
+                                    Log.d(TAG, "case added");
+                                    if(initial_acquisition){
+                                        if ((boolean)doc.get("is_event")) posts.add(doc.toObject(Event.class));
+                                        else posts.add(doc.toObject(Post.class));
+                                    }else{
+                                        if ((boolean)doc.get("is_event")) posts.add(0,doc.toObject(Event.class));
+                                        else posts.add(0,doc.toObject(Post.class));
+                                    }
+
+                                    if(posts.size() > limit) posts.remove(posts.size()-1);
                                 }
                                 break;
 
@@ -168,6 +184,9 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
                                 break;
                         }
                     }
+
+                    Log.d(TAG, "ending initial acquisition");
+                    initial_acquisition = false;
                     notifyDataSetChanged();
                     if(posts.size() < 1) hideLayout();
                     else showLayout();
@@ -190,7 +209,6 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
 
     private boolean postAlreadyAdded(String id){
         for(int i = 0; i<posts.size(); i++){
-            Log.d(TAG, "checking: "+posts.get(i).getId());
             if(posts.get(i).getId().equals(id)) return true;
         }
         return false;
@@ -214,6 +232,7 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
         // Attributes
         ImageView banner;
         TextView banner_text;
+        TextView info_text;
         ImageView image_view;
         CardView card_view;
         ConstraintLayout whole_layout;
@@ -227,6 +246,7 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
             card_view = itemView.findViewById(R.id.recyclerGridItem_cardView);
             whole_layout = itemView.findViewById(R.id.recyclerGridItem_layout);
             banner_text = itemView.findViewById(R.id.grid_item_banner_text);
+            info_text = itemView.findViewById(R.id.grid_item_text_info);
             post_listener = listener;
 
             itemView.setOnClickListener(this);

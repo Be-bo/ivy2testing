@@ -91,7 +91,7 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
     @Override
     public void onStop() {
         super.onStop();
-        if(post_adapter!=null) post_adapter.stopListening();
+        if(post_adapter!=null && is_set_up) post_adapter.stopListening();
     }
 
     @Override
@@ -105,12 +105,12 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
         setUpFragment();
 
         //TODO: remove
-        Log.d(TAG, "setting up");
-        Intent intent = new Intent(getContext(), StudentProfileActivity.class);
-        intent.putExtra("this_user", this_user);
-        intent.putExtra("student_to_display_id", "7N6c7gaCYBTjxtwxjJTjSmyBVNj1");
-        intent.putExtra("student_to_display_uni", "ucalgary.ca");
-        startActivity(intent);
+//        Log.d(TAG, "setting up");
+//        Intent intent = new Intent(getContext(), StudentProfileActivity.class);
+//        intent.putExtra("this_user", this_user);
+//        intent.putExtra("student_to_display_id", "7N6c7gaCYBTjxtwxjJTjSmyBVNj1");
+//        intent.putExtra("student_to_display_uni", "ucalgary.ca");
+//        startActivity(intent);
     }
 
     private void declareHandles(){
@@ -257,7 +257,7 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
     private void transToMembers(){
         Intent intent = new Intent(getContext(), SeeAllUsersActivity.class);
         intent.putExtra("this_user", this_user);
-        intent.putExtra("title", this_user.getName()+"'s Members");
+        intent.putExtra("title", "Your Members");
         intent.putExtra("uni_domain", this_user.getUni_domain());
         intent.putExtra("user_ids", new ArrayList<>(((Organization)this_user).getMember_ids()));
         startActivity(intent);
@@ -266,7 +266,7 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
     private void transToRequests(){
         Intent intent = new Intent(getContext(), SeeAllUsersActivity.class);
         intent.putExtra("this_user", this_user);
-        intent.putExtra("title", this_user.getName()+"'s Member Requests");
+        intent.putExtra("title","Your Member Requests");
         intent.putExtra("uni_domain", this_user.getUni_domain());
         intent.putExtra("user_ids", new ArrayList<>(((Organization)this_user).getRequest_ids()));
         intent.putExtra("shows_member_requests", true);
@@ -275,7 +275,7 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
 
     private void transToPosts(){
         Intent intent = new Intent(getContext(), SeeAllPostsActivity.class);
-        intent.putExtra("title", this_user.getName()+"'s Posts");
+        intent.putExtra("title", "Your Posts");
         intent.putExtra("this_user", this_user);
         intent.putExtra("uni_domain", this_user.getUni_domain());
         HashMap<String, Object> query_map = new HashMap<String, Object>() {{ put("author_id", this_user.getId()); }};

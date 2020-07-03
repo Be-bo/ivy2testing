@@ -88,7 +88,6 @@ public class StudentProfileFragment extends Fragment {
         else setUpElements();
 
         //TODO: remove
-        Log.d(TAG, "setting up");
         Intent intent = new Intent(getContext(), OrganizationProfileActivity.class);
         intent.putExtra("this_user", student);
         intent.putExtra("org_to_display_id", "Z2xem5pMPsQzQqA27ZMpNJ6dcP82");
@@ -99,10 +98,16 @@ public class StudentProfileFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if(adapter!=null) adapter.stopListening();
+        if(adapter!=null && is_set_up) adapter.stopListening();
     }
 
-/* Initialization Methods
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(adapter!=null && is_set_up) adapter.startListening();
+    }
+
+    /* Initialization Methods
 ***************************************************************************************************/
 
     // Get User Data - always stays update and doesn't require passing anything because ViewModel is connected to the Activity that manages the fragment
@@ -200,6 +205,7 @@ public class StudentProfileFragment extends Fragment {
     // See all posts
     private void seeAllPosts(){
         Intent intent = new Intent(getContext(), SeeAllPostsActivity.class);
+        intent.putExtra("title", "Your Posts");
         intent.putExtra("this_user", student);
         intent.putExtra("uni_domain", student.getUni_domain());
 

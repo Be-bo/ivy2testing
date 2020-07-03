@@ -1,116 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/student_signup_root_layout"
-    style='"@style/Base.Widget.AppCompat.Spinner.Underlined"'
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_green_reverse">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/student_signup_guideline_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.1" />
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/student_signup_root_layout"
+        style='"@style/Base.Widget.AppCompat.Spinner.Underlined"'
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/student_signup_guideline_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.9" />
-
-    <ImageView
-        android:id="@+id/student_signup_logo"
-        android:layout_width="0dp"
-        android:layout_height="130dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ivy_logo" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/student_signup_guideline_2"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/student_signup_guideline_1"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.451">
-
-        <EditText
-            android:id="@+id/student_signup_email"
-            style="@style/StandardEditText"
-            android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/student_signup_guideline_1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:ems="10"
-            android:hint="Email"
-            android:inputType="textEmailAddress" />
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
 
-        <EditText
-            android:id="@+id/student_signup_pass"
-            style="@style/StandardEditText"
-            android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/student_signup_guideline_2"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:ems="10"
-            android:hint="Password"
-            android:inputType="textPassword" />
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
 
-        <EditText
-            android:id="@+id/student_signup_pass_confirm"
-            style="@style/StandardEditText"
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/student_signup_logo"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/authentication_logo_height"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ivy_logo" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:ems="10"
-            android:hint="Confirm Password"
-            android:inputType="textPassword" />
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/xxl_margin"
+            app:layout_constraintTop_toBottomOf="@id/student_signup_logo"
+            app:layout_constraintEnd_toStartOf="@+id/student_signup_guideline_2"
+            app:layout_constraintStart_toStartOf="@+id/student_signup_guideline_1">
 
-        <Spinner
-            android:id="@+id/student_signup_degree"
-            android:layout_width="match_parent"
-            style="@style/StandardSpinner"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/hint" />
+            <EditText
+                android:id="@+id/student_signup_email"
+                style="@style/StandardEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:ems="10"
+                android:hint="Email"
+                android:inputType="textEmailAddress" />
 
-        <Button
-            style="@style/StandardButton"
-            android:id="@+id/student_register_button"
-            android:layout_width="match_parent"
-            android:text="Sign Up"
-            tools:layout_constraintBottom_toBottomOf="@id/imageView" />
+            <EditText
+                android:id="@+id/student_signup_pass"
+                style="@style/StandardEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:ems="10"
+                android:hint="Password"
+                android:inputType="textPassword" />
 
-    </LinearLayout>
+            <EditText
+                android:id="@+id/student_signup_pass_confirm"
+                style="@style/StandardEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:ems="10"
+                android:hint="Confirm Password"
+                android:inputType="textPassword" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.24" />
+            <Spinner
+                android:id="@+id/student_signup_degree"
+                style="@style/StandardSpinner"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:backgroundTint="@color/hint"
+                android:prompt="@string/app_name"  />
+
+            <Button
+                android:id="@+id/student_register_button"
+                style="@style/StandardButton"
+                android:layout_width="match_parent"
+                android:text="Sign Up"
+                tools:layout_constraintBottom_toBottomOf="@id/imageView" />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.24" />
 
 
-    <ProgressBar
-        android:id="@+id/signup_progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminateTint="@color/hint"
-        android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@+id/student_signup_guideline_2"
-        app:layout_constraintStart_toStartOf="@+id/student_signup_guideline_1"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        <ProgressBar
+            android:id="@+id/signup_progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/hint"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@+id/student_signup_guideline_2"
+            app:layout_constraintStart_toStartOf="@+id/student_signup_guideline_1"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-    <!-- Progress bar doesn't fit in 100% where button was  when displayed -->
+        <!-- Progress bar doesn't fit in 100% where button was  when displayed -->
 
-    <!-- Y translations are set to the same height as the signup button, so they can jump the same
-    amount of space as the signup button leaves behind when View.gone is applied  -->
+        <!-- Y translations are set to the same height as the signup button, so they can jump the same
+        amount of space as the signup button leaves behind when View.gone is applied  -->
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

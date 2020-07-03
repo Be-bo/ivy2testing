@@ -29,6 +29,7 @@
             app:layout_constraintEnd_toEndOf="@id/editStudent_guideline2"
             app:layout_constraintStart_toStartOf="@id/editStudent_guideline1"
             app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="@dimen/large_margin"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:contentDescription="@string/profile_pic"

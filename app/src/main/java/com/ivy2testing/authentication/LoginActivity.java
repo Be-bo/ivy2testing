@@ -17,20 +17,21 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.ivy2testing.R;
 import com.ivy2testing.main.MainActivity;
+import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.SpinnerAdapter;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static com.ivy2testing.util.StaticDomainList.available_domain_list;
 
@@ -42,21 +43,33 @@ import static com.ivy2testing.util.StaticDomainList.available_domain_list;
 public class LoginActivity extends AppCompatActivity {
 
     // Constants
-    private static final String TAG = "LoginActivity";
+    private static final String TAG = "LoginActivityTag";
 
     // Views
-    private EditText mEmailView;
-    private EditText mPasswordView;
-    private Button mLoginButton;
-    private ProgressBar mProgressBar;
+    private EditText email_edittext;
+    private EditText password_edittext;
+    private Button login_button;
+    private ProgressBar progress_bar;
+    private TextView resend_email_textview;
     private Spinner uni_spinner;
     private Switch org_switch;
+    private List<String> available_domains = Arrays.asList(available_domain_list);
 
     // Firebase
     private FirebaseAuth auth = FirebaseAuth.getInstance();
 
     // Other variables
     private String currentDomain = "";
+
+
+
+
+
+
+
+
+
+
 
 
     /* Override Methods
@@ -77,18 +90,30 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
 /* Initialization Methods
 ***************************************************************************************************/
 
     // Initialize all textViews and buttons
     private void declareViews() {
-        mEmailView = findViewById(R.id.login_email);
-        mPasswordView = findViewById(R.id.login_password);
-        mLoginButton = findViewById(R.id.login_logInButton);
-        mProgressBar = findViewById(R.id.login_progressBar);
+        email_edittext = findViewById(R.id.login_email);
+        password_edittext = findViewById(R.id.login_password);
+        login_button = findViewById(R.id.login_logInButton);
+        progress_bar = findViewById(R.id.login_progressBar);
         uni_spinner = findViewById(R.id.login_uni_spinner);
         org_switch = findViewById(R.id.login_org_switch);
-        mProgressBar.setVisibility(View.GONE);
+        resend_email_textview = findViewById(R.id.login_resendEmail);
+        progress_bar.setVisibility(View.GONE);
     }
 
     // Set up textWatchers for real time error checking
@@ -99,26 +124,26 @@ public class LoginActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mLoginButton.setEnabled(fieldsNotEmpty());
+                checkInput();
             }
             @Override
             public void afterTextChanged(Editable s) {}
         };
 
         // Add textWatcher to fields
-        mEmailView.addTextChangedListener(generalTextWatcher);
-        mPasswordView.addTextChangedListener(generalTextWatcher);
+        email_edittext.addTextChangedListener(generalTextWatcher);
+        password_edittext.addTextChangedListener(generalTextWatcher);
     }
 
     // Set up focus listener for for real time error checking
     private void setFocusListener(){
         // Check if email is correct after focus has changed (if format is good, check domain)
-        mEmailView.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) setInputErrors(mEmailView, getString(R.string.error_invalidEmailFormat), emailOk());
+        email_edittext.setOnFocusChangeListener((v, hasFocus) -> {
+            checkInput();
         });
         // Check if password is correct after focus change
-        mPasswordView.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) setInputErrors(mPasswordView, getString(R.string.error_invalidPasswordLength), passwordOk());
+        password_edittext.setOnFocusChangeListener((v, hasFocus) -> {
+            checkInput();
         });
     }
 
@@ -126,6 +151,7 @@ public class LoginActivity extends AppCompatActivity {
         org_switch.setOnCheckedChangeListener(((compoundButton, b) -> {
             if(b) uni_spinner.setVisibility(View.VISIBLE);
             else uni_spinner.setVisibility(View.GONE);
+            checkInput();
         }));
     }
 
@@ -136,15 +162,25 @@ public class LoginActivity extends AppCompatActivity {
         uni_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                mLoginButton.setEnabled(fieldsNotEmpty());
+                checkInput();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                mLoginButton.setEnabled(fieldsNotEmpty());
+                checkInput();
             }
         });
     }
+
+
+
+
+
+
+
+
+
+
 
 
 /* OnClick Methods
@@ -153,50 +189,105 @@ public class LoginActivity extends AppCompatActivity {
     // mLoginButton onClick method
     public void attemptLogin(View view) {
         barInteraction();
-        if(org_switch.isChecked()) currentDomain = uni_spinner.getSelectedItem().toString();
         if (getCurrentFocus() != null) getCurrentFocus().clearFocus();
         loginToFirebaseAuth();
     }
 
     // student sign up onClick method
     public void studentSignUp(View view) {
-        startActivity(new Intent(this, StudentSignUpActivity.class));
+        Intent intent = new Intent(this, StudentSignUpActivity.class);
+        startActivity(intent);
     }
 
     // student sign up onClick method
     public void orgSignUp(View view) {
-        startActivity(new Intent(this, OrganizationSignUpActivity.class));
+        Intent intent = new Intent(this, OrganizationSignUpActivity.class);
+        startActivity(intent);
     }
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* Input Checking Methods
 ***************************************************************************************************/
 
     // Set error on an editText view based on a condition
-    private void setInputErrors(EditText editText, String error_msg, boolean check){
-        if (check) editText.setError(null);
-        else editText.setError(error_msg);
+    private void setInputErrors(EditText editText, String error_msg){
+        editText.setError(error_msg);
     }
 
     // Check to see if any of fields are empty
-    private boolean fieldsNotEmpty(){
-        boolean bool = mEmailView.getText().toString().isEmpty() || mPasswordView.getText().toString().isEmpty();
-        if(!org_switch.isChecked()) return !bool;
-        else return !bool && !uni_spinner.getSelectedItem().toString().equals("university");
+    private boolean emptyFields(){
+        return email_edittext.getText().toString().trim().isEmpty() || password_edittext.getText().toString().trim().isEmpty();
     }
 
     // Make sure email has a correct format and is not empty
     private boolean emailOk() {
-        String email = mEmailView.getText().toString().trim();
-        currentDomain = email.substring(email.indexOf("@") + 1).trim();
+        String email = email_edittext.getText().toString().trim();
         return email.length() > 5 && email.contains("@") && !email.contains(" ") && email.contains(".");
     }
 
     // Make sure password field is at lest 6 characters long
     private boolean passwordOk() {
-        String password = mPasswordView.getText().toString();
+        String password = password_edittext.getText().toString();
         return password.length() > 5;
     }
+
+    private boolean uniOk(){
+        if(org_switch.isChecked()){
+            currentDomain = uni_spinner.getSelectedItem().toString();
+        }else{
+            String email = email_edittext.getText().toString();
+            currentDomain = email.substring(email.indexOf("@") + 1).trim();
+        }
+        return available_domains.contains(currentDomain) && !currentDomain.equals("university");
+    }
+
+    private boolean allInputOk(){
+        if(emptyFields()){
+            setInputErrors(email_edittext, "Some fields are empty");
+            return false;
+        }
+        if(!emailOk()){
+            setInputErrors(email_edittext, "Invalid email format");
+            return false;
+        }
+        if(!passwordOk()){
+            setInputErrors(password_edittext, "Invalid password format");
+            return false;
+        }
+        if(!uniOk()){
+            setInputErrors(email_edittext, "Invalid domain or domain selection");
+            return false;
+        }
+        return true;
+    }
+
+    private void checkInput(){
+        if(allInputOk()){
+            email_edittext.setError(null);
+            password_edittext.setError(null);
+            login_button.setEnabled(true);
+        }else login_button.setEnabled(false);
+    }
+
+
+
+
+
+
+
+
+
 
 
 /* Firebase related Methods
@@ -205,8 +296,8 @@ public class LoginActivity extends AppCompatActivity {
     // Attempt to log in to Firebase Auth
     private void loginToFirebaseAuth(){
 
-        String email = mEmailView.getText().toString().trim();
-        String password = mPasswordView.getText().toString();
+        String email = email_edittext.getText().toString().trim();
+        String password = password_edittext.getText().toString();
 
         auth.signInWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
             if (task.isSuccessful()){
@@ -218,32 +309,60 @@ public class LoginActivity extends AppCompatActivity {
                     transToMainLoggedIn();
                 }
                 else {
-                    toastError("Email not verified yet!");
+                    toastMessage("Email not verified yet!");
+                    showResendEmail();
                     allowInteraction();
                 }
             } else {
-                mLoginButton.setError(getString(R.string.error_loginInvalid));
-                toastError(getString(R.string.error_loginInvalid));
+                toastMessage(getString(R.string.error_loginInvalid));
                 allowInteraction();
             }
         });
     }
+
+    private void showResendEmail(){
+        resend_email_textview.setVisibility(View.VISIBLE);
+        resend_email_textview.setOnClickListener(view -> {
+            if(auth.getCurrentUser()!=null){
+                auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(task -> {
+                   if(task.isSuccessful()){
+                       toastMessage("Verification email sent!");
+                       resend_email_textview.setVisibility(View.GONE);
+                   }
+                   else toastMessage("Error sending verification email :-(. Try restarting the app.");
+                });
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* Transition Methods
 ***************************************************************************************************/
 
     private void allowInteraction(){
-        mProgressBar.setVisibility(View.GONE);
-        mLoginButton.setVisibility(View.VISIBLE);
+        progress_bar.setVisibility(View.GONE);
+        login_button.setVisibility(View.VISIBLE);
         this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
     private void barInteraction() {
         closeKeyboard();
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-        mLoginButton.setVisibility(View.GONE);
-        mProgressBar.setVisibility(View.VISIBLE);
+        login_button.setVisibility(View.GONE);
+        progress_bar.setVisibility(View.VISIBLE);
     }
 
 
@@ -266,18 +385,27 @@ public class LoginActivity extends AppCompatActivity {
 
     // Go back to main activity
     private void transToMainLoggedIn(){
-        Log.d(TAG, "Going back to main");
-        Intent intent = new Intent(this, MainActivity.class);
-        setResult(RESULT_OK, intent);
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("result_ok", true);
+        setResult(RESULT_OK, returnIntent);
         finish();
         allowInteraction();
     }
 
 
+
+
+
+
+
+
+
+
+
 /* Utility Methods
 ***************************************************************************************************/
 
-    private void toastError(String msg){
+    private void toastMessage(String msg){
         Log.w(TAG, msg);
         Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
     }

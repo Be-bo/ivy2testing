@@ -4,7 +4,6 @@
     android:id="@+id/main_toolbar_view"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="#FAFAFA"
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
     app:title="">
@@ -14,7 +13,7 @@
         android:layout_width="55dp"
         android:layout_height="55dp"
         android:layout_gravity="center"
-        android:src="@drawable/ivy_logo" />
+        android:src="@drawable/ivy_logo_face_mask" />
 
     <ImageButton
         android:id="@+id/post_button"
