@@ -1,8 +1,10 @@
 package com.ivy2testing.main;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
@@ -14,12 +16,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.entities.User;
@@ -30,13 +35,14 @@ import com.ivy2testing.chat.ChatFragment;
 import com.ivy2testing.home.EventsFragment;
 import com.ivy2testing.home.HomeFragment;
 import com.ivy2testing.home.PostsFragment;
+import com.ivy2testing.terms.TermsActivity;
 import com.ivy2testing.userProfile.OrganizationProfileFragment;
 import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.Constant;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
 
@@ -44,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     // MARK: Variables and Constants
 
     private final static String TAG = "MainActivityTag";
+    private NavigationView drawer_nav_view;
     private DrawerLayout drawer;
     private BottomNavigationView bottom_navigation;
     private FrameLayout loading_layout;
@@ -87,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
         setUp();
     }
 
-    //TODO: remove (if possible)
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -100,8 +106,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "on act resutl");
         if (requestCode == Constant.LOGIN_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK && data != null) attemptLogin();
+            Log.d(TAG, "resutl login");
+            attemptLogin();
+            //TODO: no matter what I tried, setting result to OK in Login never fires here...
+//            if (resultCode == Activity.RESULT_OK){
+//                Log.d(TAG, "resutl ok");
+//            }
         } else
             Log.w(TAG, "Don't know how to handle the request code, \"" + requestCode + "\" yet!");
     }
@@ -125,13 +137,54 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUpToolbar() {
         Toolbar main_toolbar = findViewById(R.id.main_toolbar_id);
+        drawer_nav_view = findViewById(R.id.main_nav_view);
         setSupportActionBar(main_toolbar);
         drawer = findViewById(R.id.main_layout_drawer);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, main_toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+        drawer_nav_view.setNavigationItemSelectedListener(this);
         if (getSupportActionBar() != null) getSupportActionBar().setTitle(null);
-        toggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.interaction));
+        toggle.getDrawerArrowDrawable().setColor(ContextCompat.getColor(this, R.color.interaction));
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.drawer_contact_us_item:
+                transToContactUs();
+                break;
+            case R.id.drawer_terms_item:
+                transToTerms();
+                break;
+            case R.id.drawer_sign_out_item:
+                signOut();
+                break;
+        }
+        return false;
+    }
+
+    private void transToContactUs(){
+        Intent intent = new Intent(this, ContactUsActivity.class);
+        intent.putExtra("this_user", this_user);
+        startActivity(intent);
+    }
+
+    private void transToTerms(){
+        Intent intent = new Intent(this, TermsActivity.class);
+        startActivity(intent);
+    }
+
+    private void signOut(){
+        auth.addAuthStateListener(firebaseAuth -> {
+            if(auth.getCurrentUser() == null){
+                Intent intent = new Intent(this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
+        });
+        auth.signOut();
     }
 
     private void setHandlers(){
@@ -220,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }else{
-            homeSetup();
+            if(!home_setup) homeSetup();
             endLoading();
         }
     }

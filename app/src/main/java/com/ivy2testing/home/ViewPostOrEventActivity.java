@@ -169,8 +169,14 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private void setFragment() {
         Fragment selected_fragment;
 
-        if (post.getIs_event()) selected_fragment = new ViewEventFragment((Event) post, this_user);
-        else selected_fragment = new ViewPostFragment(post, this_user);
+        if (post.getIs_event()){
+            setTitle(((Event)post).getName());
+            selected_fragment = new ViewEventFragment((Event) post, this_user);
+        }
+        else{
+            setTitle("Post");
+            selected_fragment = new ViewPostFragment(post, this_user);
+        }
 
         getSupportFragmentManager().beginTransaction().replace(R.id.viewPost_contents, selected_fragment).commit();
     }

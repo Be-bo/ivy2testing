@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/contact_us_guideline1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.1" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/contact_us_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.9" />
+
+    <EditText
+        android:background="@drawable/bubble_shape"
+        android:padding="@dimen/large_margin"
+        android:textColorHint="@color/hint"
+
+        android:id="@+id/contact_us_edittext"
+        android:hint="@string/contact_us_hint"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/large_margin"
+        android:layout_marginBottom="@dimen/standard_margin"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintStart_toStartOf="@id/contact_us_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/contact_us_guideline2"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button
+        android:id="@+id/contact_us_send_button"
+        style="@style/StandardButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:text="@string/send"
+        android:layout_marginTop="@dimen/standard_margin"
+        android:layout_marginBottom="@dimen/large_margin"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/contact_us_edittext"
+        app:layout_constraintStart_toStartOf="@id/contact_us_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/contact_us_guideline2"/>
+
+    <ProgressBar
+        android:id="@+id/contact_us_progress"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        android:indeterminateTint="@color/hint"
+        android:layout_marginTop="@dimen/standard_margin"
+        android:layout_marginBottom="@dimen/large_margin"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/contact_us_edittext"
+        app:layout_constraintStart_toStartOf="@id/contact_us_guideline1"
+        app:layout_constraintEnd_toEndOf="@id/contact_us_guideline2"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

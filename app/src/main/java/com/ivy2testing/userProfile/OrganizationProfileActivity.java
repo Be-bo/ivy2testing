@@ -108,7 +108,7 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
     @Override
     protected void onStop() {
         super.onStop();
-        post_adapter.stopListening();
+        if(post_adapter!=null) post_adapter.stopListening();
     }
 
 
@@ -143,7 +143,8 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
         this_user = getIntent().getParcelableExtra("this_user");
         org_to_display_id = getIntent().getStringExtra("org_to_display_id");
         org_to_display_uni = getIntent().getStringExtra("org_to_display_uni");
-        if(this_user == null || org_to_display_id == null && org_to_display_uni == null) finish();
+        //TODO: this crashes whatever happens before
+        if(this_user == null || (org_to_display_id == null && org_to_display_uni == null)) finish();
     }
 
     private void setUpActivity(){
@@ -158,18 +159,26 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
     }
 
     private void populateUI(){
-        setTitle(org_to_display.getName());
+        setTitle("Profile");
         if(this_user.getUni_domain().equals(org_to_display_uni)) join_button.setEnabled(true);
         if(org_to_display.getMember_ids().contains(this_user.getId())){
-            join_button.setVisibility(View.GONE);
             member_status_text.setText(getString(R.string.you_are_a_member));
             member_status_text.setVisibility(View.VISIBLE);
+            join_button.setText(R.string.leave_org);
+            join_button.setOnClickListener(view -> leaveOrg());
         }
-        if(org_to_display.getRequest_ids().contains(this_user.getId())){
-            join_button.setVisibility(View.GONE);
+        else if(org_to_display.getRequest_ids().contains(this_user.getId())){
             member_status_text.setText(getString(R.string.request_pending));
             member_status_text.setVisibility(View.VISIBLE);
+            join_button.setText(R.string.cancel);
+            join_button.setOnClickListener(view -> cancelRequest());
         }
+        else{
+            member_status_text.setVisibility(View.GONE);
+            join_button.setText(R.string.join);
+            join_button.setOnClickListener(view -> requestMembership());
+        }
+        if(this_user.getIs_organization()) join_button.setVisibility(View.GONE);
         name_text.setText(org_to_display.getName());
         String memberNumber = String.valueOf(org_to_display.getMember_ids().size());
         member_number_text.setText(getString(R.string.organization_member_number, memberNumber));
@@ -177,7 +186,6 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
         stor_ref.child(profPicPath).getDownloadUrl().addOnCompleteListener(task -> { if(task.getResult() != null)Glide.with(this).load(task.getResult()).into(profile_image);});
         setUpRecyclers();
         setUpMembers();
-        join_button.setOnClickListener(view -> requestMembership());
         see_all_members_button.setOnClickListener(view -> transToMembers());
         see_all_posts_button.setOnClickListener(view -> transToPosts());
     }
@@ -243,6 +251,14 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
                Toast.makeText(this, "Failed to send request. :-(", Toast.LENGTH_LONG).show();
            }
         });
+    }
+
+    private void leaveOrg(){
+        //TODO
+    }
+
+    private void cancelRequest(){
+        //TODO
     }
 
     private void transToMembers(){

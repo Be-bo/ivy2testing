@@ -1,136 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/login_rootLayout"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
-    tools:context="com.ivy2testing.authentication.LoginActivity"
     android:background="@drawable/gradient_green">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/login_guideline1"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/login_rootLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.1" />
+        android:animateLayoutChanges="true"
+        tools:context="com.ivy2testing.authentication.LoginActivity">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/login_guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.9" />
-
-    <ImageView
-        android:id="@+id/student_signup_logo"
-        android:layout_width="0dp"
-        android:layout_height="130dp"
-        android:contentDescription="@string/logo_desc"
-        app:layout_constraintBottom_toTopOf="@id/login_fieldsLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.27"
-        app:srcCompat="@drawable/ic_ivy_logo_white" />
-
-    <LinearLayout
-        android:id="@+id/login_fieldsLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="visible"
-        android:paddingTop="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/login_guideline2"
-        app:layout_constraintStart_toStartOf="@id/login_guideline1"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <Spinner
-            android:id="@+id/login_uni_spinner"
-            android:layout_width="match_parent"
-            style="@style/StandardSpinner"
-            android:visibility="gone"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/hint"
-            android:prompt="@string/app_name" />
-
-        <EditText
-            android:id="@+id/login_email"
-            style="@style/StandardEditText"
-            android:layout_width="match_parent"
-            android:layout_marginBottom="16dp"
-            android:autofillHints=""
-            android:ems="10"
-            android:hint="@string/email"
-            android:inputType="textEmailAddress" />
-
-        <EditText
-            android:id="@+id/login_password"
-            style="@style/StandardEditText"
-            android:layout_width="match_parent"
-            android:layout_marginBottom="16dp"
-            android:autofillHints=""
-            android:ems="10"
-            android:hint="@string/password"
-            android:inputType="textPassword" />
-
-        <Switch
-            android:id="@+id/login_org_switch"
-            style="@style/StandardSwitch"
-            android:layout_width="match_parent"
-            android:layout_marginBottom="16dp"
-            android:layout_marginStart="5dp"
-            android:text="@string/switch_login_org"/>
-
-        <Button
-            android:id="@+id/login_logInButton"
-            style="@style/StandardButton"
-            android:layout_width="match_parent"
-            android:enabled="false"
-            android:onClick="attemptLogin"
-            android:text="@string/login" />
-
-        <ProgressBar
-            android:id="@+id/login_progressBar"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:visibility="gone"
-            android:indeterminateTint="@color/hint"/>
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/login_singUps"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@id/login_fieldsLayout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/login_guideline1"
-        app:layout_constraintEnd_toEndOf="@id/login_guideline2">
-
-        <TextView
-            android:id="@+id/login_studentSignUp"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/login_guideline1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="studentSignUp"
-            android:text="@string/student_sign_up"
-            style="@style/StandardClickableText"
-            android:layout_gravity="end"
-            android:layout_marginBottom="16dp"/>
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
 
-        <TextView
-            android:id="@+id/login_orgSignUp"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/login_guideline2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="orgSignUp"
-            android:text="@string/org_sign_up"
-            style="@style/StandardClickableText"
-            android:layout_gravity="end"/>
-    </LinearLayout>
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/student_signup_logo"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/authentication_logo_height"
+            android:contentDescription="@string/logo_desc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.27"
+            app:srcCompat="@drawable/ic_ivy_logo_white" />
+
+        <LinearLayout
+            android:id="@+id/login_fieldsLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/xxl_margin"
+            android:visibility="visible"
+            app:layout_constraintTop_toBottomOf="@id/student_signup_logo"
+            app:layout_constraintEnd_toEndOf="@id/login_guideline2"
+            app:layout_constraintStart_toStartOf="@id/login_guideline1">
+
+            <Spinner
+                android:id="@+id/login_uni_spinner"
+                style="@style/StandardSpinner"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:backgroundTint="@color/hint"
+                android:prompt="@string/app_name"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/login_email"
+                style="@style/StandardEditText"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress" />
+
+            <EditText
+                android:id="@+id/login_password"
+                style="@style/StandardEditText"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/password"
+                android:inputType="textPassword" />
+
+            <Switch
+                android:id="@+id/login_org_switch"
+                style="@style/StandardSwitch"
+                android:layout_width="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:text="@string/switch_login_org" />
+
+            <Button
+                android:id="@+id/login_logInButton"
+                style="@style/StandardButton"
+                android:layout_width="match_parent"
+                android:enabled="false"
+                android:onClick="attemptLogin"
+                android:text="@string/login" />
+
+            <ProgressBar
+                android:id="@+id/login_progressBar"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:indeterminateTint="@color/hint"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/login_singUps"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible"
+            android:layout_marginTop="@dimen/xxl_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/login_guideline2"
+            app:layout_constraintStart_toStartOf="@id/login_guideline1"
+            app:layout_constraintTop_toBottomOf="@id/login_fieldsLayout">
+
+            <TextView
+                android:id="@+id/login_studentSignUp"
+                style="@style/StandardClickableText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:onClick="studentSignUp"
+                android:text="@string/student_sign_up" />
+
+            <TextView
+                android:id="@+id/login_orgSignUp"
+                style="@style/StandardClickableText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:onClick="orgSignUp"
+                android:text="@string/org_sign_up" />
+
+            <TextView
+                android:id="@+id/login_resendEmail"
+                style="@style/StandardClickableText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="@string/resend_verification"
+                android:textColor="@color/notification"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -21,7 +21,6 @@ public class UserViewModel extends ViewModel {
     private MutableLiveData<User> this_user = new MutableLiveData<>();
     private FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
     private ListenerRegistration listenerRegistration;
-    private boolean initialAcquisition = true;
 
 
 
