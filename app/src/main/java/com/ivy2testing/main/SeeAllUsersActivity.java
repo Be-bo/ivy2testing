@@ -1,4 +1,4 @@
-package com.ivy2testing.home;
+package com.ivy2testing.main;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,7 +22,6 @@ import com.ivy2testing.R;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.userProfile.OrganizationProfileActivity;
 import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.adapters.UserAdapter;
@@ -109,7 +108,7 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
 
     // Initialize recycler values and load first batch of items
     private void setRecycler(){
-        recycler_view = findViewById(R.id.seeAll_recycler);
+        recycler_view = findViewById(R.id.seeall_recycler);
 
         // Set LayoutManager and Adapter
         adapter = new UserAdapter(users);

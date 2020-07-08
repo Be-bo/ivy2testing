@@ -7,9 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,11 +17,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.home.SeeAllPostsActivity;
+import com.ivy2testing.main.SeeAllPostsActivity;
 import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.R;
@@ -49,12 +46,13 @@ public class StudentProfileFragment extends Fragment {
     private View root_view;
 
     // Views
-    private ImageView mProfileImg;
-    private TextView mName;
-    private TextView mDegree;
-    private RecyclerView mRecyclerView;
-    private TextView mSeeAll;
+    private ImageView profile_image;
+    private TextView name_text;
+    private TextView degree_text;
+    private RecyclerView post_recycler;
+    private TextView seeall_posts;
     private TextView post_title;
+    private TextView no_posts_text;
 
     // Firestore
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
@@ -144,19 +142,20 @@ public class StudentProfileFragment extends Fragment {
     }
 
     private void declareViews(View v){
-        mProfileImg = v.findViewById(R.id.studentProfile_circleImg);
-        mName = v.findViewById(R.id.studentProfile_name);
-        mDegree = v.findViewById(R.id.studentProfile_degree);
-        mRecyclerView = v.findViewById(R.id.studentProfile_posts);
-        mSeeAll = v.findViewById(R.id.studentProfile_seeAll);
+        profile_image = v.findViewById(R.id.studentProfile_circleImg);
+        name_text = v.findViewById(R.id.studentProfile_name);
+        degree_text = v.findViewById(R.id.studentProfile_degree);
+        post_recycler = v.findViewById(R.id.studentProfile_posts);
+        seeall_posts = v.findViewById(R.id.studentProfile_seeAll);
         post_title = v.findViewById(R.id.studentProfile_header);
+        no_posts_text = v.findViewById(R.id.studentProfile_no_posts_text);
     }
 
     private void setUpViews(){
         if (student == null) return;
-        mName.setText(student.getName());
-        mDegree.setText(student.getDegree());
-        if (profile_img_uri != null) Picasso.get().load(profile_img_uri).into(mProfileImg);
+        name_text.setText(student.getName());
+        degree_text.setText(student.getDegree());
+        if (profile_img_uri != null) Picasso.get().load(profile_img_uri).into(profile_image);
     }
 
     // Create adapter for recycler (adapter pulls posts from database)
@@ -164,18 +163,18 @@ public class StudentProfileFragment extends Fragment {
 
         // set LayoutManager and Adapter
         List<View> allViews = new ArrayList<>();
-        allViews.add(mRecyclerView);
-        allViews.add(mSeeAll);
+        allViews.add(post_recycler);
+        allViews.add(seeall_posts);
         allViews.add(post_title);
-        adapter = new SquareImageAdapter(student.getId(), student.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, getContext(), this::onPostClick, allViews);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
+        adapter = new SquareImageAdapter(student.getId(), student.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, getContext(), this::onPostClick, allViews, no_posts_text);
+        post_recycler.setLayoutManager(new GridLayoutManager(getContext(), Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
                 lp.width = getWidth() / Constant.PROFILE_POST_GRID_ROW_COUNT;
                 return true;
             }
         });
-        mRecyclerView.setAdapter(adapter);
+        post_recycler.setAdapter(adapter);
     }
 
     // Set up onClick Listeners
@@ -208,17 +207,12 @@ public class StudentProfileFragment extends Fragment {
         intent.putExtra("title", "Your Posts");
         intent.putExtra("this_user", student);
         intent.putExtra("uni_domain", student.getUni_domain());
-
-        // Make "Query"
-        HashMap<String, Object> query_map = new HashMap<String, Object>() {{ put("author_id", student.getId()); }};
-        intent.putExtra("query_map", query_map);
-
-        startActivityForResult(intent, Constant.SEEALL_POSTS_REQUEST_CODE);
+        intent.putExtra("author_id", student.getId());
+        startActivity(intent);
     }
 
     // A post in recycler was selected
     public void onPostClick(int position) {
-        Log.d(TAG, "Getting post: " + adapter.getItem(position).getId());
         Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
         intent.putExtra("this_user", student);
         intent.putExtra("uni_domain", student.getUni_domain());

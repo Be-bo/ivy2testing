@@ -37,6 +37,16 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="posted_by">Posted by:</string>
+    <string name="pinned">Pinned:</string>
+    <string name="featured">Featured</string>
+    <string name="sort_by">Sort by</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="no_posts">No posts on this campus, be the first!</string>
+    <string name="no_events">No events on this campus at the moment</string>
+    <string name="coming_fall">Coming in Fall 2020</string>
+    <string name="author">Author</string>
+    <string name="reached_bottom">You\'ve reached the bottom!</string>
 
 
     <!-- User Profile -->
@@ -65,6 +75,9 @@
     <string name="request_pending">Request Pending</string>
     <string name="join">Join</string>
     <string name="leave_org">Leave</string>
+    <string name="full">Full</string>
+    <string name="profile_no_posts">No posts yet!</string>
+
 
     <!-- Posts and Events -->
     <string name="post_visual">Post Visual</string>

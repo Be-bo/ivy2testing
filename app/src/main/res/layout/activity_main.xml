@@ -43,6 +43,7 @@
             android:layout_height="45dp"
             android:background="@color/white"
             android:visibility="gone"
+            app:labelVisibilityMode="unlabeled"
             app:itemIconTint="@color/interaction"
             app:itemTextColor="@color/interaction"
             app:layout_constraintBottom_toBottomOf="parent"

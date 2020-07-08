@@ -4,7 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,7 +12,7 @@ import com.ivy2testing.R;
 
 import java.util.ArrayList;
 
-public class BubbleAdapter extends RecyclerView.Adapter<BubbleAdapter.BubbleViewHolder>{
+public class BubbleTabAdapter extends RecyclerView.Adapter<BubbleTabAdapter.BubbleViewHolder>{
     private ArrayList<String> bubble_arraylist;
     private BubbleViewHolder.BubbleClickListener bubble_click_listener;
 
@@ -26,7 +25,7 @@ public class BubbleAdapter extends RecyclerView.Adapter<BubbleAdapter.BubbleView
 
         public BubbleViewHolder(@NonNull View itemView, BubbleClickListener bubble_click_listener) {
             super(itemView);
-            bubble = itemView.findViewById(R.id.bubble_button);
+            bubble = itemView.findViewById(R.id.item_bubble_button);
             this.bubble_click_listener = bubble_click_listener;
             bubble.setOnClickListener(this);
         }
@@ -43,7 +42,7 @@ public class BubbleAdapter extends RecyclerView.Adapter<BubbleAdapter.BubbleView
 
     }
 
-    public BubbleAdapter(ArrayList<String> bubble_list, BubbleViewHolder.BubbleClickListener bubble_click_listener){
+    public BubbleTabAdapter(ArrayList<String> bubble_list, BubbleViewHolder.BubbleClickListener bubble_click_listener){
         bubble_arraylist = bubble_list;
         this.bubble_click_listener = bubble_click_listener;
 
@@ -52,7 +51,7 @@ public class BubbleAdapter extends RecyclerView.Adapter<BubbleAdapter.BubbleView
     @NonNull
     @Override
     public BubbleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.bubble_layout, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_bubble_tab, parent, false);
         BubbleViewHolder bvh = new BubbleViewHolder(v, bubble_click_listener);
         return bvh;
     }

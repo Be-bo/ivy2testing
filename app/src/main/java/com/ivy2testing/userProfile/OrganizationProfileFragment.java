@@ -24,8 +24,8 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.home.SeeAllPostsActivity;
-import com.ivy2testing.home.SeeAllUsersActivity;
+import com.ivy2testing.main.SeeAllPostsActivity;
+import com.ivy2testing.main.SeeAllUsersActivity;
 import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.util.Constant;
@@ -58,6 +58,7 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
     private TextView post_title;
     private View post_divider;
     private View member_divider;
+    private TextView no_posts_text;
 
     private SquareImageAdapter post_adapter;
     private CircleImageAdapter person_adapter;
@@ -127,6 +128,7 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
         post_title = rootView.findViewById(R.id.orgprofile_posts_header);
         post_divider = rootView.findViewById(R.id.orgprofile_divider1);
         member_divider = rootView.findViewById(R.id.orgprofile_divider2);
+        no_posts_text = rootView.findViewById(R.id.orgprofile_no_posts);
     }
 
 
@@ -178,7 +180,7 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
         allViews.add(see_all_posts_button);
         allViews.add(post_divider);
         allViews.add(post_title);
-        post_adapter = new SquareImageAdapter(this_user.getId(), this_user.getUni_domain(), Constant.PROFILE_POST_LIMIT_ORG, getContext(), this, allViews);
+        post_adapter = new SquareImageAdapter(this_user.getId(), this_user.getUni_domain(), Constant.PROFILE_POST_LIMIT_ORG, getContext(), this, allViews, no_posts_text);
         post_recycler.setLayoutManager(new GridLayoutManager(getContext(), Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {

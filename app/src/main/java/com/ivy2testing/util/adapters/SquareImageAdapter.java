@@ -43,6 +43,7 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
     private ArrayList<Post> posts = new ArrayList<>();
     private List<View> all_layout_elements;
     private boolean initial_acquisition = true;
+    private TextView empty_adapter_text;
 
     private FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
     private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
@@ -53,13 +54,14 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
 
 
     // Constructors
-    public SquareImageAdapter(String id, String uniDomain, int limit, Context mrContext, OnPostListener listener, List<View> allElems){
+    public SquareImageAdapter(String id, String uniDomain, int limit, Context mrContext, OnPostListener listener, List<View> allElems, TextView emptyAdapterText){
         this.uni_domain = uniDomain;
         this.author_id = id;
         this.context = mrContext;
         this.post_listener = listener;
         this.pull_limit = limit;
         this.all_layout_elements = allElems;
+        this.empty_adapter_text = emptyAdapterText;
         startListening();
     }
 
@@ -80,6 +82,18 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
     public void stopListening(){
         Log.d(TAG, "stop listening");
         list_reg.remove();
+    }
+
+    private void checkEmptyAdapter(){
+        if(empty_adapter_text != null){
+            if(getItemCount() < 1){
+                hideLayout();
+                empty_adapter_text.setVisibility(View.VISIBLE);
+            } else{
+                empty_adapter_text.setVisibility(View.GONE);
+                showLayout();
+            }
+        }
     }
 
 
@@ -185,11 +199,9 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
                         }
                     }
 
-                    Log.d(TAG, "ending initial acquisition");
                     initial_acquisition = false;
                     notifyDataSetChanged();
-                    if(posts.size() < 1) hideLayout();
-                    else showLayout();
+                    checkEmptyAdapter();
                 }
                 else Log.e(TAG, "There was a problem in retrieving posts!");
             });

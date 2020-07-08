@@ -25,7 +25,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
@@ -48,10 +47,13 @@ import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
+import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
+import com.ivy2testing.util.TimePickerDialog;
+import com.yalantis.ucrop.UCrop;
 
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 
@@ -60,6 +62,11 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.UUID;
+
+
+
+
+// TODO: gifs and vids add a textview
 
 public class CreatePost extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, android.app.TimePickerDialog.OnTimeSetListener, AdapterView.OnItemSelectedListener {
     private static final String TAG = "CreatePostActivity";
@@ -96,7 +103,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
 
     //images + conversion
     private Uri pic_selected;
-    private Bitmap compressed_bitmap;
+    private byte[] final_image_bytes;
+    private byte[] preview_image_bytes;
     private Uri gif_selected;
 
     //code for onActivityResult
@@ -154,7 +162,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         this_user = intent.getParcelableExtra("this_user");
         if(this_user == null) finish();
 
-        setContentView(R.layout.activity_post);
+        setContentView(R.layout.activity_create_post);
         setTitle(R.string.new_post);            // App Bar Title
 
         // pinned event spinner wont allow selection for some reason, but it can pull from the db properly
@@ -271,13 +279,13 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         //events only
         start_date_button.setOnClickListener(v -> {
             start_or_end = true;
-            DialogFragment datePickerStart = new com.ivy2testing.home.DatePickerDialog();
+            DialogFragment datePickerStart = new com.ivy2testing.util.DatePickerDialog();
             datePickerStart.show(getSupportFragmentManager(), "start date picker");
         });
 
         end_date_button.setOnClickListener(v -> {
             start_or_end = false;
-            DialogFragment datePickerEnd = new com.ivy2testing.home.DatePickerDialog();
+            DialogFragment datePickerEnd = new com.ivy2testing.util.DatePickerDialog();
             datePickerEnd.show(getSupportFragmentManager(), "end date picker");
         });
 
@@ -410,24 +418,31 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     /* ************************************************************************************************** */
     // allows user to select a picture from within their phone
     // starts activity for result
-    //TODO gifs can be selected but wont upload to the db
+
     private void picSelect() {
-        Intent intent = new Intent();
-        // allows any file that is an image, with any file type to be selected
+        Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_PHONE);
+        String[] mimeTypes = {"image/jpeg", "image/png"};
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        startActivityForResult(intent, Constant.PICK_IMAGE_REQUEST_CODE);
     }
+
 
     // allows user to select a gif from within their phone
     // starts activity for result
+    //TODO gifs can be selected but wont upload to the db
     private void gifSelect() {
         Intent intent = new Intent();
         // allows any file with gif filetype to be selected
         intent.setType("image/gif");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setAction(Intent.ACTION_PICK);
         startActivityForResult(Intent.createChooser(intent, "Select Gif"), PICK_GIF_PHONE);
     }
+
+
+
+
+
 
     /* ************************************************************************************************** */
     // catches picture selection activities when returning and handles their data
@@ -435,32 +450,36 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // case pick_image_phone
-        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE_PHONE && data != null) {
-            pic_selected = data.getData();
-
-            // the picture setting methods need to be here or after this point/
-            // if they are in the on click listener they run asynchronously and don't update in time
-            if (pic_selected != null) {
-
-                // try's and catch's might not be required anymore, best to just rewrite function later
-                try {
-                    //TODO  this is the place to check sizes/ compress images also potentially clear all other views of their previously chosen images
-                    compressed_bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), pic_selected);
-                    image_upload_view.setImageBitmap(compressed_bitmap);
-
-                    if (current_post!=null) current_post.setVisual("picture");
-                    else if (current_event!=null) current_event.setVisual("picture");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Toast.makeText(CreatePost.this, "No Picture Selected", Toast.LENGTH_SHORT).show();
+        if (resultCode == RESULT_OK){
+            switch(requestCode){
+                case Constant.PICK_IMAGE_REQUEST_CODE:
+                    if(data != null && data.getData() != null){
+                        Uri destinationUri = Uri.fromFile(new File(this.getCacheDir(), "img_" + System.currentTimeMillis()));
+                        UCrop.of(data.getData(), destinationUri).withAspectRatio(1,1).withMaxResultSize(ImageUtils.IMAGE_MAX_DIMEN, ImageUtils.IMAGE_MAX_DIMEN).start(this);
+                    }
+                    break;
+                case UCrop.REQUEST_CROP:
+                    if(data != null){
+                        final Uri resultUri = UCrop.getOutput(data);
+                        try {
+                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
+                            preview_image_bytes = ImageUtils.compressAndGetPreviewBytes(bitmap);
+                            final_image_bytes = ImageUtils.compressAndGetBytes(bitmap);
+                            Glide.with(this).load(resultUri).into(image_upload_view);
+                            if (current_post!=null) current_post.setVisual("picture");
+                            else if (current_event!=null) current_event.setVisual("picture");
+                        } catch (IOException e) {
+                            Toast.makeText(this, "Failed to get image. :-(", Toast.LENGTH_LONG).show();
+                            e.printStackTrace();
+                        }
+                    }
+                    break;
             }
+        } else if (resultCode != RESULT_CANCELED) {
+            Toast.makeText(this, "Failed to get image. :-(", Toast.LENGTH_LONG).show();
         }
 
-        // gifs are just displayed, not sent to DB
-        if (resultCode == RESULT_OK && requestCode == PICK_GIF_PHONE && data != null) {
+        if (resultCode == RESULT_OK && requestCode == PICK_GIF_PHONE && data != null) { // gifs are just displayed, not sent to DB
             gif_selected = data.getData();
             if (gif_selected != null) {
                 RequestOptions myOptions = new RequestOptions().centerCrop();
@@ -474,6 +493,26 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
             }
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /* ************************************************************************************************** */
     // the on date set listener is called after the date view dialogs
@@ -588,7 +627,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                 current_post.setVisual("nothing");
 
             } else if (current_post.getVisual().equals("picture")) {
-                storePictureInDB(ImageUtils.compressAndGetBytes(compressed_bitmap), ImageUtils.compressAndGetPreviewBytes(compressed_bitmap));
+                storePictureInDB(final_image_bytes, preview_image_bytes);
             }
 
 
@@ -600,7 +639,12 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
 
                     //new post's id also has to be added to this user's post_ids - Robert's Addition
                     db_reference.collection("universities").document(this_user.getUni_domain()).collection("users").document(this_user.getId()).update("post_ids", FieldValue.arrayUnion(current_post.getId()))
-                            .addOnCompleteListener(task -> {if(task.isSuccessful()) finish();});
+                            .addOnCompleteListener(task -> {
+                                if(task.isSuccessful()){
+                                    setResult(RESULT_OK);
+                                    finish();
+                                }
+                            });
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -641,17 +685,14 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
             if (current_event.getVisual().equals("")) {
                 current_event.setVisual("nothing");
             } else if (current_event.getVisual().equals("picture")) {
-                storePictureInDB(ImageUtils.compressAndGetBytes(compressed_bitmap), ImageUtils.compressAndGetPreviewBytes(compressed_bitmap));
+                storePictureInDB(final_image_bytes, preview_image_bytes);
             }
-
-
-            // TODO add proper on failure listener
-            // object will be added to the DB, must wait for on success listener to end AFTER everything else has finished
 
             db_reference.document(address).set(current_event).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Toast.makeText(CreatePost.this, "Posted!", Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_OK);
                     finish();
                 }
             }).addOnFailureListener(new OnFailureListener() {

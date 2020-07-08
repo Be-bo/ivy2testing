@@ -22,7 +22,7 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.home.SeeAllPostsActivity;
+import com.ivy2testing.main.SeeAllPostsActivity;
 import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.util.Constant;
@@ -41,7 +41,7 @@ import java.util.List;
 public class StudentProfileActivity extends AppCompatActivity {
 
     // Constants
-    private final static String TAG = "StudentProfileActivity";
+    private final static String TAG = "StudentProfileActivityTag";
 
     // Views
     private ImageView mProfileImg;
@@ -50,6 +50,7 @@ public class StudentProfileActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private TextView mSeeAll;
     private TextView post_title;
+    private TextView no_posts_text;
 
     // Firestore
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -111,15 +112,15 @@ public class StudentProfileActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.studentProfile_posts);
         mSeeAll = findViewById(R.id.studentProfile_seeAll);
         post_title = findViewById(R.id.studentProfile_header);
-
+        no_posts_text = findViewById(R.id.studentProfile_no_posts_text);
         findViewById(R.id.studentProfile_edit).setVisibility(View.GONE);
-        findViewById(R.id.studentProfile_seeAll).setOnClickListener(v -> seeAllPosts());
     }
 
     private void setUpViews(){
         if (student_toDisplay == null) return;
         mName.setText(student_toDisplay.getName());
         mDegree.setText(student_toDisplay.getDegree());
+        mSeeAll.setOnClickListener(v -> seeAllPosts());
         if (profile_img_uri != null) Picasso.get().load(profile_img_uri).into(mProfileImg);
     }
 
@@ -130,7 +131,7 @@ public class StudentProfileActivity extends AppCompatActivity {
         allViews.add(mRecyclerView);
         allViews.add(mSeeAll);
         allViews.add(post_title);
-        adapter = new SquareImageAdapter(student_toDisplay.getId(), student_toDisplay.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, this, this::onPostClick, allViews);
+        adapter = new SquareImageAdapter(student_toDisplay.getId(), student_toDisplay.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, this, this::onPostClick, allViews, no_posts_text);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
@@ -151,12 +152,8 @@ public class StudentProfileActivity extends AppCompatActivity {
         intent.putExtra("title", student_toDisplay.getName()+"'s Posts");
         intent.putExtra("this_user", this_user);
         intent.putExtra("uni_domain", student_toDisplay.getUni_domain());
-
-        // Make "Query"
-        HashMap<String, Object> query_map = new HashMap<String, Object>() {{ put("author_id", student_toDisplay.getId()); }};
-        intent.putExtra("query_map", query_map);
-
-        startActivityForResult(intent, Constant.SEEALL_POSTS_REQUEST_CODE);
+        intent.putExtra("author_id", student_toDisplay.getId());
+        startActivity(intent);
     }
 
     // A post in recycler was selected

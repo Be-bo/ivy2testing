@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -28,13 +27,12 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.home.BubbleAdapter;
+import com.ivy2testing.home.BubbleTabAdapter;
 import com.ivy2testing.home.CreatePost;
 import com.ivy2testing.R;
 import com.ivy2testing.chat.ChatFragment;
-import com.ivy2testing.home.EventsFragment;
-import com.ivy2testing.home.HomeFragment;
-import com.ivy2testing.home.PostsFragment;
+import com.ivy2testing.bubbletabs.EventsFragment;
+import com.ivy2testing.bubbletabs.CampusFragment;
 import com.ivy2testing.terms.TermsActivity;
 import com.ivy2testing.userProfile.OrganizationProfileFragment;
 import com.ivy2testing.userProfile.StudentProfileFragment;
@@ -57,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageButton post_button;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
 
-    private String campus_domain;
     private String user_domain;
     private UserViewModel user_view_model;
     private User this_user;
@@ -73,9 +70,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private RecyclerView bubble_recycler_view;
     private RecyclerView.Adapter bubble_adapter;
     private RecyclerView.LayoutManager bubble_layout_manager;
-    private HomeFragment campus_fragment = new HomeFragment(this);
+    private CampusFragment campus_fragment = null;
     private EventsFragment event_fragment = null;
-    private PostsFragment post_fragment = null;
+//    private PostsFragment post_fragment = null;
     private String selected_bubble = "campus";
     private boolean home_setup = false;
 
@@ -106,16 +103,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "on act resutl");
-        if (requestCode == Constant.LOGIN_REQUEST_CODE) {
-            Log.d(TAG, "resutl login");
-            attemptLogin();
-            //TODO: no matter what I tried, setting result to OK in Login never fires here...
-//            if (resultCode == Activity.RESULT_OK){
-//                Log.d(TAG, "resutl ok");
-//            }
-        } else
-            Log.w(TAG, "Don't know how to handle the request code, \"" + requestCode + "\" yet!");
+        switch (requestCode) {
+            case Constant.LOGIN_REQUEST_CODE:
+                attemptLogin();
+                break;
+            case Constant.CREATE_POST_REQUEST_CODE:
+                if(resultCode == RESULT_OK){
+                    campus_fragment.refreshAdapter();
+                    if(event_fragment != null) event_fragment.refreshAdapter();
+                    //TODO: don't forget to notify any other fragments
+                }
+        }
     }
 
 
@@ -158,7 +156,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 transToTerms();
                 break;
             case R.id.drawer_sign_out_item:
-                signOut();
+                if(login_setup) signOut();
+                else Toast.makeText(this, "You are not logged in...", Toast.LENGTH_LONG).show();
                 break;
         }
         return false;
@@ -238,6 +237,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //TODO: Not ideal, all the bubbles essentially act as separate tabs -> limit 6 so that we can keep everything in mem, will have to be reworked in the future:
         //TODO: i.e. killing old bubbles when we reach the limit we decide on, instead of killing starting from 0th index (which will start killing actual tabs)
         bubbleBarSetup();
+        campus_fragment = new CampusFragment(this, this_user);
         tab_adapter.addFragment(campus_fragment, "campus");
         tab_view_pager.setAdapter(tab_adapter);
         tab_view_pager.setOffscreenPageLimit(6);
@@ -266,7 +266,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             user_view_model.getThis_user().observe(this, (User updatedUser) -> {
                 if(updatedUser != null){
                     //TODO: deal with banning, age update, notifications, etc.
-                    Log.d(TAG, "updating profile");
                     this_user = updatedUser;
                     if(!login_setup) setUpLoggedInInteraction();
                     endLoading();
@@ -281,17 +280,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void loadPreferences() {
         SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
         user_domain = sharedPreferences.getString("user_domain", "");
-        campus_domain = sharedPreferences.getString("campus_domain", "");
     }
 
     private void bubbleBarSetup(){
         bubble_arraylist.add("Campus");
         bubble_arraylist.add("Events");
-        bubble_arraylist.add("Posts");
+//        bubble_arraylist.add("Posts");
         bubble_recycler_view = findViewById(R.id.bubble_sample_rv);
         bubble_recycler_view.setHasFixedSize(true);
         bubble_layout_manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        bubble_adapter = new BubbleAdapter(bubble_arraylist, position -> {
+        bubble_adapter = new BubbleTabAdapter(bubble_arraylist, position -> {
             switch (position){
                 case 0:
                     tab_view_pager.setCurrentItem(tab_adapter.getPosition("campus"));
@@ -299,22 +297,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     break;
                 case 1:
                     if(event_fragment == null){
-                        event_fragment = new EventsFragment(this);
-                        event_fragment.setThisUser(this_user);
+                        event_fragment = new EventsFragment(this, this_user);
                         tab_adapter.addFragment(event_fragment, "event");
                     }
                     tab_view_pager.setCurrentItem(tab_adapter.getPosition("event"));
                     selected_bubble = "event";
                     break;
-                case 2:
-                    if(post_fragment == null){
-                        post_fragment = new PostsFragment(this);
-                        post_fragment.setThisUser(this_user);
-                        tab_adapter.addFragment(post_fragment, "post");
-                    }
-                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("post"));
-                    selected_bubble = "post";
-                    break;
+//                case 2:
+//                    if(post_fragment == null){
+//                        post_fragment = new PostsFragment(this);
+//                        post_fragment.setThisUser(this_user);
+//                        tab_adapter.addFragment(post_fragment, "post");
+//                    }
+//                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("post"));
+//                    selected_bubble = "post";
+//                    break;
             }
         });
         bubble_recycler_view.setLayoutManager(bubble_layout_manager);
@@ -330,12 +327,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
+
     // MARK: Other Methods
 
     private void transToCreatePost(){
         Intent intent = new Intent(getApplicationContext(), CreatePost.class);
         intent.putExtra("this_user", this_user);
-        startActivity(intent);
+        startActivityForResult(intent, Constant.CREATE_POST_REQUEST_CODE);
     }
 
     private void transToLogin(){
@@ -348,8 +346,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getSupportFragmentManager().beginTransaction().replace(R.id.main_loadingScreen, new LoadingPageFragment(this)).commit();      // Populate View with loading page layout
     }
 
-    // Fade out loading page animation
-    private void endLoading(){
+    private void endLoading(){ // Fade out loading page animation
         loading_layout.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out));  // Start fade out animation
         loading_layout.setVisibility(View.GONE);
     }

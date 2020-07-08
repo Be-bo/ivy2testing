@@ -17,6 +17,7 @@ import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
+import com.ivy2testing.main.SeeAllPostsActivity;
 import com.ivy2testing.util.Constant;
 
 import java.util.HashMap;

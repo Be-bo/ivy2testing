@@ -21,8 +21,8 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.home.SeeAllPostsActivity;
-import com.ivy2testing.home.SeeAllUsersActivity;
+import com.ivy2testing.main.SeeAllPostsActivity;
+import com.ivy2testing.main.SeeAllUsersActivity;
 import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.adapters.CircleImageAdapter;
@@ -56,6 +56,7 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
     private TextView member_title;
     private View post_divider;
     private View member_divider;
+    private TextView no_posts_text;
 
     private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
     private FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
@@ -137,6 +138,7 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
         post_divider = findViewById(R.id.activity_orgprofile_divider1);
         member_title = findViewById(R.id.activity_orgprofile_members_header);
         member_divider = findViewById(R.id.activity_orgprofile_divider2);
+        no_posts_text = findViewById(R.id.activity_orgprofile_no_posts);
     }
 
     private void getIncomingData(){
@@ -196,7 +198,7 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
         allViews.add(see_all_posts_button);
         allViews.add(post_divider);
         allViews.add(post_title);
-        post_adapter = new SquareImageAdapter(org_to_display_id, org_to_display_uni, POST_LIMIT, this, this, allViews);
+        post_adapter = new SquareImageAdapter(org_to_display_id, org_to_display_uni, POST_LIMIT, this, this, allViews, no_posts_text);
         post_recycler.setLayoutManager(new GridLayoutManager(this, Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {

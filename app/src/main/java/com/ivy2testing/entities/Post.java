@@ -24,7 +24,7 @@ public class Post implements Parcelable {
     protected boolean is_event = false;
     protected boolean main_feed_visible = true;
     protected long creation_millis = 0;
-    protected String registration_platform = "Android";
+    protected String creation_platform = "Android";
     protected String text;
     protected String visual;
     protected String pinned_id;
@@ -164,12 +164,12 @@ public class Post implements Parcelable {
         this.pinned_name = pinned_name;
     }
 
-    public String getRegistration_platform() {
-        return registration_platform;
+    public String getCreation_platform() {
+        return creation_platform;
     }
 
-    public void setRegistration_platform(String registration_platform) {
-        this.registration_platform = registration_platform;
+    public void setCreation_platform(String creation_platform) {
+        this.creation_platform = creation_platform;
     }
 
     public List<String> getViews_id(){
@@ -198,7 +198,7 @@ public class Post implements Parcelable {
         is_event = in.readByte() != 0;
         main_feed_visible = in.readByte() != 0;
         creation_millis = in.readLong();
-        registration_platform = in.readString();
+        creation_platform = in.readString();
         text = in.readString();
         visual = in.readString();
         pinned_id = in.readString();
@@ -233,7 +233,7 @@ public class Post implements Parcelable {
         dest.writeByte((byte) (is_event ? 1 : 0));
         dest.writeByte((byte) (main_feed_visible ? 1 : 0));
         dest.writeLong(creation_millis);
-        dest.writeString(registration_platform);
+        dest.writeString(creation_platform);
         dest.writeString(text);
         dest.writeString(visual);
         dest.writeString(pinned_id);

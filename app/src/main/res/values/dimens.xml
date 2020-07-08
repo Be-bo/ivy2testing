@@ -30,5 +30,7 @@
     <dimen name="xxxl_margin">128dp</dimen>
 
     <dimen name="authentication_logo_height">160dp</dimen>
+    <dimen name="standard_corner_radius">10dp</dimen>
+    <dimen name="standard_card_elevation">3dp</dimen>
 
 </resources>

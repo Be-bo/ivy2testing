@@ -69,12 +69,11 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".home.SeeAllUsersActivity"
             android:theme="@style/AppBarTheme"
             android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".home.SeeAllPostsActivity"
+        <activity android:name=".main.SeeAllPostsActivity"
             android:theme="@style/AppBarTheme"
             android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait"/>

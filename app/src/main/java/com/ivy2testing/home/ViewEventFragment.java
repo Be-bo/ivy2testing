@@ -21,11 +21,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
+import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.User;
+import com.ivy2testing.main.SeeAllPostsActivity;
+import com.ivy2testing.main.SeeAllUsersActivity;
 import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.adapters.CircleImageAdapter;
 import com.ivy2testing.util.Constant;
-import com.ivy2testing.util.ImageUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -150,23 +152,6 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
         if (event.getLink() != null) tv_link.setOnClickListener(v1 -> goToLink());
         if (event.getPinned_id() != null) tv_pinned.setOnClickListener(v1 -> viewPinned());
         tv_seeAll.setOnClickListener(v1 -> seeAllGoingUsers());
-        rv_going.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                //TODO: ?
-//                if (lastUriPosition < event.getGoing_ids().size() - 1){
-//                    int firstVisibleItem = layout_man.findFirstVisibleItemPosition();
-//                    int visibleItemCount = layout_man.getChildCount();
-//                    int totalItemCount = layout_man.getItemCount();
-//
-//                    if (firstVisibleItem + visibleItemCount == totalItemCount){
-//                        loadUserPics();
-//                    }
-//                }
-            }
-        });
         if (button_going.getVisibility() == View.VISIBLE)
             button_going.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) going(); // toggle is enabled
@@ -177,30 +162,29 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
 
     // Set recycler for going users (at this point, going_ids isn't empty!)
     private void setRecycler(){
-
-        // Set LayoutManager and Adapter
-        //TODO: make sure not all going ids are displayed (i.e. a limit)
-        going_adapter = new CircleImageAdapter(event.getGoing_ids(),event.getUni_domain(),getContext(),this);
-        layout_man = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        rv_going.setLayoutManager(layout_man);
-        rv_going.setAdapter(going_adapter);
-
-        // Load images with pagination
-        //TODO: what do you need pagination for with "going ppl"? we only show some and then and if they wanna see all of'em just click "see all", the comments should be paginated if anything
-//        if (!event.getGoing_ids().isEmpty()) loadUserPics();
+        if(event.getGoing_ids().size() > 0){
+            if(event.getGoing_ids().size() < Constant.PROFILE_MEMBER_LIMIT) going_adapter = new CircleImageAdapter(event.getGoing_ids(), event.getUni_domain(), getContext(), this);
+            else going_adapter = new CircleImageAdapter(event.getGoing_ids().subList(0, Constant.PROFILE_MEMBER_LIMIT), event.getUni_domain(), getContext(), this);
+            rv_going.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL,false){
+                @Override
+                public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
+                    lp.width = getWidth() / Constant.PROFILE_MEMBER_LIMIT;
+                    return true;
+                }
+            });
+            rv_going.setAdapter(going_adapter);
+        }
     }
+
 
     // Set Going recycler visibility
     private void setRecyclerVisibility(){
-        if (event.getGoing_ids().isEmpty()) {
-            Log.d(TAG, "going list is empty!"); //TODO there is a bug
-            rv_going.setVisibility(View.GONE);
-            tv_seeAll.setVisibility(View.GONE);
-        }
-        else {
-            Log.d(TAG, "going list is not empty."); //TODO there is a bug
+        if(event.getGoing_ids().size() > 0){
             rv_going.setVisibility(View.VISIBLE);
             tv_seeAll.setVisibility(View.VISIBLE);
+        }else{
+            rv_going.setVisibility(View.GONE);
+            tv_seeAll.setVisibility(View.GONE);
         }
     }
 

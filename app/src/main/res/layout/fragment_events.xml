@@ -3,13 +3,14 @@
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout   xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/feed_swipe_refresh_layout"
+    android:id="@+id/events_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/standard_margin">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/events_feed_container"
@@ -18,64 +19,46 @@
 
         <TextView
             android:id="@+id/events_feed_featured_text"
+            style="@style/LargeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:text="Featured Events"
-            android:textSize="18sp"
+            android:layout_margin="@dimen/standard_margin"
+            android:text="@string/featured"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <include
             android:id="@+id/feed_obj_reference"
-            layout="@layout/feed_post_card"
+            layout="@layout/item_feed_post"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            app:layout_constraintTop_toBottomOf="@id/events_feed_featured_text"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/events_feed_featured_text" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/events_feed_sortby_text"
+            android:id="@+id/events_feed_upcoming_text"
+            style="@style/LargeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:text="Sort by"
-            android:textSize="18sp"
+            android:layout_marginStart="@dimen/standard_margin"
+            android:layout_marginTop="@dimen/large_margin"
+            android:text="@string/upcoming"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/feed_obj_reference" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/events_feed_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/events_feed_filter_bar" />
 
         <LinearLayout
             android:id="@+id/events_feed_filter_bar"
             android:layout_width="0dp"
             android:layout_height="35dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="@dimen/extra_large_margin"
             android:background="@drawable/segmented_button_background"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@id/events_feed_recycler_view"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/events_feed_sortby_text">
+            app:layout_constraintTop_toBottomOf="@+id/events_feed_upcoming_text">
 
             <Button
                 android:id="@+id/happening_now_button"
@@ -103,29 +86,39 @@
                 android:text="Past events" />
         </LinearLayout>
 
-        <ProgressBar
-            android:id="@+id/loading_more_items_progressbar"
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/events_feed_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/events_reached_bottom_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/events_feed_filter_bar" />
+
+        <TextView
+            android:id="@+id/events_no_events_text"
+            style="@style/LargeText"
+            android:textAlignment="center"
+            android:gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@color/transparent"
+            android:text="@string/no_events"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/events_feed_recycler_view" />
+            app:layout_constraintTop_toBottomOf="@id/events_feed_filter_bar" />
 
         <TextView
-            android:id="@+id/no_more_items_text"
+            android:id="@+id/events_reached_bottom_text"
+            style="@style/LargeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
-            android:text="You reached the Bottom!"
-            android:textColor="@color/interaction"
+            android:background="@color/transparent"
+            android:layout_margin="@dimen/large_margin"
+            android:text="@string/reached_bottom"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/events_feed_recycler_view" />

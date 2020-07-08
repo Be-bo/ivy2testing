@@ -1,4 +1,4 @@
-package com.ivy2testing.home;
+package com.ivy2testing.util;
 
 import android.app.Dialog;
 import android.os.Bundle;
