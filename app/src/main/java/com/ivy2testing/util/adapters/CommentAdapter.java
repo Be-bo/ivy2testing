@@ -80,7 +80,7 @@ public class CommentAdapter extends  RecyclerView.Adapter<CommentAdapter.Comment
         holder.circle_img.setImageDrawable(context.getDrawable(R.drawable.ic_profile_selected));
 
         // Find address of possible image
-        String address = ImageUtils.getPreviewPath(user_id);
+        String address = ImageUtils.getUserImagePreviewPath(user_id);
         if (address.contains("null")){
             Log.e(TAG, "Address contained null! UserId: " + user_id);
             return;

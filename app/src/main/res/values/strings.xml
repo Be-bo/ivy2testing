@@ -47,6 +47,17 @@
     <string name="coming_fall">Coming in Fall 2020</string>
     <string name="author">Author</string>
     <string name="reached_bottom">You\'ve reached the bottom!</string>
+    <string name="show_in_campus_feed">Show in campus feed?</string>
+    <string name="type">Type</string>
+    <string name="show">Show</string>
+    <string name="dont_show">Don\'t show</string>
+    <string name="from_scratch">From scratch</string>
+    <string name="imprt">Import</string>
+    <string name="import_from_another">Import from another platform?</string>
+    <string name="description">Description</string>
+    <string name="pin_event">Pin Event</string>
+    <string name="change_uni_title">Change Campus</string>
+    <string name="confirm">Confirm</string>
 
 
     <!-- User Profile -->
@@ -78,6 +89,9 @@
     <string name="full">Full</string>
     <string name="profile_no_posts">No posts yet!</string>
 
+    <string name="profile_private">This profile is private.</string>
+    <string name="switch_private_profile">Private Profile</string>
+
 
     <!-- Posts and Events -->
     <string name="post_visual">Post Visual</string>
@@ -96,9 +110,20 @@
     <string name="event">Event</string>
     <string name="post_image">Post Image</string>
     <string name="new_post">New Post</string>
-
-
+    <string name="visual">Visual</string>
+    <string name="nothing">Nothing</string>
+    <string name="image">Image</string>
+    <string name="video">Video</string>
+    <string name="gif">GIF</string>
+    <string name="title">Title</string>
+    <string name="location">Location</string>
+    <string name="start_date">Start Date</string>
+    <string name="start_time">Start Time</string>
+    <string name="at">at</string>
+    <string name="end_date">End Date</string>
+    <string name="end_time">End Time</string>
     <string name="error_noComments">No Comments</string>
+    <string name="cant_view_comments">Log in to see the comments!</string>
 
 
     <!-- There is a space before and after each item... using .trim in student signup -->

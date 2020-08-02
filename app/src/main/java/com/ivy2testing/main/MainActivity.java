@@ -11,20 +11,30 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.home.BubbleTabAdapter;
@@ -37,8 +47,12 @@ import com.ivy2testing.terms.TermsActivity;
 import com.ivy2testing.userProfile.OrganizationProfileFragment;
 import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.Constant;
+import com.ivy2testing.util.SpinnerAdapter;
+import com.ivy2testing.util.Utils;
 
 import java.util.ArrayList;
+
+import static com.ivy2testing.util.StaticDomainList.available_domain_list;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -53,9 +67,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private BottomNavigationView bottom_navigation;
     private FrameLayout loading_layout;
     private ImageButton post_button;
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private TextView ham_menu_uni_text;
+    private ImageView ham_memu_uni_image;
 
-    private String user_domain;
+    private StorageReference stor = FirebaseStorage.getInstance().getReference();
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
     private UserViewModel user_view_model;
     private User this_user;
 
@@ -125,13 +141,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-    // MARK: Setup Methods
 
-    private void setUp(){
-        setUpToolbar();
-        setHandlers();
-        attemptLogin();
-    }
+
+
+
+
+
+    // MARK: Menu & Navbar Methods
 
     private void setUpToolbar() {
         Toolbar main_toolbar = findViewById(R.id.main_toolbar_id);
@@ -144,6 +160,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer_nav_view.setNavigationItemSelectedListener(this);
         if (getSupportActionBar() != null) getSupportActionBar().setTitle(null);
         toggle.getDrawerArrowDrawable().setColor(ContextCompat.getColor(this, R.color.interaction));
+
+        View hView =  drawer_nav_view.getHeaderView(0);
+        ham_memu_uni_image = hView.findViewById(R.id.hamburger_menu_imageview);
+        ham_menu_uni_text = hView.findViewById(R.id.hamburger_menu_bottomtext);
+        setDrawerHeader();
+    }
+
+    private void setDrawerHeader(){
+        ham_menu_uni_text.setText(Utils.getCampusUni(this));
+        stor.child("unilogos/"+Utils.getCampusUni(this)+".png").getDownloadUrl().addOnCompleteListener(task -> {
+            if(task.isSuccessful() && task.getResult() != null) Glide.with(this).load(task.getResult()).into(ham_memu_uni_image);
+        });
     }
 
     @Override
@@ -158,6 +186,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.drawer_sign_out_item:
                 if(login_setup) signOut();
                 else Toast.makeText(this, "You are not logged in...", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.drawer_change_campus_item:
+                openUniChangeDialog();
                 break;
         }
         return false;
@@ -179,11 +210,64 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if(auth.getCurrentUser() == null){
                 Intent intent = new Intent(this, LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra("signed_out", true);
                 startActivity(intent);
                 finish();
             }
         });
         auth.signOut();
+    }
+
+    private void openUniChangeDialog() {
+        final Dialog infoDialog = new Dialog(this);
+        infoDialog.setContentView(R.layout.dialog_change_uni);
+        Button okButton = infoDialog.findViewById(R.id.uni_change_dialog_button);
+        Spinner uniSpinner = infoDialog.findViewById(R.id.uni_change_dialog_spinner);
+
+        SpinnerAdapter uniAdapter = new SpinnerAdapter(this, available_domain_list);
+        uniAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        uniSpinner.setAdapter(uniAdapter);
+        uniSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(i != 0) okButton.setEnabled(true);
+                else okButton.setEnabled(false);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) { }
+        });
+
+        okButton.setOnClickListener(view -> {
+            changeCampus(uniAdapter.getItem(uniSpinner.getSelectedItemPosition()));
+            infoDialog.dismiss();
+        });
+        ColorDrawable transparentColor = new ColorDrawable(Color.TRANSPARENT);
+        if (infoDialog.getWindow() != null)
+            infoDialog.getWindow().setBackgroundDrawable(transparentColor);
+        infoDialog.setCancelable(true);
+        infoDialog.show();
+    }
+
+    private void changeCampus(String newUni){
+        Utils.setCampusUni(newUni, this);
+        setDrawerHeader();
+        campus_fragment.changeUni();
+        if(event_fragment != null) event_fragment.changeUni();
+    }
+
+
+
+
+
+
+
+
+    //MARK: Setup Methods
+
+    private void setUp(){
+        setUpToolbar();
+        setHandlers();
+        attemptLogin();
     }
 
     private void setHandlers(){
@@ -259,27 +343,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void attemptLogin(){
         startLoading();
-        loadPreferences();
         user_view_model = new ViewModelProvider(this).get(UserViewModel.class);
-        if(auth.getCurrentUser() != null && auth.getUid() != null && user_domain != null){
-            user_view_model.startListening(auth.getUid(), user_domain);
+        if(auth.getCurrentUser() != null && auth.getUid() != null){
+            user_view_model.startListening(auth.getUid());
             user_view_model.getThis_user().observe(this, (User updatedUser) -> {
                 if(updatedUser != null){
-                    //TODO: deal with banning, age update, notifications, etc.
                     this_user = updatedUser;
-                    if(!login_setup) setUpLoggedInInteraction();
-                    endLoading();
+                    if(this_user.getIs_banned()){
+                        Toast.makeText(this, "Your account has been banned.", Toast.LENGTH_LONG).show();
+                        signOut();
+                    }else{
+                        Utils.setCampusUni(this_user.getUni_domain(), this); //by default for the logged in user we want to display their campus
+                        setDrawerHeader();
+                        if(!login_setup) setUpLoggedInInteraction();
+                        endLoading();
+                    }
                 }
             });
         }else{
             if(!home_setup) homeSetup();
             endLoading();
         }
-    }
-
-    private void loadPreferences() {
-        SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
-        user_domain = sharedPreferences.getString("user_domain", "");
     }
 
     private void bubbleBarSetup(){

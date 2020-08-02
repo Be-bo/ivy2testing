@@ -34,8 +34,8 @@
 
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/viewPost_userImage"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
+                            android:layout_width="@dimen/small_preview_image_dimen"
+                            android:layout_height="@dimen/small_preview_image_dimen"
                             android:src="@drawable/ic_profile_selected"
                             android:contentDescription="@string/profile_pic"
                             android:onClick="viewAuthorProfile"/>
@@ -46,7 +46,7 @@
                             android:layout_height="wrap_content"
                             style="@style/StandardClickableText"
                             android:text="@string/userName"
-                            android:layout_marginStart="8dp"
+                            android:layout_marginStart="@dimen/standard_margin"
                             android:layout_gravity="center"
                             android:onClick="viewAuthorProfile"/>
 
@@ -67,6 +67,7 @@
                     android:layout_gravity="center">
 
                         <TextView
+                            android:id="@+id/viewPost_commentsTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             style="@style/StandardClickableText"
@@ -95,57 +96,57 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:visibility="gone"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                         <androidx.cardview.widget.CardView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="8dp"
-                            app:cardCornerRadius="10dp"
                             android:elevation="2dp"
-                            app:cardBackgroundColor="@color/light_grey">
+                            app:cardBackgroundColor="@color/light_grey"
+                            app:cardCornerRadius="10dp">
 
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_margin="8dp">
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="8dp"
+                                    android:orientation="vertical">
 
-                                <EditText
-                                    android:id="@+id/writeComment_commentText"
-                                    android:layout_width="0dp"
-                                    style="@style/StandardEditText"
-                                    android:hint="@string/write_comment"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintEnd_toStartOf="@id/writeComment_commentButton"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    android:autofillHints=""
-                                    android:inputType="text" />
+                                        <EditText
+                                            android:id="@+id/writeComment_commentText"
+                                            style="@style/StandardEditText"
+                                            android:layout_width="0dp"
+                                            android:autofillHints=""
+                                            android:hint="@string/write_comment"
+                                            android:inputType="text"
+                                            app:layout_constraintEnd_toStartOf="@id/writeComment_commentButton"
+                                            app:layout_constraintStart_toStartOf="parent"
+                                            app:layout_constraintTop_toTopOf="parent" />
 
-                                <ImageButton
-                                    android:id="@+id/writeComment_commentButton"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="0dp"
-                                    style="@style/StandardImageButton"
-                                    android:src="@drawable/ic_send"
-                                    android:onClick="postComment"
-                                    android:contentDescription="@string/write_comment"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintBottom_toBottomOf="parent"/>
+                                        <ImageButton
+                                            android:id="@+id/writeComment_commentButton"
+                                            style="@style/StandardImageButton"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="0dp"
+                                            android:contentDescription="@string/write_comment"
+                                            android:onClick="postComment"
+                                            android:src="@drawable/ic_send"
+                                            app:layout_constraintBottom_toBottomOf="parent"
+                                            app:layout_constraintEnd_toEndOf="parent"
+                                            app:layout_constraintTop_toTopOf="parent" />
 
-                                <ProgressBar
-                                    android:id="@+id/writeComment_loading"
-                                    android:layout_width="20dp"
-                                    android:layout_height="0dp"
-                                    android:visibility="gone"
-                                    style="@style/StandardIndefiniteProgressBar"
-                                    app:layout_constraintEnd_toEndOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    app:layout_constraintBottom_toBottomOf="parent"/>
+                                        <ProgressBar
+                                            android:id="@+id/writeComment_loading"
+                                            style="@style/StandardIndefiniteProgressBar"
+                                            android:layout_width="20dp"
+                                            android:layout_height="0dp"
+                                            android:visibility="gone"
+                                            app:layout_constraintBottom_toBottomOf="parent"
+                                            app:layout_constraintEnd_toEndOf="parent"
+                                            app:layout_constraintTop_toTopOf="parent" />
 
-                        </androidx.constraintlayout.widget.ConstraintLayout>
+                                </androidx.constraintlayout.widget.ConstraintLayout>
 
                         </androidx.cardview.widget.CardView>
 
@@ -155,25 +156,37 @@
                             android:layout_height="wrap_content"
                             android:background="@color/white">
 
-                        <TextView
-                            android:id="@+id/viewPost_commentErrorMsg"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="@string/error_noComments"
-                            android:textColor="@color/grey"
-                            android:visibility="gone"/>
+                                <TextView
+                                    android:id="@+id/viewPost_commentErrorMsg"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="@string/error_noComments"
+                                    android:textColor="@color/grey"
+                                    android:visibility="gone" />
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/viewPost_commentRV"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:visibility="gone"
-                            android:nestedScrollingEnabled="false"/>
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/viewPost_commentRV"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:nestedScrollingEnabled="false"
+                                    android:visibility="gone" />
 
                         </FrameLayout>
 
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/viewPost_cantSeeComments"
+                    style="@style/LargeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/standard_margin"
+                    android:gravity="center"
+                    android:text="@string/cant_view_comments"
+                    android:textAlignment="center"
+                    android:visibility="visible"
+                    android:layout_gravity="center_horizontal" />
 
         </LinearLayout>
 

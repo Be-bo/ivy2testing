@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,7 +32,7 @@ import java.util.List;
  * Overview: an adapter that takes in a list of post ids and constructs square images per post
  * Used in: StudentProfile.Posts
  */
-public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.SquareImgHolder> {
+public class SquarePostAdapter extends RecyclerView.Adapter<SquarePostAdapter.SquareImgHolder> {
     private static final String TAG = "SquareImageAdapterTag";
 
     // Attributes
@@ -54,7 +53,7 @@ public class SquareImageAdapter extends RecyclerView.Adapter<SquareImageAdapter.
 
 
     // Constructors
-    public SquareImageAdapter(String id, String uniDomain, int limit, Context mrContext, OnPostListener listener, List<View> allElems, TextView emptyAdapterText){
+    public SquarePostAdapter(String id, String uniDomain, int limit, Context mrContext, OnPostListener listener, List<View> allElems, TextView emptyAdapterText){
         this.uni_domain = uniDomain;
         this.author_id = id;
         this.context = mrContext;

@@ -37,6 +37,7 @@ import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.userProfile.OrganizationProfileActivity;
 import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.Constant;
+import com.ivy2testing.util.Utils;
 
 import java.util.ArrayList;
 
@@ -61,7 +62,6 @@ public class CampusFragment extends Fragment implements FeedAdapter.FeedClickLis
     private Context context;
     private View root_view;
     private User this_user;
-    private String campus_domain;
 
 
 
@@ -85,13 +85,7 @@ public class CampusFragment extends Fragment implements FeedAdapter.FeedClickLis
 
     public CampusFragment(Context con, User thisUser) {
         context = con;
-        loadUni();
         if(thisUser != null) this_user = thisUser;
-    }
-
-    private void loadUni(){
-        SharedPreferences sharedPreferences = context.getSharedPreferences("shared_preferences", MODE_PRIVATE);
-        campus_domain = sharedPreferences.getString("campus_domain", "ucalgary.ca");
     }
 
     private void declareHandles(){
@@ -102,7 +96,7 @@ public class CampusFragment extends Fragment implements FeedAdapter.FeedClickLis
     }
 
     private void setUpRecycler() {
-        campus_adapter = new FeedAdapter(this, Constant.FEED_ADAPTER_CAMPUS, campus_domain, "", getContext(), no_posts_text, reached_bottom_text);
+        campus_adapter = new FeedAdapter(this, Constant.FEED_ADAPTER_CAMPUS, Utils.getCampusUni(context), "", getContext(), no_posts_text, reached_bottom_text);
         feed_recycler_view.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
         feed_recycler_view.setAdapter(campus_adapter);
     }
@@ -116,6 +110,10 @@ public class CampusFragment extends Fragment implements FeedAdapter.FeedClickLis
 
     public void refreshAdapter(){
         campus_adapter.refreshPosts();
+    }
+
+    public void changeUni(){
+        setUpRecycler();
     }
 
 
@@ -141,21 +139,22 @@ public class CampusFragment extends Fragment implements FeedAdapter.FeedClickLis
         Post clickedPost = campus_adapter.getPost_array_list().get(position); //<- this is the clicked event/post
         switch (clicked_id) {
             case R.id.item_feed_full_text_button:
-                viewPost(clickedPost);
+                viewPost(clickedPost.getUni_domain(), clickedPost.getId());
                 break;
             case R.id.item_feed_posted_by_text:
                 viewUserProfile(clickedPost.getAuthor_id(), clickedPost.getUni_domain(), clickedPost.getAuthor_is_organization());
                 break;
             case R.id.item_feed_pinned_text:
-                //TODO: transition to the post
+                viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id()); //can only pin events to posts on that campus -> same uni
                 break;
         }
     }
 
-    private void viewPost(Post post) { // Transition to a post/event
+    private void viewPost(String uni, String id) { // Transition to a post/event
         Intent intent = new Intent(getActivity(), ViewPostOrEventActivity.class);
         intent.putExtra("this_user", this_user);
-        intent.putExtra("post", post);
+        intent.putExtra("post_id", id);
+        intent.putExtra("post_uni", uni);
         startActivity(intent);
     }
 

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
@@ -16,17 +17,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
-import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.SeeAllPostsActivity;
 import com.ivy2testing.main.SeeAllUsersActivity;
 import com.ivy2testing.userProfile.StudentProfileActivity;
-import com.ivy2testing.util.adapters.CircleImageAdapter;
+import com.ivy2testing.util.adapters.CircleUserAdapter;
 import com.ivy2testing.util.Constant;
 
 import java.text.DateFormat;
@@ -34,18 +33,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
 /** @author Zahra Ghavasieh
  * Overview: Event view fragment
  * Note: Includes text, pinned ID, and event only views
  */
-public class ViewEventFragment extends Fragment implements CircleImageAdapter.OnPersonListener {
+public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnPersonListener {
 
 
     // Constants
-    private final static String TAG = "ViewPostFragment";
+    private final static String TAG = "ViewEventFragmentTag";
     private final static int GOING_LIMIT = 5;
 
     // Views
@@ -54,23 +52,18 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
     private TextView tv_link;
     private TextView tv_description;
     private TextView tv_pinned;
-    private RecyclerView rv_going;
+    private RecyclerView going_recycler;
     private TextView tv_seeAll;
     private ToggleButton button_going;
 
-    // FireBase
+    // Firebase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
     // Other Variables
     private Event event;
-    private User this_user;             // Nullable!
-    private Uri viewer_img;             // Nullable
+    private User this_user;
+    private CircleUserAdapter going_adapter;
 
-    private CircleImageAdapter going_adapter;       // Recycler Adapter for going_ids
-    private LinearLayoutManager layout_man;         // Recycler Layout manager
-    private List<Uri> going_img_uris = new ArrayList<>(6); // non synchronous adds!
-    private int lastUriPosition = 0;                // Pagination: position of last img loaded
 
 
     // Constructor
@@ -95,11 +88,6 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
         return root_view;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        saveEventToDB();  // Save any changes to database
-    }
 
     /* Initialization Methods
 ***************************************************************************************************/
@@ -111,7 +99,7 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
         tv_link = v.findViewById(R.id.viewEvent_link);
         tv_description = v.findViewById(R.id.viewPost_description);
         tv_pinned = v.findViewById(R.id.viewPost_pinned);
-        rv_going = v.findViewById(R.id.viewEvent_goingRecycler);
+        going_recycler = v.findViewById(R.id.viewEvent_goingRecycler);
         tv_seeAll = v.findViewById(R.id.viewEvent_seeAll);
         button_going = v.findViewById(R.id.viewEvent_goingButton);
     }
@@ -138,10 +126,10 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
 
         // Going Users' Recycler View
         setRecyclerVisibility();
-        setRecycler();
+        setUpGoingAdapter();
 
         // Hide button if user is not signed in
-        if (this_user == null){
+        if (this_user == null || !this_user.getUni_domain().equals(event.getUni_domain())){ //either not logged in, or not from this uni -> can't say going
             button_going.setVisibility(View.GONE);
         }
         else if (event.getGoing_ids().contains(this_user.getId())) button_going.setChecked(true);
@@ -154,36 +142,34 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
         tv_seeAll.setOnClickListener(v1 -> seeAllGoingUsers());
         if (button_going.getVisibility() == View.VISIBLE)
             button_going.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) going(); // toggle is enabled
-                else notGoing();        // toggle is disabled
+                if (isChecked) setThisUserGoing(); // toggle is enabled
+                else setThisUserNotGoing();        // toggle is disabled
             });
 
     }
 
     // Set recycler for going users (at this point, going_ids isn't empty!)
-    private void setRecycler(){
-        if(event.getGoing_ids().size() > 0){
-            if(event.getGoing_ids().size() < Constant.PROFILE_MEMBER_LIMIT) going_adapter = new CircleImageAdapter(event.getGoing_ids(), event.getUni_domain(), getContext(), this);
-            else going_adapter = new CircleImageAdapter(event.getGoing_ids().subList(0, Constant.PROFILE_MEMBER_LIMIT), event.getUni_domain(), getContext(), this);
-            rv_going.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL,false){
-                @Override
-                public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
-                    lp.width = getWidth() / Constant.PROFILE_MEMBER_LIMIT;
-                    return true;
-                }
-            });
-            rv_going.setAdapter(going_adapter);
-        }
+    private void setUpGoingAdapter(){
+        if(event.getGoing_ids().size() < Constant.PROFILE_MEMBER_LIMIT) going_adapter = new CircleUserAdapter(event.getGoing_ids(), getContext(), this);
+        else going_adapter = new CircleUserAdapter(event.getGoing_ids().subList(0, Constant.PROFILE_MEMBER_LIMIT), getContext(), this);
+        going_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL,false){
+            @Override
+            public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
+                lp.width = getWidth() / Constant.PROFILE_MEMBER_LIMIT;
+                return true;
+            }
+        });
+        going_recycler.setAdapter(going_adapter);
     }
 
 
     // Set Going recycler visibility
     private void setRecyclerVisibility(){
         if(event.getGoing_ids().size() > 0){
-            rv_going.setVisibility(View.VISIBLE);
+            going_recycler.setVisibility(View.VISIBLE);
             tv_seeAll.setVisibility(View.VISIBLE);
         }else{
-            rv_going.setVisibility(View.GONE);
+            going_recycler.setVisibility(View.GONE);
             tv_seeAll.setVisibility(View.GONE);
         }
     }
@@ -280,29 +266,29 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
     }
 
     // Add user to going list
-    private void going(){
-        event.addGoingIdToList(0, this_user.getId());
-        setRecyclerVisibility();
-
-        // Load viewer preview pic if not done so yet
-
-        //TODO: has to be resolved
-//        if (viewer_img == null) loadUserPic(viewer_id);
-//        else {
-//            going_img_uris.add(0, viewer_img);
-//            going_adapter.notifyItemInserted(0);
-//        }
+    private void setThisUserGoing(){
+        db.collection("universities").document(event.getUni_domain()).collection("posts").document(event.getId()).update("going_ids", FieldValue.arrayUnion(this_user.getId())).addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                going_adapter.addUser(this_user.getId());
+                event.addGoingIdToList(0, this_user.getId());
+                setRecyclerVisibility();
+            }else{
+                Toast.makeText(getContext(), "Failed to add user as going to the event.", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     // Remove user from going list
-    private void notGoing(){
-        event.deleteGoingIdFromList(this_user.getId());
-
-        // Delete viewer preview pic from recycler
-        going_img_uris.remove(viewer_img);
-        going_adapter.notifyItemRemoved(0);
-
-        setRecyclerVisibility();    // Remove Visibility if that was the last person
+    private void setThisUserNotGoing(){
+        db.collection("universities").document(event.getUni_domain()).collection("posts").document(event.getId()).update("going_ids", FieldValue.arrayRemove(this_user.getId())).addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                going_adapter.removeUser(this_user.getId());
+                event.deleteGoingIdFromList(this_user.getId());
+                setRecyclerVisibility();    // Remove Visibility if that was the last person
+            }else{
+                Toast.makeText(getContext(), "Failed to remove user as going to the event.", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
 
@@ -329,21 +315,6 @@ public class ViewEventFragment extends Fragment implements CircleImageAdapter.On
                 Log.e(TAG, "loadEventFromDB: unsuccessful or does not exist.");
             }
         });
-    }
-
-    // Save any changes to event to database
-    private void saveEventToDB() {
-        String address = "universities/" + event.getUni_domain() + "/posts/" + event.getId();
-        if (address.contains("null")){
-            Log.e(TAG, "Event Address has null values. ID:" + event.getId());
-            return;
-        }
-
-        db.document(address).set(event).addOnCompleteListener(task->{
-            if (task.isSuccessful()) Log.d(TAG, "Changes saved to event: " + event.getId());
-            else Log.e(TAG, "Something went wrong when trying to save changes.\n");
-        });
-
     }
 
 /* Utility Methods

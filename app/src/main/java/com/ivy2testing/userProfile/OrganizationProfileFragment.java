@@ -30,8 +30,8 @@ import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
-import com.ivy2testing.util.adapters.CircleImageAdapter;
-import com.ivy2testing.util.adapters.SquareImageAdapter;
+import com.ivy2testing.util.adapters.CircleUserAdapter;
+import com.ivy2testing.util.adapters.SquarePostAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +39,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class OrganizationProfileFragment extends Fragment implements SquareImageAdapter.OnPostListener, CircleImageAdapter.OnPersonListener {
+public class OrganizationProfileFragment extends Fragment implements SquarePostAdapter.OnPostListener, CircleUserAdapter.OnPersonListener {
 
 
     // MARK: Variables and Constants
@@ -60,8 +60,8 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
     private View member_divider;
     private TextView no_posts_text;
 
-    private SquareImageAdapter post_adapter;
-    private CircleImageAdapter person_adapter;
+    private SquarePostAdapter post_adapter;
+    private CircleUserAdapter person_adapter;
     private RecyclerView post_recycler;
     private RecyclerView members_recycler;
 
@@ -157,7 +157,7 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
         String requestNumber = String.valueOf(((Organization)this_user).getRequest_ids().size());
         member_number_text.setText(getString(R.string.organization_member_number, memberNumber));
         member_requests_button.setText(getString(R.string.organization_request_number, requestNumber));
-        String profPicPath = ImageUtils.getProfilePath(this_user.getId());
+        String profPicPath = ImageUtils.getUserImagePath(this_user.getId());
         stor_ref.child(profPicPath).getDownloadUrl().addOnCompleteListener(task -> {if(task.isSuccessful() && getContext() != null) Glide.with(getContext()).load(task.getResult()).into(profile_image);});
     }
 
@@ -180,7 +180,7 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
         allViews.add(see_all_posts_button);
         allViews.add(post_divider);
         allViews.add(post_title);
-        post_adapter = new SquareImageAdapter(this_user.getId(), this_user.getUni_domain(), Constant.PROFILE_POST_LIMIT_ORG, getContext(), this, allViews, no_posts_text);
+        post_adapter = new SquarePostAdapter(this_user.getId(), this_user.getUni_domain(), Constant.PROFILE_POST_LIMIT_ORG, getContext(), this, allViews, no_posts_text);
         post_recycler.setLayoutManager(new GridLayoutManager(getContext(), Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
@@ -197,8 +197,8 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
             members_recycler.setVisibility(View.VISIBLE);
             see_all_members_button.setVisibility(View.VISIBLE);
             member_divider.setVisibility(View.VISIBLE);
-            if(((Organization)this_user).getMember_ids().size() < Constant.PROFILE_MEMBER_LIMIT) person_adapter = new CircleImageAdapter(((Organization)this_user).getMember_ids(), this_user.getUni_domain(), getContext(), this);
-            else person_adapter = new CircleImageAdapter(((Organization)this_user).getMember_ids().subList(0, Constant.PROFILE_MEMBER_LIMIT), this_user.getUni_domain(), getContext(), this);
+            if(((Organization)this_user).getMember_ids().size() < Constant.PROFILE_MEMBER_LIMIT) person_adapter = new CircleUserAdapter(((Organization)this_user).getMember_ids(), getContext(), this);
+            else person_adapter = new CircleUserAdapter(((Organization)this_user).getMember_ids().subList(0, Constant.PROFILE_MEMBER_LIMIT), getContext(), this);
             members_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL,false){
                 @Override
                 public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
@@ -218,8 +218,9 @@ public class OrganizationProfileFragment extends Fragment implements SquareImage
     @Override
     public void onPostClick(int position) {
         Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
-        intent.putExtra("viewer_id", this_user.getId());
-        intent.putExtra("post", post_adapter.getItem(position));
+        intent.putExtra("this_user", this_user);
+        intent.putExtra("post_id", post_adapter.getItem(position).getId());
+        intent.putExtra("post_uni", post_adapter.getItem(position).getUni_domain());
         startActivity(intent);
     }
 

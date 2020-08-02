@@ -60,12 +60,16 @@ public final class ImageUtils {
     }
 
     // Return path of a user's preview image
-    public static String getPreviewPath(String user_id) {
+    public static String getUserImagePreviewPath(String user_id) {
         return "userfiles/" + user_id + "/previewimage.jpg";
     }
 
     // Return path of a user's profile image
-    public static String getProfilePath(String user_id) {
+    public static String getUserImagePath(String user_id) {
         return "userfiles/" + user_id + "/profileimage.jpg";
+    }
+
+    public static String getPostPreviewPath(String postId){
+        return "postfiles/" + postId + "/previewimage.jpg";
     }
 }

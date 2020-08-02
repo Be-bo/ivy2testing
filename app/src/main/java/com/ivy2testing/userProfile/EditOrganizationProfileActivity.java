@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +22,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -91,7 +93,7 @@ public class EditOrganizationProfileActivity extends AppCompatActivity {
                 public void afterTextChanged(Editable editable) { }
             });
             String profPicPath = "userfiles/"+this_user.getId()+"/profileimage.jpg";
-            base_storage_ref.child(profPicPath).getDownloadUrl().addOnCompleteListener(uriTask -> { if(uriTask.isSuccessful()) Glide.with(this).load(uriTask.getResult()).into(profile_image);});
+            base_storage_ref.child(profPicPath).getDownloadUrl().addOnCompleteListener(uriTask -> { if(uriTask.isSuccessful() && uriTask.getResult() != null) Glide.with(this).load(uriTask.getResult()).into(profile_image);});
             change_pic_button.setOnClickListener(view -> changeProfPic());
             bafe_sutton.setOnClickListener(view -> saveChanges());
         }
@@ -99,8 +101,11 @@ public class EditOrganizationProfileActivity extends AppCompatActivity {
 
     private void saveChanges(){
         startLoading();
-        base_database_ref.collection("universities").document(this_user.getUni_domain()).collection("users").document(this_user.getId()).update("name", name_edittext.getText().toString()).addOnCompleteListener(task -> {
+        boolean nameChanged = !name_edittext.getText().toString().equals(this_user.getName());
+        base_database_ref.collection("users").document(this_user.getId()).update("name", name_edittext.getText().toString()).addOnCompleteListener(task -> {
            if(task.isSuccessful()){
+               this_user.setName(name_edittext.getText().toString());
+               if(nameChanged) updatePosts();
                if(prof_pic_changed && standard_bytes != null && preview_bytes != null){
                    String profPicPath = "userfiles/" + this_user.getId() + "/profileimage.jpg";
                    String previewPath = "userfiles/" + this_user.getId() + "/previewimage.jpg";
@@ -128,6 +133,17 @@ public class EditOrganizationProfileActivity extends AppCompatActivity {
                Toast.makeText(this, "Failed to save name. :-(", Toast.LENGTH_LONG).show();
                endLoading();
            }
+        });
+    }
+
+    private void updatePosts(){// Update posts associated with org if org name has changed
+        String address = "universities/" + this_user.getUni_domain() + "/posts";
+        base_database_ref.collection(address).whereEqualTo("author_id", this_user.getId())
+                .get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null){
+                for (DocumentSnapshot doc : task.getResult())
+                    doc.getReference().update("author_name",this_user.getName());
+            }
         });
     }
 

@@ -24,6 +24,7 @@ public class User implements Parcelable {
     protected boolean is_organization;
     protected boolean is_club;
     protected boolean is_banned = false;
+    protected boolean is_private = false;
     protected String registration_platform = "Android";
 
     /* Constructors
@@ -103,8 +104,11 @@ public class User implements Parcelable {
         return is_club;
     }
 
+    public boolean isIs_private() {
+        return is_private;
+    }
 
-/* Setters
+    /* Setters
 ***************************************************************************************************/
 
     public void setId(String id) {
@@ -124,8 +128,11 @@ public class User implements Parcelable {
         this.uni_domain = domain;
     }
 
+    public void setIs_private(boolean is_private) {
+        this.is_private = is_private;
+    }
 
-/* Parcelable Methods
+    /* Parcelable Methods
  ***************************************************************************************************/
 
     protected User(Parcel in) {
@@ -138,6 +145,7 @@ public class User implements Parcelable {
         is_organization = in.readByte() != 0;
         is_club = in.readByte() != 0;
         is_banned = in.readByte() != 0;
+        is_private = in.readByte() != 0;
         registration_platform = in.readString();
     }
 
@@ -169,6 +177,7 @@ public class User implements Parcelable {
         dest.writeByte((byte) (is_organization ? 1 : 0));
         dest.writeByte((byte) (is_club ? 1 : 0));
         dest.writeByte((byte) (is_banned ? 1 : 0));
+        dest.writeByte((byte) (is_private ? 1 : 0));
         dest.writeString(registration_platform);
     }
 }

@@ -6,6 +6,8 @@ package com.ivy2testing.util;
  */
 public final class Constant {
 
+    public static final String DEFAULT_UNI = "ucalgary.ca";
+
     // Request Codes
     public static final int PICK_IMAGE_REQUEST_CODE = 101;
     public static final int EDIT_STUDENT_REQUEST_CODE = 102;

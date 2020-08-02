@@ -82,7 +82,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         holder.circle_img.setImageDrawable(context.getDrawable(R.drawable.ic_profile_selected));
 
         // Find address of possible image
-        String address = ImageUtils.getPreviewPath(user.getId());
+        String address = ImageUtils.getUserImagePreviewPath(user.getId());
         if (address.contains("null")){
             Log.e(TAG, "Address contained null! UserId: " + user.getId());
             return;

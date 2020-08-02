@@ -51,15 +51,10 @@ public class LoginActivity extends AppCompatActivity {
     private Button login_button;
     private ProgressBar progress_bar;
     private TextView resend_email_textview;
-    private Spinner uni_spinner;
-    private Switch org_switch;
-    private List<String> available_domains = Arrays.asList(available_domain_list);
 
     // Firebase
     private FirebaseAuth auth = FirebaseAuth.getInstance();
 
-    // Other variables
-    private String currentDomain = "";
 
 
 
@@ -85,8 +80,6 @@ public class LoginActivity extends AppCompatActivity {
         allowInteraction();
         setTextWatcher();
         setFocusListener();
-        setUpSpinner();
-        setSwitchListener();
     }
 
 
@@ -110,8 +103,6 @@ public class LoginActivity extends AppCompatActivity {
         password_edittext = findViewById(R.id.login_password);
         login_button = findViewById(R.id.login_logInButton);
         progress_bar = findViewById(R.id.login_progressBar);
-        uni_spinner = findViewById(R.id.login_uni_spinner);
-        org_switch = findViewById(R.id.login_org_switch);
         resend_email_textview = findViewById(R.id.login_resendEmail);
         progress_bar.setVisibility(View.GONE);
     }
@@ -146,32 +137,6 @@ public class LoginActivity extends AppCompatActivity {
             checkInput();
         });
     }
-
-    private void setSwitchListener(){
-        org_switch.setOnCheckedChangeListener(((compoundButton, b) -> {
-            if(b) uni_spinner.setVisibility(View.VISIBLE);
-            else uni_spinner.setVisibility(View.GONE);
-            checkInput();
-        }));
-    }
-
-    private void setUpSpinner(){
-        SpinnerAdapter uni_adapter = new SpinnerAdapter(this, available_domain_list);
-        uni_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        uni_spinner.setAdapter(uni_adapter);
-        uni_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                checkInput();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                checkInput();
-            }
-        });
-    }
-
 
 
 
@@ -242,16 +207,6 @@ public class LoginActivity extends AppCompatActivity {
         return password.length() > 5;
     }
 
-    private boolean uniOk(){
-        if(org_switch.isChecked()){
-            currentDomain = uni_spinner.getSelectedItem().toString();
-        }else{
-            String email = email_edittext.getText().toString();
-            currentDomain = email.substring(email.indexOf("@") + 1).trim();
-        }
-        return available_domains.contains(currentDomain) && !currentDomain.equals("university");
-    }
-
     private boolean allInputOk(){
         if(emptyFields()){
             setInputErrors(email_edittext, "Some fields are empty");
@@ -265,10 +220,10 @@ public class LoginActivity extends AppCompatActivity {
             setInputErrors(password_edittext, "Invalid password format");
             return false;
         }
-        if(!uniOk()){
-            setInputErrors(email_edittext, "Invalid domain or domain selection");
-            return false;
-        }
+//        if(!uniOk()){
+//            setInputErrors(email_edittext, "Invalid domain or domain selection");
+//            return false;
+//        }
         return true;
     }
 
@@ -305,7 +260,6 @@ public class LoginActivity extends AppCompatActivity {
                 if(user!=null && user.isEmailVerified()){
                     // Save uni domain for auto-logins and send off to MainActivity
                     barInteraction();
-                    savePreferences();
                     transToMainLoggedIn();
                 }
                 else {
@@ -374,22 +328,24 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    // Save preferences for auto-login
-    private void savePreferences(){
-        SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("user_domain", currentDomain);
-        editor.putString("campus_domain", currentDomain);
-        editor.apply();
-    }
-
     // Go back to main activity
     private void transToMainLoggedIn(){
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("result_ok", true);
-        setResult(RESULT_OK, returnIntent);
-        finish();
-        allowInteraction();
+        boolean signedOut = getIntent().getBooleanExtra("signed_out", false);
+        if(!signedOut){ //the user came in from Main where they weren't signed in
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("result_ok", true);
+            setResult(RESULT_OK, returnIntent);
+            finish();
+            allowInteraction();
+        }else{ //the user is changing accounts (i.e. they used the sign out option)
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("result_ok", true);
+            setResult(RESULT_OK, intent);
+            startActivity(intent);
+            finish();
+            allowInteraction();
+        }
+
     }
 
 

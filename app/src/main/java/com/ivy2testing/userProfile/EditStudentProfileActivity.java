@@ -22,18 +22,20 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
+import com.ivy2testing.entities.User;
 import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
@@ -43,7 +45,10 @@ import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /** @author Zahra Ghavasieh
@@ -52,7 +57,7 @@ import java.util.Calendar;
 public class EditStudentProfileActivity extends AppCompatActivity {
 
     // Constants
-    private final static String TAG = "EditStudProfileActivity";
+    private final static String TAG = "EditStudProfileActivityTag";
 
     // Views
     private ImageView mImg;
@@ -61,14 +66,19 @@ public class EditStudentProfileActivity extends AppCompatActivity {
     private DatePicker mBirthDay;
     private Button mSaveButton;
     private ProgressBar mProgressBar;
+    private Switch privateSwitch;
 
     // Firebase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
     // Other Variables
-    private Student student;
+    private Student this_student;
     private Uri imgUri;
+
+
+
+
 
 
 /* Override Methods
@@ -121,15 +131,17 @@ public class EditStudentProfileActivity extends AppCompatActivity {
     }
 
 
+
+
+
+
 /* Initialization Methods
 ***************************************************************************************************/
 
     // Get student values
     private void getIntentExtras() {
-        if(getIntent() != null)
-            student = getIntent().getParcelableExtra("student");
-
-        if (student == null) {
+        if(getIntent() != null) this_student = getIntent().getParcelableExtra("student");
+        if (this_student == null) {
             Log.e(TAG, "Student Parcel was null!");
             backToMain();
         }
@@ -142,6 +154,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
         mBirthDay = findViewById(R.id.editStudent_birthdayDatePicker);
         mSaveButton = findViewById(R.id.editStudent_saveButton);
         mProgressBar = findViewById(R.id.editStudent_progressBar);
+        privateSwitch = findViewById(R.id.editStudent_privateSwitch);
         setTitle(R.string.editProfile);     // ActionBar Title
 
         // Create and apply a degree adapter to the spinner
@@ -154,11 +167,11 @@ public class EditStudentProfileActivity extends AppCompatActivity {
     // Preset fields with current Student info
     private void setFields() {
         loadImage();                                                // Image
-        mName.setText(student.getName());                           // Name
-        millisToDatePicker(mBirthDay, student.getBirth_millis());   // Calendar
+        mName.setText(this_student.getName());                           // Name
+        millisToDatePicker(mBirthDay, this_student.getBirth_millis());   // Calendar
+        if(this_student.isIs_private()) privateSwitch.setChecked(true);
 
-        // Spinner
-        int degreeIndex = findStringPosition(student.getDegree().trim(), getResources().getStringArray(R.array.degree_list));
+        int degreeIndex = findStringPosition(this_student.getDegree().trim(), getResources().getStringArray(R.array.degree_list)); // Spinner
         if (degreeIndex != -1) mDegree.setSelection(degreeIndex);
     }
 
@@ -170,7 +183,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!student.getName().contentEquals(s)) mSaveButton.setEnabled(nameOk());
+                if (!this_student.getName().contentEquals(s)) mSaveButton.setEnabled(nameOk());
             }
 
             @Override
@@ -189,7 +202,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
     private void setBirthDayChangeListener(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mBirthDay.setOnDateChangedListener((view, year, monthOfYear, dayOfMonth) -> {
-                if (student.getBirth_millis() != datePickerToMillis(view)) mSaveButton.setEnabled(true);
+                if (this_student.getBirth_millis() != datePickerToMillis(view)) mSaveButton.setEnabled(true);
             });
         }
     }
@@ -199,13 +212,18 @@ public class EditStudentProfileActivity extends AppCompatActivity {
         mDegree.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (student.getDegree() != mDegree.getSelectedItem()) mSaveButton.setEnabled(degreeOk());
+                if (this_student.getDegree() != mDegree.getSelectedItem()) mSaveButton.setEnabled(degreeOk());
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) { }
         });
     }
+
+
+
+
+
 
 /* OnClick Methods
 ***************************************************************************************************/
@@ -224,13 +242,17 @@ public class EditStudentProfileActivity extends AppCompatActivity {
 
         // Save to student
         if (nameOk() && degreeOk()) {
-            String old_name = student.getName();
-            student.setName(mName.getText().toString().trim());
-            student.setBirth_millis(datePickerToMillis(mBirthDay));
-            if (!degree.equals("Degree")) student.setDegree(degree);
-            saveImage(old_name.equals(student.getName()));    // Save to database
+            String old_name = this_student.getName();
+            this_student.setName(mName.getText().toString().trim());
+            this_student.setBirth_millis(datePickerToMillis(mBirthDay));
+            this_student.setIs_private(privateSwitch.isChecked());
+            if (!degree.equals("Degree")) this_student.setDegree(degree);
+            saveData(!old_name.equals(this_student.getName()));    // Save to database
         }
-        else allowInteraction(); // There was an error. So try Again!
+        else{
+            Toast.makeText(this, "Name or degree aren't ok.", Toast.LENGTH_LONG).show();
+            allowInteraction(); // There was an error. So try Again!
+        }
     }
 
     // OnClick for edit image (upload an image from gallery)
@@ -245,6 +267,13 @@ public class EditStudentProfileActivity extends AppCompatActivity {
         // onActivityResult is triggered when coming back
         startActivityForResult(intent, Constant.PICK_IMAGE_REQUEST_CODE);
     }
+
+
+
+
+
+
+
 
 /* Input Checking Methods
 ***************************************************************************************************/
@@ -264,6 +293,12 @@ public class EditStudentProfileActivity extends AppCompatActivity {
     private boolean degreeOk() {
         return !mDegree.getSelectedItem().toString().trim().equals("Degree");
     }
+
+
+
+
+
+
 
 
 /* Transition Methods
@@ -299,13 +334,79 @@ public class EditStudentProfileActivity extends AppCompatActivity {
     }
 
 
+
+
+
+
+
+
 /* Firebase Related Methods
 ***************************************************************************************************/
+
+    private void saveData(boolean nameChanged){
+        String address = "users/" + this_student.getId();
+        if (address.contains("null")){
+            Log.e(TAG, "Student Address has null values.");
+            return;
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> updatMap = objectMapper.convertValue(this_student, Map.class);
+        db.document(address).update(updatMap).addOnCompleteListener(task -> { // Save student info in /users
+            if (task.isSuccessful()){
+                if(nameChanged) updatePosts();
+                if (imgUri != null) saveImage(); //if img changed, save it
+                else{
+                    allowInteraction();
+                    backToMain();
+                }
+            } else Toast.makeText(this, "Failed to save data! Try again later.", Toast.LENGTH_LONG).show();
+        });
+    }
+
+    private void updatePosts(){ // Update posts associated with Student if student name has changed
+        String address = "universities/" + this_student.getUni_domain() + "/posts";
+        db.collection(address).whereEqualTo("author_id", this_student.getId()).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null){
+                    for (DocumentSnapshot doc : task.getResult()) doc.getReference().update("author_name", this_student.getName());
+                } else Log.e(TAG, "Post Update unsuccessful, or Student has no posts");
+            });
+    }
+
+    private void saveImage(){ // Rewrite old Pic and save to storage
+        // Build storage path
+        String profPicPath = ImageUtils.getUserImagePath(this_student.getId());
+        String previewPath = ImageUtils.getUserImagePreviewPath(this_student.getId());
+
+        try {
+            // Compress image for preview and profile view
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imgUri);
+            byte[] previewBytes = ImageUtils.compressAndGetPreviewBytes(bitmap);
+            byte[] standardBytes = ImageUtils.compressAndGetBytes(bitmap);
+
+            base_storage_ref.child(profPicPath).putBytes(standardBytes).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    base_storage_ref.child(previewPath).putBytes(previewBytes).addOnCompleteListener(task1 -> {
+                        if(task1.isSuccessful()){
+                            allowInteraction();
+                            backToMain();
+                        }
+                        else Toast.makeText(this, "Failed to save image. :-(", Toast.LENGTH_LONG).show();
+                    });
+                } else {
+                    Toast.makeText(this, "Failed to save image. :-(", Toast.LENGTH_LONG).show();
+                }
+            });
+        } catch (IOException e) {
+            Toast.makeText(this, "Failed to save image. :-(", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+    }
 
     // Load student profile picture
     // Will throw an exception if file doesn't exist in storage but app continues to work fine
     private void loadImage(){
-        base_storage_ref.child(ImageUtils.getProfilePath(student.getId())).getDownloadUrl()
+        base_storage_ref.child(ImageUtils.getUserImagePath(this_student.getId())).getDownloadUrl()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()){
                         Uri path = task.getResult();
@@ -316,76 +417,11 @@ public class EditStudentProfileActivity extends AppCompatActivity {
                 });
     }
 
-    // Rewrite old student document with new info
-    private void saveStudentInfo(boolean name_changed){
-        String address = "universities/" + student.getUni_domain() + "/users/" + student.getId();
-        if (address.contains("null")){
-            Log.e(TAG, "Student Address has null values.");
-            return;
-        }
 
-        // Save student info in /users
-        db.document(address).set(student).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) Log.d(TAG, "Changes saved.");
-            else Log.e(TAG, "Something went wrong when trying to save changes.\n" + task.getException());
-            allowInteraction();
-            backToMain();
-        });
 
-        // No need to worry about posts and comments if name hasn't changed
-        if (!name_changed) return;
 
-        // Update posts associated with Student if student name has changed
-        address = "universities/" + student.getUni_domain() + "/posts";
-        db.collection(address).whereEqualTo("author_id", student.getId())
-            .get().addOnCompleteListener(task -> {
-                if (task.isSuccessful() && task.getResult() != null){
-                    for (DocumentSnapshot doc : task.getResult())
-                        doc.getReference().update("author_name",student.getName());
-                } else Log.e(TAG, "Post Update unsuccessful, or Student has no posts");
-            });
-    }
 
-    // Rewrite old Pic and save to storage
-    private void saveImage(boolean name_changed){
 
-        // Skip image saving if image hasn't changed
-        if (imgUri == null){
-            saveStudentInfo(name_changed);
-            return;
-        }
-
-        // Build storage path
-        String profPicPath = ImageUtils.getProfilePath(student.getId());
-        String previewPath = ImageUtils.getPreviewPath(student.getId());
-
-        try {
-            // Compress image for preview and profile view
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imgUri);
-            byte[] previewBytes = ImageUtils.compressAndGetPreviewBytes(bitmap);
-            byte[] standardBytes = ImageUtils.compressAndGetBytes(bitmap);
-
-            base_storage_ref.child(profPicPath).putBytes(standardBytes).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Log.d(TAG, "Profile Image saved successfully.");
-                    base_storage_ref.child(previewPath).putBytes(previewBytes).addOnCompleteListener(task1 -> {
-
-                        if(task1.isSuccessful()) Log.d(TAG, "Preview Image saved successfully.");
-                        else Toast.makeText(this, "Failed to save image. :-(", Toast.LENGTH_LONG).show();
-
-                        saveStudentInfo(name_changed); // Save student Info either way
-                    });
-                } else {
-                    Toast.makeText(this, "Failed to save image. :-(", Toast.LENGTH_LONG).show();
-                    saveStudentInfo(name_changed);  // Save student info either way
-                }
-            });
-        } catch (IOException e) {
-            Toast.makeText(this, "Failed to save image. :-(", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-            saveStudentInfo(name_changed);  // Save student info either way
-        }
-    }
 
 
 /* Utility Methods

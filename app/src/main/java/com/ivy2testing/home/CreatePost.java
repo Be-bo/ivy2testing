@@ -82,6 +82,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     // import
     private Button from_scratch_button;
     private Button import_button;
+    private TextView import_coming_soon_text;
 
     // visual
     private Button nothing_button;
@@ -91,7 +92,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
 
     // visual uploads
     private ImageView image_upload_view;
-    private TextView video_upload_view;
+    private TextView coming_soon_textview;
     private ImageView gif_upload_view;
 
     // edit text
@@ -115,8 +116,8 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     private Post current_post;
     private Event current_event;
 
-
     // event items
+    private ConstraintLayout pinned_layout;
     private ConstraintLayout event_fields;
     private EditText title_editText;
     private EditText location_editText;
@@ -202,10 +203,12 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         video_button = findViewById(R.id.video_button);
         gif_button = findViewById(R.id.gif_button);
         description_edit_text = findViewById(R.id.description_edittext);
+        pinned_layout = findViewById(R.id.pin_event_constraint);
+        import_coming_soon_text = findViewById(R.id.import_coming_soon_textview);
 
         //media views
         image_upload_view = findViewById(R.id.image_imageview);
-        video_upload_view = findViewById(R.id.video_coming_soon_textview);
+        coming_soon_textview = findViewById(R.id.coming_soon_textview);
         gif_upload_view = findViewById(R.id.gif_imageview);
 
         // event fields
@@ -255,8 +258,14 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
             swap_campus_feed();
         });
 
-        from_scratch_button.setOnClickListener(v -> toggleEnabled(from_scratch_button, import_button));
-        import_button.setOnClickListener(v -> toggleEnabled(from_scratch_button, import_button));
+        from_scratch_button.setOnClickListener(v ->{
+            import_coming_soon_text.setVisibility(View.GONE);
+            toggleEnabled(from_scratch_button, import_button);
+        });
+        import_button.setOnClickListener(v ->{
+            import_coming_soon_text.setVisibility(View.VISIBLE);
+            toggleEnabled(from_scratch_button, import_button);
+        });
         nothing_button.setOnClickListener(v -> toggleEnabled(nothing_button));
         image_button.setOnClickListener(v -> {
             picSelect();
@@ -270,7 +279,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         });
 
         image_upload_view.setOnClickListener(v -> picSelect());
-        video_upload_view.setOnClickListener(v -> {
+        coming_soon_textview.setOnClickListener(v -> {
         });
         gif_upload_view.setOnClickListener(v -> gifSelect());
 
@@ -326,10 +335,12 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
             current_event = new Event(current_post);
             current_post = null;
             event_fields.setVisibility(View.VISIBLE);
+            pinned_layout.setVisibility(View.GONE);
         } else if (current_event != null) {
             current_post = new Post(current_event);
             current_event = null;
             event_fields.setVisibility(View.GONE);
+            pinned_layout.setVisibility(View.VISIBLE);
         } else Log.e("CreatePost", "Both current_event and current_post are null!");
     }
 
@@ -384,12 +395,14 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         } else if (btn == image_button) {
             clearViews();
             image_upload_view.setVisibility(View.VISIBLE);
-        } else if (btn == video_button) {
+        } else if (btn == video_button
+        || btn == gif_button
+        ) {
             clearViews();
-            video_upload_view.setVisibility(View.VISIBLE);
+            coming_soon_textview.setVisibility(View.VISIBLE);
         } else {
             clearViews();
-            gif_upload_view.setVisibility(View.VISIBLE);
+//            gif_upload_view.setVisibility(View.VISIBLE);
         }
     }
 
@@ -411,7 +424,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     // clears all media upload views
     private void clearViews() {
         image_upload_view.setVisibility(View.GONE);
-        video_upload_view.setVisibility(View.GONE);
+        coming_soon_textview.setVisibility(View.GONE);
         gif_upload_view.setVisibility(View.GONE);
     }
 
@@ -432,11 +445,10 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     // starts activity for result
     //TODO gifs can be selected but wont upload to the db
     private void gifSelect() {
-        Intent intent = new Intent();
-        // allows any file with gif filetype to be selected
-        intent.setType("image/gif");
-        intent.setAction(Intent.ACTION_PICK);
-        startActivityForResult(Intent.createChooser(intent, "Select Gif"), PICK_GIF_PHONE);
+//        Intent intent = new Intent();
+//        intent.setType("image/gif");
+//        intent.setAction(Intent.ACTION_PICK);
+//        startActivityForResult(Intent.createChooser(intent, "Select Gif"), PICK_GIF_PHONE);
     }
 
 
@@ -638,7 +650,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                     Toast.makeText(CreatePost.this, "Posted!", Toast.LENGTH_SHORT).show();
 
                     //new post's id also has to be added to this user's post_ids - Robert's Addition
-                    db_reference.collection("universities").document(this_user.getUni_domain()).collection("users").document(this_user.getId()).update("post_ids", FieldValue.arrayUnion(current_post.getId()))
+                    db_reference.collection("users").document(this_user.getId()).update("post_ids", FieldValue.arrayUnion(current_post.getId()))
                             .addOnCompleteListener(task -> {
                                 if(task.isSuccessful()){
                                     setResult(RESULT_OK);
@@ -923,58 +935,3 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     }
 
 }
-
-
-
-
-// previous compression methods/ bitmap to byte array method
-
-/*   //compression methods
-    // https://stackoverflow.com/questions/51919925/compress-bitmap-to-a-specific-byte-size-in-android
-    *//* ************************************************************************************************** *//*
-    private Bitmap compressionHandler() throws IOException {
-        // restructures uri to bitmap
-        Bitmap initial_bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), pic_selected);
-        //Toast.makeText(this, "initial" +initial_bitmap.getByteCount(), Toast.LENGTH_LONG).show();
-
-        // currently checks if images are larger than 1mb, resizes if so
-        // WHAT IF STILL OVER 1.5 MEGS WHEN RESIZED
-        if (initial_bitmap.getByteCount() > 1000000) {
-            // reusing initial bitmap memory... but it is resized to be max 500 px
-            initial_bitmap = getResizedBitmap(initial_bitmap, 500);
-            //Toast.makeText(this, "Resized" +initial_bitmap.getByteCount(), Toast.LENGTH_LONG).show();
-        }
-        return initial_bitmap;
-    }
-
-    //temporary compression methods
-
-    public static Bitmap getResizedBitmap(Bitmap image, int maxSize) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        float bitmapRatio = (float) width / (float) height;
-        if (bitmapRatio > 1) {
-            width = maxSize;
-            height = (int) (width / bitmapRatio);
-        } else {
-            height = maxSize;
-            width = (int) (height * bitmapRatio);
-        }
-        return Bitmap.createScaledBitmap(image,
-                width,
-                height,
-                true);
-    }
-
-    // converts a bitmap to to a byte array, and format JPEG, quality remains at 100 to prevent further loss
-    //https://stackoverflow.com/questions/4989182/converting-java-bitmap-to-byte-array
-    private byte[] bmpToByteArray(Bitmap bmp) throws IOException {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-        bmp.recycle();
-        stream.close();
-
-        return byteArray;
-    }*/

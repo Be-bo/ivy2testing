@@ -27,11 +27,10 @@ import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
-import com.ivy2testing.util.adapters.SquareImageAdapter;
+import com.ivy2testing.util.adapters.SquarePostAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /** @author Zahra Ghavasieh
@@ -41,7 +40,7 @@ import java.util.List;
 public class StudentProfileFragment extends Fragment {
 
     // Constants
-    private final static String TAG = "StudentProfileFragment";
+    private final static String TAG = "StudentProfileFragmentTag";
 
     private View root_view;
 
@@ -59,7 +58,7 @@ public class StudentProfileFragment extends Fragment {
 
     // Other Variables
     private Student student;
-    private SquareImageAdapter adapter;
+    private SquarePostAdapter adapter;
     private Uri profile_img_uri;
     private boolean is_set_up = false;
 
@@ -84,13 +83,6 @@ public class StudentProfileFragment extends Fragment {
         is_set_up = true;
         if (student == null) getUserProfile();
         else setUpElements();
-
-        //TODO: remove
-        Intent intent = new Intent(getContext(), OrganizationProfileActivity.class);
-        intent.putExtra("this_user", student);
-        intent.putExtra("org_to_display_id", "Z2xem5pMPsQzQqA27ZMpNJ6dcP82");
-        intent.putExtra("org_to_display_uni", "ucalgary.ca");
-        startActivity(intent);
     }
 
     @Override
@@ -126,6 +118,7 @@ public class StudentProfileFragment extends Fragment {
             user_view_model.getThis_user().observe(getActivity(), (User updatedProfile) -> {
                 if (updatedProfile instanceof Student){
                     student = (Student) updatedProfile;   // Update student
+                    Log.d(TAG, "updated: "+student.isIs_private());
                     getStudentPic();            // Do Other setups
                 }
             });
@@ -166,7 +159,7 @@ public class StudentProfileFragment extends Fragment {
         allViews.add(post_recycler);
         allViews.add(seeall_posts);
         allViews.add(post_title);
-        adapter = new SquareImageAdapter(student.getId(), student.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, getContext(), this::onPostClick, allViews, no_posts_text);
+        adapter = new SquarePostAdapter(student.getId(), student.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, getContext(), this::onPostClick, allViews, no_posts_text);
         post_recycler.setLayoutManager(new GridLayoutManager(getContext(), Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
@@ -191,14 +184,8 @@ public class StudentProfileFragment extends Fragment {
     // Edit profile
     private void editProfile(){
         Intent intent = new Intent(getActivity(), EditStudentProfileActivity.class);
-        Log.d(TAG, "Starting EditProfile Activity for student: " + student.getId());
         intent.putExtra("student", student);
-
-        // onActivityResult in MainActivity gets called!
-        if (getActivity() != null)
-            startActivityForResult(intent, Constant.EDIT_STUDENT_REQUEST_CODE);
-        else
-            Log.e(TAG, "getActivity() was null when calling EditProfile.");
+        startActivity(intent);
     }
 
     // See all posts
@@ -215,8 +202,8 @@ public class StudentProfileFragment extends Fragment {
     public void onPostClick(int position) {
         Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
         intent.putExtra("this_user", student);
-        intent.putExtra("uni_domain", student.getUni_domain());
-        intent.putExtra("post", adapter.getItem(position));
+        intent.putExtra("post_uni", adapter.getItem(position).getUni_domain());
+        intent.putExtra("post_id", adapter.getItem(position).getId());
         startActivity(intent);
     }
 
@@ -228,7 +215,7 @@ public class StudentProfileFragment extends Fragment {
     private void getStudentPic() {
         if (student == null) return;
 
-        base_storage_ref.child(ImageUtils.getProfilePath(student.getId())).getDownloadUrl()
+        base_storage_ref.child(ImageUtils.getUserImagePath(student.getId())).getDownloadUrl()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) profile_img_uri = task.getResult();
                     else Log.w(TAG, task.getException());

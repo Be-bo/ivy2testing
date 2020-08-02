@@ -17,6 +17,7 @@
     <!-- Space between most views (paragraphs, buttons etc) -->
 
     <dimen name="preview_profile_image_dimen">70dp</dimen>
+    <dimen name="small_preview_image_dimen">30dp</dimen>
     <dimen name="image_button_width_height">40dp</dimen>
     <dimen name="preview_square_post_image_width_height">70dp</dimen>
 

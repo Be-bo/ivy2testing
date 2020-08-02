@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -33,7 +32,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.util.SpinnerAdapter;
-import com.ivy2testing.util.StaticDomainList;
 
 import java.util.Objects;
 
@@ -323,8 +321,7 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
                     orgUser.setUni_domain(uni_spinner.getSelectedItem().toString());
                     orgUser.setMessaging_token(task.getResult().getToken());
 
-                    dbRef.collection("universities").document(orgUser.getUni_domain()).collection("users").document(id).set(orgUser)
-                            .addOnCompleteListener(task1 -> {
+                    dbRef.collection("users").document(id).set(orgUser).addOnCompleteListener(task1 -> {
                                 if (task1.isSuccessful()) openDialogComplete();
                                 else {
                                     Toast.makeText(getApplicationContext(), "Profile creation failed. Please try again later.", Toast.LENGTH_LONG).show();
@@ -380,7 +377,7 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
     private void openDialogComplete() {
         allowInteraction();
         final Dialog infoDialog = new Dialog(this);
-        infoDialog.setContentView(R.layout.activity_signup_dialog);
+        infoDialog.setContentView(R.layout.dialog_signup_success);
         Button okButton = infoDialog.findViewById(R.id.positive_button);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -80,7 +80,8 @@ public class SeeAllPostsActivity extends AppCompatActivity implements FeedAdapte
             uni_domain = getIntent().getStringExtra("uni_domain");          // Uni_domain of posts to display
             author_id = getIntent().getStringExtra("author_id");
 
-            if (author_id == null || uni_domain == null || this_user == null) {
+            if (author_id == null || uni_domain == null) {
+
                 finish();
             }
             else return true;
@@ -105,7 +106,7 @@ public class SeeAllPostsActivity extends AppCompatActivity implements FeedAdapte
 
         switch(clicked_id){
             case R.id.item_feed_full_text_button:
-                viewPost(clickedPost);
+                viewPost(clickedPost.getUni_domain(), clickedPost.getId());
                 break;
 
             case R.id.item_feed_posted_by_text:
@@ -113,17 +114,18 @@ public class SeeAllPostsActivity extends AppCompatActivity implements FeedAdapte
                 break;
 
             case R.id.item_feed_pinned_text:
-                //TODO
+                viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id());
                 break;
         }
     }
 
     // Transition to a post/event
-    private void viewPost(Post post) {
+    private void viewPost(String postUni, String postId) {
         Log.d(TAG, "Launching ViewPostOrEventActivity...");
         Intent intent = new Intent(this, ViewPostOrEventActivity.class);
         intent.putExtra("this_user", this_user);
-        intent.putExtra("post", post);
+        intent.putExtra("post_id", postId);
+        intent.putExtra("post_uni", postUni);
         startActivity(intent);
     }
 

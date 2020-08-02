@@ -7,11 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -159,7 +161,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         holder.feed_text.setText(thisPost.getText());
         holder.feed_author.setText(thisPost.getAuthor_name());
         String previewImgPath = "userfiles/"+thisPost.getAuthor_id()+"/previewimage.jpg";
-        db_storage.child(previewImgPath).getDownloadUrl().addOnCompleteListener(task -> {Glide.with(context).load(task.getResult()).into(holder.author_preview_image);});
+
+
+        try {
+            db_storage.child(previewImgPath).getDownloadUrl().addOnCompleteListener(task -> {if(task.isSuccessful() && task.getResult() != null) Glide.with(context).load(task.getResult()).into(holder.author_preview_image);
+            else Glide.with(context).load(R.drawable.ic_profile_selected).into(holder.author_preview_image);});
+        }catch (Exception e){
+            Log.e(TAG, e.toString());
+        }
+
 
         if(!load_in_progress && position >= (post_array_list.size() - NEW_BATCH_TOLERANCE)){ //new batch tolerance means within how many last items do we want to start loading the next batch (i.e. we have 20 items and tolerance 2 -> the next batch will start loading once the user scrolls to the position 18 or 19)
             if(last_retrieved_document != null && !loaded_all_posts){
@@ -206,10 +216,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
                         if(newPost.get("is_event") instanceof  Boolean && (Boolean) newPost.get("is_event")){ //it's an event
                             Event event = newPost.toObject(Event.class);
-                            if(event != null) post_array_list.add(event);
+                            if(event != null && !postAlreadyAdded(event.getId())) post_array_list.add(event);
                         }else{ //it ain't
                             Post post = newPost.toObject(Post.class);
-                            if(post != null) post_array_list.add(post);
+                            if(post != null && !postAlreadyAdded(post.getId())) post_array_list.add(post);
                         }
 
                         if (i >= querySnap.getResult().getDocuments().size() - 1) last_retrieved_document = newPost;
@@ -236,7 +246,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                     for (int i = 0; i < querySnap.getResult().getDocuments().size(); i++) {
                         DocumentSnapshot newEvent = querySnap.getResult().getDocuments().get(i);
                         Event event = newEvent.toObject(Event.class);
-                        if(event != null && !event.isIs_featured() && event.isIs_active()) post_array_list.add(event); //add if not null and not featured
+                        if(event != null && !event.isIs_featured() && event.isIs_active() && !postAlreadyAdded(event.getId())) post_array_list.add(event); //add if not null and not featured
 
                         if (i >= querySnap.getResult().getDocuments().size() - 1) last_retrieved_document = newEvent;
                     }
@@ -253,6 +263,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             checkEmptyAdapter();
             load_in_progress = false;
         });
+    }
+
+    private boolean postAlreadyAdded(String postId){
+        for(Post current: post_array_list){
+            if(current.getId().equals(postId)) return true;
+        }
+        return false;
     }
 
 
@@ -294,10 +311,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
                         if(newPost.get("is_event") instanceof Boolean && (Boolean) newPost.get("is_event")){
                             Event ev = newPost.toObject(Event.class);
-                            if(ev != null && !post_array_list.contains(ev)) post_array_list.add(0, ev);
+                            if(ev != null && !postAlreadyAdded(ev.getId())) post_array_list.add(0, ev);
                         }else{
                             Post pst = newPost.toObject(Post.class);
-                            if(pst != null && !post_array_list.contains(pst)) post_array_list.add(0, pst);
+                            if(pst != null && !postAlreadyAdded(pst.getId())) post_array_list.add(0, pst);
                         }
                     }
                     notifyDataSetChanged();
@@ -315,7 +332,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                     for (int i = 0; i < querySnap.getResult().getDocuments().size(); i++) {
                         DocumentSnapshot newEvent = querySnap.getResult().getDocuments().get(i);
                         Event event = newEvent.toObject(Event.class);
-                        if(event!= null && !event.isIs_featured() && event.isIs_active() && !post_array_list.contains(event)) post_array_list.add(0, event); //add all the missing events to the top of the arraylist
+                        if(event!= null && !event.isIs_featured() && event.isIs_active() && !postAlreadyAdded(event.getId())) post_array_list.add(0, event); //add all the missing events to the top of the arraylist
                     }
                     notifyDataSetChanged();
                 }
@@ -342,7 +359,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
     public void getPicFromDB(FeedViewHolder holder, Post post) {
         String visualPath = post.getVisual();
-        db_storage.child(visualPath).getDownloadUrl().addOnCompleteListener(task -> {Glide.with(context).load(task.getResult()).into(holder.feed_image_view);});
+        db_storage.child(visualPath).getDownloadUrl().addOnCompleteListener(task -> {if(task.isSuccessful() && task.getResult() != null)Glide.with(context).load(task.getResult()).into(holder.feed_image_view);
+                else Glide.with(context).load(R.drawable.ivy_logo).into(holder.feed_image_view);});
     }
 
     public ArrayList<Post> getPost_array_list() {
@@ -351,7 +369,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
     private void checkEmptyAdapter(){
         if(empty_adapter_text != null){
-            if(getItemCount() < 1) empty_adapter_text.setVisibility(View.VISIBLE);
+            if(getItemCount() < 1){
+                empty_adapter_text.setVisibility(View.VISIBLE);
+                reached_bottom_text.setVisibility(View.GONE);
+            }
             else empty_adapter_text.setVisibility(View.GONE);
         }
     }

@@ -59,6 +59,8 @@
             <EditText
                 android:id="@+id/editStudent_name"
                 style="@style/StandardEditText"
+                android:layout_marginStart="-4dp"
+                android:layout_marginEnd="-4dp"
                 android:layout_width="match_parent"
                 android:autofillHints=""
                 android:hint="@string/name"
@@ -67,6 +69,8 @@
             <Spinner
                 android:id="@+id/editStudent_degree"
                 style="@style/StandardSpinner"
+                android:layout_marginStart="-4dp"
+                android:layout_marginEnd="-4dp"
                 android:layout_width="match_parent"
                 android:layout_marginTop="@dimen/standard_margin"
                 android:backgroundTint="@color/hint"
@@ -90,6 +94,13 @@
                 android:minDate="01/01/1920"
                 android:startYear="2000" />
 
+            <Switch
+                android:id="@+id/editStudent_privateSwitch"
+                style="@style/StandardSwitch"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="@dimen/large_margin"
+                android:text="@string/switch_private_profile" />
+
         </LinearLayout>
 
         <Button
@@ -98,6 +109,7 @@
             app:layout_constraintEnd_toEndOf="@id/editStudent_guideline2"
             app:layout_constraintStart_toStartOf="@id/editStudent_guideline1"
             app:layout_constraintTop_toBottomOf="@id/editStudent_fields"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="0dp"
             android:layout_marginTop="@dimen/large_margin"
             android:layout_marginBottom="@dimen/large_margin"
@@ -110,6 +122,7 @@
             app:layout_constraintEnd_toEndOf="@id/editStudent_guideline2"
             app:layout_constraintStart_toStartOf="@id/editStudent_guideline1"
             app:layout_constraintTop_toBottomOf="@id/editStudent_fields"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="match_parent"
             android:layout_marginTop="@dimen/large_margin"
             android:layout_marginBottom="@dimen/large_margin"

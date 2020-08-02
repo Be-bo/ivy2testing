@@ -59,7 +59,7 @@ import java.util.List;
 public class ViewPostOrEventActivity extends AppCompatActivity {
 
     //Constants
-    private static final String TAG = "ViewPostActivity";
+    private static final String TAG = "ViewPostActivityTag";
 
     // Views
     private ImageView mPostVisual;
@@ -69,6 +69,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private RecyclerView mCommentsRecycler;
     private EditText mWriteComment;
     private ImageButton mPostComment;
+    private TextView commentsTitle;
+    private TextView cantSeeComments;
 
     // Firebase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -88,6 +90,16 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
 
 
+
+
+
+
+
+
+
+
+
+
 /* Override Methods
 ***************************************************************************************************/
 
@@ -95,14 +107,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewpostorevent);
-
-        // Initialization
         declareViews();
-        getIntentExtras();
-        if (post != null){
-            setFields();
-            setFragment();
-        }
+        pullPost();
     }
 
     @Override
@@ -140,6 +146,17 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
 /* Initialization Methods
 ***************************************************************************************************/
 
@@ -151,7 +168,37 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         mCommentsRecycler = findViewById(R.id.viewPost_commentRV);
         mWriteComment = findViewById(R.id.writeComment_commentText);
         mPostComment = findViewById(R.id.writeComment_commentButton);
+        commentsTitle = findViewById(R.id.viewPost_commentsTitle);
+        cantSeeComments = findViewById(R.id.viewPost_cantSeeComments);
         setTitle(null);
+    }
+
+    // get post object and id of current user
+    private void pullPost() {
+        if (getIntent() != null) {
+            String postId = getIntent().getStringExtra("post_id"); //if it's a pinned event
+            String postUni = getIntent().getStringExtra("post_uni");
+            this_user = getIntent().getParcelableExtra("this_user");
+            if(postId != null && postUni != null){
+                db.collection("universities").document(postUni).collection("posts").document(postId).get().addOnCompleteListener(task -> {
+                    if(task.isSuccessful() && task.getResult() != null){
+                        if(task.getResult().get("is_event") instanceof Boolean && (Boolean) task.getResult().get("is_event")) post = task.getResult().toObject(Event.class);
+                        else post = task.getResult().toObject(Post.class);
+                        if(post != null){
+                            setFields();
+                            setFragment();
+                            if(this_user != null) post.addViewIdToList(this_user.getId());
+                        }
+                    }else Toast.makeText(this, "Failed to get post/event data. :-(", Toast.LENGTH_LONG).show();
+                });
+            }else{
+                Toast.makeText(this, "Failed to get post/event data. :-(", Toast.LENGTH_LONG).show();
+                finish();
+            }
+        }
+        else if (this_user != null) {
+            post.addViewIdToList(this_user.getId());
+        }
     }
 
     // Populate fields with Post info
@@ -162,7 +209,22 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         mAuthorName.setText(post.getAuthor_name());
 
         // Can comment if logged in
-        if (this_user != null) setupWriteComment();
+        if (this_user != null){
+            if(this_user.getUni_domain().equals(post.getUni_domain())){ //from this uni -> can comment
+                mExpandComments.setVisibility(View.VISIBLE);
+                commentsTitle.setVisibility(View.VISIBLE);
+                cantSeeComments.setVisibility(View.GONE);
+                setupWriteComment();
+            }else{
+                mExpandComments.setVisibility(View.GONE);
+                commentsTitle.setVisibility(View.GONE);
+                cantSeeComments.setVisibility(View.GONE);
+            }
+        }else{
+            mExpandComments.setVisibility(View.GONE);
+            commentsTitle.setVisibility(View.GONE);
+            cantSeeComments.setVisibility(View.VISIBLE);
+        }
     }
 
     // Set up either ViewPost or ViewEvent Fragment in FrameLayout
@@ -221,23 +283,22 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* Transition Methods
 ***************************************************************************************************/
 
-    // get post object and id of current user
-    private void getIntentExtras() {
-        if (getIntent() != null) {
-            post = getIntent().getParcelableExtra("post");
-            this_user = getIntent().getParcelableExtra("this_user");
-        }
-
-        if (post == null){
-            Log.d(TAG, "Post Parcel was null! Showing test view!");
-        }
-        else if (this_user != null) {
-            post.addViewIdToList(this_user.getId());
-        }
-    }
 
     // Handle Up Button
     private void goBackToParent(){
@@ -293,6 +354,19 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             scrollView.smoothScrollBy(0, getResources().getDisplayMetrics().heightPixels); //TODO scroll down a bit
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* OnClick Methods
@@ -408,6 +482,13 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
 
 
+
+
+
+
+
+
+
 /* Firebase Related Methods
 ***************************************************************************************************/
 
@@ -419,7 +500,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         }
 
         // Get author address
-        String address = ImageUtils.getPreviewPath(post.getAuthor_id());
+        String address = ImageUtils.getUserImagePreviewPath(post.getAuthor_id());
         if (address.contains("null")){
             Log.e(TAG, "Address contained null! UserId: " + post.getAuthor_id());
             return;

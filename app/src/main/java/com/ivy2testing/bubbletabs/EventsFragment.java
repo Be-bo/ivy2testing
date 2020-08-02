@@ -29,6 +29,7 @@ import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.userProfile.OrganizationProfileActivity;
 import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.Constant;
+import com.ivy2testing.util.Utils;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -40,7 +41,6 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedClickLis
     private SwipeRefreshLayout refresh_layout;
     private TextView reached_bottom_text;
 
-    private String campus_domain;
     private RecyclerView feed_recycler_view;
     private User this_user;
     private FeedAdapter feed_adapter;
@@ -103,13 +103,7 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedClickLis
 
     public EventsFragment(Context con, User thisUser) {
         context = con;
-        loadUni();
         if(thisUser != null) this_user = thisUser;
-    }
-
-    private void loadUni(){
-        SharedPreferences sharedPreferences = context.getSharedPreferences("shared_preferences", MODE_PRIVATE);
-        campus_domain = sharedPreferences.getString("campus_domain", "ucalgary.ca");
     }
 
     private void refreshLayoutSetup() {
@@ -120,7 +114,7 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedClickLis
     }
 
     private void setUpRecycler(){
-        feed_adapter = new FeedAdapter(this, Constant.FEED_ADAPTER_EVENTS, campus_domain, "", context, no_events_text, reached_bottom_text);
+        feed_adapter = new FeedAdapter(this, Constant.FEED_ADAPTER_EVENTS, Utils.getCampusUni(context), "", context, no_events_text, reached_bottom_text);
         feed_recycler_view.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
         feed_recycler_view.setAdapter(feed_adapter);
     }
@@ -129,47 +123,11 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedClickLis
         feed_adapter.refreshPosts();
     }
 
+    public void changeUni(){
+        setUpRecycler();
+    }
 
-//    private void setUpButtons() {
-//        happening_now_button = root_view.findViewById(R.id.happening_now_button);
-//        happening_now_button.setOnClickListener(v -> {
-//            clearEnabled(happening_now_button);
-//            current_arraylist = happening_arraylist;
-//            search_method = HAPPENING_NOW;
-//            if (happening_arraylist.size()!= 0){
-//                feed_recycler_view.swapAdapter(happening_adapter,true);
-//            }
-//            else {
-//                switchQuery();
-//            }
-//        });
-//
-//        past_events_button = root_view.findViewById(R.id.past_events_button);
-//        past_events_button.setOnClickListener(v -> {
-//            current_arraylist = past_arraylist;
-//            search_method = PAST_EVENTS;
-//            clearEnabled(past_events_button);
-//            if (past_arraylist.size()!= 0){
-//                feed_recycler_view.swapAdapter(past_adapter,true);
-//            }
-//            else {
-//                switchQuery();
-//            }
-//        });
-//
-//        starting_soon_button = root_view.findViewById(R.id.upcoming_button);
-//        starting_soon_button.setOnClickListener(v -> {
-//            search_method = UPCOMING;
-//            current_arraylist = upcoming_arraylist;
-//            clearEnabled(starting_soon_button);
-//            if (upcoming_arraylist.size()!= 0){
-//                feed_recycler_view.swapAdapter(upcoming_adapter,true);
-//            }
-//            else {
-//                switchQuery();
-//            }
-//        });
-//    }
+
 
 
 

@@ -47,7 +47,6 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
     // Variables passed by intent
     private String appbar_title;    // Optional title
     private User this_user;         // Current user
-    private String uni_domain;      // Uni Domain of users to view
     private List<String> user_ids;  // List of user_ids
     private boolean shows_member_requests = false;
 
@@ -95,12 +94,11 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
         if (getIntent() != null){
             appbar_title = getIntent().getStringExtra("title");             // Optional activity title
             this_user = getIntent().getParcelableExtra("this_user");        // currently logged in user
-            uni_domain = getIntent().getStringExtra("uni_domain");
             user_ids = getIntent().getStringArrayListExtra("user_ids");     // List of user ids to be displayed
             shows_member_requests = getIntent().getBooleanExtra("shows_member_requests", false);
 
-            if (user_ids == null || uni_domain == null || this_user == null) {
-                Log.e(TAG, "Must Provide a list of user ids and uni domain.");
+            if (user_ids == null) {
+                Log.e(TAG, "Must Provide a list of user ids.");
                 finish();
             }
         }
@@ -160,8 +158,8 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
             Log.d(TAG, "Starting OrganizationProfile Activity for organization " + user.getId());
             intent = new Intent(this, OrganizationProfileActivity.class);
             // TODO @Robert, pass user as a parcel instead?
+            // TODO fromRobert, weh wuh?
             intent.putExtra("org_to_display_id", user.getId());
-            intent.putExtra("org_to_display_uni", user.getUni_domain());
         } else {
             Log.d(TAG, "Starting StudentProfile Activity for student " + user.getId());
             intent = new Intent(this, StudentProfileActivity.class);
@@ -207,7 +205,7 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
 
     private void acceptMemberRequest(int pos){
         User user = users.get(pos);
-        firebase_db.collection("universities").document(this_user.getUni_domain()).collection("users").document(this_user.getId())
+        firebase_db.collection("users").document(this_user.getId())
                 .update("member_ids", FieldValue.arrayUnion(user.getId()), "request_ids", FieldValue.arrayRemove(user.getId())).addOnCompleteListener(task -> {
             if(task.isSuccessful()){
                 Toast.makeText(this, "Member added!", Toast.LENGTH_LONG).show();
@@ -219,7 +217,7 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
 
     private void rejectMemberRequest(int pos){
         User user = users.get(pos);
-        firebase_db.collection("universities").document(this_user.getUni_domain()).collection("users").document(this_user.getId())
+        firebase_db.collection("users").document(this_user.getId())
                 .update("request_ids", FieldValue.arrayRemove(user.getId())).addOnCompleteListener(task -> {
                     if(task.isSuccessful()){
                         Toast.makeText(this, "Request removed!", Toast.LENGTH_LONG).show();
@@ -264,7 +262,7 @@ public class SeeAllUsersActivity extends AppCompatActivity implements UserAdapte
 
     // Load a user given its id (assuming they all share same uni domain)
     private void loadUser(String user_id){
-        String address = "universities/" + uni_domain + "/users/" + user_id;
+        String address = "/users/" + user_id;
         if (address.contains("null")){
             Log.e(TAG, "User Address has null values. ID:" + user_id);
             return;

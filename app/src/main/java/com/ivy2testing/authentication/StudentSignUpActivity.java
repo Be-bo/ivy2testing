@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -23,8 +22,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,11 +31,8 @@ import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.util.SpinnerAdapter;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
-import static com.ivy2testing.util.StaticDomainList.available_domain_list;
 import static com.ivy2testing.util.StaticDomainList.domain_list;
 import static com.ivy2testing.util.StaticDegreesList.degree_array;
 
@@ -292,7 +286,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
                     this_student = new Student(id, degree, email);
                     this_student.setMessaging_token(task.getResult().getToken());
                     Log.d("testudo", "token success, id: " + id);
-                    db_reference.collection("universities").document(domain).collection("users").document(id).set(this_student).addOnSuccessListener(aVoid -> openDialogComplete()).addOnFailureListener(e -> {
+                    db_reference.collection("users").document(id).set(this_student).addOnSuccessListener(aVoid -> openDialogComplete()).addOnFailureListener(e -> {
                         Toast.makeText(getApplicationContext(), "Profile creation failed. Please try again later.", Toast.LENGTH_LONG).show();
                         returnToLogin();
                     });
@@ -314,7 +308,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     private void openDialogComplete() {
         student_progress_bar.setVisibility(View.GONE);
         final Dialog infoDialog = new Dialog(this);
-        infoDialog.setContentView(R.layout.activity_signup_dialog);
+        infoDialog.setContentView(R.layout.dialog_signup_success);
         Button okButton = infoDialog.findViewById(R.id.positive_button);
         //TextView infoText = infoDialog.findViewById(R.id.Info_textview);
         //infoText.setText(info);

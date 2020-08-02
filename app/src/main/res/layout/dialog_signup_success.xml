@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:id="@+id/dialog_parent_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <!-- https://stackoverflow.com/questions/58633351/how-to-create-a-dialogfragment-with-a-transparent-part -->
+
+    <LinearLayout
+        android:id="@+id/dialog_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/dialog_background"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/dialog_text"
+            style="@style/LargeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_horizontal"
+            android:text="Welcome to Ivy! We've sent you a confirmation email."
+            />
+
+        <Button
+            style="@style/StandardButton"
+            android:id="@+id/positive_button"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="8dp"
+            android:text="Okay"
+            android:enabled="true"
+            />
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/dialog_logo"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/background_circle"
+        android:padding="3dp"
+        android:src="@drawable/ivy_logo" />
+</RelativeLayout>

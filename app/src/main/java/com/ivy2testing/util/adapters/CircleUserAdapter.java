@@ -23,21 +23,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Overview: an adapter that takes in a list of image Uris and constructs small(40x40dp) circle images
  * Used in: EventView.going
  */
-public class CircleImageAdapter extends RecyclerView.Adapter<CircleImageAdapter.CircleImgHolder> {
+public class CircleUserAdapter extends RecyclerView.Adapter<CircleUserAdapter.CircleImgHolder> {
 
     // Vars
     private List<String> user_ids;
-    private String uni_domain = "";
     private Context context;
     private OnPersonListener person_listener;
     private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
     private View recycler_layout;
 
 
-    public CircleImageAdapter(List<String> ids, String domain, Context con, OnPersonListener listener) {
+    public CircleUserAdapter(List<String> ids, Context con, OnPersonListener listener) {
         this.user_ids = ids;
         this.context = con;
-        this.uni_domain = domain;
         this.person_listener = listener;
     }
 
@@ -47,6 +45,16 @@ public class CircleImageAdapter extends RecyclerView.Adapter<CircleImageAdapter.
 
     public String getItem(int position){
         return user_ids.get(position);
+    }
+
+    public void removeUser(String userId){
+        user_ids.remove(userId);
+        notifyDataSetChanged();
+    }
+
+    public void addUser(String userId){
+        user_ids.add(userId);
+        notifyDataSetChanged();
     }
 
 
@@ -63,7 +71,7 @@ public class CircleImageAdapter extends RecyclerView.Adapter<CircleImageAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull CircleImgHolder holder, int position) {
-        String path = ImageUtils.getPreviewPath(user_ids.get(position));
+        String path = ImageUtils.getUserImagePreviewPath(user_ids.get(position));
         stor_ref.child(path).getDownloadUrl().addOnCompleteListener(task -> { if(task.isSuccessful() && task.getResult() != null) Glide.with(context).load(task.getResult()).into(holder.circle_img); });
     }
 

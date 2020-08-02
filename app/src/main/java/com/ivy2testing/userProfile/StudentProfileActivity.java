@@ -27,11 +27,10 @@ import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
-import com.ivy2testing.util.adapters.SquareImageAdapter;
+import com.ivy2testing.util.adapters.SquarePostAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /** @author Zahra Ghavasieh
@@ -51,17 +50,19 @@ public class StudentProfileActivity extends AppCompatActivity {
     private TextView mSeeAll;
     private TextView post_title;
     private TextView no_posts_text;
+    private TextView private_text;
+    private View contents;
 
     // Firestore
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
     // Other Variables
-    private SquareImageAdapter adapter;
+    private SquarePostAdapter adapter;
     private Uri profile_img_uri;
 
     // User Variables
-    private Student student_toDisplay;  // Student whose profile we're looking at
+    private Student student_to_display;  // Student whose profile we're looking at
     private User this_user;             // Currently logged in user (Nullable)
 
 
@@ -72,7 +73,7 @@ public class StudentProfileActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_profile);
-
+        declareViews();
         getIntentExtras();      // Get student (via intent or database) and set up elements
         setTitle(null);         // set up toolBar as an actionBar
     }
@@ -99,7 +100,6 @@ public class StudentProfileActivity extends AppCompatActivity {
     // General setup after acquiring student object
     private void setUpElements(){
         setTitle("Profile");
-        declareViews();
         setUpViews();               // populate UI
         setUpRecycler();            // set up posts recycler view
         getStudentPic();            // Do Other setups
@@ -113,13 +113,15 @@ public class StudentProfileActivity extends AppCompatActivity {
         mSeeAll = findViewById(R.id.studentProfile_seeAll);
         post_title = findViewById(R.id.studentProfile_header);
         no_posts_text = findViewById(R.id.studentProfile_no_posts_text);
+        private_text = findViewById(R.id.activity_student_profile_private_text);
+        contents = findViewById(R.id.activity_student_profile_contents);
         findViewById(R.id.studentProfile_edit).setVisibility(View.GONE);
     }
 
     private void setUpViews(){
-        if (student_toDisplay == null) return;
-        mName.setText(student_toDisplay.getName());
-        mDegree.setText(student_toDisplay.getDegree());
+        if (student_to_display == null) return;
+        mName.setText(student_to_display.getName());
+        mDegree.setText(student_to_display.getDegree());
         mSeeAll.setOnClickListener(v -> seeAllPosts());
         if (profile_img_uri != null) Picasso.get().load(profile_img_uri).into(mProfileImg);
     }
@@ -131,7 +133,7 @@ public class StudentProfileActivity extends AppCompatActivity {
         allViews.add(mRecyclerView);
         allViews.add(mSeeAll);
         allViews.add(post_title);
-        adapter = new SquareImageAdapter(student_toDisplay.getId(), student_toDisplay.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, this, this::onPostClick, allViews, no_posts_text);
+        adapter = new SquarePostAdapter(student_to_display.getId(), student_to_display.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, this, this::onPostClick, allViews, no_posts_text);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
@@ -149,20 +151,19 @@ public class StudentProfileActivity extends AppCompatActivity {
     // See all posts
     private void seeAllPosts(){
         Intent intent = new Intent(this, SeeAllPostsActivity.class);
-        intent.putExtra("title", student_toDisplay.getName()+"'s Posts");
+        intent.putExtra("title", student_to_display.getName()+"'s Posts");
         intent.putExtra("this_user", this_user);
-        intent.putExtra("uni_domain", student_toDisplay.getUni_domain());
-        intent.putExtra("author_id", student_toDisplay.getId());
+        intent.putExtra("uni_domain", student_to_display.getUni_domain());
+        intent.putExtra("author_id", student_to_display.getId());
         startActivity(intent);
     }
 
     // A post in recycler was selected
     public void onPostClick(int position) {
-        Log.d(TAG, "Getting post: " + adapter.getItem(position).getId());
         Intent intent = new Intent(this, ViewPostOrEventActivity.class);
         intent.putExtra("this_user", this_user);
-        intent.putExtra("uni_domain", student_toDisplay.getUni_domain());
-        intent.putExtra("post", adapter.getItem(position));
+        intent.putExtra("post_uni", adapter.getItem(position).getUni_domain());
+        intent.putExtra("post_id", adapter.getItem(position).getId());
         startActivity(intent);
     }
 
@@ -175,9 +176,9 @@ public class StudentProfileActivity extends AppCompatActivity {
         if (getIntent() != null){
 
             this_user = getIntent().getParcelableExtra("this_user");
-            student_toDisplay = getIntent().getParcelableExtra("student_to_display");
+            student_to_display = getIntent().getParcelableExtra("student_to_display");
 
-            if (student_toDisplay == null) {
+            if (student_to_display == null) {
                 String student_id = getIntent().getStringExtra("student_to_display_id");
                 String student_uni = getIntent().getStringExtra("student_to_display_uni");
 
@@ -226,7 +227,7 @@ public class StudentProfileActivity extends AppCompatActivity {
 
     // Get all student info and return student class
     public void getUserInfo(String user_id, String user_uni) {
-        String address = "universities/" + user_uni + "/users/" + user_id;
+        String address = "users/" + user_id;
         if (address.contains("null")) {
             Log.e(TAG, "User Address has null values.");
             return;
@@ -239,11 +240,15 @@ public class StudentProfileActivity extends AppCompatActivity {
                     Log.e(TAG, "This user is an organization!");
                     viewOrganization(user_id, user_uni);
                 }
-                else student_toDisplay = task.getResult().toObject(Student.class);
+                else student_to_display = task.getResult().toObject(Student.class);
 
-                if (student_toDisplay != null){
-                    student_toDisplay.setId(user_id);
-                    setUpElements();
+                if (student_to_display != null){
+
+                    if(student_to_display.isIs_private()) setPrivateDisplay();
+                    else{
+                        student_to_display.setId(user_id);
+                        setUpElements();
+                    }
                 } else {
                     Log.e(TAG, "user was null!");
                     goBackToParent();
@@ -257,12 +262,17 @@ public class StudentProfileActivity extends AppCompatActivity {
         });
     }
 
+    private void setPrivateDisplay(){
+        private_text.setVisibility(View.VISIBLE);
+        contents.setVisibility(View.GONE);
+    }
+
     // load picture from firebase storage
     // Will throw an exception if file doesn't exist in storage but app continues to work fine
     private void getStudentPic() {
-        if (student_toDisplay == null) return;
+        if (student_to_display == null) return;
 
-        base_storage_ref.child(ImageUtils.getProfilePath(student_toDisplay.getId())).getDownloadUrl()
+        base_storage_ref.child(ImageUtils.getUserImagePath(student_to_display.getId())).getDownloadUrl()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) profile_img_uri = task.getResult();
                     else Log.w(TAG, task.getException());

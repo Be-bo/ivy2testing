@@ -30,8 +30,8 @@ public class UserViewModel extends ViewModel {
 
     // MARK: Active Listening to User's Profile in the DB
 
-    public void startListening(String thisUserId, String thisUniDomain){ //listen to this user's profile updates in Firestore
-        listenerRegistration = db_ref.collection("universities").document(thisUniDomain).collection("users").document(thisUserId).addSnapshotListener((documentSnapshot, e) -> {
+    public void startListening(String thisUserId){ //listen to this user's profile updates in Firestore
+        listenerRegistration = db_ref.collection("users").document(thisUserId).addSnapshotListener((documentSnapshot, e) -> {
             if(e != null){
                 Log.d(TAG, "Listening for this user's profile failed: ", e);
             }

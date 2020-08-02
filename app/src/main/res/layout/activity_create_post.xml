@@ -40,9 +40,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Type"
-                android:textColor="@color/black"
-                android:textSize="17sp"
+                android:text="@string/type"
+                style="@style/LargeText"
                 app:layout_constraintBottom_toTopOf="@+id/type_button_container"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -50,8 +49,8 @@
                 android:id="@+id/type_button_container"
                 android:layout_width="0dp"
                 android:layout_height="30dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp"
+                android:layout_marginTop="@dimen/extra_large_margin"
+                android:layout_marginBottom="@dimen/large_margin"
                 android:background="@drawable/segmented_button_background"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toTopOf="@+id/show_button_container"
@@ -65,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Post" />
+                    android:text="@string/post" />
 
                 <Button
                     android:id="@+id/event_button"
@@ -73,17 +72,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Event" />
+                    android:text="@string/event" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/show_text"
+                style="@style/LargeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Show in campus feed?"
-                android:textColor="@color/black"
-                android:textSize="17sp"
+                android:text="@string/show_in_campus_feed"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/show_button_container"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -95,6 +94,7 @@
                 android:layout_marginBottom="24dp"
                 android:background="@drawable/segmented_button_background"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/import_button_container"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -106,7 +106,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Show" />
+                    android:text="@string/show" />
 
                 <Button
                     android:id="@+id/dont_show_button"
@@ -114,7 +114,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Don't Show" />
+                    android:text="@string/dont_show" />
             </LinearLayout>
 
             <LinearLayout
@@ -122,10 +122,9 @@
                 android:layout_width="0dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp"
                 android:background="@drawable/segmented_button_background"
                 android:orientation="horizontal"
-                app:layout_constraintBottom_toTopOf="@+id/visual_button_container"
+                app:layout_constraintBottom_toTopOf="@+id/import_coming_soon_textview"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/show_button_container">
@@ -136,7 +135,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="From Scratch" />
+                    android:text="@string/from_scratch" />
 
                 <Button
                     android:id="@+id/import_button"
@@ -144,43 +143,56 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Import" />
+                    android:text="@string/imprt" />
             </LinearLayout>
 
             <TextView
+                style="@style/LargeText"
                 android:id="@+id/import_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Import from another platform?"
-                android:textColor="@color/black"
-                android:textSize="17sp"
+                android:text="@string/import_from_another"
                 app:layout_constraintBottom_toTopOf="@+id/import_button_container"
                 app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/import_coming_soon_textview"
+                style="@style/LargeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/standard_margin"
+                android:gravity="center"
+                android:text="@string/coming_fall"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/visual_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/import_button_container" />
 
             <TextView
                 android:id="@+id/visual_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="Visual"
-                android:textColor="@color/black"
-                android:textSize="17sp"
-                app:layout_constraintBottom_toTopOf="@+id/visual_button_container"
+                android:layout_marginTop="@dimen/standard_margin"
+                android:layout_marginBottom="@dimen/standard_margin"
+                android:text="@string/visual"
+                style="@style/LargeText"
+                app:layout_constraintTop_toBottomOf="@id/import_coming_soon_textview"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <LinearLayout
                 android:id="@+id/visual_button_container"
                 android:layout_width="0dp"
                 android:layout_height="30dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="@dimen/standard_margin"
+                android:layout_marginBottom="@dimen/standard_margin"
                 android:background="@drawable/segmented_button_background"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/import_button_container">
+                app:layout_constraintTop_toBottomOf="@id/visual_text">
 
                 <Button
                     android:id="@+id/nothing_button"
@@ -188,7 +200,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Nothing" />
+                    android:text="@string/nothing" />
 
                 <Button
                     android:id="@+id/image_button"
@@ -196,7 +208,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Image" />
+                    android:text="@string/image" />
 
                 <Button
                     android:id="@+id/video_button"
@@ -204,7 +216,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Video" />
+                    android:text="@string/video" />
 
                 <Button
                     android:id="@+id/gif_button"
@@ -212,9 +224,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="GIF" />
+                    android:text="@string/gif" />
 
             </LinearLayout>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -228,14 +241,13 @@
             app:layout_constraintTop_toBottomOf="@+id/button_container_constraint">
 
             <TextView
-                android:id="@+id/video_coming_soon_textview"
+                android:id="@+id/coming_soon_textview"
+                style="@style/LargeText"
                 android:layout_width="wrap_content"
-                android:layout_height="150dp"
-                android:layout_marginBottom="16dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/standard_margin"
                 android:gravity="center"
-                android:text="Coming in Fall 2020!"
-                android:textColor="@color/text_color"
-                android:textSize="32sp"
+                android:text="@string/coming_fall"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -281,7 +293,7 @@
                 android:id="@+id/title_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Title"
+                android:text="@string/title"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toTopOf="@+id/event_title_editText"
@@ -294,7 +306,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 android:ems="10"
-                android:hint="Give your event a name..."
+                android:hint="@string/name"
                 android:inputType="textShortMessage"
                 app:layout_constraintBottom_toTopOf="@id/event_location_editText"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -305,7 +317,7 @@
                 android:id="@+id/location_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Location"
+                android:text="@string/location"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toTopOf="@+id/event_location_editText"
@@ -319,7 +331,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="24dp"
                 android:ems="10"
-                android:hint="Where will your event take place..."
+                android:hint="@string/location"
                 android:inputType="textShortMessage"
                 app:layout_constraintBottom_toTopOf="@id/start_times_constraint"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -342,7 +354,7 @@
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:ems="10"
-                    android:text="Start Date"
+                    android:text="@string/start_date"
                     android:textAllCaps="false"
                     android:theme="@style/SegmentedButton"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -358,7 +370,7 @@
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="0"
-                    android:text="at"
+                    android:text="@string/at"
                     android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/start_time_button"
@@ -371,7 +383,7 @@
                     android:layout_height="40dp"
                     android:ems="10"
                     android:enabled="true"
-                    android:text="Start Time"
+                    android:text="@string/start_time"
                     android:textAllCaps="false"
                     android:theme="@style/SegmentedButton"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -384,7 +396,7 @@
                 android:id="@+id/start_time_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Start time"
+                android:text="@string/start_time"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toTopOf="@+id/start_times_constraint"
@@ -405,7 +417,7 @@
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:ems="10"
-                    android:text="End Date"
+                    android:text="@string/end_date"
                     android:textAllCaps="false"
                     android:theme="@style/SegmentedButton"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -420,7 +432,7 @@
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="0"
-                    android:text="at"
+                    android:text="@string/at"
                     android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/end_time_button"
@@ -432,7 +444,7 @@
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:ems="10"
-                    android:text="End Time"
+                    android:text="@string/end_time"
                     android:textAllCaps="false"
                     android:theme="@style/SegmentedButton"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -445,7 +457,7 @@
                 android:id="@+id/end_time_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="End time"
+                android:text="@string/end_time"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toTopOf="@+id/end_times_constraint"
@@ -468,7 +480,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Add some text..."
+                android:hint="@string/description"
                 android:inputType="textMultiLine"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -487,7 +499,7 @@
                     android:id="@+id/pin_event_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pin Event"
+                    android:text="@string/pin_event"
                     android:textColor="@color/interaction"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -514,7 +526,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="24dp"
                 android:enabled="true"
-                android:text="Post"
+                android:text="@string/post"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -523,10 +535,10 @@
 
             <ProgressBar
                 android:id="@+id/submit_progress_bar"
-                style="?android:attr/progressBarStyle"
+                style="@style/StandardIndefiniteProgressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="@dimen/large_margin"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
-    android:id="@+id/dialog_parent_layout"
+    android:id="@+id/uni_change_dialog_parent_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <!-- https://stackoverflow.com/questions/58633351/how-to-create-a-dialogfragment-with-a-transparent-part -->
 
     <LinearLayout
-        android:id="@+id/dialog_layout"
+        android:id="@+id/uni_change_dialog_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -20,29 +19,38 @@
         android:padding="10dp">
 
         <TextView
-            android:id="@+id/dialog_text"
+            android:id="@+id/uni_change_dialog_title"
+            style="@style/LargeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="@dimen/large_margin"
             android:gravity="center_horizontal"
-            android:text="Welcome to Ivy! We've sent you a confirmation email."
-            android:textSize="16sp" />
+            android:text="@string/change_uni_title"
+            />
+
+        <Spinner
+            android:id="@+id/uni_change_dialog_spinner"
+            style="@style/StandardSpinner"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="@dimen/large_margin"
+            android:backgroundTint="@color/hint"
+            android:prompt="@string/app_name" />
 
         <Button
             style="@style/StandardButton"
-            android:id="@+id/positive_button"
+            android:id="@+id/uni_change_dialog_button"
             android:layout_width="match_parent"
-            android:layout_marginBottom="8dp"
-            android:text="Okay"
-            android:enabled="true"
+            android:layout_marginBottom="@dimen/standard_margin"
+            android:text="@string/confirm"
+            android:enabled="false"
             />
 
     </LinearLayout>
 
 
     <ImageView
-        android:id="@+id/dialog_logo"
+        android:id="@+id/uni_change_dialog_logo"
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:layout_centerHorizontal="true"
@@ -50,4 +58,3 @@
         android:padding="3dp"
         android:src="@drawable/ivy_logo" />
 </RelativeLayout>
-    <!-- https://stackoverflow.com/questions/58633351/how-to-create-a-dialogfragment-with-a-transparent-part -->
