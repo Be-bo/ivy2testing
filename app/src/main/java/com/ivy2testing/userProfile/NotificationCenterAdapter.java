@@ -18,6 +18,7 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Notification;
 import com.ivy2testing.util.Constant;
+import com.ivy2testing.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,9 +48,10 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
 
     // MARK: Base Methods
 
-    public NotificationCenterAdapter(String userId, NotificationListener notificationListener) {
+    public NotificationCenterAdapter(String userId, NotificationListener notificationListener, Context con) {
         this.notification_listener = notificationListener;
         this.user_id = userId;
+        this.context = con;
         current_query = db.collection("users").document(userId).collection("notifications").limit(Constant.NOTIFICATION_CENTER_LIMIT)
                 .orderBy("timestamp", Query.Direction.DESCENDING);
         pullNotifications(current_query);
@@ -106,8 +108,7 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
                 header = notification.getAuthor_name() + " sent you a message.";
                 holder.content_text_view.setText(header);
                 holder.time_text_view.setText(notification.getTimestamp().toString());
-                //holder.visual_card_view.setRadius(R.dimen.notification_center_circle_radius);
-                Log.d(TAG, "chat message: " + holder.visual_card_view.getRadius());
+                holder.visual_card_view.setRadius(Utils.dpToPixel(context, 25));
                 if (notification.getVisual().contains("/")) {
                     stor.child(notification.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
                         if(task.isSuccessful() && task.getResult()!=null) Glide.with(context).load(task.getResult()).circleCrop().into(holder.visual);
@@ -119,10 +120,10 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
 
 
             case Constant.NOTIFICATION_TYPE_COMMENT:
-                header = notification.getAuthor_name() + " commented on " + notification.getTarget_name();
+                header = notification.getAuthor_name() + " commented on " + notification.getTarget_name().substring(0, 10)+"...";
                 holder.content_text_view.setText(header);
                 holder.time_text_view.setText(notification.getTimestamp().toString());
-                holder.visual_card_view.setRadius(R.dimen.notification_center_circle_radius);
+                holder.visual_card_view.setRadius(Utils.dpToPixel(context, 25));
                 if (notification.getVisual().contains("/")) {
                     stor.child(notification.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
                         if(task.isSuccessful() && task.getResult() != null)Glide.with(context).load(task.getResult()).circleCrop().into(holder.visual);
@@ -136,8 +137,7 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
                 header = notification.getAuthor_name() + " featured their " + notification.getTarget_name();
                 holder.content_text_view.setText(header);
                 holder.time_text_view.setText(notification.getTimestamp().toString());
-                holder.visual_card_view.setRadius(R.dimen.standard_corner_radius);
-                Log.d(TAG, "featured: " + holder.visual_card_view.getRadius());
+                holder.visual_card_view.setRadius(Utils.dpToPixel(context, 10));
                 if (notification.getVisual().contains("/")) {
                     stor.child(notification.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
                         if(task.isSuccessful() && task.getResult() != null)Glide.with(context).load(task.getResult()).circleCrop().into(holder.visual);
@@ -150,7 +150,7 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
                 header = notification.getAuthor_name() + " added a new event: " + notification.getTarget_name();
                 holder.content_text_view.setText(header);
                 holder.time_text_view.setText(notification.getTimestamp().toString());
-                holder.visual_card_view.setRadius(R.dimen.standard_corner_radius);
+                holder.visual_card_view.setRadius(Utils.dpToPixel(context, 10));
                 if (notification.getVisual().contains("/")) {
                     stor.child(notification.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
                         if(task.isSuccessful() && task.getResult() != null)Glide.with(context).load(task.getResult()).circleCrop().into(holder.visual);
@@ -163,7 +163,7 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
                 header = notification.getAuthor_name() + " posted " + notification.getTarget_name();
                 holder.content_text_view.setText(header);
                 holder.time_text_view.setText(notification.getTimestamp().toString());
-                holder.visual_card_view.setRadius(R.dimen.standard_corner_radius);
+                holder.visual_card_view.setRadius(Utils.dpToPixel(context, 10));
                 if (notification.getVisual().contains("/")) {
                     stor.child(notification.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
                         if(task.isSuccessful() && task.getResult() != null)Glide.with(context).load(task.getResult()).circleCrop().into(holder.visual);

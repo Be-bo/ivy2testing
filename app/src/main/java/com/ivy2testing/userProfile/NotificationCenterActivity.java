@@ -28,7 +28,7 @@ public class NotificationCenterActivity extends AppCompatActivity implements Not
         this_user = getIntent().getParcelableExtra("this_user");
         notification_recycler = findViewById(R.id.activity_notification_center_recycler);
         if(this_user != null){
-            notification_adapter = new NotificationCenterAdapter(this_user.getId(), this);
+            notification_adapter = new NotificationCenterAdapter(this_user.getId(), this, this);
             notification_recycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
             notification_recycler.setAdapter(notification_adapter);
         }
