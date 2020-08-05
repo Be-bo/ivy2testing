@@ -107,7 +107,7 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
             case Constant.NOTIFICATION_TYPE_CHAT:
                 header = notification.getAuthor_name() + " sent you a message.";
                 holder.content_text_view.setText(header);
-                holder.time_text_view.setText(notification.getTimestamp().toString());
+                holder.time_text_view.setText(Utils.getHumanTimeFromMillis(notification.getTimestamp()));
                 holder.visual_card_view.setRadius(Utils.dpToPixel(context, 25));
                 if (notification.getVisual().contains("/")) {
                     stor.child(notification.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
@@ -122,7 +122,7 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
             case Constant.NOTIFICATION_TYPE_COMMENT:
                 header = notification.getAuthor_name() + " commented on " + notification.getTarget_name().substring(0, 10)+"...";
                 holder.content_text_view.setText(header);
-                holder.time_text_view.setText(notification.getTimestamp().toString());
+                holder.time_text_view.setText(Utils.getHumanTimeFromMillis(notification.getTimestamp()));
                 holder.visual_card_view.setRadius(Utils.dpToPixel(context, 25));
                 if (notification.getVisual().contains("/")) {
                     stor.child(notification.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
@@ -136,7 +136,7 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
             case Constant.NOTIFICATION_TYPE_FEATURED:
                 header = notification.getAuthor_name() + " featured their " + notification.getTarget_name();
                 holder.content_text_view.setText(header);
-                holder.time_text_view.setText(notification.getTimestamp().toString());
+                holder.time_text_view.setText(Utils.getHumanTimeFromMillis(notification.getTimestamp()));
                 holder.visual_card_view.setRadius(Utils.dpToPixel(context, 10));
                 if (notification.getVisual().contains("/")) {
                     stor.child(notification.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
@@ -149,7 +149,7 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
             case Constant.NOTIFICATION_TYPE_ORG_EVENT:
                 header = notification.getAuthor_name() + " added a new event: " + notification.getTarget_name();
                 holder.content_text_view.setText(header);
-                holder.time_text_view.setText(notification.getTimestamp().toString());
+                holder.time_text_view.setText(Utils.getHumanTimeFromMillis(notification.getTimestamp()));
                 holder.visual_card_view.setRadius(Utils.dpToPixel(context, 10));
                 if (notification.getVisual().contains("/")) {
                     stor.child(notification.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
@@ -162,7 +162,7 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
             case Constant.NOTIFICATION_TYPE_ORG_POST:
                 header = notification.getAuthor_name() + " posted " + notification.getTarget_name();
                 holder.content_text_view.setText(header);
-                holder.time_text_view.setText(notification.getTimestamp().toString());
+                holder.time_text_view.setText(Utils.getHumanTimeFromMillis(notification.getTimestamp()));
                 holder.visual_card_view.setRadius(Utils.dpToPixel(context, 10));
                 if (notification.getVisual().contains("/")) {
                     stor.child(notification.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {

@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/standard_margin"
         android:layout_marginEnd="@dimen/small_margin"
-        android:text="Student Union added a new event: BSD 2020"
+        android:text="@string/notification"
         app:layout_constraintStart_toEndOf="@id/item_notification_center_cardview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/item_notification_center_horizontal_guideline"/>
@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/standard_margin"
         android:layout_marginEnd="@dimen/small_margin"
-        android:text="Yesterday 5pm"
+        android:text="@string/time"
         app:layout_constraintTop_toTopOf="@id/item_notification_center_horizontal_guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/item_notification_center_cardview"/>

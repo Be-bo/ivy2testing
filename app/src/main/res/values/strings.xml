@@ -92,6 +92,8 @@
     <string name="profile_private">This profile is private.</string>
     <string name="switch_private_profile">Private Profile</string>
 
+    <string name="notification">Notificaion</string>
+    <string name="time">time</string>
 
     <!-- Posts and Events -->
     <string name="post_visual">Post Visual</string>

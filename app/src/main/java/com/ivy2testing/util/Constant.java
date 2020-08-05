@@ -35,4 +35,9 @@ public final class Constant {
     public static final int NOTIFICATION_TYPE_ORG_EVENT = 4;
     public static final int NOTIFICATION_TYPE_ORG_POST = 5;
     public static final int NOTIFICATION_BATCH_TOLERANCE = 5;
+
+    public static final long MILLIS_IN_A_DAY = 86400000;
+    public static final long MILLIS_IN_A_WEEK = 604800000;
+    public static final long MILLIS_IN_AN_HOUR = 3600000;
+    public static final long MILLIS_IN_A_MINUTE = 60000;
 }
