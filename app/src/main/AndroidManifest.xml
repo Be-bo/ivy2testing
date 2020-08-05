@@ -101,6 +101,11 @@
             android:theme="@style/AppBarTheme"
             android:parentActivityName=".main.MainActivity"/>
 
+        <activity android:name=".userProfile.NotificationCenterActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBarTheme"
+            android:parentActivityName=".main.MainActivity"/>
+
     </application>
 
 </manifest>

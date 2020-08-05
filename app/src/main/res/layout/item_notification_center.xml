@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/item_notification_center_cardview"
+        android:layout_width="@dimen/notification_center_image_dimen"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/standard_margin"
+        app:cardElevation="@dimen/standard_card_elevation"
+        app:cardCornerRadius="@dimen/standard_corner_radius"
+        app:cardPreventCornerOverlap="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/item_notification_center_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ivy_logo"
+            />
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        style="@style/StandardText"
+        android:id="@+id/item_notification_center_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/standard_margin"
+        android:layout_marginEnd="@dimen/small_margin"
+        android:text="Student Union added a new event: BSD 2020"
+        app:layout_constraintStart_toEndOf="@id/item_notification_center_cardview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/item_notification_center_horizontal_guideline"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/item_notification_center_horizontal_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5"/>
+
+    <TextView
+        style="@style/SmallText"
+        android:id="@+id/item_notification_center_small_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/standard_margin"
+        android:layout_marginEnd="@dimen/small_margin"
+        android:text="Yesterday 5pm"
+        app:layout_constraintTop_toTopOf="@id/item_notification_center_horizontal_guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/item_notification_center_cardview"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

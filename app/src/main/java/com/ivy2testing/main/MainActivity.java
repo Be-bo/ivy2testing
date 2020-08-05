@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -44,6 +43,7 @@ import com.ivy2testing.chat.ChatFragment;
 import com.ivy2testing.bubbletabs.EventsFragment;
 import com.ivy2testing.bubbletabs.CampusFragment;
 import com.ivy2testing.terms.TermsActivity;
+import com.ivy2testing.userProfile.NotificationCenterActivity;
 import com.ivy2testing.userProfile.OrganizationProfileFragment;
 import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.Constant;
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawer;
     private BottomNavigationView bottom_navigation;
     private FrameLayout loading_layout;
-    private ImageButton post_button;
+    private ImageButton function_button;
     private TextView ham_menu_uni_text;
     private ImageView ham_memu_uni_image;
 
@@ -274,14 +274,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bottom_navigation = findViewById(R.id.main_tab_bar);
         bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
         loading_layout = findViewById(R.id.main_loadingScreen);
-        post_button = findViewById(R.id.post_button);
+        function_button = findViewById(R.id.post_button);
         tab_view_pager = findViewById(R.id.tab_view_pager);
-        post_button.setOnClickListener(view -> transToLogin());
+        function_button.setOnClickListener(view -> transToLogin());
     }
 
     private void setUpLoggedInInteraction() { //this method will set up all the interactive elements the user has access to when logged in, by default they're hidden (tab bar + post btn)
-        post_button.setImageResource(R.drawable.ic_create);
-        post_button.setOnClickListener(view -> transToCreatePost());
+        function_button.setImageResource(R.drawable.ic_create);
+        function_button.setOnClickListener(view -> transToCreatePost());
         bottom_navigation.setVisibility(View.VISIBLE);
 
         tab_adapter.addFragment(chat_fragment, "chat");
@@ -294,14 +294,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             switch (menuItem.getItemId()) {
                 case R.id.tab_bar_chat:
                     bubble_recycler_view.setVisibility(View.GONE);
+                    setFunctionButton(R.id.tab_bar_chat);
                     tab_view_pager.setCurrentItem(tab_adapter.getPosition("chat"));
                     return true;
                 case R.id.tab_bar_home:
                     bubble_recycler_view.setVisibility(View.VISIBLE);
+                    setFunctionButton(R.id.tab_bar_home);
                     tab_view_pager.setCurrentItem(tab_adapter.getPosition(selected_bubble));
                     return true;
                 case R.id.tab_bar_profile:
                     bubble_recycler_view.setVisibility(View.GONE);
+                    setFunctionButton(R.id.tab_bar_profile);
                     if (this_user.getIs_organization()) {
                         if (!org_fragment.isIs_set_up()) org_fragment.setUp();
                         tab_view_pager.setCurrentItem(tab_adapter.getPosition("organization"));
@@ -326,6 +329,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tab_view_pager.setAdapter(tab_adapter);
         tab_view_pager.setOffscreenPageLimit(6);
         home_setup = true;
+    }
+
+    private void setFunctionButton(int tabId){
+        if(this_user != null) {
+            switch (tabId) {
+                case R.id.tab_bar_profile:
+                    function_button.setImageResource(R.drawable.ic_bell);
+                    function_button.setOnClickListener(view -> transToNotificationCenter());
+                    break;
+                case R.id.tab_bar_home:
+                    function_button.setImageResource(R.drawable.ic_create);
+                    function_button.setOnClickListener(view -> transToCreatePost());
+                    break;
+                case R.id.tab_bar_chat:
+                    function_button.setImageResource(R.drawable.ic_create);
+                    function_button.setOnClickListener(view -> transToCreatePost());
+                    break;
+            }
+        }
     }
 
 
@@ -418,6 +440,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent(getApplicationContext(), CreatePost.class);
         intent.putExtra("this_user", this_user);
         startActivityForResult(intent, Constant.CREATE_POST_REQUEST_CODE);
+    }
+
+    private void transToNotificationCenter(){
+        Intent intent = new Intent(this, NotificationCenterActivity.class);
+        intent.putExtra("this_user", this_user);
+        startActivity(intent);
     }
 
     private void transToLogin(){

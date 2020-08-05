@@ -27,4 +27,12 @@ public final class Constant {
     public static final int FEED_ADAPTER_SEEALL = 13;
     public static final int FEED_ADAPTER_CAMPUS = 14;
     public static final int FEED_ADAPTER_EVENTS = 15;
+    public static final int NOTIFICATION_CENTER_LIMIT = 15;
+
+    public static final int NOTIFICATION_TYPE_CHAT = 1;
+    public static final int NOTIFICATION_TYPE_COMMENT = 2;
+    public static final int NOTIFICATION_TYPE_FEATURED = 3;
+    public static final int NOTIFICATION_TYPE_ORG_EVENT = 4;
+    public static final int NOTIFICATION_TYPE_ORG_POST = 5;
+    public static final int NOTIFICATION_BATCH_TOLERANCE = 5;
 }

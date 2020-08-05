@@ -21,6 +21,8 @@
     <dimen name="image_button_width_height">40dp</dimen>
     <dimen name="preview_square_post_image_width_height">70dp</dimen>
 
+    <dimen name="notification_center_image_dimen">50dp</dimen>
+    <dimen name="notification_center_circle_radius">25dp</dimen>
     <dimen name="divider_height">0dp</dimen>
 
     <dimen name="small_margin">4dp</dimen>
@@ -32,6 +34,6 @@
 
     <dimen name="authentication_logo_height">160dp</dimen>
     <dimen name="standard_corner_radius">10dp</dimen>
-    <dimen name="standard_card_elevation">3dp</dimen>
+    <dimen name="standard_card_elevation">2dp</dimen>
 
 </resources>
