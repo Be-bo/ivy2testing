@@ -7,11 +7,12 @@ public class Notification {
     String visual;
     Long timestamp;
     String target_id;
+    String author_id;
     String target_name;
     String author_name;
 
 
-    public Notification(String id, Integer type, String visual, Long time, String targetId, String author_name, String targetName){
+    public Notification(String id, Integer type, String visual, Long time, String targetId, String author_name, String targetName, String authId){
         this.id = id;
         this.type = type;
         this.visual = visual;
@@ -19,6 +20,7 @@ public class Notification {
         this.target_id = targetId;
         this.author_name = author_name;
         this.target_name = targetName;
+        this.author_id = authId;
     }
     public Notification(){
 
