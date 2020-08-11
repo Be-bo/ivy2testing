@@ -20,6 +20,7 @@
             android:id="@+id/bubble_sample_rv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/main_toolbar_id" />
@@ -43,7 +44,7 @@
             android:layout_height="45dp"
             android:background="@color/white"
             android:visibility="gone"
-            app:labelVisibilityMode="unlabeled"
+            app:labelVisibilityMode="labeled"
             app:itemIconTint="@color/interaction"
             app:itemTextColor="@color/interaction"
             app:layout_constraintBottom_toBottomOf="parent"

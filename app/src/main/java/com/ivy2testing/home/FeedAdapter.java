@@ -215,8 +215,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                         DocumentSnapshot newPost = querySnap.getResult().getDocuments().get(i);
 
                         if(newPost.get("is_event") instanceof  Boolean && (Boolean) newPost.get("is_event")){ //it's an event
-                            Event event = newPost.toObject(Event.class);
-                            if(event != null && !postAlreadyAdded(event.getId())) post_array_list.add(event);
+//                            Event event = newPost.toObject(Event.class);
+//                            if(event != null && !postAlreadyAdded(event.getId())) post_array_list.add(event);
                         }else{ //it ain't
                             Post post = newPost.toObject(Post.class);
                             if(post != null && !postAlreadyAdded(post.getId())) post_array_list.add(post);

@@ -10,10 +10,11 @@
 
     <ImageView
         android:id="@+id/ivy_logo_toolbar"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="@dimen/standard_margin"
         android:layout_gravity="center"
-        android:src="@drawable/ivy_logo_face_mask" />
+        android:src="@drawable/ic_interlock_uc" />
 
     <ImageButton
         android:id="@+id/post_button"

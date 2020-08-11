@@ -17,6 +17,12 @@
             />
 
         <item
+            android:id="@+id/tab_bar_events"
+            android:title="@string/events"
+            android:icon="@drawable/ic_calendar"
+            />
+
+        <item
             android:id="@+id/tab_bar_profile"
             android:title="@string/profile"
             android:icon="@drawable/ic_profile"

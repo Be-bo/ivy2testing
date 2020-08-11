@@ -298,9 +298,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     tab_view_pager.setCurrentItem(tab_adapter.getPosition("chat"));
                     return true;
                 case R.id.tab_bar_home:
-                    bubble_recycler_view.setVisibility(View.VISIBLE);
+                    bubble_recycler_view.setVisibility(View.GONE);
                     setFunctionButton(R.id.tab_bar_home);
-                    tab_view_pager.setCurrentItem(tab_adapter.getPosition(selected_bubble));
+                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("campus"));
+                    return true;
+                case R.id.tab_bar_events:
+                    bubble_recycler_view.setVisibility(View.GONE);
+                    setFunctionButton(R.id.tab_bar_home);
+                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("event"));
                     return true;
                 case R.id.tab_bar_profile:
                     bubble_recycler_view.setVisibility(View.GONE);
@@ -326,6 +331,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bubbleBarSetup();
         campus_fragment = new CampusFragment(this, this_user);
         tab_adapter.addFragment(campus_fragment, "campus");
+        event_fragment = new EventsFragment(this, this_user);
+        tab_adapter.addFragment(event_fragment, "event");
         tab_view_pager.setAdapter(tab_adapter);
         tab_view_pager.setOffscreenPageLimit(6);
         home_setup = true;

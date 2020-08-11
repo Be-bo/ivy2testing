@@ -88,17 +88,17 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedClickLis
         no_events_text = root_view.findViewById(R.id.events_no_events_text);
         reached_bottom_text = root_view.findViewById(R.id.events_reached_bottom_text);
 
-        featured_cardview = root_view.findViewById(R.id.item_feed_cardview);
-        featured_title = featured_cardview.findViewById(R.id.item_feed_event_title);
-        featured_title.setVisibility(View.VISIBLE);
-        featured_text = featured_cardview.findViewById(R.id.item_feed_text);
-        featured_author = featured_cardview.findViewById(R.id.item_feed_posted_by_text);
-        featured_pinned = featured_cardview.findViewById(R.id.item_feed_pinned_text);
-
-        featured_title.setText("Want your event featured on Ivy?");
-        featured_text.setText("It's totally possible, click on this event to find out how!");
-        featured_author.setText("This could be you!");
-        featured_pinned.setText("last pinned event");
+//        featured_cardview = root_view.findViewById(R.id.item_feed_cardview);
+//        featured_title = featured_cardview.findViewById(R.id.item_feed_event_title);
+//        featured_title.setVisibility(View.VISIBLE);
+//        featured_text = featured_cardview.findViewById(R.id.item_feed_text);
+//        featured_author = featured_cardview.findViewById(R.id.item_feed_posted_by_text);
+//        featured_pinned = featured_cardview.findViewById(R.id.item_feed_pinned_text);
+//
+//        featured_title.setText("Want your event featured on Ivy?");
+//        featured_text.setText("It's totally possible, click on this event to find out how!");
+//        featured_author.setText("This could be you!");
+//        featured_pinned.setText("last pinned event");
     }
 
     public EventsFragment(Context con, User thisUser) {

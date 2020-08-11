@@ -17,74 +17,74 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/events_feed_featured_text"
-            style="@style/LargeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/standard_margin"
-            android:text="@string/featured"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+<!--        <TextView-->
+<!--            android:id="@+id/events_feed_featured_text"-->
+<!--            style="@style/LargeText"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="@dimen/standard_margin"-->
+<!--            android:text="@string/featured"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
 
-        <include
-            android:id="@+id/feed_obj_reference"
-            layout="@layout/item_feed_post"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/events_feed_featured_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+<!--        <include-->
+<!--            android:id="@+id/feed_obj_reference"-->
+<!--            layout="@layout/item_feed_post"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/events_feed_featured_text"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent" />-->
 
-        <TextView
-            android:id="@+id/events_feed_upcoming_text"
-            style="@style/LargeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/standard_margin"
-            android:layout_marginTop="@dimen/large_margin"
-            android:text="@string/upcoming"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/feed_obj_reference" />
+<!--        <TextView-->
+<!--            android:id="@+id/events_feed_upcoming_text"-->
+<!--            style="@style/LargeText"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="@dimen/standard_margin"-->
+<!--            android:layout_marginTop="@dimen/large_margin"-->
+<!--            android:text="@string/upcoming"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/feed_obj_reference" />-->
 
 
-        <LinearLayout
-            android:id="@+id/events_feed_filter_bar"
-            android:layout_width="0dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="@dimen/extra_large_margin"
-            android:background="@drawable/segmented_button_background"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/events_feed_upcoming_text">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/events_feed_filter_bar"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="35dp"-->
+<!--            android:layout_marginTop="@dimen/extra_large_margin"-->
+<!--            android:background="@drawable/segmented_button_background"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:visibility="gone"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/events_feed_upcoming_text">-->
 
-            <Button
-                android:id="@+id/happening_now_button"
-                style="@style/SegmentedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:enabled="false"
-                android:text="Happening now" />
+<!--            <Button-->
+<!--                android:id="@+id/happening_now_button"-->
+<!--                style="@style/SegmentedButton"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:enabled="false"-->
+<!--                android:text="Happening now" />-->
 
-            <Button
-                android:id="@+id/upcoming_button"
-                style="@style/SegmentedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Upcoming" />
+<!--            <Button-->
+<!--                android:id="@+id/upcoming_button"-->
+<!--                style="@style/SegmentedButton"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Upcoming" />-->
 
-            <Button
-                android:id="@+id/past_events_button"
-                style="@style/SegmentedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Past events" />
-        </LinearLayout>
+<!--            <Button-->
+<!--                android:id="@+id/past_events_button"-->
+<!--                style="@style/SegmentedButton"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Past events" />-->
+<!--        </LinearLayout>-->
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -94,7 +94,7 @@
             app:layout_constraintBottom_toTopOf="@id/events_reached_bottom_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/events_feed_filter_bar" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/events_no_events_text"
@@ -109,7 +109,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/events_feed_filter_bar" />
+            app:layout_constraintTop_toTopOf="parent"  />
 
         <TextView
             android:id="@+id/events_reached_bottom_text"

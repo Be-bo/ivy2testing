@@ -308,8 +308,7 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
             }
         });
     }
-
-    // Store user info in database (not implemented yet!)
+    
     private void registerInDB(){
         String id = auth.getUid();
         if (id != null){
