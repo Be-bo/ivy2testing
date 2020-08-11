@@ -130,7 +130,7 @@ public class NotificationHandler extends FirebaseMessagingService {
         builder.setSmallIcon(R.drawable.ivy_logo) // ivy logo
                 .setLargeIcon(getCircleBitmap(large_img)) // ivy logo
                 .setContentTitle(remoteMessage.getData().get("title_data"))
-                .setContentText(remoteMessage.getData().get("body_data")) // TODO
+           //     .setContentText(remoteMessage.getData().get("body_data")) // TODO
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setChannelId(channel_id)
@@ -187,7 +187,7 @@ public class NotificationHandler extends FirebaseMessagingService {
 
         builder.setSmallIcon(R.drawable.ivy_logo)
                 .setContentTitle(remoteMessage.getData().get("title_data"))
-                .setContentText(remoteMessage.getData().get("title_data")) // TODO is this necessary?
+       //         .setContentText(remoteMessage.getData().get("title_data")) // TODO is this necessary?
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setChannelId(channel_id)
