@@ -189,10 +189,13 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
                             setFragment();
                             if(this_user != null) post.addViewIdToList(this_user.getId());
                         }
-                    }else Toast.makeText(this, "Failed to get post/event data. :-(", Toast.LENGTH_LONG).show();
+                    }else {
+                        Toast.makeText(this, "Failed to get post/event data. :-(", Toast.LENGTH_LONG).show();
+                    }
                 });
             }else{
                 Toast.makeText(this, "Failed to get post/event data. :-(", Toast.LENGTH_LONG).show();
+                Log.d(TAG, "pullPost: postID = " + postId + " postUni" + postUni);
                 finish();
             }
         }

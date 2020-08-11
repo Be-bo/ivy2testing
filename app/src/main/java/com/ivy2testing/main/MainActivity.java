@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -29,9 +30,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.authentication.LoginActivity;
@@ -42,6 +48,7 @@ import com.ivy2testing.R;
 import com.ivy2testing.chat.ChatFragment;
 import com.ivy2testing.bubbletabs.EventsFragment;
 import com.ivy2testing.bubbletabs.CampusFragment;
+import com.ivy2testing.notifications.NotificationHandler;
 import com.ivy2testing.terms.TermsActivity;
 import com.ivy2testing.userProfile.NotificationCenterActivity;
 import com.ivy2testing.userProfile.OrganizationProfileFragment;
@@ -70,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView ham_menu_uni_text;
     private ImageView ham_memu_uni_image;
 
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageReference stor = FirebaseStorage.getInstance().getReference();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private UserViewModel user_view_model;
@@ -215,6 +223,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 finish();
             }
         });
+        Utils.deleteThis_user();
+
         auth.signOut();
     }
 
@@ -375,6 +385,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Toast.makeText(this, "Your account has been banned.", Toast.LENGTH_LONG).show();
                         signOut();
                     }else{
+                        initFCM();
                         Utils.setCampusUni(this_user.getUni_domain(), this); //by default for the logged in user we want to display their campus
                         setDrawerHeader();
                         if(!login_setup) setUpLoggedInInteraction();
@@ -462,4 +473,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         loading_layout.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out));  // Start fade out animation
         loading_layout.setVisibility(View.GONE);
     }
+
+
+
+    private void initFCM(){
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (!task.isSuccessful()) {
+                    Log.w("TAG", "getInstanceId failed", task.getException());
+                    return;
+                }
+
+                // Get new Instance ID token
+                String token = task.getResult().getToken();
+                Utils.setThis_user(this_user);
+                if(!token.equals(this_user.getMessaging_token())){
+                    Utils.sendRegistrationToServer(token);
+                    this_user.setMessaging_token(token);
+                }
+            }
+        });
+        //sendRegistrationToServer(token);
+    }
+
 }

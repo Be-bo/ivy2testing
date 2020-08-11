@@ -36,6 +36,12 @@ public final class Constant {
     public static final int NOTIFICATION_TYPE_ORG_POST = 5;
     public static final int NOTIFICATION_BATCH_TOLERANCE = 5;
 
+    public static final String CHANNEL_1_ID = "messages";
+    public static final String CHANNEL_2_ID = "comments";
+    public static final String CHANNEL_3_ID = "featured";
+    public static final String CHANNEL_4_ID = "org_events";
+    public static final String CHANNEL_5_ID = "org_posts";
+
     public static final long MILLIS_IN_A_DAY = 86400000;
     public static final long MILLIS_IN_A_WEEK = 604800000;
     public static final long MILLIS_IN_AN_HOUR = 3600000;
