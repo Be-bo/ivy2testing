@@ -13,7 +13,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Notification;
 import com.ivy2testing.entities.User;
+import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.main.MainActivity;
+import com.ivy2testing.util.Utils;
 
 public class NotificationCenterActivity extends AppCompatActivity implements NotificationCenterAdapter.NotificationListener{
 
@@ -50,16 +52,25 @@ public class NotificationCenterActivity extends AppCompatActivity implements Not
                 intent = new Intent(this, MainActivity.class);
                 break;
             case 2:
-                intent = new Intent(this, MainActivity.class);
+                intent = new Intent(this, ViewPostOrEventActivity.class);
+                intent.putExtra("post_uni", Utils.getThis_user().getUni_domain());
+                intent.putExtra("post_id", clicked.getNotification_origin_name());
+                intent.putExtra("this_user",Utils.getThis_user());
                 break;
             case 3:
                 intent = new Intent(this, MainActivity.class);
                 break;
             case 4:
-                intent = new Intent(this, MainActivity.class);
+                intent = new Intent(this, ViewPostOrEventActivity.class);
+                intent.putExtra("post_uni", Utils.getThis_user().getUni_domain());
+                intent.putExtra("post_id", clicked.getNotification_origin_name());
+                intent.putExtra("this_user",Utils.getThis_user());
                 break;
             case 5:
-                intent = new Intent(this, MainActivity.class);
+                intent = new Intent(this, ViewPostOrEventActivity.class);
+                intent.putExtra("post_uni", Utils.getThis_user().getUni_domain());
+                intent.putExtra("post_id", clicked.getNotification_origin_name());
+                intent.putExtra("this_user",Utils.getThis_user());
                 break;
         }
         startActivity(intent);

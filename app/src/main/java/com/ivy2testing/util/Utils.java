@@ -1,12 +1,17 @@
 package com.ivy2testing.util;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import androidx.core.app.NotificationManagerCompat;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.ivy2testing.entities.User;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -95,5 +100,24 @@ public final class Utils {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         if (this_user != null)
             db.collection("users").document(this_user.getId()).update("messaging_token", token);
+    }
+
+    //For cancelling notifications
+
+    public static ArrayList<HashMap<String, Integer>> notif_list = new ArrayList<>();
+
+    public static void addNotif(HashMap<String, Integer> toAdd){
+        notif_list.add(toAdd);
+    }
+
+    public static ArrayList<HashMap<String, Integer>> getNotif_list() {
+        return notif_list;
+    }
+
+    public static void clearNotif_list(){ //is used
+        notif_list = new ArrayList<>();
+    }
+    public static void setNotif_list(ArrayList<HashMap<String, Integer>> array){
+        notif_list = array;
     }
 }

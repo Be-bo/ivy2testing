@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -223,9 +224,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 finish();
             }
         });
-        Utils.deleteThis_user();
+        db.collection("users").document(this_user.getId()).update("messaging_token", "none").addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Utils.deleteThis_user();
+                Utils.clearNotif_list();
+                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                assert notificationManager != null;
+                notificationManager.cancelAll();
+                auth.signOut();
+            }
+        });
 
-        auth.signOut();
+        // Just in case? // TODO
+      //  Utils.deleteThis_user();
+      //  auth.signOut();
     }
 
     private void openUniChangeDialog() {

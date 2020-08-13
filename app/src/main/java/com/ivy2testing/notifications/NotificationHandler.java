@@ -1,6 +1,6 @@
 package com.ivy2testing.notifications;
-
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,24 +10,21 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
-import com.ivy2testing.entities.User;
 import com.ivy2testing.home.ViewPostOrEventActivity;
-import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.userProfile.NotificationCenterActivity;
 import com.ivy2testing.util.Utils;
+import java.util.HashMap;
+
 
 import static com.ivy2testing.util.Constant.CHANNEL_1_ID;
 import static com.ivy2testing.util.Constant.CHANNEL_2_ID;
@@ -43,6 +40,7 @@ public class NotificationHandler extends FirebaseMessagingService {
     public static int CHANNEL_3_COUNT = 21;
     public static int CHANNEL_4_COUNT = 31;
     public static int CHANNEL_5_COUNT = 41;
+    public static int pending_request_code = 0;
 
     @Override
     public void onNewToken(String token) {
@@ -73,14 +71,11 @@ public class NotificationHandler extends FirebaseMessagingService {
 
     private void grabPhoto(String path, RemoteMessage remoteMessage) {
         if (path.contains("/")) {
-            db_storage.child(path).getBytes(1048576).addOnCompleteListener(new OnCompleteListener<byte[]>() {
-                @Override
-                public void onComplete(@NonNull Task<byte[]> task) {
-                    //   Log.d(TAG, "onComplete: " + task.isSuccessful());
-                    if (task.isSuccessful() && task.getResult() != null)
-                        buildNotification(BitmapFactory.decodeByteArray(task.getResult(), 0, task.getResult().length), remoteMessage);
-                    else buildNotification(remoteMessage);
-                }
+            db_storage.child(path).getBytes(1048576).addOnCompleteListener(task -> {
+                //   Log.d(TAG, "onComplete: " + task.isSuccessful());
+                if (task.isSuccessful() && task.getResult() != null)
+                    buildNotification(BitmapFactory.decodeByteArray(task.getResult(), 0, task.getResult().length), remoteMessage);
+                else buildNotification(remoteMessage);
             });
         } else {
             buildNotification(remoteMessage);
@@ -89,6 +84,8 @@ public class NotificationHandler extends FirebaseMessagingService {
 
     private void buildNotification(Bitmap large_img, RemoteMessage remoteMessage) {
         Intent intent = new Intent(this, NotificationCenterActivity.class);
+        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
+
         String channel_id = "";
         int notif_id = 0;
 
@@ -113,17 +110,26 @@ public class NotificationHandler extends FirebaseMessagingService {
                 break;
             case "4":
                 channel_id = CHANNEL_4_ID;
-                intent = new Intent(this, NotificationCenterActivity.class);
+                intent = new Intent(this, ViewPostOrEventActivity.class);
+                intent.putExtra("post_id", remoteMessage.getData().get("intent_data"));
+                intent.putExtra("post_uni",Utils.getThis_user().getUni_domain());
+                intent.putExtra("this_user",Utils.getThis_user());
                 notif_id = idBuilder(4);
                 break;
             case "5":
                 channel_id = CHANNEL_5_ID;
-                intent = new Intent(this, NotificationCenterActivity.class);
+                intent = new Intent(this, ViewPostOrEventActivity.class);
+                intent.putExtra("post_id", remoteMessage.getData().get("intent_data"));
+                intent.putExtra("post_uni",Utils.getThis_user().getUni_domain());
+                intent.putExtra("this_user",Utils.getThis_user());
                 notif_id = idBuilder(5);
                 break;
         }
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        taskStackBuilder.addNextIntentWithParentStack(intent);
+      //  intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+       // PendingIntent pendingIntent = PendingIntent.getActivity(this, pendingIntentRequestMethod(), intent, 0);
+        PendingIntent pendingIntent = taskStackBuilder.getPendingIntent( pendingIntentRequestMethod(), 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channel_id);
 
 
@@ -137,6 +143,10 @@ public class NotificationHandler extends FirebaseMessagingService {
                 .setAutoCancel(true);
 
 
+        HashMap<String, Integer> toCancel =  new HashMap<>();
+        toCancel.put(remoteMessage.getData().get("intent_data"), notif_id);
+        Utils.addNotif(toCancel);
+
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
         notificationManagerCompat.notify(notif_id, builder.build());
 
@@ -145,7 +155,11 @@ public class NotificationHandler extends FirebaseMessagingService {
 
     private void buildNotification(RemoteMessage remoteMessage) {
         Log.d(TAG, "buildNotification: called");
+
         Intent intent = new Intent(this, NotificationCenterActivity.class);
+        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
+
+
         String channel_id = "";
         int notif_id = 0;
 
@@ -171,17 +185,25 @@ public class NotificationHandler extends FirebaseMessagingService {
                 break;
             case "4":
                 channel_id = CHANNEL_4_ID;
-                intent = new Intent(this, NotificationCenterActivity.class);
+                intent = new Intent(this, ViewPostOrEventActivity.class);
+                intent.putExtra("post_id", remoteMessage.getData().get("intent_data"));
+                intent.putExtra("post_uni",Utils.getThis_user().getUni_domain());
+                intent.putExtra("this_user",Utils.getThis_user());
                 notif_id = idBuilder(4);
                 break;
             case "5":
                 channel_id = CHANNEL_5_ID;
-                intent = new Intent(this, NotificationCenterActivity.class);
+                intent = new Intent(this, ViewPostOrEventActivity.class);
+                intent.putExtra("post_id", remoteMessage.getData().get("intent_data"));
+                intent.putExtra("post_uni",Utils.getThis_user().getUni_domain());
+                intent.putExtra("this_user",Utils.getThis_user());
                 notif_id = idBuilder(5);
                 break;
         }
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        taskStackBuilder.addNextIntentWithParentStack(intent);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //PendingIntent pendingIntent = PendingIntent.getActivity(this, pendingIntentRequestMethod(), intent, 0);
+        PendingIntent pendingIntent = taskStackBuilder.getPendingIntent( pendingIntentRequestMethod(), 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channel_id);
 
 
@@ -192,6 +214,11 @@ public class NotificationHandler extends FirebaseMessagingService {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setChannelId(channel_id)
                 .setAutoCancel(true);
+
+
+        HashMap<String, Integer> toCancel =  new HashMap<>();
+        toCancel.put(remoteMessage.getData().get("intent_data"), notif_id);
+        Utils.addNotif(toCancel);
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
         notificationManagerCompat.notify(notif_id, builder.build());
@@ -261,6 +288,10 @@ public class NotificationHandler extends FirebaseMessagingService {
         bitmap.recycle();
 
         return output;
+    }
+
+    private int pendingIntentRequestMethod(){
+        return pending_request_code+=1;
     }
 
 
