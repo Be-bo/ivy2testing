@@ -121,6 +121,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
     private ConstraintLayout event_fields;
     private EditText title_editText;
     private EditText location_editText;
+    private EditText link_editText;
 
     //calendar buttons + times
     private Button start_date_button;
@@ -214,6 +215,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
         // event fields
         title_editText = findViewById(R.id.event_title_editText);
         location_editText = findViewById(R.id.event_location_editText);
+        link_editText = findViewById(R.id.external_link_editText);
 
         event_fields = findViewById(R.id.event_constraint_view);
         start_date_button = findViewById(R.id.start_date_button);
@@ -685,6 +687,7 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
             current_event.setText(description_edit_text.getText().toString());
             current_event.setName(title_editText.getText().toString());
             current_event.setLocation(location_editText.getText().toString());
+            current_event.setLink(linkFunction(link_editText.getText().toString().trim()));
             // time functions
             current_event.setStart_millis(start_date_millis + start_time_millis);
             current_event.setEnd_millis(end_date_millis + end_time_millis);
@@ -894,6 +897,13 @@ public class CreatePost extends AppCompatActivity implements DatePickerDialog.On
                         }
                     }
                 });
+    }
+
+    // basic check if link is properly formatted
+    private String linkFunction(String link){
+        if(link.isEmpty()) return null;
+        else if(link.contains(".")) return link;
+        else return null;
     }
 
     private void addArrayListToAdapter(){

@@ -53,24 +53,24 @@ public class NotificationCenterActivity extends AppCompatActivity implements Not
                 break;
             case 2:
                 intent = new Intent(this, ViewPostOrEventActivity.class);
-                intent.putExtra("post_uni", Utils.getThis_user().getUni_domain());
+                intent.putExtra("post_uni", this_user.getUni_domain());
                 intent.putExtra("post_id", clicked.getNotification_origin_name());
-                intent.putExtra("this_user",Utils.getThis_user());
+                intent.putExtra("this_user",this_user);
                 break;
             case 3:
                 intent = new Intent(this, MainActivity.class);
                 break;
             case 4:
                 intent = new Intent(this, ViewPostOrEventActivity.class);
-                intent.putExtra("post_uni", Utils.getThis_user().getUni_domain());
+                intent.putExtra("post_uni",  this_user.getUni_domain());
                 intent.putExtra("post_id", clicked.getNotification_origin_name());
-                intent.putExtra("this_user",Utils.getThis_user());
+                intent.putExtra("this_user",this_user);
                 break;
             case 5:
                 intent = new Intent(this, ViewPostOrEventActivity.class);
-                intent.putExtra("post_uni", Utils.getThis_user().getUni_domain());
+                intent.putExtra("post_uni",  this_user.getUni_domain());
                 intent.putExtra("post_id", clicked.getNotification_origin_name());
-                intent.putExtra("this_user",Utils.getThis_user());
+                intent.putExtra("this_user",this_user);
                 break;
         }
         startActivity(intent);

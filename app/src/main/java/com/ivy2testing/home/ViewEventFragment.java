@@ -3,16 +3,22 @@ package com.ivy2testing.home;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,12 +36,14 @@ import com.ivy2testing.util.Constant;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 
-/** @author Zahra Ghavasieh
+/**
+ * @author Zahra Ghavasieh
  * Overview: Event view fragment
  * Note: Includes text, pinned ID, and event only views
  */
@@ -64,10 +72,15 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
     private User this_user;
     private CircleUserAdapter going_adapter;
 
+    // button tray
+    private ConstraintLayout button_tray;
+    private ImageButton share_button;
+    private ImageButton link_button;
+    private ImageButton calendar_button;
 
 
     // Constructor
-    public ViewEventFragment(Event event, User this_user){
+    public ViewEventFragment(Event event, User this_user) {
         this.event = event;
         this.this_user = this_user;
     }
@@ -90,10 +103,10 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
 
 
     /* Initialization Methods
-***************************************************************************************************/
+     ***************************************************************************************************/
 
     // Define and initialize views
-    private void declareViews(View v){
+    private void declareViews(View v) {
         tv_time = v.findViewById(R.id.viewEvent_time);
         tv_location = v.findViewById(R.id.viewEvent_place);
         tv_link = v.findViewById(R.id.viewEvent_link);
@@ -102,14 +115,22 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
         going_recycler = v.findViewById(R.id.viewEvent_goingRecycler);
         tv_seeAll = v.findViewById(R.id.viewEvent_seeAll);
         button_going = v.findViewById(R.id.viewEvent_goingButton);
+
+        // button tray
+        button_tray = v.findViewById(R.id.button_tray_constraint);
+        share_button = v.findViewById(R.id.share_button);
+        link_button = v.findViewById(R.id.link_button);
+        calendar_button = v.findViewById(R.id.calendar_button);
+
+
     }
 
     // Populate views
-    private void setFields(View v){
+    private void setFields(View v) {
 
         // Time
-        String time = convertMillisToReadable(event.getStart_millis())
-                + " - " + convertMillisToReadable(event.getEnd_millis());
+        String time = convertMillisToReadableDisplay(event.getStart_millis())
+                + " - " + convertMillisToReadableDisplay(event.getEnd_millis());
         tv_time.setText(time);
 
         // Mandatory text fields
@@ -129,15 +150,18 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
         setUpGoingAdapter();
 
         // Hide button if user is not signed in
-        if (this_user == null || !this_user.getUni_domain().equals(event.getUni_domain())){ //either not logged in, or not from this uni -> can't say going
-            button_going.setVisibility(View.GONE);
-        }
-        else if (event.getGoing_ids().contains(this_user.getId())) button_going.setChecked(true);
+        if (this_user == null || !this_user.getUni_domain().equals(event.getUni_domain())) { //either not logged in, or not from this uni -> can't say going // now updated to not show button tray
+            button_tray.setVisibility(View.GONE);
+        } else if (event.getGoing_ids().contains(this_user.getId())) button_going.setChecked(true);
     }
 
     // OnClick and scroll Listeners
-    private void setListeners(){
-        if (event.getLink() != null) tv_link.setOnClickListener(v1 -> goToLink());
+    private void setListeners() {
+        if (event.getLink() != null) {
+            tv_link.setOnClickListener(v1 -> goToLink());
+            link_button.setVisibility(View.VISIBLE);
+            link_button.setOnClickListener(v1 -> goToLink());
+        }
         if (event.getPinned_id() != null) tv_pinned.setOnClickListener(v1 -> viewPinned());
         tv_seeAll.setOnClickListener(v1 -> seeAllGoingUsers());
         if (button_going.getVisibility() == View.VISIBLE)
@@ -146,13 +170,22 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
                 else setThisUserNotGoing();        // toggle is disabled
             });
 
+        share_button.setOnClickListener(v1 -> {
+            shareExternal();
+        });
+        calendar_button.setOnClickListener(v1 -> {
+            addToCalendar();
+        });
+
     }
 
     // Set recycler for going users (at this point, going_ids isn't empty!)
-    private void setUpGoingAdapter(){
-        if(event.getGoing_ids().size() < Constant.PROFILE_MEMBER_LIMIT) going_adapter = new CircleUserAdapter(event.getGoing_ids(), getContext(), this);
-        else going_adapter = new CircleUserAdapter(event.getGoing_ids().subList(0, Constant.PROFILE_MEMBER_LIMIT), getContext(), this);
-        going_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL,false){
+    private void setUpGoingAdapter() {
+        if (event.getGoing_ids().size() < Constant.PROFILE_MEMBER_LIMIT)
+            going_adapter = new CircleUserAdapter(event.getGoing_ids(), getContext(), this);
+        else
+            going_adapter = new CircleUserAdapter(event.getGoing_ids().subList(0, Constant.PROFILE_MEMBER_LIMIT), getContext(), this);
+        going_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false) {
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
                 lp.width = getWidth() / Constant.PROFILE_MEMBER_LIMIT;
@@ -164,40 +197,91 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
 
 
     // Set Going recycler visibility
-    private void setRecyclerVisibility(){
-        if(event.getGoing_ids().size() > 0){
+    private void setRecyclerVisibility() {
+        if (event.getGoing_ids().size() > 0) {
             going_recycler.setVisibility(View.VISIBLE);
             tv_seeAll.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             going_recycler.setVisibility(View.GONE);
             tv_seeAll.setVisibility(View.GONE);
         }
     }
 
 
-/* OnClick and Transition Methods
-***************************************************************************************************/
+    /* OnClick and Transition Methods
+     ***************************************************************************************************/
 
     // OnClick for link: Go to a browser to view link
-    private void goToLink(){
+    private void goToLink() {
         Log.d(TAG, "Opening browser...");
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(event.getLink()));     // link not null!!
+        if (URLUtil.isValidUrl(event.getLink())) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(event.getLink()));
+            startActivity(intent);
+        } else {
+            Toast.makeText(getContext(), "Can't open link properly :(", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // sends a plain text send intent to any apps with proper receiving parameters.
+    // uses Sharesheet, instead of intent resolver
+    private void shareExternal() {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, createShareText(100));
+        sendIntent.setType("text/plain");
+        Intent shareIntent = Intent.createChooser(sendIntent, "Choose where to share");
+        startActivity(shareIntent);
+    }
+
+
+    // method will check size of description text, and build a text block to send external
+    private String createShareText(int max_description_size) {
+
+        // determine proper size for description.
+        int length = event.getText().length();
+        String description = "";
+        if (length > max_description_size) description = event.getText().substring(0, max_description_size) + "...";
+        else description = event.getText();
+
+        String share_text =
+                "Check out this event on Ivy: \n"
+                        + event.getName() + "\n"
+                        + "from: " + convertMillisToReadableShare(event.getStart_millis()) + "\n"
+                        + "until: " + convertMillisToReadableShare(event.getEnd_millis()) + "\n"
+                        + "at: " + event.getLocation() + "\n"
+                        + description;
+
+        if (event.getLink() != null) share_text += "\nLink: " + event.getLink();
+
+        return share_text;
+    }
+
+    // takes user to default calendar and autofills fields
+    private void addToCalendar() {
+        Intent intent = new Intent(Intent.ACTION_INSERT)
+                .setData(CalendarContract.Events.CONTENT_URI)
+                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.getStart_millis())
+                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.getEnd_millis())
+                .putExtra(CalendarContract.Events.TITLE, event.getName())
+                .putExtra(CalendarContract.Events.DESCRIPTION, event.getText())
+                .putExtra(CalendarContract.Events.EVENT_LOCATION, event.getLocation())
+                .putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
         startActivity(intent);
     }
+
 
     // OnClick for pinned Event:
     // Start new Activity to view posts relating to event if pinned == event
     // Else open the pinned event page
-    private void viewPinned(){
+    private void viewPinned() {
         String address = "universities/" + event.getUni_domain() + "/posts";
-        if (address.contains("null")){
+        if (address.contains("null")) {
             Log.e(TAG, "Event Address has null values. ID:" + event.getUni_domain());
             return;
         }
 
         // Pull all posts relating to event
-        if (event.getId().equals(event.getPinned_id())){
+        if (event.getId().equals(event.getPinned_id())) {
             Log.d(TAG, "View all posts related to this event...");
             seeAllPosts();  // Pass a "query" to SeeAllPostsActivity
         }
@@ -217,15 +301,17 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
         intent.putExtra("title", event.getPinned_id());
 
         // Make "Query"
-        HashMap<String, Object> query_map = new HashMap<String, Object>() {{ put("pinned_id", event.getPinned_id()); }};
+        HashMap<String, Object> query_map = new HashMap<String, Object>() {{
+            put("pinned_id", event.getPinned_id());
+        }};
         intent.putExtra("query_map", query_map);
 
         startActivityForResult(intent, Constant.SEEALL_POSTS_REQUEST_CODE);
     }
 
     // Start new Activity to view event
-    private void viewEventPage(Event event){
-        if (event == null || event.getId() == null){
+    private void viewEventPage(Event event) {
+        if (event == null || event.getId() == null) {
             Log.e(TAG, "Event was null!");
             return;
         }
@@ -238,7 +324,7 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
     }
 
     // OnClick for See All: Launch a new Activity to view users
-    private void seeAllGoingUsers(){
+    private void seeAllGoingUsers() {
         Intent intent = new Intent(getContext(), SeeAllUsersActivity.class);
         Log.d(TAG, "Starting SeeAll Activity to see all going users");
         intent.putExtra("title", "Going Users");
@@ -261,75 +347,126 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
             intent.putExtra("student_to_display_uni", event.getUni_domain());
             intent.putExtra("this_user", this_user);
             startActivity(intent);
-        }
-        else Log.e(TAG, "Parent Activity was null!");
+        } else Log.e(TAG, "Parent Activity was null!");
     }
 
     // Add user to going list
-    private void setThisUserGoing(){
+    private void setThisUserGoing() {
         db.collection("universities").document(event.getUni_domain()).collection("posts").document(event.getId()).update("going_ids", FieldValue.arrayUnion(this_user.getId())).addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
+            if (task.isSuccessful()) {
                 going_adapter.addUser(this_user.getId());
                 event.addGoingIdToList(0, this_user.getId());
                 setRecyclerVisibility();
-            }else{
+            } else {
                 Toast.makeText(getContext(), "Failed to add user as going to the event.", Toast.LENGTH_LONG).show();
             }
         });
     }
 
     // Remove user from going list
-    private void setThisUserNotGoing(){
+    private void setThisUserNotGoing() {
         db.collection("universities").document(event.getUni_domain()).collection("posts").document(event.getId()).update("going_ids", FieldValue.arrayRemove(this_user.getId())).addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
+            if (task.isSuccessful()) {
                 going_adapter.removeUser(this_user.getId());
                 event.deleteGoingIdFromList(this_user.getId());
                 setRecyclerVisibility();    // Remove Visibility if that was the last person
-            }else{
+            } else {
                 Toast.makeText(getContext(), "Failed to remove user as going to the event.", Toast.LENGTH_LONG).show();
             }
         });
     }
 
 
-/* Firebase Related Methods
-***************************************************************************************************/
+    /* Firebase Related Methods
+     ***************************************************************************************************/
 
     // Pull pinned event from database
-    private void loadEventFromDB(){
+    private void loadEventFromDB() {
         String address = "universities/" + event.getUni_domain() + "/posts/" + event.getPinned_id();
-        if (address.contains("null")){
+        if (address.contains("null")) {
             Log.e(TAG, "Event Address has null values. ID:" + event.getUni_domain());
             return;
         }
 
-        db.document(address).get().addOnCompleteListener(task->{
+        db.document(address).get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 Event event = task.getResult().toObject(Event.class);
                 if (event != null) {
                     event.setId(event.getPinned_id());
                     viewEventPage(event);
                 } else Log.e(TAG, "Event was null!");
-            }
-            else {
+            } else {
                 Log.e(TAG, "loadEventFromDB: unsuccessful or does not exist.");
             }
         });
     }
 
-/* Utility Methods
-***************************************************************************************************/
+    /* Utility Methods
+     ***************************************************************************************************/
 
-    // Convert time in Millis to readable text
-    private String convertMillisToReadable(Long millis){
+    // Convert time in Millis to readable text for sharing externally
+    private String convertMillisToReadableShare(Long millis) {
 
         // Format string in locale timezone base on device settings
-        DateFormat formatter = new SimpleDateFormat("EEE MMM d, hh a", Locale.getDefault());
+        DateFormat formatter = new SimpleDateFormat("EEE MMM d,", Locale.getDefault());
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(millis);
 
-        return formatter.format(cal.getTime());
+        return formatter.format(cal.getTime()) + " " + DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault()).format(millis);
     }
 
 
+    // A long of millis will run the gauntlet to see if it is same day or  within a day/ week from now
+    private String convertMillisToReadableDisplay(Long millis) {
+
+        Calendar cal_today = Calendar.getInstance();
+        int year_today = cal_today.get(cal_today.YEAR);
+        int week_today = cal_today.get(cal_today.WEEK_OF_YEAR);
+        int day_today = cal_today.get(cal_today.DAY_OF_YEAR);
+
+        // Calendar instantiated with time to check
+        Calendar check_cal = Calendar.getInstance();
+        check_cal.setTimeInMillis(millis);
+        int check_year = check_cal.get(check_cal.YEAR);
+        int check_week = check_cal.get(check_cal.WEEK_OF_YEAR);
+        int check_day = check_cal.get(check_cal.DAY_OF_YEAR);
+
+
+        String return_string = null;
+
+        // Must check year first
+        if (year_today == check_year) {
+
+            DateFormat formatter = new SimpleDateFormat("EEE,", Locale.getDefault());
+
+            if (day_today == check_day) {
+                return_string = "Today";
+
+            } else if (day_today + 1 == check_day ) {
+                return_string = "Tomorrow";
+
+            } else if(day_today - 1 ==check_day){
+                return_string = "Yesterday";
+
+            } else if(week_today == check_week){
+                return_string = "This " + formatter.format(check_cal.getTime());
+
+            } else if(week_today + 1 == check_week){
+                return_string = "Next " + formatter.format(check_cal.getTime());
+
+            } else if(week_today - 1 == check_week){
+                return_string = "Last " + formatter.format(check_cal.getTime());
+
+            }
+        }
+
+        // if Return string did not get updated, return to standard format
+        if (return_string == null){
+            DateFormat formatter_default = new SimpleDateFormat("EEE MMM d,", Locale.getDefault());
+            return_string = formatter_default.format(check_cal.getTime());
+        }
+
+        return return_string + " " + DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault()).format(millis);
+    }
 }
+

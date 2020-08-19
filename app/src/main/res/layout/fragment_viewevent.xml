@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -110,15 +111,58 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.9" />
 
-    <androidx.appcompat.widget.AppCompatToggleButton
-        android:id="@+id/viewEvent_goingButton"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/button_tray_constraint"
         android:layout_width="0dp"
-        style="@style/ToggleButton"
-        android:textOff="@string/going"
-        android:textOn="@string/not_going"
-        android:layout_marginTop="@dimen/large_margin"
-        app:layout_constraintTop_toBottomOf="@id/viewEvent_seeAll"
-        app:layout_constraintStart_toStartOf="@id/viewEvent_guideline1"
-        app:layout_constraintEnd_toEndOf="@id/viewEvent_guideline2"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toStartOf="@+id/viewPost_guideline2"
+        app:layout_constraintStart_toStartOf="@+id/viewPost_guideline1"
+        app:layout_constraintTop_toBottomOf="@+id/viewEvent_seeAll">
+
+        <ImageButton
+            android:id="@+id/share_button"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/link_button"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/ic_menu_share" />
+
+        <ImageButton
+            android:id="@+id/link_button"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/viewEvent_goingButton"
+            app:layout_constraintStart_toEndOf="@+id/share_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/common_full_open_on_phone" />
+
+        <androidx.appcompat.widget.AppCompatToggleButton
+            android:id="@+id/viewEvent_goingButton"
+            style="@style/ToggleButton"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:textOff="@string/going"
+            android:textOn="@string/not_going"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/calendar_button"
+            app:layout_constraintStart_toEndOf="@+id/link_button"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/calendar_button"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/viewEvent_goingButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/ic_menu_my_calendar" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
