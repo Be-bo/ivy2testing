@@ -63,6 +63,7 @@
     <string name="today">Today</string>
     <string name="this_week">This Week</string>
     <string name="explore_all">Explore All</string>
+    <string name="nobody_going">Nobody\'s going to this event yet.</string>
 
 
     <!-- User Profile -->

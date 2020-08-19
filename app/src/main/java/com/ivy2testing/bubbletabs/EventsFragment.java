@@ -10,12 +10,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -29,6 +32,7 @@ import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.home.ViewPostOrEventActivity;
+import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.userProfile.OrganizationProfileActivity;
 import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.Constant;
@@ -41,6 +45,7 @@ public class EventsFragment extends Fragment implements EventAdapter.EventClickL
     private View root_view;
     private SwipeRefreshLayout refresh_layout;
     private User this_user;
+    private UserViewModel this_user_vm;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageReference stor = FirebaseStorage.getInstance().getReference();
 
@@ -48,6 +53,11 @@ public class EventsFragment extends Fragment implements EventAdapter.EventClickL
     private RecyclerView today_recycler;
     private RecyclerView this_week_recycler;
     private RecyclerView upcoming_recycler;
+
+    private ProgressBar for_you_progress_bar; //not connected
+    private ProgressBar today_progress_bar;
+    private ProgressBar this_week_progress_bar;
+    private ProgressBar upcoming_progress_bar;
 
     private TextView for_you_title;
     private TextView today_title;
@@ -63,6 +73,8 @@ public class EventsFragment extends Fragment implements EventAdapter.EventClickL
     private Button explore_all_btn;
     private CardView featured_cardview;
     private ImageView featured_imageview;
+    private ProgressBar featured_progress_bar;
+    private TextView featured_title;
 
 
 
@@ -89,6 +101,7 @@ public class EventsFragment extends Fragment implements EventAdapter.EventClickL
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root_view = inflater.inflate(R.layout.fragment_events, container, false);
         declareHandles();
+        setUpViewModel();
         setUpFeatured();
         setUpRecyclers();
         setUpExploreAll();
@@ -109,6 +122,21 @@ public class EventsFragment extends Fragment implements EventAdapter.EventClickL
         this_week_title = root_view.findViewById(R.id.fragment_events_this_week_title);
         upcoming_title = root_view.findViewById(R.id.fragment_events_upcoming_title);
         explore_all_btn = root_view.findViewById(R.id.fragment_events_explore_all_button);
+        today_progress_bar = root_view.findViewById(R.id.fragment_events_today_progress_bar);
+        this_week_progress_bar = root_view.findViewById(R.id.fragment_events_this_week_progress_bar);
+        upcoming_progress_bar = root_view.findViewById(R.id.fragment_events_upcoming_progress_bar);
+        featured_progress_bar = root_view.findViewById(R.id.fragment_events_featured_progress_bar);
+        featured_title = root_view.findViewById(R.id.fragment_events_featured_title);
+    }
+
+    private void setUpViewModel(){
+        if (getActivity() != null) {
+            this_user_vm = new ViewModelProvider(getActivity()).get(UserViewModel.class);
+            this_user = this_user_vm.getThis_user().getValue();
+            this_user_vm.getThis_user().observe(getActivity(), (User updatedProfile) -> { //listen to realtime user profile changes
+                if(updatedProfile != null) this_user = updatedProfile;
+            });
+        }
     }
 
 
@@ -134,15 +162,15 @@ public class EventsFragment extends Fragment implements EventAdapter.EventClickL
 
     private void setUpRecyclers(){
         if(getContext() != null){
-            today_adapter = new EventAdapter(getContext(), Constant.EVENT_ADAPTER_TODAY, Utils.getCampusUni(getContext()), this, today_recycler, today_title);
+            today_adapter = new EventAdapter(getContext(), Constant.EVENT_ADAPTER_TODAY, Utils.getCampusUni(getContext()), this, today_recycler, today_title, today_progress_bar);
             today_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
             today_recycler.setAdapter(today_adapter);
 
-            this_week_adapter = new EventAdapter(getContext(), Constant.EVENT_ADAPTER_THIS_WEEK, Utils.getCampusUni(getContext()), this, this_week_recycler, this_week_title);
+            this_week_adapter = new EventAdapter(getContext(), Constant.EVENT_ADAPTER_THIS_WEEK, Utils.getCampusUni(getContext()), this, this_week_recycler, this_week_title, this_week_progress_bar);
             this_week_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
             this_week_recycler.setAdapter(this_week_adapter);
 
-            upcoming_adapter = new EventAdapter(getContext(), Constant.EVENT_ADAPTER_UPCOMING, Utils.getCampusUni(getContext()), this, upcoming_recycler, upcoming_title);
+            upcoming_adapter = new EventAdapter(getContext(), Constant.EVENT_ADAPTER_UPCOMING, Utils.getCampusUni(getContext()), this, upcoming_recycler, upcoming_title, upcoming_progress_bar);
             upcoming_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
             upcoming_recycler.setAdapter(upcoming_adapter);
         }
@@ -161,14 +189,22 @@ public class EventsFragment extends Fragment implements EventAdapter.EventClickL
                                     if(task2.isSuccessful() && task2.getResult() != null && getContext() != null){
                                         Glide.with(getContext()).load(task2.getResult()).into(featured_imageview);
                                         featured_cardview.setOnClickListener(view -> viewEvent(featuredEvent));
+                                        featured_progress_bar.setVisibility(View.GONE);
+                                        featured_cardview.setVisibility(View.VISIBLE);
                                     }
                                 });
-                            }
-                        }
+                            }else hideFeatured();
+                        }else hideFeatured();
                     });
-                }
+                }else hideFeatured();
             });
         }
+    }
+
+    private void hideFeatured(){
+        featured_title.setVisibility(View.GONE);
+        featured_cardview.setVisibility(View.GONE);
+        featured_progress_bar.setVisibility(View.GONE);
     }
 
     private void refreshLayoutSetup() {

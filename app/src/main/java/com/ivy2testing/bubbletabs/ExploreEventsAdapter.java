@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +33,8 @@ public class ExploreEventsAdapter extends RecyclerView.Adapter<ExploreEventsView
     // MARK: Base
 
     private static final int NEW_BATCH_TOLERANCE = 5;
+    private RecyclerView recycler;
+    private ProgressBar progress_bar;
     private List<Event> events = new ArrayList<>();
     private Context context;
     private AllEventsItemClickListener listener;
@@ -42,9 +45,11 @@ public class ExploreEventsAdapter extends RecyclerView.Adapter<ExploreEventsView
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageReference stor = FirebaseStorage.getInstance().getReference();
 
-    public ExploreEventsAdapter(Context con, AllEventsItemClickListener listenr){
-        context = con;
-        listener = listenr;
+    public ExploreEventsAdapter(Context con, AllEventsItemClickListener listenr, RecyclerView rec, ProgressBar progressBar){
+        this.recycler = rec;
+        this.progress_bar = progressBar;
+        this.context = con;
+        this.listener = listenr;
         query = db.collection("universities").document(Utils.getCampusUni(context)).collection("posts")
                 .whereEqualTo("is_event", true).whereGreaterThan("start_millis", System.currentTimeMillis())
                 .orderBy("start_millis", Query.Direction.ASCENDING).limit(Constant.ALL_EVENTS_LOAD_LIMIT);
@@ -60,6 +65,11 @@ public class ExploreEventsAdapter extends RecyclerView.Adapter<ExploreEventsView
 
     public Event getItem(int position){
         return events.get(position);
+    }
+
+    private void stopLoading(){
+        if(progress_bar.getVisibility() ==  View.VISIBLE) progress_bar.setVisibility(View.GONE);
+        if(recycler.getVisibility() == View.INVISIBLE) recycler.setVisibility(View.VISIBLE);
     }
 
 
@@ -94,6 +104,7 @@ public class ExploreEventsAdapter extends RecyclerView.Adapter<ExploreEventsView
                         }
                     }
                     notifyDataSetChanged();
+                    stopLoading();
                 }
 //                else loadedAllPosts();
             }

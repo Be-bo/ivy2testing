@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -55,8 +56,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     private long last_pull_millis = 0;
     private TextView empty_adapter_text;
     private TextView reached_bottom_text;
+    private ProgressBar progress_bar;
+    private RecyclerView recycler;
 
-    public FeedAdapter(FeedClickListener feed_click_listener, String campusDomain, String seeallAuthorId, Context con, TextView emptyAdapterText, TextView reachedBottomText) {
+    public FeedAdapter(FeedClickListener feed_click_listener, String campusDomain, String seeallAuthorId, Context con, TextView emptyAdapterText, TextView reachedBottomText, RecyclerView rec, ProgressBar progressBar) {
         this.post_array_list = new ArrayList<>();
         this.feed_click_listener = feed_click_listener;
         this.campus_domain = campusDomain;
@@ -65,6 +68,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         this.last_pull_millis = System.currentTimeMillis();
         this.empty_adapter_text = emptyAdapterText;
         this.reached_bottom_text = reachedBottomText;
+        this.progress_bar = progressBar;
+        this.recycler = rec;
 
         default_query = db.collection("universities").document(campus_domain).collection("posts").whereEqualTo("is_event", false).orderBy("creation_millis", Query.Direction.DESCENDING).limit(BATCH_LIMIT);
         fetchPostBatch(default_query);
@@ -173,6 +178,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                     notifyDataSetChanged();
                 }else loadedAllPosts(); //no more data to load
             }
+            stopLoading();
             checkEmptyAdapter();
             load_in_progress = false;
         });
@@ -186,7 +192,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     }
 
     public void refreshPosts() { //load everything the user has missed since they last pulled
-        Log.d(TAG, "refresh posts");
         refreshAdapter(db.collection("universities").document(campus_domain).collection("posts").whereEqualTo("is_event", false)
                 .whereGreaterThan("creation_millis", last_pull_millis).orderBy("creation_millis", Query.Direction.ASCENDING));
     }
@@ -195,21 +200,18 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         load_in_progress = true; //just in case
         query.get().addOnCompleteListener(querySnap ->{
             if (querySnap.isSuccessful() && querySnap.getResult() != null) {
-                Log.d(TAG, "if 1");
                 if (!querySnap.getResult().isEmpty()) {
-                    Log.d(TAG, "if 2");
                     for (int i = 0; i < querySnap.getResult().getDocuments().size(); i++) {
-                        Log.d(TAG, "for loop");
                         DocumentSnapshot newPost = querySnap.getResult().getDocuments().get(i);//add all the missing posts to the top of the arraylist
                         Post pst = newPost.toObject(Post.class);
                         if(pst != null && !postAlreadyAdded(pst.getId())){
-                            Log.d(TAG, "adding");
                             post_array_list.add(0, pst);
                         }
                     }
                     notifyDataSetChanged();
                 }
             }
+            checkEmptyAdapter();
             load_in_progress = false;
         });
     }
@@ -254,6 +256,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         if(getItemCount() > 0) reached_bottom_text.setVisibility(View.VISIBLE);
     }
 
+    private void stopLoading(){
+        if(progress_bar.getVisibility() == View.VISIBLE) progress_bar.setVisibility(View.GONE);
+        if(recycler.getVisibility() == View.INVISIBLE) recycler.setVisibility(View.VISIBLE);
+    }
 
 
 

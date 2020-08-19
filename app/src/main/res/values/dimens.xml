@@ -39,5 +39,7 @@
     <dimen name="events_fragment_recycler_height">250dp</dimen>
 
     <dimen name="image_button_dimen">25dp</dimen>
+    <dimen name="standard_button_height">50dp</dimen>
+    <dimen name="progress_bar_dimen">50dp</dimen>
 
 </resources>

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -54,6 +54,7 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
     private View post_divider;
     private View member_divider;
     private TextView no_posts_text;
+    private ProgressBar progress_bar;
 
     private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
     private FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
@@ -133,6 +134,7 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
         member_title = findViewById(R.id.activity_orgprofile_members_header);
         member_divider = findViewById(R.id.activity_orgprofile_divider2);
         no_posts_text = findViewById(R.id.activity_orgprofile_no_posts);
+        progress_bar = findViewById(R.id.activity_orgprofile_progress_bar);
     }
 
     private void getIncomingData(){
@@ -191,7 +193,7 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
         allViews.add(post_recycler);
         allViews.add(post_divider);
         allViews.add(post_title);
-        post_adapter = new SquarePostAdapter(org_to_display_id, org_to_display.getUni_domain(), Constant.PROFILE_POST_LIMIT_ORG, this, this, allViews, no_posts_text);
+        post_adapter = new SquarePostAdapter(org_to_display_id, org_to_display.getUni_domain(), Constant.PROFILE_POST_LIMIT_ORG, this, this, allViews, no_posts_text, post_recycler, progress_bar);
         post_recycler.setLayoutManager(new GridLayoutManager(this, Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
@@ -211,17 +213,17 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
             members_recycler.setVisibility(View.VISIBLE);
             member_divider.setVisibility(View.VISIBLE);
 
-            if(org_to_display.getMember_ids().size() < Constant.PROFILE_MEMBER_LIMIT){ //if less members than how many we're displaying in profile preview -> hide see all button and give full list
+            if(org_to_display.getMember_ids().size() < Constant.PEOPLE_PREVIEW_LIMIT){ //if less members than how many we're displaying in profile preview -> hide see all button and give full list
                 person_adapter = new CircleUserAdapter(org_to_display.getMember_ids(), this, this);
                 see_all_members_button.setVisibility(View.GONE);
             } else{ //otherwise show see all button and only feed the adapter a sublist (we don't need to load all members when we're only displaying 5 or so)
-                person_adapter = new CircleUserAdapter(org_to_display.getMember_ids().subList(0, Constant.PROFILE_MEMBER_LIMIT), this, this);
+                person_adapter = new CircleUserAdapter(org_to_display.getMember_ids().subList(0, Constant.PEOPLE_PREVIEW_LIMIT), this, this);
                 see_all_members_button.setVisibility(View.VISIBLE);
             }
             members_recycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false){
                 @Override
                 public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
-                    lp.width = getWidth() / Constant.PROFILE_MEMBER_LIMIT;
+                    lp.width = getWidth() / Constant.PEOPLE_PREVIEW_LIMIT;
                     return true;
                 }
             });

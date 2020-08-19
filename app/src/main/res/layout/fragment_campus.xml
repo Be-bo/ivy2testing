@@ -36,13 +36,23 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/campus_feed_recyclerview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:filterTouchesWhenObscured="false"
+                android:layout_height="match_parent"
+                android:minHeight="500dp"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toTopOf="@id/campus_reached_bottom_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ProgressBar
+                android:id="@+id/campus_feed_progress_bar"
+                style="@style/StandardIndefiniteProgressBar"
+                android:elevation="10dp"
+                android:visibility="visible"
+                app:layout_constraintTop_toTopOf="@id/campus_feed_recyclerview"
+                app:layout_constraintBottom_toBottomOf="@id/campus_feed_recyclerview"
+                app:layout_constraintStart_toStartOf="@id/campus_feed_recyclerview"
+                app:layout_constraintEnd_toEndOf="@id/campus_feed_recyclerview"/>
 
             <TextView
                 android:id="@+id/campus_reached_bottom_text"

@@ -38,7 +38,6 @@
         android:id="@+id/contact_us_send_button"
         style="@style/StandardButton"
         android:layout_width="0dp"
-        android:layout_height="50dp"
         android:text="@string/send"
         android:layout_marginTop="@dimen/standard_margin"
         android:layout_marginBottom="@dimen/large_margin"

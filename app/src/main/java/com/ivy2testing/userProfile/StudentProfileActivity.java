@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -51,6 +52,7 @@ public class StudentProfileActivity extends AppCompatActivity {
     private TextView no_posts_text;
     private TextView private_text;
     private View contents;
+    private ProgressBar progress_bar;
 
     // Firestore
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -112,6 +114,7 @@ public class StudentProfileActivity extends AppCompatActivity {
         no_posts_text = findViewById(R.id.studentProfile_no_posts_text);
         private_text = findViewById(R.id.activity_student_profile_private_text);
         contents = findViewById(R.id.activity_student_profile_contents);
+        progress_bar = findViewById(R.id.studentProfile_progress_bar);
         findViewById(R.id.studentProfile_edit).setVisibility(View.GONE);
     }
 
@@ -128,7 +131,7 @@ public class StudentProfileActivity extends AppCompatActivity {
         List<View> allViews = new ArrayList<>();
         allViews.add(mRecyclerView);
         allViews.add(post_title);
-        adapter = new SquarePostAdapter(student_to_display.getId(), student_to_display.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, this, this::onPostClick, allViews, no_posts_text);
+        adapter = new SquarePostAdapter(student_to_display.getId(), student_to_display.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, this, this::onPostClick, allViews, no_posts_text, mRecyclerView, progress_bar);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {

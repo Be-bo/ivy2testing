@@ -27,10 +27,21 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <ProgressBar
+                    android:id="@+id/fragment_events_featured_progress_bar"
+                    style="@style/StandardIndefiniteProgressBar"
+                    android:elevation="10dp"
+                    android:visibility="visible"
+                    app:layout_constraintTop_toTopOf="@id/fragment_events_featured_cardview"
+                    app:layout_constraintBottom_toBottomOf="@id/fragment_events_featured_cardview"
+                    app:layout_constraintStart_toStartOf="@id/fragment_events_featured_cardview"
+                    app:layout_constraintEnd_toEndOf="@id/fragment_events_featured_cardview"/>
+
                 <androidx.cardview.widget.CardView
                     android:id="@+id/fragment_events_featured_cardview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="invisible"
                     app:cardElevation="@dimen/standard_card_elevation"
                     android:layout_margin="@dimen/standard_margin"
                     app:cardCornerRadius="@dimen/standard_corner_radius"
@@ -84,6 +95,7 @@
 
 
 
+
                 <TextView
                     android:id="@+id/fragment_events_today_title"
                     style="@style/LargeText"
@@ -99,11 +111,25 @@
                     android:id="@+id/fragment_events_today_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/events_fragment_recycler_height"
+                    android:visibility="invisible"
                     android:layout_marginStart="@dimen/standard_margin"
                     android:layout_marginBottom="@dimen/standard_margin"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/fragment_events_today_title" />
+
+                <ProgressBar
+                    android:id="@+id/fragment_events_today_progress_bar"
+                    style="@style/StandardIndefiniteProgressBar"
+                    android:elevation="10dp"
+                    android:visibility="visible"
+                    app:layout_constraintTop_toTopOf="@id/fragment_events_today_recycler"
+                    app:layout_constraintBottom_toBottomOf="@id/fragment_events_today_recycler"
+                    app:layout_constraintStart_toStartOf="@id/fragment_events_today_recycler"
+                    app:layout_constraintEnd_toEndOf="@id/fragment_events_today_recycler"/>
+
+
+
 
 
 
@@ -123,11 +149,25 @@
                     android:id="@+id/fragment_events_this_week_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/events_fragment_recycler_height"
+                    android:visibility="invisible"
                     android:layout_marginStart="@dimen/standard_margin"
                     android:layout_marginBottom="@dimen/standard_margin"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/fragment_events_this_week_title" />
+
+                <ProgressBar
+                    android:id="@+id/fragment_events_this_week_progress_bar"
+                    style="@style/StandardIndefiniteProgressBar"
+                    android:elevation="10dp"
+                    android:visibility="visible"
+                    app:layout_constraintTop_toTopOf="@id/fragment_events_this_week_recycler"
+                    app:layout_constraintBottom_toBottomOf="@id/fragment_events_this_week_recycler"
+                    app:layout_constraintStart_toStartOf="@id/fragment_events_this_week_recycler"
+                    app:layout_constraintEnd_toEndOf="@id/fragment_events_this_week_recycler"/>
+
+
+
 
 
 
@@ -146,11 +186,22 @@
                     android:id="@+id/fragment_events_upcoming_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/events_fragment_recycler_height"
+                    android:visibility="invisible"
                     android:layout_marginStart="@dimen/standard_margin"
                     android:layout_marginBottom="@dimen/standard_margin"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/fragment_events_upcoming_title" />
+
+                <ProgressBar
+                    android:id="@+id/fragment_events_upcoming_progress_bar"
+                    style="@style/StandardIndefiniteProgressBar"
+                    android:elevation="10dp"
+                    android:visibility="visible"
+                    app:layout_constraintTop_toTopOf="@id/fragment_events_upcoming_recycler"
+                    app:layout_constraintBottom_toBottomOf="@id/fragment_events_upcoming_recycler"
+                    app:layout_constraintStart_toStartOf="@id/fragment_events_upcoming_recycler"
+                    app:layout_constraintEnd_toEndOf="@id/fragment_events_upcoming_recycler"/>
 
 
 
@@ -160,7 +211,6 @@
                     style="@style/StandardButton"
                     android:text="@string/explore_all"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
                     android:layout_marginStart="@dimen/standard_margin"
                     android:layout_marginEnd="@dimen/standard_margin"
                     android:layout_marginTop="@dimen/large_margin"

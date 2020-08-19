@@ -22,7 +22,7 @@ public final class Constant {
 
 
     public static final int PROFILE_POST_GRID_ROW_COUNT = 3;
-    public static final int PROFILE_MEMBER_LIMIT = 5;
+    public static final int PEOPLE_PREVIEW_LIMIT = 5;
     public static final int PROFILE_POST_LIMIT_STUDENT = 9;
     public static final int PROFILE_POST_LIMIT_ORG = 6;
     public static final int NOTIFICATION_CENTER_LIMIT = 15;

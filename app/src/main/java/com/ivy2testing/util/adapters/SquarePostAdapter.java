@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -49,6 +50,8 @@ public class SquarePostAdapter extends RecyclerView.Adapter<SquareImgHolder> {
     private List<View> all_layout_elements;
     private long creation_millis;
     private TextView empty_adapter_text;
+    private RecyclerView recycler;
+    private ProgressBar progress_bar;
 
     private Query query;
     private FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
@@ -61,7 +64,9 @@ public class SquarePostAdapter extends RecyclerView.Adapter<SquareImgHolder> {
     private Context context;
     private ListenerRegistration list_reg;
 
-    public SquarePostAdapter(String id, String uniDomain, int limit, Context mrContext, OnPostListener listener, List<View> allElems, TextView emptyAdapterText) {
+    public SquarePostAdapter(String id, String uniDomain, int limit, Context mrContext, OnPostListener listener, List<View> allElems, TextView emptyAdapterText, RecyclerView rec, ProgressBar progressBar) {
+        this.recycler = rec;
+        this.progress_bar = progressBar;
         this.uni_domain = uniDomain;
         this.author_id = id;
         this.context = mrContext;
@@ -138,6 +143,7 @@ public class SquarePostAdapter extends RecyclerView.Adapter<SquareImgHolder> {
                     loaded_all_posts = true;
                 }
             }
+            stopLoading();
             checkEmptyAdapter();
             load_in_progress = false;
         });
@@ -159,6 +165,7 @@ public class SquarePostAdapter extends RecyclerView.Adapter<SquareImgHolder> {
                 notifyDataSetChanged();
                 load_in_progress = false;
             }
+            checkEmptyAdapter();
         });
     }
 
@@ -258,5 +265,10 @@ public class SquarePostAdapter extends RecyclerView.Adapter<SquareImgHolder> {
             if (posts.get(i).getId().equals(id)) return true;
         }
         return false;
+    }
+
+    private void stopLoading(){
+        if(progress_bar.getVisibility() == View.VISIBLE) progress_bar.setVisibility(View.GONE);
+        if(recycler.getVisibility() == View.INVISIBLE) recycler.setVisibility(View.VISIBLE);
     }
 }

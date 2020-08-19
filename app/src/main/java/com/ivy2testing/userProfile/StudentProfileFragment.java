@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -51,6 +52,7 @@ public class StudentProfileFragment extends Fragment {
     private RecyclerView post_recycler;
     private TextView post_title;
     private TextView no_posts_text;
+    private ProgressBar progress_bar;
 
     // Firestore
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
@@ -139,6 +141,7 @@ public class StudentProfileFragment extends Fragment {
         post_recycler = v.findViewById(R.id.studentProfile_posts);
         post_title = v.findViewById(R.id.studentProfile_header);
         no_posts_text = v.findViewById(R.id.studentProfile_no_posts_text);
+        progress_bar = v.findViewById(R.id.studentProfile_progress_bar);
     }
 
     private void setUpViews(){
@@ -155,7 +158,7 @@ public class StudentProfileFragment extends Fragment {
         List<View> allViews = new ArrayList<>();
         allViews.add(post_recycler);
         allViews.add(post_title);
-        adapter = new SquarePostAdapter(student.getId(), student.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, getContext(), this::onPostClick, allViews, no_posts_text);
+        adapter = new SquarePostAdapter(student.getId(), student.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, getContext(), this::onPostClick, allViews, no_posts_text, post_recycler, progress_bar);
         post_recycler.setLayoutManager(new GridLayoutManager(getContext(), Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {

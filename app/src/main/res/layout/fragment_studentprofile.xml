@@ -92,9 +92,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/standard_margin"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/studentProfile_header"/>
+
+        <ProgressBar
+            android:id="@+id/studentProfile_progress_bar"
+            style="@style/StandardIndefiniteProgressBar"
+            android:elevation="10dp"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="@id/studentProfile_posts"
+            app:layout_constraintBottom_toBottomOf="@id/studentProfile_posts"
+            app:layout_constraintStart_toStartOf="@id/studentProfile_posts"
+            app:layout_constraintEnd_toEndOf="@id/studentProfile_posts"/>
 
         <TextView
             android:id="@+id/studentProfile_no_posts_text"

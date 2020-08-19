@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -58,6 +59,7 @@ public class OrganizationProfileFragment extends Fragment implements SquarePostA
     private View post_divider;
     private View member_divider;
     private TextView no_posts_text;
+    private ProgressBar progress_bar;
 
     private SquarePostAdapter post_adapter;
     private CircleUserAdapter person_adapter;
@@ -118,6 +120,7 @@ public class OrganizationProfileFragment extends Fragment implements SquarePostA
         post_divider = rootView.findViewById(R.id.orgprofile_divider1);
         member_divider = rootView.findViewById(R.id.orgprofile_divider2);
         no_posts_text = rootView.findViewById(R.id.orgprofile_no_posts);
+        progress_bar = rootView.findViewById(R.id.orgprofile_progress_bar);
     }
 
 
@@ -168,7 +171,7 @@ public class OrganizationProfileFragment extends Fragment implements SquarePostA
         allViews.add(post_recycler);
         allViews.add(post_divider);
         allViews.add(post_title);
-        post_adapter = new SquarePostAdapter(this_user.getId(), this_user.getUni_domain(), Constant.PROFILE_POST_LIMIT_ORG, getContext(), this, allViews, no_posts_text);
+        post_adapter = new SquarePostAdapter(this_user.getId(), this_user.getUni_domain(), Constant.PROFILE_POST_LIMIT_ORG, getContext(), this, allViews, no_posts_text, post_recycler, progress_bar);
         post_recycler.setLayoutManager(new GridLayoutManager(getContext(), Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
@@ -185,17 +188,17 @@ public class OrganizationProfileFragment extends Fragment implements SquarePostA
             members_recycler.setVisibility(View.VISIBLE);
             see_all_members_button.setVisibility(View.VISIBLE);
             member_divider.setVisibility(View.VISIBLE);
-            if(((Organization)this_user).getMember_ids().size() < Constant.PROFILE_MEMBER_LIMIT){ //if less members than how many we're displaying in profile preview -> hide see all button and give full list
+            if(((Organization)this_user).getMember_ids().size() < Constant.PEOPLE_PREVIEW_LIMIT){ //if less members than how many we're displaying in profile preview -> hide see all button and give full list
                 person_adapter = new CircleUserAdapter(((Organization)this_user).getMember_ids(), getContext(), this);
                 see_all_members_button.setVisibility(View.GONE);
             }else{ //otherwise show see all button and only feed the adapter a sublist (we don't need to load all members when we're only displaying 5 or so)
-                person_adapter = new CircleUserAdapter(((Organization)this_user).getMember_ids().subList(0, Constant.PROFILE_MEMBER_LIMIT), getContext(), this);
+                person_adapter = new CircleUserAdapter(((Organization)this_user).getMember_ids().subList(0, Constant.PEOPLE_PREVIEW_LIMIT), getContext(), this);
                 see_all_members_button.setVisibility(View.VISIBLE);
             }
             members_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL,false){
                 @Override
                 public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
-                    lp.width = getWidth() / Constant.PROFILE_MEMBER_LIMIT;
+                    lp.width = getWidth() / Constant.PEOPLE_PREVIEW_LIMIT;
                     return true;
                 }
             });

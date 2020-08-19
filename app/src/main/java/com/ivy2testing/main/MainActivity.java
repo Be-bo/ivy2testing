@@ -322,10 +322,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         function_button.setImageResource(R.drawable.ic_create);
         function_button.setOnClickListener(view -> transToCreatePost());
 
-        event_fragment = new EventsFragment(this, this_user);
-        tab_adapter.addFragment(event_fragment, "event");
-        campus_fragment = new CampusFragment(this, this_user);
-        tab_adapter.addFragment(campus_fragment, "campus");
+        if(event_fragment != null) event_fragment.refreshAdapters(); //if we're coming back from login events fragment already exists
+        else{ //not coming back, starting the app already logged in
+            event_fragment = new EventsFragment(this, this_user);
+            tab_adapter.addFragment(event_fragment, "event");
+        }
+        if(campus_fragment != null) campus_fragment.refreshAdapter(); //same for the campus fragment
+        else{
+            campus_fragment = new CampusFragment(this, this_user);
+            tab_adapter.addFragment(campus_fragment, "campus");
+        }
+
         if (this_user.getIs_organization()) tab_adapter.addFragment(org_fragment, "organization");
         else tab_adapter.addFragment(stud_fragment, "student");
 
@@ -355,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     tab_view_pager.setCurrentItem(tab_adapter.getPosition("campus"));
                     return true;
                 case R.id.tab_bar_events:
-                    setFunctionButton(R.id.tab_bar_home);
+                    setFunctionButton(R.id.tab_bar_events);
                     tab_view_pager.setCurrentItem(tab_adapter.getPosition("event"));
                     return true;
                 case R.id.tab_bar_profile:
@@ -381,7 +388,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     function_button.setImageResource(R.drawable.ic_bell);
                     function_button.setOnClickListener(view -> transToNotificationCenter());
                     break;
-                case R.id.tab_bar_home:
+                default:
                     function_button.setImageResource(R.drawable.ic_create);
                     function_button.setOnClickListener(view -> transToCreatePost());
                     break;

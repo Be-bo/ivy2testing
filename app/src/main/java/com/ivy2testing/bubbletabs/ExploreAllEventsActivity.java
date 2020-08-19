@@ -2,6 +2,7 @@ package com.ivy2testing.bubbletabs;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +20,7 @@ public class ExploreAllEventsActivity extends AppCompatActivity implements Explo
     private RecyclerView recycler;
     private ExploreEventsAdapter adapter;
     private User this_user;
+    private ProgressBar progress_bar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,7 +33,8 @@ public class ExploreAllEventsActivity extends AppCompatActivity implements Explo
     private void setUp(){
         this_user = getIntent().getParcelableExtra("this_user");
         recycler = findViewById(R.id.activity_view_all_events_recycler);
-        adapter = new ExploreEventsAdapter(this, this);
+        progress_bar = findViewById(R.id.activity_view_all_events_progress_bar);
+        adapter = new ExploreEventsAdapter(this, this, recycler, progress_bar);
         recycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         recycler.setAdapter(adapter);
     }

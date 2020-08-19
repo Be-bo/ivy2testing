@@ -151,11 +151,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/standard_margin"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/activity_orgprofile_posts_header">
+            app:layout_constraintTop_toBottomOf="@id/activity_orgprofile_posts_header"/>
 
-        </androidx.recyclerview.widget.RecyclerView>
+        <ProgressBar
+            android:id="@+id/activity_orgprofile_progress_bar"
+            style="@style/StandardIndefiniteProgressBar"
+            android:elevation="10dp"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="@id/activity_orgprofile_post_recycler"
+            app:layout_constraintBottom_toBottomOf="@id/activity_orgprofile_post_recycler"
+            app:layout_constraintStart_toStartOf="@id/activity_orgprofile_post_recycler"
+            app:layout_constraintEnd_toEndOf="@id/activity_orgprofile_post_recycler"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

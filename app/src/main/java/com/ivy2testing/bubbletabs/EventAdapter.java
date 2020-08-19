@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,6 +38,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     private List<Event> events;
     private TextView title;
     private RecyclerView recycler;
+    private ProgressBar progress_bar;
     private int type;
     private String campus_domain;
     private Context context;
@@ -45,10 +47,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     private StorageReference stor = FirebaseStorage.getInstance().getReference();
     private Query query;
 
-    public EventAdapter(Context con, int typ, String domain, EventClickListener listener, RecyclerView rec, TextView titl){
+    public EventAdapter(Context con, int typ, String domain, EventClickListener listener, RecyclerView rec, TextView titl, ProgressBar progressBar){
         this.events = new ArrayList<>();
         this.title = titl;
         this.recycler = rec;
+        this.progress_bar = progressBar;
         this.type = typ;
         this.context = con;
         this.campus_domain = domain;
@@ -127,6 +130,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
                    if(event != null && event.isIs_active() && !event.isIs_featured() && !eventAlreadyAdded(event.getId())) events.add(event);
                }
                notifyDataSetChanged();
+               stopLoading();
            }else hideElems();
         });
     }
@@ -134,6 +138,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
     private void hideElems(){
         title.setVisibility(View.GONE);
         recycler.setVisibility(View.GONE);
+        progress_bar.setVisibility(View.GONE);
     }
 
     private void showElems(){
@@ -146,6 +151,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
             if(current.getId().equals(eventId)) return true;
         }
         return false;
+    }
+
+    private void stopLoading(){
+        if(progress_bar.getVisibility() == View.VISIBLE) progress_bar.setVisibility(View.GONE);
+        if(recycler.getVisibility() == View.INVISIBLE) recycler.setVisibility(View.VISIBLE);
     }
 
 

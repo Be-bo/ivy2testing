@@ -38,7 +38,7 @@
     <!-- Widget Styles -->
 
     <style name="StandardButton" parent="Widget.AppCompat.Button">
-        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_height">@dimen/standard_button_height</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:gravity">center</item>
@@ -116,7 +116,8 @@
     </style>
 
     <style name="StandardIndefiniteProgressBar" parent="Widget.AppCompat.ProgressBar">
-        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_height">@dimen/progress_bar_dimen</item>
+        <item name="android:layout_width">@dimen/progress_bar_dimen</item>
         <item name="android:indeterminateTint">@color/hint</item>
     </style>
 

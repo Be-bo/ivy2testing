@@ -12,11 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -26,6 +28,7 @@ import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.home.FeedAdapter;
 import com.ivy2testing.home.ViewPostOrEventActivity;
+import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.userProfile.OrganizationProfileActivity;
 import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.Constant;
@@ -35,24 +38,40 @@ import com.ivy2testing.util.Utils;
 public class CampusFragment extends Fragment implements FeedAdapter.FeedClickListener {
 
 
-    // MARK: Base
+
+
+
+
+    // MARK: Variables
 
     private static final String TAG = "CampusFragmentTag";
     private SwipeRefreshLayout refresh_layout;
     private RecyclerView feed_recycler_view;
     private TextView no_posts_text;
     private TextView reached_bottom_text;
+    private ProgressBar progress_bar;
 
     private FeedAdapter campus_adapter;
     private Context context;
     private View root_view;
     private User this_user;
+    private UserViewModel this_user_vm;
+
+
+
+
+
+
+
+
+    // MARK: Base
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root_view = inflater.inflate(R.layout.fragment_campus, container, false);
         declareHandles();
+        setUpViewModel();
         setUpRecycler();
         setUpRefreshing();
         return root_view;
@@ -68,10 +87,32 @@ public class CampusFragment extends Fragment implements FeedAdapter.FeedClickLis
         feed_recycler_view = root_view.findViewById(R.id.campus_feed_recyclerview);
         no_posts_text = root_view.findViewById(R.id.campus_no_posts_text);
         reached_bottom_text = root_view.findViewById(R.id.campus_reached_bottom_text);
+        progress_bar = root_view.findViewById(R.id.campus_feed_progress_bar);
     }
 
+    private void setUpViewModel(){
+        if (getActivity() != null) {
+            this_user_vm = new ViewModelProvider(getActivity()).get(UserViewModel.class);
+            this_user = this_user_vm.getThis_user().getValue();
+            this_user_vm.getThis_user().observe(getActivity(), (User updatedProfile) -> { //listen to realtime user profile changes
+                if(updatedProfile != null) this_user = updatedProfile;
+            });
+        }
+    }
+
+
+
+
+
+
+
+
+
+    // MARK: Adapter Stuff
+
     private void setUpRecycler() {
-        campus_adapter = new FeedAdapter(this, Utils.getCampusUni(context), "", getContext(), no_posts_text, reached_bottom_text);
+        Toast.makeText(context, "uni: "+Utils.getCampusUni(context), Toast.LENGTH_SHORT).show();
+        campus_adapter = new FeedAdapter(this, Utils.getCampusUni(context), "", getContext(), no_posts_text, reached_bottom_text, feed_recycler_view, progress_bar);
         feed_recycler_view.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
         feed_recycler_view.setAdapter(campus_adapter);
     }

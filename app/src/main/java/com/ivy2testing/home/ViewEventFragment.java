@@ -55,6 +55,7 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
     private RecyclerView going_recycler;
     private TextView tv_seeAll;
     private ToggleButton button_going;
+    private TextView nobody_going_text;
 
     // Firebase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -102,6 +103,7 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
         going_recycler = v.findViewById(R.id.viewEvent_goingRecycler);
         tv_seeAll = v.findViewById(R.id.viewEvent_seeAll);
         button_going = v.findViewById(R.id.viewEvent_goingButton);
+        nobody_going_text = v.findViewById(R.id.viewEvent_nobody_going_text);
     }
 
     // Populate views
@@ -150,12 +152,12 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
 
     // Set recycler for going users (at this point, going_ids isn't empty!)
     private void setUpGoingAdapter(){
-        if(event.getGoing_ids().size() < Constant.PROFILE_MEMBER_LIMIT) going_adapter = new CircleUserAdapter(event.getGoing_ids(), getContext(), this);
-        else going_adapter = new CircleUserAdapter(event.getGoing_ids().subList(0, Constant.PROFILE_MEMBER_LIMIT), getContext(), this);
+        if(event.getGoing_ids().size() < Constant.PEOPLE_PREVIEW_LIMIT) going_adapter = new CircleUserAdapter(event.getGoing_ids(), getContext(), this);
+        else going_adapter = new CircleUserAdapter(event.getGoing_ids().subList(0, Constant.PEOPLE_PREVIEW_LIMIT), getContext(), this);
         going_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL,false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
-                lp.width = getWidth() / Constant.PROFILE_MEMBER_LIMIT;
+                lp.width = getWidth() / Constant.PEOPLE_PREVIEW_LIMIT;
                 return true;
             }
         });
@@ -166,10 +168,13 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
     // Set Going recycler visibility
     private void setRecyclerVisibility(){
         if(event.getGoing_ids().size() > 0){
+            nobody_going_text.setVisibility(View.GONE);
             going_recycler.setVisibility(View.VISIBLE);
-            tv_seeAll.setVisibility(View.VISIBLE);
+            if(event.getGoing_ids().size() > Constant.PEOPLE_PREVIEW_LIMIT) tv_seeAll.setVisibility(View.VISIBLE); //only show see all if the ppl going exceed the capacity
+            else tv_seeAll.setVisibility(View.GONE);
         }else{
-            going_recycler.setVisibility(View.GONE);
+            nobody_going_text.setVisibility(View.VISIBLE);
+            going_recycler.setVisibility(View.INVISIBLE);
             tv_seeAll.setVisibility(View.GONE);
         }
     }
