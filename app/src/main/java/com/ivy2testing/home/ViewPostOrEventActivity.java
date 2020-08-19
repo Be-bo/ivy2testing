@@ -282,6 +282,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         layout_man = new LinearLayoutManager(this);
         mCommentsRecycler.setLayoutManager(layout_man);
         mCommentsRecycler.setAdapter(adapter);
+        mCommentsRecycler.setNestedScrollingEnabled(true);
         loadComments();
 
         // Scroll Listener used for pagination
@@ -498,7 +499,6 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             stopCommentLoading();
             return;
         }
-
         db.document(address).set(newComment).addOnCompleteListener(task1 -> {
             if (task1.isSuccessful()) {
                 comments.add(0, newComment);
@@ -600,7 +600,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
                     // Get post object
                     Comment comment = doc.toObject(Comment.class);
-                    post.setId(doc.getId());
+                   //  post.setId(doc.getId());// TODO heres the problem
 
                     // Add to list and tell recycler adapter
                     comments.add(comment);
