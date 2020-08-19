@@ -49,26 +49,16 @@ public final class Utils {
         return retVal;
     }
 
-    public static String getHumanTimeFromMillis(long timestamp){
-        Calendar cal = Calendar.getInstance();
+    public static String getHumanTimeFromMillis(long timestamp){ //convert millis to a more human readable format (22m, 1hr, 6d, etc.)
         long timeDif = System.currentTimeMillis() - timestamp;
-
         if(timeDif < Constant.MILLIS_IN_AN_HOUR){ //within the last hour
-            return timeDif/Constant.MILLIS_IN_A_MINUTE+" min";
+            return timeDif/Constant.MILLIS_IN_A_MINUTE+" m";
         } else if(timeDif < Constant.MILLIS_IN_A_DAY){ //within 24 hrs
             return timeDif/Constant.MILLIS_IN_AN_HOUR+" h";
-        }else if(timeDif < Constant.MILLIS_IN_A_WEEK){ //but within a week
+        }else if(timeDif < Constant.MILLIS_IN_A_WEEK){ //within a week
             return timeDif/Constant.MILLIS_IN_A_DAY+" d";
         }else{ //beyond 1 week in the past
-            cal.setTimeInMillis(System.currentTimeMillis());
-            int currentYear = cal.get(Calendar.YEAR);
-            cal.setTimeInMillis(timestamp);
-            int stampYear = cal.get(Calendar.YEAR);
-            if(currentYear != stampYear){ //if not in the current year, show the year after date
-                return cal.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.CANADA)+" "+cal.get(Calendar.DAY_OF_MONTH)+" "+cal.get(Calendar.YEAR);
-            }else{ //if current year, show date only
-                return cal.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.CANADA)+" "+cal.get(Calendar.DAY_OF_MONTH);
-            }
+            return timeDif/Constant.MILLIS_IN_A_WEEK+" w";
         }
     }
 }

@@ -36,7 +36,8 @@
                             android:id="@+id/viewPost_userImage"
                             android:layout_width="@dimen/small_preview_image_dimen"
                             android:layout_height="@dimen/small_preview_image_dimen"
-                            android:src="@drawable/ic_profile_selected"
+                            android:elevation="@dimen/preview_image_elevation"
+                            android:src="@drawable/empty_profile_image"
                             android:contentDescription="@string/profile_pic"
                             android:onClick="viewAuthorProfile"/>
 

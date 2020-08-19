@@ -49,7 +49,6 @@ public class StudentProfileFragment extends Fragment {
     private TextView name_text;
     private TextView degree_text;
     private RecyclerView post_recycler;
-    private TextView seeall_posts;
     private TextView post_title;
     private TextView no_posts_text;
 
@@ -88,13 +87,12 @@ public class StudentProfileFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if(adapter!=null && is_set_up) adapter.stopListening();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if(adapter!=null && is_set_up) adapter.startListening();
+        if(adapter!=null && is_set_up) adapter.refreshAdapter(); //each time the user comes back we have to refresh the adapter in case they edited or posted a post
     }
 
     /* Initialization Methods
@@ -139,7 +137,6 @@ public class StudentProfileFragment extends Fragment {
         name_text = v.findViewById(R.id.studentProfile_name);
         degree_text = v.findViewById(R.id.studentProfile_degree);
         post_recycler = v.findViewById(R.id.studentProfile_posts);
-        seeall_posts = v.findViewById(R.id.studentProfile_seeAll);
         post_title = v.findViewById(R.id.studentProfile_header);
         no_posts_text = v.findViewById(R.id.studentProfile_no_posts_text);
     }
@@ -157,7 +154,6 @@ public class StudentProfileFragment extends Fragment {
         // set LayoutManager and Adapter
         List<View> allViews = new ArrayList<>();
         allViews.add(post_recycler);
-        allViews.add(seeall_posts);
         allViews.add(post_title);
         adapter = new SquarePostAdapter(student.getId(), student.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, getContext(), this::onPostClick, allViews, no_posts_text);
         post_recycler.setLayoutManager(new GridLayoutManager(getContext(), Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
@@ -173,7 +169,6 @@ public class StudentProfileFragment extends Fragment {
     // Set up onClick Listeners
     private void setListeners(View v) {
         v.findViewById(R.id.studentProfile_edit).setOnClickListener(v12 -> editProfile());
-        v.findViewById(R.id.studentProfile_seeAll).setOnClickListener(v1 -> seeAllPosts());
     }
 
 

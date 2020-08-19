@@ -70,7 +70,7 @@
 
     <style name="SmallText" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">13sp</item>
-        <item name="android:textColor">@color/light_black</item>
+        <item name="android:textColor">@color/grey</item>
     </style>
 
     <style name="BannerText" parent="Widget.AppCompat.TextView">

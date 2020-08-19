@@ -2,7 +2,6 @@ package com.ivy2testing.bubbletabs;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -10,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,40 +20,49 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
+import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.home.FeedAdapter;
 import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.userProfile.OrganizationProfileActivity;
 import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.Utils;
 
-import static android.content.Context.MODE_PRIVATE;
+public class EventsFragment extends Fragment implements EventAdapter.EventClickListener {
 
-public class EventsFragment extends Fragment implements FeedAdapter.FeedClickListener {
+    // MARK: Variables
 
-
-    private Context context;
     private View root_view;
     private SwipeRefreshLayout refresh_layout;
-    private TextView reached_bottom_text;
-
-    private RecyclerView feed_recycler_view;
     private User this_user;
-    private FeedAdapter feed_adapter;
-    private TextView no_events_text;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private StorageReference stor = FirebaseStorage.getInstance().getReference();
 
-    private Button happening_now_button;
-    private Button starting_soon_button;
-    private Button past_events_button;
+    private RecyclerView for_you_recycler;
+    private RecyclerView today_recycler;
+    private RecyclerView this_week_recycler;
+    private RecyclerView upcoming_recycler;
 
+    private TextView for_you_title;
+    private TextView today_title;
+    private TextView this_week_title;
+    private TextView upcoming_title;
+
+    private EventAdapter today_adapter;
+    private EventAdapter for_you_adapter;
+    private EventAdapter this_week_adapter;
+    private EventAdapter upcoming_adapter;
+
+
+    private Button explore_all_btn;
     private CardView featured_cardview;
-    private TextView featured_title;
-    private TextView featured_text;
-    private TextView featured_author;
-    private TextView featured_pinned;
+    private ImageView featured_imageview;
 
 
 
@@ -70,61 +78,115 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedClickLis
 
 
 
-    // MARK: Base & Setup
+    // MARK: Base
+
+    public EventsFragment(Context con, User thisUser) {
+        if(thisUser != null) this_user = thisUser;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root_view = inflater.inflate(R.layout.fragment_events, container, false);
         declareHandles();
-        setUpRecycler();
+        setUpFeatured();
+        setUpRecyclers();
+        setUpExploreAll();
         refreshLayoutSetup();
         return root_view;
     }
 
     private void declareHandles(){
         refresh_layout = root_view.findViewById(R.id.events_refresh_layout);
-        feed_recycler_view = root_view.findViewById(R.id.events_feed_recycler_view);
-        no_events_text = root_view.findViewById(R.id.events_no_events_text);
-        reached_bottom_text = root_view.findViewById(R.id.events_reached_bottom_text);
-
-//        featured_cardview = root_view.findViewById(R.id.item_feed_cardview);
-//        featured_title = featured_cardview.findViewById(R.id.item_feed_event_title);
-//        featured_title.setVisibility(View.VISIBLE);
-//        featured_text = featured_cardview.findViewById(R.id.item_feed_text);
-//        featured_author = featured_cardview.findViewById(R.id.item_feed_posted_by_text);
-//        featured_pinned = featured_cardview.findViewById(R.id.item_feed_pinned_text);
-//
-//        featured_title.setText("Want your event featured on Ivy?");
-//        featured_text.setText("It's totally possible, click on this event to find out how!");
-//        featured_author.setText("This could be you!");
-//        featured_pinned.setText("last pinned event");
+        featured_cardview = root_view.findViewById(R.id.fragment_events_featured_cardview);
+        featured_imageview = root_view.findViewById(R.id.fragment_events_featured_image);
+        for_you_recycler = root_view.findViewById(R.id.fragment_events_for_you_recycler);
+        today_recycler = root_view.findViewById(R.id.fragment_events_today_recycler);
+        this_week_recycler = root_view.findViewById(R.id.fragment_events_this_week_recycler);
+        upcoming_recycler = root_view.findViewById(R.id.fragment_events_upcoming_recycler);
+        today_title = root_view.findViewById(R.id.fragment_events_today_title);
+        for_you_title = root_view.findViewById(R.id.fragment_events_for_you_title);
+        this_week_title = root_view.findViewById(R.id.fragment_events_this_week_title);
+        upcoming_title = root_view.findViewById(R.id.fragment_events_upcoming_title);
+        explore_all_btn = root_view.findViewById(R.id.fragment_events_explore_all_button);
     }
 
-    public EventsFragment(Context con, User thisUser) {
-        context = con;
-        if(thisUser != null) this_user = thisUser;
+
+
+
+
+
+
+    // MARK: Setup
+
+    private void setUpExploreAll(){
+        if(getContext() != null){
+            db.collection("universities").document(Utils.getCampusUni(getContext())).collection("posts").whereEqualTo("is_event", true).whereEqualTo("is_active", true).whereEqualTo("is_featured", false).limit(1).get().addOnCompleteListener(querySnap -> {
+                if(querySnap.isSuccessful() && querySnap.getResult() != null && !querySnap.getResult().isEmpty()){ //there's at least one relevant event
+                    explore_all_btn.setVisibility(View.VISIBLE);
+                    explore_all_btn.setOnClickListener(view -> goToAllEvents());
+                }else{
+                    explore_all_btn.setVisibility(View.GONE);
+                }
+            });
+        }
+    }
+
+    private void setUpRecyclers(){
+        if(getContext() != null){
+            today_adapter = new EventAdapter(getContext(), Constant.EVENT_ADAPTER_TODAY, Utils.getCampusUni(getContext()), this, today_recycler, today_title);
+            today_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
+            today_recycler.setAdapter(today_adapter);
+
+            this_week_adapter = new EventAdapter(getContext(), Constant.EVENT_ADAPTER_THIS_WEEK, Utils.getCampusUni(getContext()), this, this_week_recycler, this_week_title);
+            this_week_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
+            this_week_recycler.setAdapter(this_week_adapter);
+
+            upcoming_adapter = new EventAdapter(getContext(), Constant.EVENT_ADAPTER_UPCOMING, Utils.getCampusUni(getContext()), this, upcoming_recycler, upcoming_title);
+            upcoming_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
+            upcoming_recycler.setAdapter(upcoming_adapter);
+        }
+    }
+
+    private void setUpFeatured(){
+        if(getContext()!=null){
+            db.collection("universities").document(Utils.getCampusUni(getContext())).get().addOnCompleteListener(task -> {
+                if(task.isSuccessful() && task.getResult() != null){
+                    String featuredId = String.valueOf(task.getResult().get("featured_id"));
+                    db.collection("universities").document(Utils.getCampusUni(getContext())).collection("posts").document(featuredId).get().addOnCompleteListener(task1 -> {
+                        if(task1.isSuccessful() && task1.getResult() != null){
+                            Event featuredEvent = task1.getResult().toObject(Event.class);
+                            if(featuredEvent != null){
+                                stor.child(featuredEvent.getVisual()).getDownloadUrl().addOnCompleteListener(task2 -> {
+                                    if(task2.isSuccessful() && task2.getResult() != null && getContext() != null){
+                                        Glide.with(getContext()).load(task2.getResult()).into(featured_imageview);
+                                        featured_cardview.setOnClickListener(view -> viewEvent(featuredEvent));
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        }
     }
 
     private void refreshLayoutSetup() {
         refresh_layout.setOnRefreshListener(() -> {
-            feed_adapter.refreshPosts();
-            new Handler().postDelayed(() -> { refresh_layout.setRefreshing(false); }, 2000);
+            refreshAdapters();
+            new Handler().postDelayed(() -> { refresh_layout.setRefreshing(false); }, 1000);
         });
     }
 
-    private void setUpRecycler(){
-        feed_adapter = new FeedAdapter(this, Constant.FEED_ADAPTER_EVENTS, Utils.getCampusUni(context), "", context, no_events_text, reached_bottom_text);
-        feed_recycler_view.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-        feed_recycler_view.setAdapter(feed_adapter);
-    }
-
-    public void refreshAdapter(){
-        feed_adapter.refreshPosts();
+    public void refreshAdapters(){
+        if(for_you_adapter != null) for_you_adapter.refreshAdapter();
+        if(today_adapter!= null)today_adapter.refreshAdapter();
+        if(this_week_adapter!=null)this_week_adapter.refreshAdapter();
+        if(upcoming_adapter!=null)upcoming_adapter.refreshAdapter();
     }
 
     public void changeUni(){
-        setUpRecycler();
+        setUpRecyclers();
     }
 
 
@@ -141,29 +203,41 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedClickLis
     // MARK: Event Interaction
 
     @Override
-    public void onFeedClick(int position, int clicked_id) {     // Handles clicks on a post item
-
-        Post clickedPost = feed_adapter.getPost_array_list().get(position); //<- this is the clicked event/post
-
-        switch (clicked_id) {
-            case R.id.item_feed_full_text_button:
-                viewPost(clickedPost);
-                break;
-
-            case R.id.item_feed_posted_by_text:
-                viewUserProfile(clickedPost.getAuthor_id(), clickedPost.getUni_domain(), clickedPost.getAuthor_is_organization());
-                break;
-
-            case R.id.item_feed_pinned_text:
+    public void onEventClick(int position, int clickedId, int adapterType) {
+        switch(adapterType){
+            case Constant.EVENT_ADAPTER_FOR_YOU:
                 //TODO
+                break;
+            case Constant.EVENT_ADAPTER_TODAY:
+                handleEventItemClick(today_adapter.getItem(position), clickedId);
+                break;
+            case Constant.EVENT_ADAPTER_THIS_WEEK:
+                handleEventItemClick(this_week_adapter.getItem(position), clickedId);
+                break;
+            case Constant.EVENT_ADAPTER_UPCOMING:
+                handleEventItemClick(upcoming_adapter.getItem(position), clickedId);
                 break;
         }
     }
 
-    private void viewPost(Post post) { // Transition to a post/event
-        Intent intent = new Intent(getActivity(), ViewPostOrEventActivity.class);
+    private void handleEventItemClick(Event event, int clickedId){
+        if(clickedId == R.id.item_event_author_image) viewUserProfile(event.getAuthor_id(), event.getUni_domain(), event.getAuthor_is_organization());
+        else viewEvent(event);
+    }
+
+    private void viewEvent(Post event) { // Transition to a post/event
+        if(event != null){
+            Intent intent = new Intent(getContext(), ViewPostOrEventActivity.class);
+            intent.putExtra("this_user", this_user);
+            intent.putExtra("post_id", event.getId());
+            intent.putExtra("post_uni", event.getUni_domain());
+            startActivity(intent);
+        }
+    }
+
+    private void goToAllEvents(){
+        Intent intent = new Intent(getContext(), ExploreAllEventsActivity.class);
         intent.putExtra("this_user", this_user);
-        intent.putExtra("post", post);
         startActivity(intent);
     }
 
@@ -172,7 +246,6 @@ public class EventsFragment extends Fragment implements FeedAdapter.FeedClickLis
             Log.e("EventsFragment", "User not properly defined! Cannot view author's profile");
             return;
         } // author field wasn't defined
-
 
         if (this_user != null && user_id.equals(this_user.getId())) {
             Log.d("EventsFragment", "Viewer is author. Might want to change behaviour.");

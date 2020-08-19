@@ -17,7 +17,9 @@
     <!-- Space between most views (paragraphs, buttons etc) -->
 
     <dimen name="preview_profile_image_dimen">70dp</dimen>
-    <dimen name="small_preview_image_dimen">30dp</dimen>
+    <dimen name="small_preview_image_dimen">35dp</dimen>
+    <dimen name="preview_image_elevation">1dp</dimen>
+
     <dimen name="image_button_width_height">40dp</dimen>
     <dimen name="preview_square_post_image_width_height">70dp</dimen>
 
@@ -32,7 +34,10 @@
     <dimen name="xxxl_margin">128dp</dimen>
 
     <dimen name="authentication_logo_height">160dp</dimen>
-    <dimen name="standard_corner_radius">10dp</dimen>
-    <dimen name="standard_card_elevation">2dp</dimen>
+    <dimen name="standard_corner_radius">20dp</dimen>
+    <dimen name="standard_card_elevation">1dp</dimen>
+    <dimen name="events_fragment_recycler_height">250dp</dimen>
+
+    <dimen name="image_button_dimen">25dp</dimen>
 
 </resources>

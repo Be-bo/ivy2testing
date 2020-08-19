@@ -1,553 +1,279 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--The scrollview can only contain one child, the child is also *required to use wrap content instead of match parent-->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scrollview_main"
+
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/large_margin">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/left_guideline"
+
+
+
+
+<!--        TYPE -->
+        <TextView
+            android:id="@+id/create_post_type_title"
+            style="@style/LargeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.1" />
+            android:text="@string/type"
+            android:layout_margin="@dimen/standard_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/right_guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.9" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/button_container_constraint"
+        <LinearLayout
+            android:id="@+id/create_post_type_container"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toStartOf="@+id/right_guideline"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/type_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="@string/type"
-                style="@style/LargeText"
-                app:layout_constraintBottom_toTopOf="@+id/type_button_container"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <LinearLayout
-                android:id="@+id/type_button_container"
-                android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="@dimen/extra_large_margin"
-                android:layout_marginBottom="@dimen/large_margin"
-                android:background="@drawable/segmented_button_background"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toTopOf="@+id/show_button_container"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <Button
-                    android:id="@+id/post_button"
-                    style="@style/SegmentedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/post" />
-
-                <Button
-                    android:id="@+id/event_button"
-                    style="@style/SegmentedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/event" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/show_text"
-                style="@style/LargeText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="@string/show_in_campus_feed"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/show_button_container"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <LinearLayout
-                android:id="@+id/show_button_container"
-                android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp"
-                android:background="@drawable/segmented_button_background"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/import_button_container"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/type_button_container">
-
-                <Button
-                    android:id="@+id/show_button"
-                    style="@style/SegmentedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/show" />
-
-                <Button
-                    android:id="@+id/dont_show_button"
-                    style="@style/SegmentedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/dont_show" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/import_button_container"
-                android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/segmented_button_background"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toTopOf="@+id/import_coming_soon_textview"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/show_button_container">
-
-                <Button
-                    android:id="@+id/from_scratch_button"
-                    style="@style/SegmentedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/from_scratch" />
-
-                <Button
-                    android:id="@+id/import_button"
-                    style="@style/SegmentedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/imprt" />
-            </LinearLayout>
-
-            <TextView
-                style="@style/LargeText"
-                android:id="@+id/import_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="@string/import_from_another"
-                app:layout_constraintBottom_toTopOf="@+id/import_button_container"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <TextView
-                android:id="@+id/import_coming_soon_textview"
-                style="@style/LargeText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/standard_margin"
-                android:gravity="center"
-                android:text="@string/coming_fall"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/visual_text"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/import_button_container" />
-
-            <TextView
-                android:id="@+id/visual_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/standard_margin"
-                android:layout_marginBottom="@dimen/standard_margin"
-                android:text="@string/visual"
-                style="@style/LargeText"
-                app:layout_constraintTop_toBottomOf="@id/import_coming_soon_textview"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <LinearLayout
-                android:id="@+id/visual_button_container"
-                android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="@dimen/standard_margin"
-                android:layout_marginBottom="@dimen/standard_margin"
-                android:background="@drawable/segmented_button_background"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/visual_text">
-
-                <Button
-                    android:id="@+id/nothing_button"
-                    style="@style/SegmentedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/nothing" />
-
-                <Button
-                    android:id="@+id/image_button"
-                    style="@style/SegmentedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/image" />
-
-                <Button
-                    android:id="@+id/video_button"
-                    style="@style/SegmentedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/video" />
-
-                <Button
-                    android:id="@+id/gif_button"
-                    style="@style/SegmentedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/gif" />
-
-            </LinearLayout>
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/imageview_container"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
-            app:layout_constraintEnd_toStartOf="@+id/right_guideline"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@+id/button_container_constraint">
-
-            <TextView
-                android:id="@+id/coming_soon_textview"
-                style="@style/LargeText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/standard_margin"
-                android:gravity="center"
-                android:text="@string/coming_fall"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/image_imageview"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/gif_imageview"
-                android:layout_width="0dp"
-                android:layout_height="150dp"
-                android:layout_marginBottom="16dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@android:drawable/ic_menu_gallery" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/event_constraint_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintEnd_toStartOf="@+id/right_guideline"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@id/imageview_container">
-
-            <TextView
-                android:id="@+id/title_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/title"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toTopOf="@+id/event_title_editText"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <EditText
-                android:id="@+id/event_title_editText"
-                style="@style/StandardEditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:ems="10"
-                android:hint="@string/name"
-                android:inputType="textShortMessage"
-                app:layout_constraintBottom_toTopOf="@id/event_location_editText"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/location_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/location"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toTopOf="@+id/event_location_editText"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <EditText
-                android:id="@+id/event_location_editText"
-                style="@style/StandardEditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp"
-                android:ems="10"
-                android:hint="@string/location"
-                android:inputType="textShortMessage"
-                app:layout_constraintBottom_toTopOf="@id/start_times_constraint"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/event_title_editText" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/start_times_constraint"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp"
-                app:layout_constraintBottom_toTopOf="@id/end_times_constraint"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/event_location_editText">
-
-                <Button
-                    android:id="@+id/start_date_button"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:ems="10"
-                    android:text="@string/start_date"
-                    android:textAllCaps="false"
-                    android:theme="@style/SegmentedButton"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/start_at_text"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
-
-                <TextView
-                    android:id="@+id/start_at_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="0"
-                    android:text="@string/at"
-                    android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/start_time_button"
-                    app:layout_constraintStart_toEndOf="@id/start_date_button"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <Button
-                    android:id="@+id/start_time_button"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:ems="10"
-                    android:enabled="true"
-                    android:text="@string/start_time"
-                    android:textAllCaps="false"
-                    android:theme="@style/SegmentedButton"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/start_at_text"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <TextView
-                android:id="@+id/start_time_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/start_time"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toTopOf="@+id/start_times_constraint"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/end_times_constraint"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/start_times_constraint">
-
-                <Button
-                    android:id="@+id/end_date_button"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:ems="10"
-                    android:text="@string/end_date"
-                    android:textAllCaps="false"
-                    android:theme="@style/SegmentedButton"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/textView13"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/textView13"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="0"
-                    android:text="@string/at"
-                    android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/end_time_button"
-                    app:layout_constraintStart_toEndOf="@+id/end_date_button"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <Button
-                    android:id="@+id/end_time_button"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:ems="10"
-                    android:text="@string/end_time"
-                    android:textAllCaps="false"
-                    android:theme="@style/SegmentedButton"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/textView13"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <TextView
-                android:id="@+id/end_time_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/end_time"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toTopOf="@+id/end_times_constraint"
-                app:layout_constraintStart_toStartOf="parent" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/text_and_post_container"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toStartOf="@+id/right_guideline"
-            app:layout_constraintStart_toStartOf="@+id/left_guideline"
-            app:layout_constraintTop_toBottomOf="@+id/event_constraint_view">
-
-            <EditText
-                android:id="@+id/description_edittext"
-                style="@style/StandardEditText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/description"
-                android:inputType="textMultiLine"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/pin_event_constraint"
-                android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/description_edittext">
-
-                <TextView
-                    android:id="@+id/pin_event_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/pin_event"
-                    android:textColor="@color/interaction"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <Spinner
-                    android:id="@+id/pinned_event_spinner"
-                    style="@style/StandardSpinner"
-                    android:layout_width="0dp"
-                    android:backgroundTint="@color/hint"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/pin_event_text"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_height="30dp"
+            android:background="@drawable/segmented_button_background"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/standard_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/create_post_type_title">
 
             <Button
-                android:id="@+id/submit_button"
-                style="@style/StandardButton"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="24dp"
-                android:enabled="true"
-                android:text="@string/post"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pin_event_constraint" />
-
-            <ProgressBar
-                android:id="@+id/submit_progress_bar"
-                style="@style/StandardIndefiniteProgressBar"
+                android:id="@+id/create_post_post_button"
+                style="@style/SegmentedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/large_margin"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_weight="1"
+                android:enabled="false"
+                android:text="@string/post" />
+
+            <Button
+                android:id="@+id/create_post_event_button"
+                style="@style/SegmentedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:enabled="true"
+                android:text="@string/event" />
+        </LinearLayout>
+
+
+
+
+
+<!--        VISUAL-->
+        <TextView
+            android:id="@+id/create_post_visual_title"
+            style="@style/LargeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/visual"
+            android:layout_margin="@dimen/standard_margin"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/create_post_type_container"/>
+
+        <LinearLayout
+            android:id="@+id/create_post_visual_container"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_margin="@dimen/standard_margin"
+            android:background="@drawable/segmented_button_background"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/create_post_visual_title">
+
+            <Button
+                android:id="@+id/create_post_nothing_button"
+                style="@style/SegmentedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:enabled="false"
+                android:text="@string/nothing" />
+
+            <Button
+                android:id="@+id/create_post_image_button"
+                style="@style/SegmentedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/image" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/create_post_image_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/create_post_visual_container" />
+
+
+
+
+
+<!--    UNIVERSAL FIELDS-->
+        <EditText
+            android:id="@+id/create_post_description_edit_text"
+            style="@style/StandardEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/text"
+            android:inputType="textMultiLine"
+            android:layout_margin="@dimen/standard_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/create_post_image_view" />
+
+
+
+
+
+
+<!--        POST FIELDS-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/create_post_post_fields_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/create_post_description_edit_text">
+
+            <TextView
+                style="@style/StandardText"
+                android:id="@+id/create_post_pin_event_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pin_event"
+                android:layout_margin="12dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pin_event_constraint" />
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Spinner
+                android:id="@+id/create_post_pin_event_spinner"
+                style="@style/StandardSpinner"
+                android:layout_width="0dp"
+                android:backgroundTint="@color/hint"
+                android:layout_margin="@dimen/standard_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/create_post_pin_event_text"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+<!--    EVENT FIELDS-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/create_post_event_fields_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/create_post_post_fields_layout">
+
+            <EditText
+                android:id="@+id/create_post_title_edit_text"
+                style="@style/StandardEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/standard_margin"
+                android:ems="10"
+                android:hint="@string/name"
+                android:inputType="text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/create_post_location_edit_text"
+                style="@style/StandardEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/standard_margin"
+                android:ems="10"
+                android:hint="@string/location"
+                android:inputType="text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/create_post_title_edit_text" />
+
+            <Button
+                android:id="@+id/create_post_start_time_button"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_margin="@dimen/standard_margin"
+                android:ems="10"
+                android:autoSizeTextType="uniform"
+                android:text="@string/start_time"
+                android:textAllCaps="false"
+                android:theme="@style/SegmentedButton"
+                app:layout_constraintEnd_toStartOf="@id/create_post_end_time_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/create_post_location_edit_text" />
+
+            <Button
+                android:id="@+id/create_post_end_time_button"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_margin="@dimen/standard_margin"
+                android:ems="10"
+                android:autoSizeTextType="uniform"
+                android:text="@string/end_time"
+                android:textAllCaps="false"
+                android:theme="@style/SegmentedButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/create_post_start_time_button"
+                app:layout_constraintTop_toBottomOf="@id/create_post_location_edit_text" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+<!--        BUTTON & LOADING WHEEL-->
+        <Button
+            android:id="@+id/create_post_submit_btn"
+            style="@style/StandardButton"
+            android:layout_width="0dp"
+            android:layout_marginStart="@dimen/standard_margin"
+            android:layout_marginEnd="@dimen/standard_margin"
+            android:layout_marginTop="@dimen/extra_large_margin"
+            android:layout_marginBottom="@dimen/extra_large_margin"
+            android:text="@string/post"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/create_post_event_fields_layout" />
+
+        <ProgressBar
+            android:id="@+id/create_post_progress_bar"
+            style="@style/StandardIndefiniteProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/extra_large_margin"
+            android:layout_marginBottom="@dimen/extra_large_margin"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/create_post_event_fields_layout" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 </ScrollView>

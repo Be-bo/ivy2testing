@@ -8,8 +8,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -36,12 +34,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.home.BubbleTabAdapter;
-import com.ivy2testing.home.CreatePost;
 import com.ivy2testing.R;
-import com.ivy2testing.chat.ChatFragment;
 import com.ivy2testing.bubbletabs.EventsFragment;
 import com.ivy2testing.bubbletabs.CampusFragment;
+import com.ivy2testing.home.CreatePostActivity;
 import com.ivy2testing.terms.TermsActivity;
 import com.ivy2testing.userProfile.NotificationCenterActivity;
 import com.ivy2testing.userProfile.OrganizationProfileFragment;
@@ -49,8 +45,6 @@ import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.SpinnerAdapter;
 import com.ivy2testing.util.Utils;
-
-import java.util.ArrayList;
 
 import static com.ivy2testing.util.StaticDomainList.available_domain_list;
 
@@ -76,21 +70,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private User this_user;
 
     private SectionsPageAdapter tab_adapter = new SectionsPageAdapter(getSupportFragmentManager());
-    private ChatFragment chat_fragment = new ChatFragment();
     private OrganizationProfileFragment org_fragment = new OrganizationProfileFragment();
     private StudentProfileFragment stud_fragment = new StudentProfileFragment();
     private NoSwipeViewPager tab_view_pager;
     private boolean login_setup = false;
 
-    private final ArrayList<String> bubble_arraylist = new ArrayList<String>();
-    private RecyclerView bubble_recycler_view;
-    private RecyclerView.Adapter bubble_adapter;
-    private RecyclerView.LayoutManager bubble_layout_manager;
-    private CampusFragment campus_fragment = null;
-    private EventsFragment event_fragment = null;
-//    private PostsFragment post_fragment = null;
-    private String selected_bubble = "campus";
-    private boolean home_setup = false;
+    private CampusFragment campus_fragment;
+    private EventsFragment event_fragment;
+
+
+
 
 
 
@@ -126,9 +115,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case Constant.CREATE_POST_REQUEST_CODE:
                 if(resultCode == RESULT_OK){
                     campus_fragment.refreshAdapter();
-                    if(event_fragment != null) event_fragment.refreshAdapter();
-                    //TODO: don't forget to notify any other fragments
+                    if(event_fragment != null) event_fragment.refreshAdapters();
                 }
+                break;
         }
     }
 
@@ -165,6 +154,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ham_memu_uni_image = hView.findViewById(R.id.hamburger_menu_imageview);
         ham_menu_uni_text = hView.findViewById(R.id.hamburger_menu_bottomtext);
         setDrawerHeader();
+
+        main_toolbar.setNavigationIcon(R.drawable.ic_settings);
     }
 
     private void setDrawerHeader(){
@@ -262,100 +253,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-    //MARK: Setup Methods
-
-    private void setUp(){
-        setUpToolbar();
-        setHandlers();
-        attemptLogin();
-    }
-
-    private void setHandlers(){
-        bottom_navigation = findViewById(R.id.main_tab_bar);
-        bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
-        loading_layout = findViewById(R.id.main_loadingScreen);
-        function_button = findViewById(R.id.post_button);
-        tab_view_pager = findViewById(R.id.tab_view_pager);
-        function_button.setOnClickListener(view -> transToLogin());
-    }
-
-    private void setUpLoggedInInteraction() { //this method will set up all the interactive elements the user has access to when logged in, by default they're hidden (tab bar + post btn)
-        function_button.setImageResource(R.drawable.ic_create);
-        function_button.setOnClickListener(view -> transToCreatePost());
-        bottom_navigation.setVisibility(View.VISIBLE);
-
-        tab_adapter.addFragment(chat_fragment, "chat");
-        if (this_user.getIs_organization()) tab_adapter.addFragment(org_fragment, "organization");
-        else tab_adapter.addFragment(stud_fragment, "student");
-
-        if(!home_setup) homeSetup();
-
-        bottom_navigation.setOnNavigationItemSelectedListener((menuItem) -> {
-            switch (menuItem.getItemId()) {
-                case R.id.tab_bar_chat:
-                    bubble_recycler_view.setVisibility(View.GONE);
-                    setFunctionButton(R.id.tab_bar_chat);
-                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("chat"));
-                    return true;
-                case R.id.tab_bar_home:
-                    bubble_recycler_view.setVisibility(View.GONE);
-                    setFunctionButton(R.id.tab_bar_home);
-                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("campus"));
-                    return true;
-                case R.id.tab_bar_events:
-                    bubble_recycler_view.setVisibility(View.GONE);
-                    setFunctionButton(R.id.tab_bar_home);
-                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("event"));
-                    return true;
-                case R.id.tab_bar_profile:
-                    bubble_recycler_view.setVisibility(View.GONE);
-                    setFunctionButton(R.id.tab_bar_profile);
-                    if (this_user.getIs_organization()) {
-                        if (!org_fragment.isIs_set_up()) org_fragment.setUp();
-                        tab_view_pager.setCurrentItem(tab_adapter.getPosition("organization"));
-                    } else {
-                        if (!stud_fragment.isIs_set_up()) stud_fragment.setUpProfile();
-                        tab_view_pager.setCurrentItem(tab_adapter.getPosition("student"));
-                    }
-                    return true;
-            }
-            return false;
-        });
-        tab_view_pager.setCurrentItem(tab_adapter.getPosition("campus"));
-        login_setup = true;
-    }
-
-    private void homeSetup(){
-        //TODO: Not ideal, all the bubbles essentially act as separate tabs -> limit 6 so that we can keep everything in mem, will have to be reworked in the future:
-        //TODO: i.e. killing old bubbles when we reach the limit we decide on, instead of killing starting from 0th index (which will start killing actual tabs)
-        bubbleBarSetup();
-        campus_fragment = new CampusFragment(this, this_user);
-        tab_adapter.addFragment(campus_fragment, "campus");
-        event_fragment = new EventsFragment(this, this_user);
-        tab_adapter.addFragment(event_fragment, "event");
-        tab_view_pager.setAdapter(tab_adapter);
-        tab_view_pager.setOffscreenPageLimit(6);
-        home_setup = true;
-    }
-
-    private void setFunctionButton(int tabId){
-        if(this_user != null) {
-            switch (tabId) {
-                case R.id.tab_bar_profile:
-                    function_button.setImageResource(R.drawable.ic_bell);
-                    function_button.setOnClickListener(view -> transToNotificationCenter());
-                    break;
-                case R.id.tab_bar_home:
-                    function_button.setImageResource(R.drawable.ic_create);
-                    function_button.setOnClickListener(view -> transToCreatePost());
-                    break;
-                case R.id.tab_bar_chat:
-                    function_button.setImageResource(R.drawable.ic_create);
-                    function_button.setOnClickListener(view -> transToCreatePost());
-                    break;
-            }
-        }
-    }
 
 
 
@@ -363,12 +260,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-
-
-
-
-
-    // MARK: Base Methods
+    // MARK: Login Methods
 
     private void attemptLogin(){
         startLoading();
@@ -390,46 +282,124 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
         }else{
-            if(!home_setup) homeSetup();
+            setUpNoLoginInteraction();
             endLoading();
         }
     }
 
-    private void bubbleBarSetup(){
-        bubble_arraylist.add("Campus");
-        bubble_arraylist.add("Events");
-//        bubble_arraylist.add("Posts");
-        bubble_recycler_view = findViewById(R.id.bubble_sample_rv);
-        bubble_recycler_view.setHasFixedSize(true);
-        bubble_layout_manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        bubble_adapter = new BubbleTabAdapter(bubble_arraylist, position -> {
-            switch (position){
-                case 0:
-                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("campus"));
-                    selected_bubble = "campus";
-                    break;
-                case 1:
-                    if(event_fragment == null){
-                        event_fragment = new EventsFragment(this, this_user);
-                        tab_adapter.addFragment(event_fragment, "event");
-                    }
-                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("event"));
-                    selected_bubble = "event";
-                    break;
-//                case 2:
-//                    if(post_fragment == null){
-//                        post_fragment = new PostsFragment(this);
-//                        post_fragment.setThisUser(this_user);
-//                        tab_adapter.addFragment(post_fragment, "post");
-//                    }
-//                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("post"));
-//                    selected_bubble = "post";
-//                    break;
-            }
-        });
-        bubble_recycler_view.setLayoutManager(bubble_layout_manager);
-        bubble_recycler_view.setAdapter(bubble_adapter);
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //MARK: Setup Methods
+
+    private void setUp(){
+        setUpToolbar();
+        setHandlers();
+        attemptLogin();
     }
+
+    private void setHandlers(){
+        bottom_navigation = findViewById(R.id.activity_main_tab_bar_logged_in);
+        loading_layout = findViewById(R.id.main_loadingScreen);
+        function_button = findViewById(R.id.post_button);
+        tab_view_pager = findViewById(R.id.tab_view_pager);
+        function_button.setOnClickListener(view -> transToLogin());
+    }
+
+    private void setUpLoggedInInteraction() { //this method will set up all the interactive elements the user has access to when logged in, by default they're hidden (tab bar + post btn)
+        bottom_navigation.getMenu().findItem(R.id.tab_bar_profile).setVisible(true);
+        bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
+        function_button.setImageResource(R.drawable.ic_create);
+        function_button.setOnClickListener(view -> transToCreatePost());
+
+        event_fragment = new EventsFragment(this, this_user);
+        tab_adapter.addFragment(event_fragment, "event");
+        campus_fragment = new CampusFragment(this, this_user);
+        tab_adapter.addFragment(campus_fragment, "campus");
+        if (this_user.getIs_organization()) tab_adapter.addFragment(org_fragment, "organization");
+        else tab_adapter.addFragment(stud_fragment, "student");
+
+        tab_view_pager.setAdapter(tab_adapter);
+        tab_view_pager.setOffscreenPageLimit(4);
+        setUpBottomNavigationInteraction();
+        login_setup = true;
+    }
+
+    private void setUpNoLoginInteraction(){ //this will only set up home and events fragments (user not signed in they don't have access to anything else)
+        bottom_navigation.getMenu().findItem(R.id.tab_bar_profile).setVisible(false);
+        bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
+        event_fragment = new EventsFragment(this, this_user);
+        tab_adapter.addFragment(event_fragment, "event");
+        campus_fragment = new CampusFragment(this, this_user);
+        tab_adapter.addFragment(campus_fragment, "campus");
+        tab_view_pager.setAdapter(tab_adapter);
+        tab_view_pager.setOffscreenPageLimit(3);
+        setUpBottomNavigationInteraction();
+    }
+
+    private void setUpBottomNavigationInteraction(){ //this method sets up menu button clicks for the current bottom navigation bar
+        bottom_navigation.setOnNavigationItemSelectedListener((menuItem) -> {
+            switch (menuItem.getItemId()) {
+                case R.id.tab_bar_home:
+                    setFunctionButton(R.id.tab_bar_home);
+                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("campus"));
+                    return true;
+                case R.id.tab_bar_events:
+                    setFunctionButton(R.id.tab_bar_home);
+                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("event"));
+                    return true;
+                case R.id.tab_bar_profile:
+                    setFunctionButton(R.id.tab_bar_profile);
+                    if (this_user.getIs_organization()) {
+                        if (!org_fragment.isIs_set_up()) org_fragment.setUp();
+                        tab_view_pager.setCurrentItem(tab_adapter.getPosition("organization"));
+                    } else {
+                        if (!stud_fragment.isIs_set_up()) stud_fragment.setUpProfile();
+                        tab_view_pager.setCurrentItem(tab_adapter.getPosition("student"));
+                    }
+                    return true;
+            }
+            return false;
+        });
+        tab_view_pager.setCurrentItem(tab_adapter.getPosition("campus"));
+    }
+
+    private void setFunctionButton(int tabId){
+        if(this_user != null) {
+            switch (tabId) {
+                case R.id.tab_bar_profile:
+                    function_button.setImageResource(R.drawable.ic_bell);
+                    function_button.setOnClickListener(view -> transToNotificationCenter());
+                    break;
+                case R.id.tab_bar_home:
+                    function_button.setImageResource(R.drawable.ic_create);
+                    function_button.setOnClickListener(view -> transToCreatePost());
+                    break;
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -444,7 +414,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // MARK: Other Methods
 
     private void transToCreatePost(){
-        Intent intent = new Intent(getApplicationContext(), CreatePost.class);
+        Intent intent = new Intent(getApplicationContext(), CreatePostActivity.class);
         intent.putExtra("this_user", this_user);
         startActivityForResult(intent, Constant.CREATE_POST_REQUEST_CODE);
     }

@@ -90,7 +90,7 @@ public class SeeAllPostsActivity extends AppCompatActivity implements FeedAdapte
     }
 
     private void setRecycler(){
-        adapter = new FeedAdapter(this, Constant.FEED_ADAPTER_SEEALL, uni_domain, author_id, this, null, reached_bottom_text);
+//        adapter = new FeedAdapter(this, Constant.FEED_ADAPTER_SEEALL, uni_domain, author_id, this, null, reached_bottom_text);
         recycler_view.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         recycler_view.setAdapter(adapter);
     }
@@ -105,16 +105,20 @@ public class SeeAllPostsActivity extends AppCompatActivity implements FeedAdapte
         Post clickedPost = adapter.getPost_array_list().get(position);     //<- this is the clicked event/post
 
         switch(clicked_id){
-            case R.id.item_feed_full_text_button:
-                viewPost(clickedPost.getUni_domain(), clickedPost.getId());
-                break;
-
-            case R.id.item_feed_posted_by_text:
+            case R.id.item_feed_author_preview_image:
                 viewUserProfile(clickedPost.getAuthor_id(), clickedPost.getUni_domain(), clickedPost.getAuthor_is_organization());
                 break;
 
             case R.id.item_feed_pinned_text:
                 viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id());
+                break;
+
+            case R.id.item_feed_pin_icon:
+                viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id());
+                break;
+
+            default:
+                viewPost(clickedPost.getUni_domain(), clickedPost.getId());
                 break;
         }
     }

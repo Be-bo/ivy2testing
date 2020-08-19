@@ -2,129 +2,179 @@
 
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout   xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/events_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/standard_margin">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/events_feed_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-<!--        <TextView-->
-<!--            android:id="@+id/events_feed_featured_text"-->
-<!--            style="@style/LargeText"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="@dimen/standard_margin"-->
-<!--            android:text="@string/featured"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--        <include-->
-<!--            android:id="@+id/feed_obj_reference"-->
-<!--            layout="@layout/item_feed_post"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/events_feed_featured_text"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/events_feed_upcoming_text"-->
-<!--            style="@style/LargeText"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="@dimen/standard_margin"-->
-<!--            android:layout_marginTop="@dimen/large_margin"-->
-<!--            android:text="@string/upcoming"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/feed_obj_reference" />-->
-
-
-<!--        <LinearLayout-->
-<!--            android:id="@+id/events_feed_filter_bar"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="35dp"-->
-<!--            android:layout_marginTop="@dimen/extra_large_margin"-->
-<!--            android:background="@drawable/segmented_button_background"-->
-<!--            android:orientation="horizontal"-->
-<!--            android:visibility="gone"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/events_feed_upcoming_text">-->
-
-<!--            <Button-->
-<!--                android:id="@+id/happening_now_button"-->
-<!--                style="@style/SegmentedButton"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:enabled="false"-->
-<!--                android:text="Happening now" />-->
-
-<!--            <Button-->
-<!--                android:id="@+id/upcoming_button"-->
-<!--                style="@style/SegmentedButton"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:text="Upcoming" />-->
-
-<!--            <Button-->
-<!--                android:id="@+id/past_events_button"-->
-<!--                style="@style/SegmentedButton"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_weight="1"-->
-<!--                android:text="Past events" />-->
-<!--        </LinearLayout>-->
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/events_feed_recycler_view"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/events_reached_bottom_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/events_no_events_text"
-            style="@style/LargeText"
-            android:textAlignment="center"
-            android:gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/standard_margin"
-            android:text="@string/no_events"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"  />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/events_feed_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/events_reached_bottom_text"
-            style="@style/LargeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/transparent"
-            android:layout_margin="@dimen/large_margin"
-            android:text="@string/reached_bottom"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/events_feed_recycler_view" />
+                <TextView
+                    android:id="@+id/fragment_events_featured_title"
+                    style="@style/LargeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/standard_margin"
+                    android:layout_marginTop="@dimen/large_margin"
+                    android:text="@string/featured"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/fragment_events_featured_cardview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardElevation="@dimen/standard_card_elevation"
+                    android:layout_margin="@dimen/standard_margin"
+                    app:cardCornerRadius="@dimen/standard_corner_radius"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_events_featured_title"
+                    >
+
+                    <ImageView
+                        android:id="@+id/fragment_events_featured_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/ic_ivy_logo_white"
+                        android:background="@drawable/gradient_custom_post"
+                        android:scaleType="fitCenter"
+                        android:contentDescription="@string/post_image"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.cardview.widget.CardView>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+
+
+                <TextView
+                    android:id="@+id/fragment_events_for_you_title"
+                    style="@style/LargeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/standard_margin"
+                    android:layout_marginTop="@dimen/large_margin"
+                    android:text="@string/for_you"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fragment_events_featured_cardview"
+                    android:visibility="gone"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/fragment_events_for_you_recycler"
+                    android:layout_marginStart="@dimen/standard_margin"
+                    android:layout_marginBottom="@dimen/standard_margin"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/events_fragment_recycler_height"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_events_for_you_title"
+                    android:visibility="gone"/>
+
+
+
+
+
+                <TextView
+                    android:id="@+id/fragment_events_today_title"
+                    style="@style/LargeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/standard_margin"
+                    android:layout_marginTop="@dimen/large_margin"
+                    android:text="@string/today"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fragment_events_for_you_recycler" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/fragment_events_today_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/events_fragment_recycler_height"
+                    android:layout_marginStart="@dimen/standard_margin"
+                    android:layout_marginBottom="@dimen/standard_margin"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_events_today_title" />
+
+
+
+
+                <TextView
+                    android:id="@+id/fragment_events_this_week_title"
+                    style="@style/LargeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/standard_margin"
+                    android:layout_marginTop="@dimen/large_margin"
+                    android:text="@string/this_week"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fragment_events_today_recycler" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/fragment_events_this_week_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/events_fragment_recycler_height"
+                    android:layout_marginStart="@dimen/standard_margin"
+                    android:layout_marginBottom="@dimen/standard_margin"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_events_this_week_title" />
+
+
+
+                <TextView
+                    android:id="@+id/fragment_events_upcoming_title"
+                    style="@style/LargeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/standard_margin"
+                    android:layout_marginTop="@dimen/large_margin"
+                    android:text="@string/upcoming"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fragment_events_this_week_recycler" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/fragment_events_upcoming_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/events_fragment_recycler_height"
+                    android:layout_marginStart="@dimen/standard_margin"
+                    android:layout_marginBottom="@dimen/standard_margin"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_events_upcoming_title" />
+
+
+
+
+                <Button
+                    android:id="@+id/fragment_events_explore_all_button"
+                    style="@style/StandardButton"
+                    android:text="@string/explore_all"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="@dimen/standard_margin"
+                    android:layout_marginEnd="@dimen/standard_margin"
+                    android:layout_marginTop="@dimen/large_margin"
+                    android:layout_marginBottom="@dimen/large_margin"
+                    android:enabled="true"
+                    app:layout_constraintTop_toBottomOf="@id/fragment_events_upcoming_recycler"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
+
+
+
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

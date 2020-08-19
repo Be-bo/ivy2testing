@@ -47,7 +47,6 @@ public class StudentProfileActivity extends AppCompatActivity {
     private TextView mName;
     private TextView mDegree;
     private RecyclerView mRecyclerView;
-    private TextView mSeeAll;
     private TextView post_title;
     private TextView no_posts_text;
     private TextView private_text;
@@ -91,7 +90,6 @@ public class StudentProfileActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(adapter!=null) adapter.stopListening();
     }
 
     /* Initialization Methods
@@ -110,7 +108,6 @@ public class StudentProfileActivity extends AppCompatActivity {
         mName = findViewById(R.id.studentProfile_name);
         mDegree = findViewById(R.id.studentProfile_degree);
         mRecyclerView = findViewById(R.id.studentProfile_posts);
-        mSeeAll = findViewById(R.id.studentProfile_seeAll);
         post_title = findViewById(R.id.studentProfile_header);
         no_posts_text = findViewById(R.id.studentProfile_no_posts_text);
         private_text = findViewById(R.id.activity_student_profile_private_text);
@@ -122,7 +119,6 @@ public class StudentProfileActivity extends AppCompatActivity {
         if (student_to_display == null) return;
         mName.setText(student_to_display.getName());
         mDegree.setText(student_to_display.getDegree());
-        mSeeAll.setOnClickListener(v -> seeAllPosts());
         if (profile_img_uri != null) Picasso.get().load(profile_img_uri).into(mProfileImg);
     }
 
@@ -131,7 +127,6 @@ public class StudentProfileActivity extends AppCompatActivity {
         // set LayoutManager and Adapter
         List<View> allViews = new ArrayList<>();
         allViews.add(mRecyclerView);
-        allViews.add(mSeeAll);
         allViews.add(post_title);
         adapter = new SquarePostAdapter(student_to_display.getId(), student_to_display.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, this, this::onPostClick, allViews, no_posts_text);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){

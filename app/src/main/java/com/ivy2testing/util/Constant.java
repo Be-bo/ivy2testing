@@ -18,16 +18,25 @@ public final class Constant {
     public static final int SEEALL_POSTS_REQUEST_CODE = 107;
     public static final int EDIT_ORGANIZATION_REQUEST_CODE = 108;
     public static final int CREATE_POST_REQUEST_CODE = 109;
+    public static final int EDIT_POST_REQUEST_CODE = 110;
 
 
     public static final int PROFILE_POST_GRID_ROW_COUNT = 3;
     public static final int PROFILE_MEMBER_LIMIT = 5;
     public static final int PROFILE_POST_LIMIT_STUDENT = 9;
     public static final int PROFILE_POST_LIMIT_ORG = 6;
-    public static final int FEED_ADAPTER_SEEALL = 13;
-    public static final int FEED_ADAPTER_CAMPUS = 14;
-    public static final int FEED_ADAPTER_EVENTS = 15;
     public static final int NOTIFICATION_CENTER_LIMIT = 15;
+    public static final int EVENT_ADAPTER_UPCOMING_LIMIT = 15;
+    public static final int ALL_EVENTS_LOAD_LIMIT = 20;
+
+    public static final int FEED_ADAPTER_SEEALL = 1;
+    public static final int FEED_ADAPTER_CAMPUS = 2;
+    public static final int FEED_ADAPTER_EVENTS = 3;
+
+    public static final int EVENT_ADAPTER_FOR_YOU = 1;
+    public static final int EVENT_ADAPTER_TODAY = 2;
+    public static final int EVENT_ADAPTER_THIS_WEEK = 3;
+    public static final int EVENT_ADAPTER_UPCOMING = 4;
 
     public static final int NOTIFICATION_TYPE_CHAT = 1;
     public static final int NOTIFICATION_TYPE_COMMENT = 2;

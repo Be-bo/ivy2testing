@@ -21,15 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.ivy2testing.R;
-import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.home.FeedAdapter;
@@ -39,18 +31,11 @@ import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.Utils;
 
-import java.util.ArrayList;
-
-import static android.content.Context.MODE_PRIVATE;
-
-// Author Clyde.
-// Home Fragment will be the default format for any feed based Class, The methods can be kept the same
-// and the buildArrayList and pullMorePosts can be modified with custom queries create any type of feed.
 
 public class CampusFragment extends Fragment implements FeedAdapter.FeedClickListener {
 
 
-
+    // MARK: Base
 
     private static final String TAG = "CampusFragmentTag";
     private SwipeRefreshLayout refresh_layout;
@@ -62,16 +47,6 @@ public class CampusFragment extends Fragment implements FeedAdapter.FeedClickLis
     private Context context;
     private View root_view;
     private User this_user;
-
-
-
-
-
-
-
-
-
-    //MARK: Base & Setup
 
     @Nullable
     @Override
@@ -96,7 +71,7 @@ public class CampusFragment extends Fragment implements FeedAdapter.FeedClickLis
     }
 
     private void setUpRecycler() {
-        campus_adapter = new FeedAdapter(this, Constant.FEED_ADAPTER_CAMPUS, Utils.getCampusUni(context), "", getContext(), no_posts_text, reached_bottom_text);
+        campus_adapter = new FeedAdapter(this, Utils.getCampusUni(context), "", getContext(), no_posts_text, reached_bottom_text);
         feed_recycler_view.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
         feed_recycler_view.setAdapter(campus_adapter);
     }
@@ -138,14 +113,17 @@ public class CampusFragment extends Fragment implements FeedAdapter.FeedClickLis
     public void onFeedClick(int position, int clicked_id) { // Handles clicks on a post item
         Post clickedPost = campus_adapter.getPost_array_list().get(position); //<- this is the clicked event/post
         switch (clicked_id) {
-            case R.id.item_feed_full_text_button:
-                viewPost(clickedPost.getUni_domain(), clickedPost.getId());
-                break;
-            case R.id.item_feed_posted_by_text:
+            case R.id.item_feed_author_preview_image:
                 viewUserProfile(clickedPost.getAuthor_id(), clickedPost.getUni_domain(), clickedPost.getAuthor_is_organization());
                 break;
             case R.id.item_feed_pinned_text:
                 viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id()); //can only pin events to posts on that campus -> same uni
+                break;
+            case R.id.item_feed_pin_icon:
+                viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id()); //can only pin events to posts on that campus -> same uni
+                break;
+            default:
+                viewPost(clickedPost.getUni_domain(), clickedPost.getId());
                 break;
         }
     }

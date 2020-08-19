@@ -40,8 +40,9 @@
             android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait" />
 
+
         <activity
-            android:name=".home.CreatePost"
+            android:name=".home.CreatePostActivity"
             android:theme="@style/AppBarTheme"
             android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait"/>
@@ -102,6 +103,11 @@
             android:parentActivityName=".main.MainActivity"/>
 
         <activity android:name=".userProfile.NotificationCenterActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBarTheme"
+            android:parentActivityName=".main.MainActivity"/>
+
+        <activity android:name=".bubbletabs.ExploreAllEventsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppBarTheme"
             android:parentActivityName=".main.MainActivity"/>

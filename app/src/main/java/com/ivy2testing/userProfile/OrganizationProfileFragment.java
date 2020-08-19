@@ -49,7 +49,6 @@ public class OrganizationProfileFragment extends Fragment implements SquarePostA
     private View rootView;
     private TextView edit_button;
     private TextView member_requests_button;
-    private TextView see_all_posts_button;
     private TextView see_all_members_button;
     private CircleImageView profile_image;
     private TextView name_text;
@@ -92,32 +91,22 @@ public class OrganizationProfileFragment extends Fragment implements SquarePostA
     @Override
     public void onStop() {
         super.onStop();
-        if(post_adapter!=null && is_set_up) post_adapter.stopListening();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if(is_set_up && post_adapter != null) post_adapter.startListening();
+        if(is_set_up && post_adapter != null) post_adapter.refreshAdapter();
     }
 
     public void setUp(){
         is_set_up = true;
         setUpFragment();
-
-        //TODO: remove
-//        Log.d(TAG, "setting up");
-//        Intent intent = new Intent(getContext(), StudentProfileActivity.class);
-//        intent.putExtra("this_user", this_user);
-//        intent.putExtra("student_to_display_id", "7N6c7gaCYBTjxtwxjJTjSmyBVNj1");
-//        intent.putExtra("student_to_display_uni", "ucalgary.ca");
-//        startActivity(intent);
     }
 
     private void declareHandles(){
         edit_button = rootView.findViewById(R.id.orgprofile_edit_button);
         member_requests_button = rootView.findViewById(R.id.orgprofile_members_button);
-        see_all_posts_button = rootView.findViewById(R.id.orgprofile_post_see_all);
         see_all_members_button = rootView.findViewById(R.id.orgprofile_members_see_all);
         post_recycler = rootView.findViewById(R.id.orgprofile_post_recycler);
         members_recycler = rootView.findViewById(R.id.orgprofile_members_recycler);
@@ -155,14 +144,14 @@ public class OrganizationProfileFragment extends Fragment implements SquarePostA
         name_text.setText(this_user.getName());
         String memberNumber = String.valueOf(((Organization)this_user).getMember_ids().size());
         String requestNumber = String.valueOf(((Organization)this_user).getRequest_ids().size());
-        member_number_text.setText(getString(R.string.organization_member_number, memberNumber));
+        if(memberNumber.equals("1")) member_number_text.setText(getString(R.string.one_member));
+        else member_number_text.setText(getString(R.string.organization_member_number, memberNumber));
         member_requests_button.setText(getString(R.string.organization_request_number, requestNumber));
         String profPicPath = ImageUtils.getUserImagePath(this_user.getId());
         stor_ref.child(profPicPath).getDownloadUrl().addOnCompleteListener(task -> {if(task.isSuccessful() && getContext() != null) Glide.with(getContext()).load(task.getResult()).into(profile_image);});
     }
 
     private void setInteractionListeners(){
-        see_all_posts_button.setOnClickListener(view -> transToPosts());
         if(getContext()!=null){
             if(((Organization)this_user).getRequest_ids().size()<1) member_requests_button.setTextColor(ContextCompat.getColor(getContext(), R.color.light_grey));
             else{
@@ -177,7 +166,6 @@ public class OrganizationProfileFragment extends Fragment implements SquarePostA
     private void setUpPosts(){
         List<View> allViews = new ArrayList<>();
         allViews.add(post_recycler);
-        allViews.add(see_all_posts_button);
         allViews.add(post_divider);
         allViews.add(post_title);
         post_adapter = new SquarePostAdapter(this_user.getId(), this_user.getUni_domain(), Constant.PROFILE_POST_LIMIT_ORG, getContext(), this, allViews, no_posts_text);
@@ -197,8 +185,13 @@ public class OrganizationProfileFragment extends Fragment implements SquarePostA
             members_recycler.setVisibility(View.VISIBLE);
             see_all_members_button.setVisibility(View.VISIBLE);
             member_divider.setVisibility(View.VISIBLE);
-            if(((Organization)this_user).getMember_ids().size() < Constant.PROFILE_MEMBER_LIMIT) person_adapter = new CircleUserAdapter(((Organization)this_user).getMember_ids(), getContext(), this);
-            else person_adapter = new CircleUserAdapter(((Organization)this_user).getMember_ids().subList(0, Constant.PROFILE_MEMBER_LIMIT), getContext(), this);
+            if(((Organization)this_user).getMember_ids().size() < Constant.PROFILE_MEMBER_LIMIT){ //if less members than how many we're displaying in profile preview -> hide see all button and give full list
+                person_adapter = new CircleUserAdapter(((Organization)this_user).getMember_ids(), getContext(), this);
+                see_all_members_button.setVisibility(View.GONE);
+            }else{ //otherwise show see all button and only feed the adapter a sublist (we don't need to load all members when we're only displaying 5 or so)
+                person_adapter = new CircleUserAdapter(((Organization)this_user).getMember_ids().subList(0, Constant.PROFILE_MEMBER_LIMIT), getContext(), this);
+                see_all_members_button.setVisibility(View.VISIBLE);
+            }
             members_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL,false){
                 @Override
                 public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {

@@ -39,7 +39,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="posted_by">Posted by:</string>
-    <string name="pinned">Pinned:</string>
+    <string name="pinned">Pinned Event</string>
     <string name="featured">Featured</string>
     <string name="sort_by">Sort by</string>
     <string name="upcoming">Upcoming</string>
@@ -55,10 +55,14 @@
     <string name="from_scratch">From scratch</string>
     <string name="imprt">Import</string>
     <string name="import_from_another">Import from another platform?</string>
-    <string name="description">Description</string>
+    <string name="text">Text</string>
     <string name="pin_event">Pin Event</string>
     <string name="change_uni_title">Change Campus</string>
     <string name="confirm">Confirm</string>
+    <string name="for_you">For You</string>
+    <string name="today">Today</string>
+    <string name="this_week">This Week</string>
+    <string name="explore_all">Explore All</string>
 
 
     <!-- User Profile -->
@@ -74,7 +78,7 @@
     <string name="edit">Edit</string>
     <string name="posts">Posts</string>
     <string name="member_requests">Member Requests</string>
-
+    <string name="no_notifications_yet">Your notifications will show up here!</string>
     <string name="view_profile">View Profile</string>
     <string name="add_friend">Add Friend</string>
     <string name="message">Message</string>
@@ -102,6 +106,7 @@
     <string name="expand_comments">Expand Comments</string>
     <string name="write_comment">Write a Comment…</string>
     <string name="organization_member_number">%1$s Members</string>
+    <string name="one_member">1 Member</string>
     <string name="members">Members</string>
     <string name="organization_request_number">Member Requests (%1$s)</string>
     <string name="link">Link:</string>

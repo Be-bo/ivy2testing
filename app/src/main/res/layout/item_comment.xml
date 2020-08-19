@@ -23,7 +23,7 @@
             android:id="@+id/comment_userImage"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/ic_profile_selected"
+            android:src="@drawable/empty_profile_image"
             android:contentDescription="@string/profile_pic"
             android:onClick="viewAuthorProfile"
             app:layout_constraintStart_toStartOf="parent"

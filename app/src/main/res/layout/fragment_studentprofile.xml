@@ -17,9 +17,9 @@
             android:layout_height="0dp"
             app:layout_constraintDimensionRatio="1"
             android:layout_margin="@dimen/standard_margin"
-            android:src="@drawable/ic_profile_selected"
+            android:elevation="@dimen/preview_image_elevation"
+            android:src="@drawable/empty_profile_image"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/studentProfile_guidelineH"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="@id/studentProfile_guidelineV"/>
 
@@ -35,11 +35,11 @@
             android:id="@+id/studentProfile_info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
             android:orientation="vertical"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/studentProfile_guidelineV"
-            android:layout_margin="@dimen/standard_margin">
+            app:layout_constraintStart_toEndOf="@id/studentProfile_guidelineV">
 
             <TextView
                 android:id="@+id/studentProfile_name"
@@ -69,19 +69,13 @@
             app:layout_constraintStart_toEndOf="@id/studentProfile_guidelineV"
             app:layout_constraintTop_toBottomOf="@id/studentProfile_info"/>
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/studentProfile_guidelineH"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.2" />
-
         <View
             android:id="@+id/studentProfile_divider"
             android:layout_width="match_parent"
             android:layout_height="@dimen/divider_height"
+            android:layout_marginTop="@dimen/standard_margin"
             android:background="@color/black"
-            app:layout_constraintTop_toTopOf="@id/studentProfile_guidelineH"/>
+            app:layout_constraintTop_toBottomOf="@id/studentProfile_circleImg"/>
 
         <TextView
             android:id="@+id/studentProfile_header"
@@ -115,16 +109,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/studentProfile_header"/>
-
-        <TextView
-            android:id="@+id/studentProfile_seeAll"
-            style="@style/StandardClickableText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/standard_margin"
-            android:text="@string/see_all"
-            app:layout_constraintTop_toBottomOf="@id/studentProfile_posts"
-            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

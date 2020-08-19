@@ -42,11 +42,8 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
     // MARK: Variables and Constants
 
     private static final String TAG = "OrganizationProfileActivityTag";
-    private static final int POST_LIMIT = 6;
-    private static final int MEMBER_LIMIT = 5;
 
     private Button join_button;
-    private TextView see_all_posts_button;
     private TextView see_all_members_button;
     private TextView member_status_text;
     private CircleImageView profile_image;
@@ -108,7 +105,6 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
     @Override
     protected void onStop() {
         super.onStop();
-        if(post_adapter!=null) post_adapter.stopListening();
     }
 
 
@@ -125,7 +121,6 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
 
     private void declareHandles(){
         join_button = findViewById(R.id.activity_orgprofile_join_button);
-        see_all_posts_button = findViewById(R.id.activity_orgprofile_post_see_all);
         see_all_members_button = findViewById(R.id.activity_orgprofile_members_see_all);
         post_recycler = findViewById(R.id.activity_orgprofile_post_recycler);
         members_recycler = findViewById(R.id.activity_orgprofile_members_recycler);
@@ -189,17 +184,14 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
         setUpRecyclers();
         setUpMembers();
         see_all_members_button.setOnClickListener(view -> transToMembers());
-        see_all_posts_button.setOnClickListener(view -> transToPosts());
-
     }
 
     private void setUpRecyclers(){
         List<View> allViews = new ArrayList<>();
         allViews.add(post_recycler);
-        allViews.add(see_all_posts_button);
         allViews.add(post_divider);
         allViews.add(post_title);
-        post_adapter = new SquarePostAdapter(org_to_display_id, org_to_display.getUni_domain(), POST_LIMIT, this, this, allViews, no_posts_text);
+        post_adapter = new SquarePostAdapter(org_to_display_id, org_to_display.getUni_domain(), Constant.PROFILE_POST_LIMIT_ORG, this, this, allViews, no_posts_text);
         post_recycler.setLayoutManager(new GridLayoutManager(this, Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
@@ -212,14 +204,20 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
 
     private void setUpMembers(){
         String memberNumber = String.valueOf(org_to_display.getMember_ids().size());
-        member_number_text.setText(getString(R.string.organization_member_number, memberNumber));
+        if(memberNumber.equals("1")) member_number_text.setText(getString(R.string.one_member));
+        else member_number_text.setText(getString(R.string.organization_member_number, memberNumber));
         if(org_to_display.getMember_ids().size() > 0){
             member_title.setVisibility(View.VISIBLE);
             members_recycler.setVisibility(View.VISIBLE);
-            see_all_members_button.setVisibility(View.VISIBLE);
             member_divider.setVisibility(View.VISIBLE);
-            if(org_to_display.getMember_ids().size() < MEMBER_LIMIT) person_adapter = new CircleUserAdapter(org_to_display.getMember_ids(), this, this);
-            else person_adapter = new CircleUserAdapter(org_to_display.getMember_ids().subList(0, MEMBER_LIMIT), this, this);
+
+            if(org_to_display.getMember_ids().size() < Constant.PROFILE_MEMBER_LIMIT){ //if less members than how many we're displaying in profile preview -> hide see all button and give full list
+                person_adapter = new CircleUserAdapter(org_to_display.getMember_ids(), this, this);
+                see_all_members_button.setVisibility(View.GONE);
+            } else{ //otherwise show see all button and only feed the adapter a sublist (we don't need to load all members when we're only displaying 5 or so)
+                person_adapter = new CircleUserAdapter(org_to_display.getMember_ids().subList(0, Constant.PROFILE_MEMBER_LIMIT), this, this);
+                see_all_members_button.setVisibility(View.VISIBLE);
+            }
             members_recycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false){
                 @Override
                 public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {

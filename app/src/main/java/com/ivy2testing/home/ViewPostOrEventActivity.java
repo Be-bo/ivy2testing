@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -35,13 +36,17 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
+import com.ivy2testing.bubbletabs.CampusFragment;
+import com.ivy2testing.bubbletabs.EventsFragment;
 import com.ivy2testing.entities.Comment;
 import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.userProfile.OrganizationProfileActivity;
+import com.ivy2testing.userProfile.OrganizationProfileFragment;
 import com.ivy2testing.userProfile.StudentProfileActivity;
+import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.adapters.CommentAdapter;
@@ -71,6 +76,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private ImageButton mPostComment;
     private TextView commentsTitle;
     private TextView cantSeeComments;
+    private Menu options_menu;
 
     // Firebase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -100,6 +106,9 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
 
 
+
+
+
 /* Override Methods
 ***************************************************************************************************/
 
@@ -112,37 +121,53 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.view_event_post_bar_menu, menu);
+        options_menu = menu;
+        options_menu.setGroupVisible(0, false);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Handling up button for when another activity called it (it will simply go back to main otherwise)
         if (item.getItemId() == android.R.id.home && !isTaskRoot()){
             goBackToParent(); // Tells parent if post was updated
             return true;
         }
+        else if(item.getItemId() == R.id.view_event_post_bar_edit_post){
+            editPost();
+            return true;
+        }
         else return super.onOptionsItemSelected(item);
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // came back from viewing author user profile
-        if (requestCode == Constant.USER_PROFILE_REQUEST_CODE) {
-            Log.d(TAG, "Coming back from UserProfile!");
-            if (resultCode == Activity.RESULT_OK && data != null) {
+        switch(requestCode){
+            case Constant.USER_PROFILE_REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK && data != null) {
 
-                // Update author name if changed
-                String new_name = data.getStringExtra("user_name");
-                if (new_name != null){
-                    post.setAuthor_name(new_name);
-                    mAuthorName.setText(new_name);
+                    // Update author name if changed
+                    String new_name = data.getStringExtra("user_name");
+                    if (new_name != null){
+                        post.setAuthor_name(new_name);
+                        mAuthorName.setText(new_name);
+                    }
+
+                    // Update author image if changed
+                    Uri profile_img = data.getParcelableExtra("profile_img");
+                    if (profile_img != null) Picasso.get().load(profile_img).into(mAuthorImg);
                 }
-
-                // Update author image if changed
-                Uri profile_img = data.getParcelableExtra("profile_img");
-                if (profile_img != null) Picasso.get().load(profile_img).into(mAuthorImg);
-            }
-        } else
-            Log.w(TAG, "Don't know how to handle the request code, \"" + requestCode + "\" yet!");
+                break;
+            case Constant.EDIT_POST_REQUEST_CODE:
+                if(resultCode == RESULT_OK){ //not an ideal solution but good enough for now - if an event/post gets edited we refresh all fragments
+                    pullPost();
+                }
+        }
     }
 
 
@@ -219,6 +244,10 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
                 mExpandComments.setVisibility(View.GONE);
                 commentsTitle.setVisibility(View.GONE);
                 cantSeeComments.setVisibility(View.GONE);
+            }
+
+            if(this_user.getId().equals(post.getAuthor_id())){ //if the user is the author of this post -> show the edit button and allow them to edit
+                options_menu.setGroupVisible(0, true);
             }
         }else{
             mExpandComments.setVisibility(View.GONE);
@@ -479,6 +508,16 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         });
     }
 
+    private void editPost(){
+        Intent intent = new Intent(this, CreatePostActivity.class);
+        intent.putExtra("this_user", this_user);
+        intent.putExtra("editing_mode", true);
+        intent.putExtra("is_event", post.getIs_event());
+        if(post.getIs_event()) intent.putExtra("event", post);
+        else intent.putExtra("post", post);
+        startActivityForResult(intent, Constant.EDIT_POST_REQUEST_CODE);
+    }
+
 
 
 
@@ -516,10 +555,12 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
     // Loads post visual (only image for now)
     private void loadPostVisual() {
-        if (post == null || post.getVisual() == null) {
+        if (post == null || post.getVisual() == null || post.getVisual().equals("") || post.getVisual().equals("nothing")) {
             mPostVisual.setVisibility(View.GONE);
             Log.e(TAG, "Either Post or its visual field is null!");
             return;
+        }else{
+            mPostVisual.setVisibility(View.VISIBLE);
         }
 
         // Get Visual from storage and load into image view

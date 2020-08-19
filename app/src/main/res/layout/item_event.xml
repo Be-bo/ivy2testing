@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="200dp"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/item_event_cardview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="@dimen/standard_card_elevation"
+        android:layout_marginStart="@dimen/standard_margin"
+        android:layout_marginEnd="@dimen/standard_margin"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="@dimen/small_margin"
+        app:cardCornerRadius="@dimen/standard_corner_radius"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <ImageView
+            android:id="@+id/item_event_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_ivy_logo_white"
+            android:background="@drawable/gradient_custom_post"
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/post_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.cardview.widget.CardView>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/item_event_author_image"
+        android:layout_width="@dimen/small_preview_image_dimen"
+        android:layout_height="@dimen/small_preview_image_dimen"
+        android:layout_margin="@dimen/standard_margin"
+        android:elevation="@dimen/preview_image_elevation"
+        android:src="@drawable/empty_profile_image"
+        android:contentDescription="@string/profile_pic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_event_cardview"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        style="@style/StandardText"
+        android:id="@+id/item_event_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:text="@string/event"
+        android:layout_margin="@dimen/standard_margin"
+        app:layout_constraintStart_toEndOf="@id/item_event_author_image"
+        app:layout_constraintTop_toBottomOf="@id/item_event_cardview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

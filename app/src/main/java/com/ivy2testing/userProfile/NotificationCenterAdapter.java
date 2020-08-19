@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +29,7 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
     // MARK: Variables
 
     private final static String TAG = "NotificationCenterAdapterTag";
+    private TextView no_notifications_text;
     private List<Notification> notifications = new ArrayList<>();
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageReference stor = FirebaseStorage.getInstance().getReference();
@@ -48,10 +50,11 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
 
     // MARK: Base Methods
 
-    public NotificationCenterAdapter(String userId, NotificationListener notificationListener, Context con) {
+    public NotificationCenterAdapter(String userId, NotificationListener notificationListener, Context con, TextView noNotifsText) {
         this.notification_listener = notificationListener;
         this.user_id = userId;
         this.context = con;
+        this.no_notifications_text = noNotifsText;
         current_query = db.collection("users").document(userId).collection("notifications").limit(Constant.NOTIFICATION_CENTER_LIMIT)
                 .orderBy("timestamp", Query.Direction.DESCENDING);
         pullNotifications(current_query);
@@ -77,6 +80,8 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
                 }else loaded_all_notifications = true;
             }
             load_in_progress = false;
+            if(notifications.size() < 1) no_notifications_text.setVisibility(View.VISIBLE);
+            else no_notifications_text.setVisibility(View.GONE);
         });
     }
 

@@ -15,8 +15,8 @@
             android:layout_height="0dp"
             app:layout_constraintDimensionRatio="1"
             android:layout_margin="@dimen/standard_margin"
-            android:src="@drawable/ic_profile_selected"
-            app:layout_constraintBottom_toTopOf="@id/orgprofile_guidelineH"
+            android:elevation="@dimen/preview_image_elevation"
+            android:src="@drawable/empty_profile_image"
             app:layout_constraintEnd_toEndOf="@id/orgprofile_guidelineV"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -78,20 +78,14 @@
             app:layout_constraintStart_toEndOf="@id/orgprofile_guidelineV"
             app:layout_constraintTop_toBottomOf="@id/orgprofile_members_button" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/orgprofile_guidelineH"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.2" />
-
 
         <View
             android:id="@+id/orgprofile_divider2"
             android:layout_width="match_parent"
             android:layout_height="@dimen/divider_height"
+            android:layout_marginTop="@dimen/standard_margin"
             android:background="@color/black"
-            app:layout_constraintTop_toTopOf="@id/orgprofile_guidelineH" />
+            app:layout_constraintTop_toBottomOf="@id/orgprofile_image" />
 
         <TextView
             android:id="@+id/orgprofile_members_header"
@@ -164,15 +158,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/orgprofile_posts_header"/>
 
-        <TextView
-            android:id="@+id/orgprofile_post_see_all"
-            style="@style/StandardClickableText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/standard_margin"
-            android:text="@string/see_all"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/orgprofile_post_recycler" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

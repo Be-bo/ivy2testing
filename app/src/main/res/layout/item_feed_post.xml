@@ -1,168 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/item_post_banner"
-        android:layout_width="40dp"
-        android:layout_height="70dp"
-        android:layout_marginEnd="30dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/event"
-        android:elevation="4dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/ic_banner"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/item_post_banner_text"
-        style="@style/BannerText"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:text="@string/event"
-        android:layout_marginTop="@dimen/large_margin"
-        android:layout_marginEnd="34dp"
-        android:elevation="5dp"
-        android:rotation="90"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-
-
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/item_feed_cardview"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardElevation="@dimen/standard_card_elevation"
-        android:layout_marginStart="@dimen/standard_margin"
-        android:layout_marginEnd="@dimen/standard_margin"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="@dimen/small_margin"
-        app:cardCornerRadius="@dimen/standard_corner_radius"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/item_feed_author_preview_image"
+            android:layout_width="@dimen/small_preview_image_dimen"
+            android:layout_height="@dimen/small_preview_image_dimen"
+            android:layout_margin="@dimen/standard_margin"
+            android:contentDescription="@string/profile_pic"
+            android:elevation="@dimen/preview_image_elevation"
+            android:src="@drawable/empty_profile_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/item_feed_text"
+            style="@style/StandardText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/standard_margin"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_marginEnd="@dimen/standard_margin"
+            android:layout_marginBottom="@dimen/standard_margin"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="5"
+            android:minLines="2"
+            android:text="@string/lorem_ipsum"
+            app:layout_constraintBottom_toTopOf="@id/item_feed_pin_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/item_feed_author_preview_image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0" />
+
+        <TextView
+            android:id="@+id/item_feed_time"
+            style="@style/SmallText"
+            android:layout_width="@dimen/small_preview_image_dimen"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/standard_margin"
+            android:layout_marginBottom="@dimen/standard_margin"
+            app:layout_constraintVertical_bias="0"
+            android:gravity="center_horizontal"
+            android:text="@string/time"
+            app:layout_constraintTop_toBottomOf="@id/item_feed_author_preview_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/item_feed_divider"/>
+
+
+        <ImageView
+            android:id="@+id/item_feed_pin_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="51dp"
+            android:layout_marginBottom="@dimen/standard_margin"
+            android:src="@drawable/ic_pin_unselected"
+            app:layout_constraintBottom_toTopOf="@id/item_feed_cardview"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/item_feed_pinned_text"
+            style="@style/StandardClickableText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/pinned"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintBottom_toBottomOf="@id/item_feed_pin_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/item_feed_pin_icon"
+            app:layout_constraintTop_toTopOf="@id/item_feed_pin_icon" />
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/item_feed_cardview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white">
+            android:layout_height="wrap_content"
+            android:layout_marginStart="51dp"
+            android:layout_marginEnd="@dimen/standard_margin"
+            android:layout_marginBottom="@dimen/standard_margin"
+            app:cardCornerRadius="@dimen/standard_corner_radius"
+            app:cardElevation="@dimen/standard_card_elevation"
+            app:layout_constraintBottom_toTopOf="@id/item_feed_divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <ImageView
                 android:id="@+id/item_feed_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:src="@drawable/ic_ivy_logo_white"
                 android:background="@drawable/gradient_custom_post"
-                android:scaleType="fitCenter"
                 android:contentDescription="@string/post_image"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-
-
-            <TextView
-                android:id="@+id/item_feed_event_title"
-                style="@style/StandardText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:layout_margin="@dimen/small_margin"
-                android:maxLines="1"
-                android:text="@string/name"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_ivy_logo_white"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/item_feed_image"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 />
 
-            <TextView
-                android:id="@+id/item_feed_text"
-                style="@style/StandardText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:maxLines="2"
-                android:text="@string/lorem_ipsum"
-                android:layout_margin="@dimen/small_margin"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/item_feed_event_title" />
+        </androidx.cardview.widget.CardView>
 
 
+        <View
+            android:id="@+id/item_feed_divider"
+            android:layout_width="match_parent"
+            android:layout_height="0.05dp"
+            android:layout_marginTop="@dimen/large_margin"
+            android:layout_marginBottom="@dimen/standard_margin"
+            android:background="@color/grey"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/item_feed_author_preview_image"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_margin="@dimen/small_margin"
-                android:src="@drawable/ic_profile_selected"
-                android:contentDescription="@string/profile_pic"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/item_feed_text" />
-
-            <TextView
-                android:id="@+id/item_feed_posted_by_text"
-                style="@style/StandardClickableText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/author"
-                android:layout_margin="@dimen/small_margin"
-                app:layout_constraintStart_toEndOf="@+id/item_feed_author_preview_image"
-                app:layout_constraintTop_toBottomOf="@id/item_feed_text" />
-
-
-
-
-
-
-            <ImageView
-                android:id="@+id/item_feed_pin_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_margin="@dimen/small_margin"
-                android:src="@drawable/ic_pin_unselected"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/item_feed_posted_by_text" />
-
-            <TextView
-                android:id="@+id/item_feed_pinned_text"
-                style="@style/StandardClickableText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/small_margin"
-                android:text="@string/pinned"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/item_feed_pin_icon" />
-
-
-
-
-            <TextView
-                android:id="@+id/item_feed_full_text_button"
-                style="@style/StandardClickableText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/full"
-                android:layout_margin="@dimen/small_margin"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

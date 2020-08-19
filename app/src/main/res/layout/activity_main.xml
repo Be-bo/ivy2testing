@@ -32,28 +32,25 @@
             android:layout_alignParentTop="true"
             android:visibility="visible"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:layout_constraintBottom_toTopOf="@id/main_tab_bar"
+            app:layout_constraintBottom_toTopOf="@id/activity_main_tab_bar_logged_in"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bubble_sample_rv"/>
+            app:layout_constraintTop_toBottomOf="@+id/bubble_sample_rv" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/main_tab_bar"
+            android:id="@+id/activity_main_tab_bar_logged_in"
             style="@style/MainNavBar"
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:background="@color/white"
-            android:visibility="gone"
-            app:labelVisibilityMode="labeled"
             app:itemIconTint="@color/interaction"
             app:itemTextColor="@color/interaction"
+            app:labelVisibilityMode="unlabeled"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tab_view_pager"
-            app:menu="@menu/main_tab_bar">
-
-        </com.google.android.material.bottomnavigation.BottomNavigationView>
+            app:menu="@menu/main_tab_bar"/>
 
         <FrameLayout
             android:id="@+id/main_loadingScreen"
