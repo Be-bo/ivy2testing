@@ -110,7 +110,7 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
         switch(notification.getType()){
 
             case Constant.NOTIFICATION_TYPE_CHAT:
-                header = notification.getAuthor_name() + " sent you a message.";
+                header = notification.getNotification_sender_name() + " sent you a message.";
                 holder.content_text_view.setText(header);
                 holder.time_text_view.setText(Utils.getHumanTimeFromMillis(notification.getTimestamp()));
                 holder.visual_card_view.setRadius(Utils.dpToPixel(context, 25));
@@ -125,7 +125,7 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
 
 
             case Constant.NOTIFICATION_TYPE_COMMENT:
-                header = notification.getAuthor_name() + " commented on " + notification.getTarget_name().substring(0, 10)+"...";
+                header = notification.getNotification_sender_name() + " commented on " + notification.getNotification_origin_name() ; //.substring(0, 10)+"...";
                 holder.content_text_view.setText(header);
                 holder.time_text_view.setText(Utils.getHumanTimeFromMillis(notification.getTimestamp()));
                 holder.visual_card_view.setRadius(Utils.dpToPixel(context, 25));
@@ -139,7 +139,7 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
 
 
             case Constant.NOTIFICATION_TYPE_FEATURED:
-                header = notification.getAuthor_name() + " featured their " + notification.getTarget_name();
+                header = notification.getNotification_sender_name() + " featured their " + notification.getNotification_origin_name() ;
                 holder.content_text_view.setText(header);
                 holder.time_text_view.setText(Utils.getHumanTimeFromMillis(notification.getTimestamp()));
                 holder.visual_card_view.setRadius(Utils.dpToPixel(context, 10));
@@ -152,7 +152,7 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
 
 
             case Constant.NOTIFICATION_TYPE_ORG_EVENT:
-                header = notification.getAuthor_name() + " added a new event: " + notification.getTarget_name();
+                header = notification.getNotification_sender_name() + " added a new event: " + notification.getNotification_origin_name();
                 holder.content_text_view.setText(header);
                 holder.time_text_view.setText(Utils.getHumanTimeFromMillis(notification.getTimestamp()));
                 holder.visual_card_view.setRadius(Utils.dpToPixel(context, 10));
@@ -165,7 +165,7 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
 
 
             case Constant.NOTIFICATION_TYPE_ORG_POST:
-                header = notification.getAuthor_name() + " posted " + notification.getTarget_name();
+                header = notification.getNotification_sender_name()+ " posted " + notification.getNotification_origin_name();
                 holder.content_text_view.setText(header);
                 holder.time_text_view.setText(Utils.getHumanTimeFromMillis(notification.getTimestamp()));
                 holder.visual_card_view.setRadius(Utils.dpToPixel(context, 10));
@@ -186,5 +186,9 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
     @Override
     public int getItemCount() {
         return notifications.size();
+    }
+
+    public Notification getNotification(int position){
+        return notifications.get(position);
     }
 }

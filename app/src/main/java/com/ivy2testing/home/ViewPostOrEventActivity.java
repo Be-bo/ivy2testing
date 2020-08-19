@@ -1,6 +1,7 @@
 package com.ivy2testing.home;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -43,20 +44,24 @@ import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.MainActivity;
+import com.ivy2testing.notifications.NotificationHandler;
 import com.ivy2testing.userProfile.OrganizationProfileActivity;
 import com.ivy2testing.userProfile.OrganizationProfileFragment;
 import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
+import com.ivy2testing.util.Utils;
 import com.ivy2testing.util.adapters.CommentAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
-/** @author Zahra Ghavasieh
+/**
+ * @author Zahra Ghavasieh
  * Overview: Holder to View a post or an event. Uses ViewPostFragment and ViewEventFragment for specific details
  * Feature: If viewer is the author, they will have the option to edit this post [not implemented yet!]
  * WIP: comments [expandable recyclerView], edit post layout and functionality
@@ -131,15 +136,10 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Handling up button for when another activity called it (it will simply go back to main otherwise)
-        if (item.getItemId() == android.R.id.home && !isTaskRoot()){
+        if (item.getItemId() == android.R.id.home && !isTaskRoot()) {
             goBackToParent(); // Tells parent if post was updated
             return true;
-        }
-        else if(item.getItemId() == R.id.view_event_post_bar_edit_post){
-            editPost();
-            return true;
-        }
-        else return super.onOptionsItemSelected(item);
+        } else return super.onOptionsItemSelected(item);
     }
 
 
@@ -182,10 +182,12 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
 
 
-/* Initialization Methods
-***************************************************************************************************/
 
-    private void declareViews(){
+
+    /* Initialization Methods
+     ***************************************************************************************************/
+
+    private void declareViews() {
         mPostVisual = findViewById(R.id.viewPost_visual);
         mAuthorImg = findViewById(R.id.viewPost_userImage);
         mAuthorName = findViewById(R.id.viewPost_userName);
@@ -204,24 +206,27 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             String postId = getIntent().getStringExtra("post_id"); //if it's a pinned event
             String postUni = getIntent().getStringExtra("post_uni");
             this_user = getIntent().getParcelableExtra("this_user");
-            if(postId != null && postUni != null){
+            if (postId != null && postUni != null) {
+                checkNotifications(postId);
                 db.collection("universities").document(postUni).collection("posts").document(postId).get().addOnCompleteListener(task -> {
-                    if(task.isSuccessful() && task.getResult() != null){
-                        if(task.getResult().get("is_event") instanceof Boolean && (Boolean) task.getResult().get("is_event")) post = task.getResult().toObject(Event.class);
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        if (task.getResult().get("is_event") instanceof Boolean && (Boolean) task.getResult().get("is_event"))
+                            post = task.getResult().toObject(Event.class);
                         else post = task.getResult().toObject(Post.class);
-                        if(post != null){
+                        if (post != null) {
                             setFields();
                             setFragment();
-                            if(this_user != null) post.addViewIdToList(this_user.getId());
+                            if (this_user != null) post.addViewIdToList(this_user.getId());
                         }
-                    }else Toast.makeText(this, "Failed to get post/event data. :-(", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(this, "Failed to get post/event data. :-(", Toast.LENGTH_LONG).show();
+                    }
                 });
-            }else{
+            } else {
                 Toast.makeText(this, "Failed to get post/event data. :-(", Toast.LENGTH_LONG).show();
                 finish();
             }
-        }
-        else if (this_user != null) {
+        } else if (this_user != null) {
             post.addViewIdToList(this_user.getId());
         }
     }
@@ -234,13 +239,13 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         mAuthorName.setText(post.getAuthor_name());
 
         // Can comment if logged in
-        if (this_user != null){
-            if(this_user.getUni_domain().equals(post.getUni_domain())){ //from this uni -> can comment
+        if (this_user != null) {
+            if (this_user.getUni_domain().equals(post.getUni_domain())) { //from this uni -> can comment
                 mExpandComments.setVisibility(View.VISIBLE);
                 commentsTitle.setVisibility(View.VISIBLE);
                 cantSeeComments.setVisibility(View.GONE);
                 setupWriteComment();
-            }else{
+            } else {
                 mExpandComments.setVisibility(View.GONE);
                 commentsTitle.setVisibility(View.GONE);
                 cantSeeComments.setVisibility(View.GONE);
@@ -260,11 +265,10 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private void setFragment() {
         Fragment selected_fragment;
 
-        if (post.getIs_event()){
-            setTitle(((Event)post).getName());
+        if (post.getIs_event()) {
+            setTitle(((Event) post).getName());
             selected_fragment = new ViewEventFragment((Event) post, this_user);
-        }
-        else{
+        } else {
             setTitle("Post");
             selected_fragment = new ViewPostFragment(post, this_user);
         }
@@ -273,7 +277,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     }
 
     // Set up comments recycler with manager and adapter
-    private void setCommentRecycler(){
+    private void setCommentRecycler() {
         adapter.setOnSelectionListener(this::onCommentAuthorClicked);
         layout_man = new LinearLayoutManager(this);
         mCommentsRecycler.setLayoutManager(layout_man);
@@ -286,7 +290,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (comment_list_updated) {
-                    if (layout_man.findLastCompletelyVisibleItemPosition() > (comments.size() - 3 )){
+                    if (layout_man.findLastCompletelyVisibleItemPosition() > (comments.size() - 3)) {
                         comment_list_updated = false;
                         loadComments();
                     }
@@ -296,18 +300,23 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     }
 
     // Set up write comment functionality for a logged in user
-    private void setupWriteComment(){
+    private void setupWriteComment() {
         mWriteComment.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mPostComment.setClickable(!mWriteComment.getText().toString().trim().isEmpty());
-                if (mPostComment.isClickable()) mPostComment.setColorFilter(getColor(R.color.interaction));
+                if (mPostComment.isClickable())
+                    mPostComment.setColorFilter(getColor(R.color.interaction));
                 else mPostComment.setColorFilter(getColor(R.color.grey));
             }
+
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
     }
 
@@ -325,12 +334,12 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
 
 
-/* Transition Methods
-***************************************************************************************************/
+    /* Transition Methods
+     ***************************************************************************************************/
 
 
     // Handle Up Button
-    private void goBackToParent(){
+    private void goBackToParent() {
         Log.d(TAG, "Returning to parent");
         Intent intent;
 
@@ -344,14 +353,14 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     }
 
     // Don't let user make another comment while comment is going to database
-    private void startCommentLoading(){
+    private void startCommentLoading() {
         closeKeyboard();
         mPostComment.setClickable(false);
         mPostComment.setVisibility(View.INVISIBLE);
         findViewById(R.id.writeComment_loading).setVisibility(View.VISIBLE);
     }
 
-    private void stopCommentLoading(){
+    private void stopCommentLoading() {
         mPostComment.setVisibility(View.VISIBLE);
         findViewById(R.id.writeComment_loading).setVisibility(View.GONE);
     }
@@ -361,21 +370,20 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         View view = this.getCurrentFocus();
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            if(imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
     // Show different views if there are no comments
-    private void viewComments(){
+    private void viewComments() {
         // Put a no Comments available sign
-        if (comments.size() > 0){
+        if (comments.size() > 0) {
             mCommentsRecycler.setVisibility(View.VISIBLE);
             findViewById(R.id.viewPost_commentErrorMsg).setVisibility(View.GONE);
             // Scroll down a bit
             ScrollView scrollView = findViewById(R.id.viewPost_scrollView);
             scrollView.smoothScrollBy(0, getResources().getDisplayMetrics().heightPixels); //TODO scroll down a bit
-        }
-        else {
+        } else {
             mCommentsRecycler.setVisibility(View.GONE);
             findViewById(R.id.viewPost_commentErrorMsg).setVisibility(View.VISIBLE);
             // Scroll down a bit
@@ -398,12 +406,12 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
 
 
-/* OnClick Methods
-***************************************************************************************************/
+    /* OnClick Methods
+     ***************************************************************************************************/
 
     // Clicked on username or user pic -> go to author profile
-    public void viewAuthorProfile(View view){
-        if (post == null){
+    public void viewAuthorProfile(View view) {
+        if (post == null) {
             Log.e(TAG, "Post object is null! Cannot view author's profile");
             return;
         } // author field wasn't define
@@ -416,7 +424,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         viewUserProfile(post.getAuthor_id(), post.getUni_domain(), post.getAuthor_is_organization());
     }
 
-   // onClick for Comments
+    // onClick for Comments
     private void onCommentAuthorClicked(int position) {
         Comment clicked_comment = comments.get(position);
         viewUserProfile(clicked_comment.getAuthor_id(),
@@ -425,15 +433,14 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     }
 
     // View a user's profile
-    private void viewUserProfile(String user_id, String uni_domain, boolean is_organization){
+    private void viewUserProfile(String user_id, String uni_domain, boolean is_organization) {
         Intent intent;
-        if (is_organization){
+        if (is_organization) {
             Log.d(TAG, "Starting OrganizationProfile Activity for organization " + user_id);
             intent = new Intent(this, OrganizationProfileActivity.class);
             intent.putExtra("org_to_display_id", user_id);
             intent.putExtra("org_to_display_uni", uni_domain);
-        }
-        else {
+        } else {
             Log.d(TAG, "Starting StudentProfile Activity for student " + user_id);
             intent = new Intent(this, StudentProfileActivity.class);
             intent.putExtra("student_to_display_id", user_id);
@@ -444,8 +451,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     }
 
     // Load comments only when clicked on
-    public void expandComments(View view){
-        if (findViewById(R.id.viewPost_commentsLayout).getVisibility() == View.GONE){
+    public void expandComments(View view) {
+        if (findViewById(R.id.viewPost_commentsLayout).getVisibility() == View.GONE) {
             TransitionManager.beginDelayedTransition(findViewById(R.id.viewPost_linearRootLayout), new AutoTransition());
             findViewById(R.id.viewPost_commentsLayout).setVisibility(View.VISIBLE);
             mExpandComments.setImageResource(R.drawable.ic_arrow_up);
@@ -457,8 +464,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
                 ScrollView scrollView = findViewById(R.id.viewPost_scrollView);
                 scrollView.smoothScrollBy(0, getResources().getDisplayMetrics().heightPixels); //TODO scroll down a bit
             }
-        }
-        else {
+        } else {
             TransitionManager.beginDelayedTransition(findViewById(R.id.viewPost_linearRootLayout), new AutoTransition());
             findViewById(R.id.viewPost_commentsLayout).setVisibility(View.GONE);
             mExpandComments.setImageResource(R.drawable.ic_arrow_down);
@@ -466,9 +472,9 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     }
 
     // OnClick for post a comment
-    public void postComment(View view){
+    public void postComment(View view) {
         String commentText = mWriteComment.getText().toString().trim();
-        if (commentText.isEmpty()){
+        if (commentText.isEmpty()) {
             Log.d(TAG, "Can't post empty comment!");
             return;
         }
@@ -486,23 +492,22 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
                 commentText);
 
         // Write to database
-        String address = "universities/" + post.getUni_domain() + "/posts/" + post.getId() +"/comments/"+commentId;
-        if (address.contains("null")){
+        String address = "universities/" + post.getUni_domain() + "/posts/" + post.getId() + "/comments/" + commentId;
+        if (address.contains("null")) {
             Log.e(TAG, "Address has null values.");
             stopCommentLoading();
             return;
         }
 
         db.document(address).set(newComment).addOnCompleteListener(task1 -> {
-            if (task1.isSuccessful()){
+            if (task1.isSuccessful()) {
                 comments.add(0, newComment);
                 adapter.notifyItemInserted(0);
                 if (mCommentsRecycler.getVisibility() == View.GONE) viewComments();
                 mWriteComment.setText(null);
-            }
-            else {
+            } else {
                 Log.e(TAG, "Comment not saved in database.", task1.getException());
-                Toast.makeText(this,"Could not post comment", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Could not post comment", Toast.LENGTH_LONG).show();
             }
             stopCommentLoading();
         });
@@ -528,19 +533,19 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
 
 
-/* Firebase Related Methods
-***************************************************************************************************/
+    /* Firebase Related Methods
+     ***************************************************************************************************/
 
     // loads author profile image
-    private void loadAuthorProfileImage(){
-        if (post == null){
+    private void loadAuthorProfileImage() {
+        if (post == null) {
             Log.e(TAG, "Post is null!");
             return;
         }
 
         // Get author address
         String address = ImageUtils.getUserImagePreviewPath(post.getAuthor_id());
-        if (address.contains("null")){
+        if (address.contains("null")) {
             Log.e(TAG, "Address contained null! UserId: " + post.getAuthor_id());
             return;
         }
@@ -575,9 +580,9 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
 
     // Loads Comments from Firebase
-    private void loadComments(){
-        String address = "universities/" + post.getUni_domain() + "/posts/" + post.getId() +"/comments";
-        if (address.contains("null")){
+    private void loadComments() {
+        String address = "universities/" + post.getUni_domain() + "/posts/" + post.getId() + "/comments";
+        if (address.contains("null")) {
             Log.e(TAG, "Address has null values.");
             return;
         }
@@ -588,10 +593,10 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
         // Pull Comments
         query.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null){
+            if (task.isSuccessful() && task.getResult() != null) {
                 QuerySnapshot query_doc = task.getResult();
                 int i = 0;
-                for (QueryDocumentSnapshot doc : query_doc){
+                for (QueryDocumentSnapshot doc : query_doc) {
 
                     // Get post object
                     Comment comment = doc.toObject(Comment.class);
@@ -599,17 +604,44 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
                     // Add to list and tell recycler adapter
                     comments.add(comment);
-                    adapter.notifyItemInserted(comments.size()-1);
+                    adapter.notifyItemInserted(comments.size() - 1);
 
                     i++;
                 }
                 if (!query_doc.isEmpty())
-                    last_doc = query_doc.getDocuments().get(query_doc.size()-1);    // Save last doc retrieved
+                    last_doc = query_doc.getDocuments().get(query_doc.size() - 1);    // Save last doc retrieved
                 Log.d(TAG, i + " comments were uploaded from database!");
-            }
-            else Log.e(TAG, "loadComments: unsuccessful or do not exist.", task.getException());
+            } else Log.e(TAG, "loadComments: unsuccessful or do not exist.", task.getException());
 
             viewComments();
         });
+    }
+
+    private void checkNotifications(String postID) {
+        boolean found = false;
+        int count = 0;
+        ArrayList<Integer> found_list = new ArrayList<>();
+        ArrayList<Integer> remove_list = new ArrayList<>();
+        ArrayList<HashMap<String, Integer>> notif_list = Utils.getNotif_list();
+        if (notif_list.size() != 0) {
+            for (HashMap<String, Integer> map : notif_list) {
+                if (map.containsKey(postID)) {
+                    if (map.get(postID) != null) {
+                        found_list.add(map.get(postID));
+                        remove_list.add(count);
+                        found = true;
+                    }
+                }
+                count++;
+            }
+            if (found) {
+                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                for (int j = found_list.size() - 1; j >= 0; j--) {
+                    notificationManager.cancel(found_list.get(j));
+                    notif_list.remove((int) remove_list.get(j));
+                }
+                Utils.setNotif_list(notif_list);
+            }
+        }
     }
 }

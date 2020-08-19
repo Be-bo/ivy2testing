@@ -6,21 +6,21 @@ public class Notification {
     Integer type;
     String visual;
     Long timestamp;
-    String target_id;
-    String author_id;
-    String target_name;
-    String author_name;
+    String notification_receiver_id;
+    String notification_sender_name;
+    String notification_origin_name;
+    String notification_origin_id;
 
 
-    public Notification(String id, Integer type, String visual, Long time, String targetId, String author_name, String targetName, String authId){
+    public Notification(String id, Integer type, String visual, Long time, String notification_receiver_id, String notification_sender_name, String notification_origin_name, String notification_origin_id){
         this.id = id;
         this.type = type;
         this.visual = visual;
         this.timestamp = time;
-        this.target_id = targetId;
-        this.author_name = author_name;
-        this.target_name = targetName;
-        this.author_id = authId;
+        this.notification_receiver_id = notification_receiver_id;
+        this.notification_sender_name = notification_sender_name;
+        this.notification_origin_name = notification_origin_name;
+        this.notification_origin_id = notification_origin_id;
     }
     public Notification(){
 
@@ -57,19 +57,35 @@ public class Notification {
         this.timestamp = timestamp;
     }
 
-    public String getTarget_id() {
-        return target_id;
+    public String getNotification_receiver_id() {
+        return notification_receiver_id;
     }
 
-    public String getAuthor_name() {
-        return author_name;
+    public void setNotification_receiver_id(String notification_receiver_id) {
+        this.notification_receiver_id = notification_receiver_id;
     }
 
-    public String getTarget_name() {
-        return target_name;
+    public String getNotification_sender_name() {
+        return notification_sender_name;
     }
 
-    public void setTarget_name(String target_name) {
-        this.target_name = target_name;
+    public void setNotification_sender_name(String notification_sender_name) {
+        this.notification_sender_name = notification_sender_name;
+    }
+
+    public String getNotification_origin_name() {
+        return notification_origin_name;
+    }
+
+    public void setNotification_origin_name(String notification_receiver_name) {
+        this.notification_origin_name = notification_receiver_name;
+    }
+
+    public String getNotification_origin_id() {
+        return notification_origin_id;
+    }
+
+    public void setNotification_origin_id(String notification_origin_id) {
+        this.notification_origin_id = notification_origin_id;
     }
 }
