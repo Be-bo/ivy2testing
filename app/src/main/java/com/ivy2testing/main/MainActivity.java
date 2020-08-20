@@ -45,7 +45,6 @@ import com.ivy2testing.R;
 import com.ivy2testing.bubbletabs.EventsFragment;
 import com.ivy2testing.bubbletabs.CampusFragment;
 import com.ivy2testing.home.CreatePostActivity;
-import com.ivy2testing.notifications.NotificationHandler;
 import com.ivy2testing.terms.TermsActivity;
 import com.ivy2testing.userProfile.NotificationCenterActivity;
 import com.ivy2testing.userProfile.OrganizationProfileFragment;
@@ -71,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageButton function_button;
     private TextView ham_menu_uni_text;
     private ImageView ham_memu_uni_image;
+    private ImageView toolbar_logo_image;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageReference stor = FirebaseStorage.getInstance().getReference();
@@ -156,21 +156,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         drawer_nav_view.setNavigationItemSelectedListener(this);
-        if (getSupportActionBar() != null) getSupportActionBar().setTitle(null);
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setTitle(null);
+            toolbar_logo_image = main_toolbar.findViewById(R.id.ivy_logo_toolbar);
+        }
         toggle.getDrawerArrowDrawable().setColor(ContextCompat.getColor(this, R.color.interaction));
 
         View hView =  drawer_nav_view.getHeaderView(0);
         ham_memu_uni_image = hView.findViewById(R.id.hamburger_menu_imageview);
         ham_menu_uni_text = hView.findViewById(R.id.hamburger_menu_bottomtext);
-        setDrawerHeader();
+        changeUniLogo();
 
         main_toolbar.setNavigationIcon(R.drawable.ic_settings);
     }
 
-    private void setDrawerHeader(){
+    private void changeUniLogo(){
         ham_menu_uni_text.setText(Utils.getCampusUni(this));
         stor.child("unilogos/"+Utils.getCampusUni(this)+".png").getDownloadUrl().addOnCompleteListener(task -> {
-            if(task.isSuccessful() && task.getResult() != null) Glide.with(this).load(task.getResult()).into(ham_memu_uni_image);
+            if(task.isSuccessful() && task.getResult() != null){
+                Glide.with(this).load(task.getResult()).into(ham_memu_uni_image);
+                if(toolbar_logo_image != null) Glide.with(this).load(task.getResult()).into(toolbar_logo_image);
+            }
         });
     }
 
@@ -264,9 +270,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void changeCampus(String newUni){
         Utils.setCampusUni(newUni, this);
-        setDrawerHeader();
+        changeUniLogo();
         campus_fragment.changeUni();
         if(event_fragment != null) event_fragment.changeUni();
+        updateTopLog();
+    }
+
+    private void updateTopLog(){
+
     }
 
 
@@ -299,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }else{
                         initFCM();
                         Utils.setCampusUni(this_user.getUni_domain(), this); //by default for the logged in user we want to display their campus
-                        setDrawerHeader();
+                        changeUniLogo();
                         if(!login_setup) setUpLoggedInInteraction();
                         endLoading();
                     }

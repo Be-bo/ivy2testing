@@ -227,13 +227,17 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
 
     private void handleClick(Button clickedButton) { //universal clicking method
         if (clickedButton == type_event_button) { //reset collected data & clear event layout and make it visible, flip type buttons
-            this_event = new Event(this_post); // TODO the problem is here
-            this_post = null;
+            if(!editing_mode){
+                this_event = new Event(this_post);
+                this_post = null;
+            }
             resetLayoutToEvent();
 
         } else if (clickedButton == type_post_button) { //reset collected data & clear post layout and make it visible, flip type buttons
-            this_post = new Post(this_event);
-            this_event = null;
+            if(!editing_mode){
+                this_post = new Post(this_event);
+                this_event = null;
+            }
             resetLayoutToPost();
 
         } else if (clickedButton == visual_nothing_button) { //hide image upload view, flip buttons

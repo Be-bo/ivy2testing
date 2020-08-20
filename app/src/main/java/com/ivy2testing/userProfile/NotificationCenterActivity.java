@@ -2,6 +2,7 @@ package com.ivy2testing.userProfile;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -20,6 +21,9 @@ import com.ivy2testing.util.Utils;
 
 public class NotificationCenterActivity extends AppCompatActivity implements NotificationCenterAdapter.NotificationListener{
 
+
+
+    private static final String TAG = "NotificationCenterActivityTag";
     private RecyclerView notification_recycler;
     private ProgressBar progress_bar;
     private NotificationCenterAdapter notification_adapter;
@@ -36,6 +40,10 @@ public class NotificationCenterActivity extends AppCompatActivity implements Not
     private void setUp(){
         setTitle("Notification Center");
         this_user = getIntent().getParcelableExtra("this_user");
+        if(this_user == null){
+            Toast.makeText(this, "Couldn't get user data :-(.", Toast.LENGTH_LONG).show();
+            finish();
+        }
         notification_recycler = findViewById(R.id.activity_notification_center_recycler);
         progress_bar = findViewById(R.id.activity_notification_center_progress_bar);
         if(this_user != null){
@@ -47,32 +55,19 @@ public class NotificationCenterActivity extends AppCompatActivity implements Not
 
     @Override
     public void onNotificationClick(int position) {
-        // Toast.makeText(this, "My position is " + position, Toast.LENGTH_SHORT).show();
         Notification clicked = notification_adapter.getNotification(position);
         Intent intent = new Intent();
         switch(clicked.getType()){
             case 1:
                 intent = new Intent(this, MainActivity.class);
                 break;
-            case 2:
-                intent = new Intent(this, ViewPostOrEventActivity.class);
-                intent.putExtra("post_uni", this_user.getUni_domain());
-                intent.putExtra("post_id", clicked.getNotification_origin_name());
-                intent.putExtra("this_user",this_user);
-                break;
             case 3:
                 intent = new Intent(this, MainActivity.class);
                 break;
-            case 4:
+            default:
                 intent = new Intent(this, ViewPostOrEventActivity.class);
                 intent.putExtra("post_uni",  this_user.getUni_domain());
-                intent.putExtra("post_id", clicked.getNotification_origin_name());
-                intent.putExtra("this_user",this_user);
-                break;
-            case 5:
-                intent = new Intent(this, ViewPostOrEventActivity.class);
-                intent.putExtra("post_uni",  this_user.getUni_domain());
-                intent.putExtra("post_id", clicked.getNotification_origin_name());
+                intent.putExtra("post_id", clicked.getNotification_origin_id());
                 intent.putExtra("this_user",this_user);
                 break;
         }

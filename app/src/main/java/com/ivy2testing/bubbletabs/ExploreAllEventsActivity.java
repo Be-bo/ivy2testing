@@ -47,7 +47,8 @@ public class ExploreAllEventsActivity extends AppCompatActivity implements Explo
     private void viewEvent(Post event) { // Transition to a post/event
         Intent intent = new Intent(this, ViewPostOrEventActivity.class);
         intent.putExtra("this_user", this_user);
-        intent.putExtra("post", event);
+        intent.putExtra("post_id", event.getId());
+        intent.putExtra("post_uni", event.getUni_domain());
         startActivity(intent);
     }
 }
