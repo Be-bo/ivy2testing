@@ -194,7 +194,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         mPostVisual = findViewById(R.id.viewPost_visual);
         mAuthorImg = findViewById(R.id.viewPost_userImage);
         mAuthorName = findViewById(R.id.viewPost_userName);
-        mExpandComments = findViewById(R.id.viewPost_commentButton);
+       // mExpandComments = findViewById(R.id.viewPost_commentButton);
         mCommentsRecycler = findViewById(R.id.viewPost_commentRV);
         mWriteComment = findViewById(R.id.writeComment_commentText);
         mPostComment = findViewById(R.id.writeComment_commentButton);
@@ -246,12 +246,14 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         // Can comment if logged in
         if (this_user != null) {
             if (this_user.getUni_domain().equals(post.getUni_domain())) { //from this uni -> can comment
-                mExpandComments.setVisibility(View.VISIBLE);
+               // mExpandComments.setVisibility(View.VISIBLE);
                 commentsTitle.setVisibility(View.VISIBLE);
                 cantSeeComments.setVisibility(View.GONE);
+                findViewById(R.id.viewPost_commentsLayout).setVisibility(View.VISIBLE);
                 setupWriteComment();
+                setCommentRecycler();
             } else {
-                mExpandComments.setVisibility(View.GONE);
+            //    mExpandComments.setVisibility(View.GONE);
                 commentsTitle.setVisibility(View.GONE);
                 cantSeeComments.setVisibility(View.GONE);
             }
@@ -260,7 +262,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
                 options_menu.setGroupVisible(0, true);
             }
         }else{
-            mExpandComments.setVisibility(View.GONE);
+           // mExpandComments.setVisibility(View.GONE);
             commentsTitle.setVisibility(View.GONE);
             cantSeeComments.setVisibility(View.VISIBLE);
         }
@@ -461,7 +463,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         if (findViewById(R.id.viewPost_commentsLayout).getVisibility() == View.GONE) {
             TransitionManager.beginDelayedTransition(findViewById(R.id.viewPost_linearRootLayout), new AutoTransition());
             findViewById(R.id.viewPost_commentsLayout).setVisibility(View.VISIBLE);
-            mExpandComments.setImageResource(R.drawable.ic_arrow_up);
+           // mExpandComments.setImageResource(R.drawable.ic_arrow_up);
 
             // Set up recycler with recycler manager and adapter if not done yet
             if (layout_man == null) setCommentRecycler();
@@ -473,7 +475,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         } else {
             TransitionManager.beginDelayedTransition(findViewById(R.id.viewPost_linearRootLayout), new AutoTransition());
             findViewById(R.id.viewPost_commentsLayout).setVisibility(View.GONE);
-            mExpandComments.setImageResource(R.drawable.ic_arrow_down);
+          //  mExpandComments.setImageResource(R.drawable.ic_arrow_down);
         }
     }
 

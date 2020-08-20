@@ -19,182 +19,183 @@
             android:id="@+id/viewPost_scrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="invisible">
-
-        <LinearLayout
-            android:id="@+id/viewPost_linearRootLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/viewPost_visual"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/light_grey"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/post_visual" />
+            android:visibility="visible">
 
                 <LinearLayout
-                    android:id="@+id/viewPost_user"
+                    android:id="@+id/viewPost_linearRootLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginHorizontal="8dp">
+                    android:orientation="vertical">
 
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/viewPost_userImage"
-                            android:layout_width="@dimen/small_preview_image_dimen"
-                            android:layout_height="@dimen/small_preview_image_dimen"
-                            android:elevation="@dimen/preview_image_elevation"
-                            android:src="@drawable/empty_profile_image"
-                            android:contentDescription="@string/profile_pic"
-                            android:onClick="viewAuthorProfile"/>
-
-                        <TextView
-                            android:id="@+id/viewPost_userName"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            style="@style/StandardClickableText"
-                            android:text="@string/userName"
-                            android:layout_marginStart="@dimen/standard_margin"
-                            android:layout_gravity="center"
-                            android:onClick="viewAuthorProfile"/>
-
-                </LinearLayout>
-
-                <FrameLayout
-                    android:id="@+id/viewPost_contents"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/large_margin">
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="24dp"
-                    android:layout_gravity="center">
-
-                        <TextView
-                            android:id="@+id/viewPost_commentsTitle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            style="@style/StandardClickableText"
-                            android:text="@string/comments"
-                            android:onClick="expandComments"/>
-
-                        <ImageButton
-                            android:id="@+id/viewPost_commentButton"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:backgroundTint="@color/transparent"
-                            android:src="@drawable/ic_arrow_down"
-                            android:contentDescription="@string/expand_comments"
-                            android:onClick="expandComments"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/viewPost_commentsLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-
-                        <androidx.cardview.widget.CardView
+                        <ImageView
+                            android:id="@+id/viewPost_visual"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
-                            android:elevation="2dp"
-                            app:cardBackgroundColor="@color/light_grey"
-                            app:cardCornerRadius="10dp">
+                            android:adjustViewBounds="true"
+                            android:background="@color/light_grey"
+                            android:contentDescription="@string/post_visual" />
 
-                                <androidx.constraintlayout.widget.ConstraintLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_margin="8dp"
-                                    android:orientation="vertical">
-
-                                        <EditText
-                                            android:id="@+id/writeComment_commentText"
-                                            style="@style/StandardEditText"
-                                            android:layout_width="0dp"
-                                            android:autofillHints=""
-                                            android:hint="@string/write_comment"
-                                            android:inputType="text"
-                                            app:layout_constraintEnd_toStartOf="@id/writeComment_commentButton"
-                                            app:layout_constraintStart_toStartOf="parent"
-                                            app:layout_constraintTop_toTopOf="parent" />
-
-                                        <ImageButton
-                                            android:id="@+id/writeComment_commentButton"
-                                            style="@style/StandardImageButton"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="0dp"
-                                            android:contentDescription="@string/write_comment"
-                                            android:onClick="postComment"
-                                            android:src="@drawable/ic_send"
-                                            app:layout_constraintBottom_toBottomOf="parent"
-                                            app:layout_constraintEnd_toEndOf="parent"
-                                            app:layout_constraintTop_toTopOf="parent" />
-
-                                        <ProgressBar
-                                            android:id="@+id/writeComment_loading"
-                                            style="@style/StandardIndefiniteProgressBar"
-                                            android:layout_width="20dp"
-                                            android:layout_height="0dp"
-                                            android:visibility="gone"
-                                            app:layout_constraintBottom_toBottomOf="parent"
-                                            app:layout_constraintEnd_toEndOf="parent"
-                                            app:layout_constraintTop_toTopOf="parent" />
-
-                                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        </androidx.cardview.widget.CardView>
-
-                        <FrameLayout
-                            android:id="@+id/viewPost_listCommentsLayout"
+                        <LinearLayout
+                            android:id="@+id/viewPost_user"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@color/white">
+                            android:layout_marginHorizontal="8dp"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+
+                                <de.hdodenhof.circleimageview.CircleImageView
+                                    android:id="@+id/viewPost_userImage"
+                                    android:layout_width="@dimen/small_preview_image_dimen"
+                                    android:layout_height="@dimen/small_preview_image_dimen"
+                                    android:contentDescription="@string/profile_pic"
+                                    android:elevation="@dimen/preview_image_elevation"
+                                    android:onClick="viewAuthorProfile"
+                                    android:src="@drawable/empty_profile_image" />
 
                                 <TextView
-                                    style="@style/InfoText"
-                                    android:id="@+id/viewPost_commentErrorMsg"
+                                    android:id="@+id/viewPost_userName"
+                                    style="@style/StandardClickableText"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center"
-                                    android:text="@string/error_noComments"
-                                    android:visibility="gone" />
+                                    android:layout_marginStart="@dimen/standard_margin"
+                                    android:onClick="viewAuthorProfile"
+                                    android:text="@string/userName" />
 
-                                <androidx.recyclerview.widget.RecyclerView
-                                    android:id="@+id/viewPost_commentRV"
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:id="@+id/viewPost_contents"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/large_margin"></FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="24dp"
+                            android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/viewPost_commentsTitle"
+                                    style="@style/StandardClickableText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/comments" />
+
+                                 <!--   android:onClick="expandComments" -->
+
+
+                            <!--    <ImageButton
+                                    android:id="@+id/viewPost_commentButton"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:backgroundTint="@color/transparent"
+                                    android:contentDescription="@string/expand_comments"
+                                    android:onClick="expandComments"
+                                    android:src="@drawable/ic_arrow_down" /> -->
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/viewPost_commentsLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dp"
+                            android:orientation="vertical"
+                            android:visibility="gone">
+
+                                <androidx.cardview.widget.CardView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:nestedScrollingEnabled="false"
-                                    android:visibility="gone" />
+                                    android:layout_margin="8dp"
+                                    android:elevation="2dp"
+                                    app:cardBackgroundColor="@color/light_grey"
+                                    app:cardCornerRadius="10dp">
 
-                        </FrameLayout>
+                                        <androidx.constraintlayout.widget.ConstraintLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_margin="8dp"
+                                            android:orientation="vertical">
+
+                                                <EditText
+                                                    android:id="@+id/writeComment_commentText"
+                                                    style="@style/StandardEditText"
+                                                    android:layout_width="0dp"
+                                                    android:autofillHints=""
+                                                    android:hint="@string/write_comment"
+                                                    android:inputType="text"
+                                                    app:layout_constraintEnd_toStartOf="@id/writeComment_commentButton"
+                                                    app:layout_constraintStart_toStartOf="parent"
+                                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                                <ImageButton
+                                                    android:id="@+id/writeComment_commentButton"
+                                                    style="@style/StandardImageButton"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="0dp"
+                                                    android:contentDescription="@string/write_comment"
+                                                    android:onClick="postComment"
+                                                    android:src="@drawable/ic_send"
+                                                    app:layout_constraintBottom_toBottomOf="parent"
+                                                    app:layout_constraintEnd_toEndOf="parent"
+                                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                                <ProgressBar
+                                                    android:id="@+id/writeComment_loading"
+                                                    style="@style/StandardIndefiniteProgressBar"
+                                                    android:layout_width="20dp"
+                                                    android:layout_height="0dp"
+                                                    android:visibility="gone"
+                                                    app:layout_constraintBottom_toBottomOf="parent"
+                                                    app:layout_constraintEnd_toEndOf="parent"
+                                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                                </androidx.cardview.widget.CardView>
+
+                                <FrameLayout
+                                    android:id="@+id/viewPost_listCommentsLayout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/white">
+
+                                        <TextView
+                                            android:id="@+id/viewPost_commentErrorMsg"
+                                            style="@style/InfoText"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:text="@string/error_noComments"
+                                            android:visibility="gone" />
+
+                                        <androidx.recyclerview.widget.RecyclerView
+                                            android:id="@+id/viewPost_commentRV"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:nestedScrollingEnabled="false"
+                                            android:visibility="gone" />
+
+                                </FrameLayout>
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/viewPost_cantSeeComments"
+                            style="@style/InfoText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_margin="@dimen/standard_margin"
+                            android:gravity="center"
+                            android:text="@string/cant_view_comments"
+                            android:textAlignment="center"
+                            android:visibility="visible" />
 
                 </LinearLayout>
-
-                <TextView
-                    android:id="@+id/viewPost_cantSeeComments"
-                    style="@style/InfoText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/standard_margin"
-                    android:gravity="center"
-                    android:text="@string/cant_view_comments"
-                    android:textAlignment="center"
-                    android:visibility="visible"
-                    android:layout_gravity="center_horizontal" />
-
-        </LinearLayout>
 
         </ScrollView>
 
