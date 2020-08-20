@@ -98,7 +98,10 @@ public class OrganizationProfileFragment extends Fragment implements SquarePostA
     @Override
     public void onStart() {
         super.onStart();
-        if(is_set_up && post_adapter != null) post_adapter.refreshAdapter();
+        if(is_set_up && post_adapter != null){
+            post_adapter.refreshAdapter();
+            setInteractionListeners();
+        }
     }
 
     public void setUp(){
@@ -237,6 +240,7 @@ public class OrganizationProfileFragment extends Fragment implements SquarePostA
                 if(updatedProfile != null){
                     this_user = updatedProfile;
                     populateUI();
+                    setInteractionListeners();
                     setUpMembers();
                 }
             });
