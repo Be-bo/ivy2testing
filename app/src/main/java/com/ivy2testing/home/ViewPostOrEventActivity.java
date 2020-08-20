@@ -142,7 +142,11 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home && !isTaskRoot()) {
             goBackToParent(); // Tells parent if post was updated
             return true;
-        } else return super.onOptionsItemSelected(item);
+        } else if(item.getItemId() == R.id.view_event_post_bar_edit_post){
+            editPost();
+            return true;
+        }
+        else return super.onOptionsItemSelected(item);
     }
 
 
