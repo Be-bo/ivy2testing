@@ -81,6 +81,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
     private Spinner pinned_spinner;
     private Button submit_button;
     private ProgressBar progress_bar;
+    private EditText link_edit_text;
 
     private Calendar temp_calendar = Calendar.getInstance();
     private List<String> pinnable_event_names = new ArrayList<>();
@@ -175,6 +176,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
         pinned_spinner = findViewById(R.id.create_post_pin_event_spinner);
         submit_button = findViewById(R.id.create_post_submit_btn);
         progress_bar = findViewById(R.id.create_post_progress_bar);
+        link_edit_text = findViewById(R.id.create_post_link_edit_text);
     }
 
     private void setListeners(){ //set up on click listener actions for all buttons/interactive elements
@@ -394,6 +396,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
             this_event.setLocation(location_edit_text.getText().toString());
             this_event.setStart_millis(start_millis);
             this_event.setEnd_millis(end_millis);
+            this_event.setLink(link_edit_text.getText().toString().trim());
             
             if(image_upload_view.getVisibility() == View.VISIBLE){
                 String visualPath = "postfiles/"+this_event.getId()+"/"+this_event.getId()+".jpg";

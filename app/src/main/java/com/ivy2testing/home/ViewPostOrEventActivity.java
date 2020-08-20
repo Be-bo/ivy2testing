@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,6 +83,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private TextView commentsTitle;
     private TextView cantSeeComments;
     private Menu options_menu;
+    private ProgressBar progress_bar;
+    private ScrollView scroll_view;
 
     // Firebase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -197,6 +200,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         mPostComment = findViewById(R.id.writeComment_commentButton);
         commentsTitle = findViewById(R.id.viewPost_commentsTitle);
         cantSeeComments = findViewById(R.id.viewPost_cantSeeComments);
+        progress_bar = findViewById(R.id.viewPost_progress_bar);
+        scroll_view = findViewById(R.id.viewPost_scrollView);
         setTitle(null);
     }
 
@@ -562,6 +567,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private void loadPostVisual() {
         if (post == null || post.getVisual() == null || post.getVisual().equals("") || post.getVisual().equals("nothing")) {
             mPostVisual.setVisibility(View.GONE);
+            progress_bar.setVisibility(View.GONE);
+            scroll_view.setVisibility(View.VISIBLE);
             Log.e(TAG, "Either Post or its visual field is null!");
             return;
         }else{
@@ -575,6 +582,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
                 mPostVisual.setVisibility(View.GONE);
                 Log.e(TAG, "Could not get post Visual from storage.");
             }
+            progress_bar.setVisibility(View.GONE);
+            scroll_view.setVisibility(View.VISIBLE);
         });
     }
 

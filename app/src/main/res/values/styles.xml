@@ -51,6 +51,9 @@
     <style name="StandardImageButton" parent="Widget.AppCompat.ImageButton">
         <item name="android:background">@color/transparent</item>
         <item name="android:clickable">true</item>
+        <item name="android:layout_width">@dimen/image_button_width_height</item>
+        <item name="android:layout_height">@dimen/image_button_width_height</item>
+        <item name="android:scaleType">fitCenter</item>
     </style>
 
     <style name="ToggleButton" parent="Widget.AppCompat.Button">
@@ -81,6 +84,11 @@
     <style name="LargeText" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="InfoText" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/grey</item>
     </style>
 
     <style name="StandardEditText" parent="android:Widget.EditText">

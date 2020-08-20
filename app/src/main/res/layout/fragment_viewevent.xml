@@ -20,7 +20,7 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.98"/>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/viewEvent_eventDetails"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -29,43 +29,47 @@
         app:layout_constraintEnd_toEndOf="@id/viewPost_guideline2"
         app:layout_constraintTop_toTopOf="parent">
 
+        <ImageView
+            android:id="@+id/viewEvent_time_icon"
+            android:layout_width="@dimen/small_icon_dimen"
+            android:layout_height="@dimen/small_icon_dimen"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/small_margin"
+            android:src="@drawable/ic_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
         <TextView
             android:id="@+id/viewEvent_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/StandardText"
-            android:text="@string/sample_event_time"/>
+            android:layout_margin="@dimen/small_margin"
+            android:text="@string/sample_event_time"
+            app:layout_constraintStart_toEndOf="@id/viewEvent_time_icon"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
+            android:id="@+id/viewEvent_location_icon"
+            android:layout_width="@dimen/small_icon_dimen"
+            android:layout_height="@dimen/small_icon_dimen"
+            android:layout_margin="@dimen/small_margin"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_location"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/viewEvent_time_icon"/>
 
         <TextView
             android:id="@+id/viewEvent_place"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin"
             style="@style/StandardText"
-            android:text="@string/sample_event_location"/>
+            android:text="@string/sample_event_location"
+            app:layout_constraintStart_toEndOf="@id/viewEvent_location_icon"
+            app:layout_constraintTop_toBottomOf="@id/viewEvent_time"/>
 
-        <LinearLayout
-            android:id="@+id/viewEvent_linkLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/StandardText"
-                android:text="@string/link"
-                android:layout_marginEnd="8dp"/>
-
-            <TextView
-                android:id="@+id/viewEvent_link"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/StandardClickableText"
-                android:text="@string/sample_link"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
         android:id="@+id/viewEvent_description"
@@ -77,21 +81,32 @@
     </FrameLayout>
 
 
+    <TextView
+        android:id="@+id/viewEvent_whos_going_text"
+        style="@style/StandardText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/whos_going"
+        android:layout_margin="@dimen/standard_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewEvent_description"/>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/viewEvent_goingRecycler"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:minHeight="35dp"
-        android:layout_marginTop="@dimen/large_margin"
+        android:minHeight="80dp"
+        android:layout_marginTop="@dimen/standard_margin"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@id/viewPost_guideline1"
         app:layout_constraintEnd_toEndOf="@id/viewPost_guideline2"
-        app:layout_constraintTop_toBottomOf="@id/viewEvent_description"/>
+        app:layout_constraintTop_toBottomOf="@id/viewEvent_whos_going_text"/>
 
 
     <TextView
         android:id="@+id/viewEvent_nobody_going_text"
-        style="@style/LargeText"
+        style="@style/InfoText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -101,7 +116,7 @@
         app:layout_constraintBottom_toBottomOf="@id/viewEvent_goingRecycler"
         app:layout_constraintStart_toStartOf="@id/viewPost_guideline1"
         app:layout_constraintEnd_toEndOf="@id/viewPost_guideline2"
-        app:layout_constraintTop_toBottomOf="@id/viewEvent_description" />
+        app:layout_constraintTop_toBottomOf="@id/viewEvent_whos_going_text" />
 
 
     <TextView
@@ -132,54 +147,104 @@
         android:id="@+id/button_tray_constraint"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_margin="@dimen/standard_margin"
         app:layout_constraintEnd_toStartOf="@+id/viewPost_guideline2"
         app:layout_constraintStart_toStartOf="@+id/viewPost_guideline1"
         app:layout_constraintTop_toBottomOf="@+id/viewEvent_seeAll">
 
         <ImageButton
-            android:id="@+id/share_button"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/link_button"
-            app:layout_constraintHorizontal_chainStyle="spread"
+            style="@style/StandardImageButton"
+            android:id="@+id/view_event_share_button"
+            android:src="@drawable/ic_share"
+            app:layout_constraintEnd_toStartOf="@id/view_event_link_button"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_menu_share" />
-
-        <ImageButton
-            android:id="@+id/link_button"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/viewEvent_goingButton"
-            app:layout_constraintStart_toEndOf="@+id/share_button"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/common_full_open_on_phone" />
-
-        <androidx.appcompat.widget.AppCompatToggleButton
-            android:id="@+id/viewEvent_goingButton"
-            style="@style/ToggleButton"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:textOff="@string/going"
-            android:textOn="@string/not_going"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/calendar_button"
-            app:layout_constraintStart_toEndOf="@+id/link_button"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/viewEvent_share_button_text"
+            style="@style/StandardClickableText"
+            android:textAlignment="center"
+            android:layout_width="@dimen/image_button_width_height"
+            android:layout_height="wrap_content"
+            android:text="@string/share"
+            app:layout_constraintStart_toStartOf="@id/view_event_share_button"
+            app:layout_constraintEnd_toEndOf="@id/view_event_share_button"
+            app:layout_constraintTop_toBottomOf="@id/view_event_share_button" />
+
         <ImageButton
-            android:id="@+id/calendar_button"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/view_event_link_button"
+            style="@style/StandardImageButton"
+            android:src="@drawable/ic_link"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@id/viewEvent_add_calendar_button"
+            app:layout_constraintStart_toEndOf="@+id/view_event_share_button"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/viewEvent_link_button_text"
+            style="@style/StandardClickableText"
+            android:layout_width="@dimen/image_button_width_height"
+            android:layout_height="wrap_content"
+            android:text="@string/link_placeholder"
+            android:textAlignment="center"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/view_event_link_button"
+            app:layout_constraintEnd_toEndOf="@id/view_event_link_button"
+            app:layout_constraintTop_toBottomOf="@id/view_event_link_button" />
+
+
+
+        <ImageButton
+            android:id="@+id/viewEvent_goingButton"
+            style="@style/StandardImageButton"
+            android:src="@drawable/ic_not_going"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/viewEvent_goingButton"
+            app:layout_constraintStart_toEndOf="@+id/viewEvent_add_calendar_button"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/viewEvent_going_button_text"
+            style="@style/StandardClickableText"
+            android:layout_width="wrap_content"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:text="@string/not_going"
+            app:layout_constraintStart_toStartOf="@id/viewEvent_goingButton"
+            app:layout_constraintEnd_toEndOf="@id/viewEvent_goingButton"
+            app:layout_constraintTop_toBottomOf="@id/viewEvent_goingButton" />
+
+
+
+        <ImageButton
+            style="@style/StandardImageButton"
+            android:id="@+id/viewEvent_add_calendar_button"
+            android:src="@drawable/ic_calendar_add"
+            app:layout_constraintEnd_toStartOf="@id/viewEvent_goingButton"
+            app:layout_constraintStart_toEndOf="@id/view_event_link_button"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_menu_my_calendar" />
+            />
+
+        <TextView
+            android:id="@+id/viewEvent_calendar_button_text"
+            style="@style/StandardClickableText"
+            android:textAlignment="center"
+            android:layout_width="@dimen/image_button_width_height"
+            android:layout_height="wrap_content"
+            android:text="@string/add_to_calendar"
+            app:layout_constraintStart_toStartOf="@id/viewEvent_add_calendar_button"
+            app:layout_constraintEnd_toEndOf="@id/viewEvent_add_calendar_button"
+            app:layout_constraintTop_toBottomOf="@id/viewEvent_add_calendar_button" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/viewEvent_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.05dp"
+        android:layout_marginTop="@dimen/large_margin"
+        android:layout_marginBottom="@dimen/standard_margin"
+        android:background="@color/light_black"
+        app:layout_constraintTop_toBottomOf="@id/button_tray_constraint"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

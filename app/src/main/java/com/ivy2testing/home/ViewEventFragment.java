@@ -9,12 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.URLUtil;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,7 +33,6 @@ import com.ivy2testing.util.Constant;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -57,13 +53,15 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
     // Views
     private TextView tv_time;
     private TextView tv_location;
-    private TextView tv_link;
     private TextView tv_description;
     private TextView tv_pinned;
     private RecyclerView going_recycler;
     private TextView tv_seeAll;
-    private ToggleButton button_going;
+    private ImageButton button_going;
     private TextView nobody_going_text;
+    private TextView link_button_text;
+    private TextView going_button_text;
+    private TextView whos_going_text;
 
     // Firebase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -110,21 +108,21 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
     private void declareViews(View v) {
         tv_time = v.findViewById(R.id.viewEvent_time);
         tv_location = v.findViewById(R.id.viewEvent_place);
-        tv_link = v.findViewById(R.id.viewEvent_link);
         tv_description = v.findViewById(R.id.viewPost_description);
         tv_pinned = v.findViewById(R.id.viewPost_pinned);
         going_recycler = v.findViewById(R.id.viewEvent_goingRecycler);
         tv_seeAll = v.findViewById(R.id.viewEvent_seeAll);
         button_going = v.findViewById(R.id.viewEvent_goingButton);
         nobody_going_text = v.findViewById(R.id.viewEvent_nobody_going_text);
+        whos_going_text = v.findViewById(R.id.viewEvent_whos_going_text);
 
         // button tray
         button_tray = v.findViewById(R.id.button_tray_constraint);
-        share_button = v.findViewById(R.id.share_button);
-        link_button = v.findViewById(R.id.link_button);
-        calendar_button = v.findViewById(R.id.calendar_button);
-
-
+        share_button = v.findViewById(R.id.view_event_share_button);
+        link_button = v.findViewById(R.id.view_event_link_button);
+        calendar_button = v.findViewById(R.id.viewEvent_add_calendar_button);
+        link_button_text = v.findViewById(R.id.viewEvent_link_button_text);
+        going_button_text = v.findViewById(R.id.viewEvent_going_button_text);
     }
 
     // Populate views
@@ -139,36 +137,35 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
         tv_location.setText(event.getLocation());
         tv_description.setText(event.getText());
 
-        // Optional text Fields
-        if (event.getLink() != null) tv_link.setText(event.getLink());
-        else v.findViewById(R.id.viewEvent_linkLayout).setVisibility(View.GONE);
-
         if (event.getPinned_id() != null && !event.getPinned_id().isEmpty())
             tv_pinned.setText(event.getPinned_id()); //TODO change to pin name
         else v.findViewById(R.id.viewPost_pinLayout).setVisibility(View.GONE);
 
         // Going Users' Recycler View
-        setRecyclerVisibility();
+        setGoingLayout();
         setUpGoingAdapter();
 
         // Hide button if user is not signed in
         if (this_user == null || !this_user.getUni_domain().equals(event.getUni_domain())) { //either not logged in, or not from this uni -> can't say going // now updated to not show button tray
             button_tray.setVisibility(View.GONE);
-        } else if (event.getGoing_ids().contains(this_user.getId())) button_going.setChecked(true);
+        } else if (event.getGoing_ids().contains(this_user.getId())){
+            button_going.setImageResource(R.drawable.ic_going);
+            going_button_text.setText(getString(R.string.going));
+        }
     }
 
     // OnClick and scroll Listeners
     private void setListeners() {
         if (event.getLink() != null) {
-            tv_link.setOnClickListener(v1 -> goToLink());
             link_button.setVisibility(View.VISIBLE);
+            link_button_text.setVisibility(View.VISIBLE);
             link_button.setOnClickListener(v1 -> goToLink());
         }
         if (event.getPinned_id() != null) tv_pinned.setOnClickListener(v1 -> viewPinned());
         tv_seeAll.setOnClickListener(v1 -> seeAllGoingUsers());
         if (button_going.getVisibility() == View.VISIBLE)
-            button_going.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) setThisUserGoing(); // toggle is enabled
+            button_going.setOnClickListener(view -> {
+                if (!event.getGoing_ids().contains(this_user.getId())) setThisUserGoing(); // toggle is enabled
                 else setThisUserNotGoing();        // toggle is disabled
             });
 
@@ -197,16 +194,25 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
 
 
     // Set Going recycler visibility
-    private void setRecyclerVisibility(){
+    private void setGoingLayout(){
         if(event.getGoing_ids().size() > 0){
+            whos_going_text.setVisibility(View.VISIBLE);
             nobody_going_text.setVisibility(View.GONE);
             going_recycler.setVisibility(View.VISIBLE);
             if(event.getGoing_ids().size() > Constant.PEOPLE_PREVIEW_LIMIT) tv_seeAll.setVisibility(View.VISIBLE); //only show see all if the ppl going exceed the capacity
             else tv_seeAll.setVisibility(View.GONE);
         }else{
+            whos_going_text.setVisibility(View.GONE);
             nobody_going_text.setVisibility(View.VISIBLE);
             going_recycler.setVisibility(View.INVISIBLE);
             tv_seeAll.setVisibility(View.GONE);
+        }
+        if(event.getGoing_ids().contains(this_user.getId())){
+            button_going.setImageResource(R.drawable.ic_going);
+            going_button_text.setText(getString(R.string.going));
+        }else{
+            button_going.setImageResource(R.drawable.ic_not_going);
+            going_button_text.setText(getString(R.string.not_going));
         }
     }
 
@@ -359,7 +365,7 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
             if (task.isSuccessful()) {
                 going_adapter.addUser(this_user.getId());
                 event.addGoingIdToList(0, this_user.getId());
-                setRecyclerVisibility();
+                setGoingLayout();
             } else {
                 Toast.makeText(getContext(), "Failed to add user as going to the event.", Toast.LENGTH_LONG).show();
             }
@@ -372,7 +378,7 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
             if (task.isSuccessful()) {
                 going_adapter.removeUser(this_user.getId());
                 event.deleteGoingIdFromList(this_user.getId());
-                setRecyclerVisibility();    // Remove Visibility if that was the last person
+                setGoingLayout();    // Remove Visibility if that was the last person
             } else {
                 Toast.makeText(getContext(), "Failed to remove user as going to the event.", Toast.LENGTH_LONG).show();
             }

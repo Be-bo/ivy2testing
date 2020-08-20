@@ -64,6 +64,11 @@
     <string name="this_week">This Week</string>
     <string name="explore_all">Explore All</string>
     <string name="nobody_going">Nobody\'s going to this event yet.</string>
+    <string name="add_to_calendar">Add</string>
+    <string name="link_placeholder">Link</string>
+    <string name="share">Share</string>
+    <string name="whos_going">Who\'s Going:</string>
+    <string name="link_optional">Link (optional)</string>
 
 
     <!-- User Profile -->

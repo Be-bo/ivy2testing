@@ -202,7 +202,7 @@ public class SquarePostAdapter extends RecyclerView.Adapter<SquareImgHolder> {
             holder.banner_text.setVisibility(View.GONE);
         }
 
-        if (current.getVisual() == null || current.getVisual().equals("nothing")) {
+        if (current.getVisual() == null || current.getVisual().equals("nothing") || current.getVisual().equals("")) {
             holder.image_view.setVisibility(View.GONE);
             holder.info_text.setVisibility(View.VISIBLE);
             if (current.getIs_event()) holder.info_text.setText(((Event) current).getName());

@@ -5,10 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+        <ProgressBar
+            android:id="@+id/viewPost_progress_bar"
+            style="@style/StandardIndefiniteProgressBar"
+            android:elevation="10dp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
         <ScrollView
             android:id="@+id/viewPost_scrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="invisible">
 
         <LinearLayout
             android:id="@+id/viewPost_linearRootLayout"
@@ -86,12 +97,6 @@
 
                 </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:background="?android:attr/listDivider"
-                    android:layout_marginTop="2dp"/>
-
                 <LinearLayout
                     android:id="@+id/viewPost_commentsLayout"
                     android:layout_width="match_parent"
@@ -158,12 +163,12 @@
                             android:background="@color/white">
 
                                 <TextView
+                                    style="@style/InfoText"
                                     android:id="@+id/viewPost_commentErrorMsg"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center"
                                     android:text="@string/error_noComments"
-                                    android:textColor="@color/grey"
                                     android:visibility="gone" />
 
                                 <androidx.recyclerview.widget.RecyclerView
@@ -179,7 +184,7 @@
 
                 <TextView
                     android:id="@+id/viewPost_cantSeeComments"
-                    style="@style/LargeText"
+                    style="@style/InfoText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/standard_margin"

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -40,7 +41,8 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
     private boolean load_in_progress = false;
     private boolean loaded_all_notifications = false;
     private NotificationListener notification_listener;
-
+    private ProgressBar progress_bar;
+    private RecyclerView recycler;
 
 
 
@@ -50,11 +52,13 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
 
     // MARK: Base Methods
 
-    public NotificationCenterAdapter(String userId, NotificationListener notificationListener, Context con, TextView noNotifsText) {
+    public NotificationCenterAdapter(String userId, NotificationListener notificationListener, Context con, TextView noNotifsText, ProgressBar pbar, RecyclerView rec) {
         this.notification_listener = notificationListener;
         this.user_id = userId;
         this.context = con;
         this.no_notifications_text = noNotifsText;
+        this.progress_bar = pbar;
+        this.recycler = rec;
         current_query = db.collection("users").document(userId).collection("notifications").limit(Constant.NOTIFICATION_CENTER_LIMIT)
                 .orderBy("timestamp", Query.Direction.DESCENDING);
         pullNotifications(current_query);
@@ -82,6 +86,8 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
             load_in_progress = false;
             if(notifications.size() < 1) no_notifications_text.setVisibility(View.VISIBLE);
             else no_notifications_text.setVisibility(View.GONE);
+            progress_bar.setVisibility(View.GONE);
+            recycler.setVisibility(View.VISIBLE);
         });
     }
 

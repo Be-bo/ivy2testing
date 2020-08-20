@@ -2,6 +2,7 @@ package com.ivy2testing.userProfile;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.ivy2testing.util.Utils;
 public class NotificationCenterActivity extends AppCompatActivity implements NotificationCenterAdapter.NotificationListener{
 
     private RecyclerView notification_recycler;
+    private ProgressBar progress_bar;
     private NotificationCenterAdapter notification_adapter;
     private User this_user;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -35,8 +37,9 @@ public class NotificationCenterActivity extends AppCompatActivity implements Not
         setTitle("Notification Center");
         this_user = getIntent().getParcelableExtra("this_user");
         notification_recycler = findViewById(R.id.activity_notification_center_recycler);
+        progress_bar = findViewById(R.id.activity_notification_center_progress_bar);
         if(this_user != null){
-            notification_adapter = new NotificationCenterAdapter(this_user.getId(), this, this, findViewById(R.id.activity_notification_center_no_notifs));
+            notification_adapter = new NotificationCenterAdapter(this_user.getId(), this, this, findViewById(R.id.activity_notification_center_no_notifs), progress_bar, notification_recycler);
             notification_recycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
             notification_recycler.setAdapter(notification_adapter);
         }

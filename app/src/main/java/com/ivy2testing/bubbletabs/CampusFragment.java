@@ -111,7 +111,6 @@ public class CampusFragment extends Fragment implements FeedAdapter.FeedClickLis
     // MARK: Adapter Stuff
 
     private void setUpRecycler() {
-        Toast.makeText(context, "uni: "+Utils.getCampusUni(context), Toast.LENGTH_SHORT).show();
         campus_adapter = new FeedAdapter(this, Utils.getCampusUni(context), "", getContext(), no_posts_text, reached_bottom_text, feed_recycler_view, progress_bar);
         feed_recycler_view.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
         feed_recycler_view.setAdapter(campus_adapter);

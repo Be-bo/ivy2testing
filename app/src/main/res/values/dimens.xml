@@ -42,4 +42,6 @@
     <dimen name="standard_button_height">50dp</dimen>
     <dimen name="progress_bar_dimen">50dp</dimen>
 
+    <dimen name="small_icon_dimen">20dp</dimen>
+
 </resources>
