@@ -384,7 +384,8 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
             this_event.setLocation(location_edit_text.getText().toString());
             this_event.setStart_millis(start_millis);
             this_event.setEnd_millis(end_millis);
-            this_event.setLink(link_edit_text.getText().toString().trim());
+            if(!link_edit_text.getText().toString().trim().isEmpty()) this_event.setLink(link_edit_text.getText().toString().trim());
+            else this_event.setLink(null);
 
             if (image_upload_view.getVisibility() == View.VISIBLE) {
                 String visualPath = "postfiles/" + this_event.getId() + "/" + this_event.getId() + ".jpg";
