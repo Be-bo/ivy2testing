@@ -42,9 +42,9 @@ import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.authentication.LoginActivity;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.R;
-import com.ivy2testing.bubbletabs.EventsFragment;
-import com.ivy2testing.bubbletabs.CampusFragment;
-import com.ivy2testing.home.CreatePostActivity;
+import com.ivy2testing.eventstab.EventsFragment;
+import com.ivy2testing.hometab.HomeFragment;
+import com.ivy2testing.hometab.CreatePostActivity;
 import com.ivy2testing.terms.TermsActivity;
 import com.ivy2testing.userProfile.NotificationCenterActivity;
 import com.ivy2testing.userProfile.OrganizationProfileFragment;
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NoSwipeViewPager tab_view_pager;
     private boolean login_setup = false;
 
-    private CampusFragment campus_fragment;
+    private HomeFragment home_fragment;
     private EventsFragment event_fragment;
 
 
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case Constant.CREATE_POST_REQUEST_CODE:
                 if(resultCode == RESULT_OK){
-                    campus_fragment.refreshAdapter();
+                    home_fragment.refreshAdapter();
                     if(event_fragment != null) event_fragment.refreshAdapters();
                 }
                 break;
@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void changeCampus(String newUni){
         Utils.setCampusUni(newUni, this);
         changeUniLogo();
-        campus_fragment.changeUni();
+        home_fragment.changeUni();
         if(event_fragment != null) event_fragment.changeUni();
         updateTopLog();
     }
@@ -363,10 +363,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             event_fragment = new EventsFragment(this, this_user);
             tab_adapter.addFragment(event_fragment, "event");
         }
-        if(campus_fragment != null) campus_fragment.refreshAdapter(); //same for the campus fragment
+        if(home_fragment != null) home_fragment.refreshAdapter(); //same for the campus fragment
         else{
-            campus_fragment = new CampusFragment(this, this_user);
-            tab_adapter.addFragment(campus_fragment, "campus");
+            home_fragment = new HomeFragment(this, this_user);
+            tab_adapter.addFragment(home_fragment, "campus");
         }
 
         if (this_user.getIs_organization()) tab_adapter.addFragment(org_fragment, "organization");
@@ -383,8 +383,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
         event_fragment = new EventsFragment(this, this_user);
         tab_adapter.addFragment(event_fragment, "event");
-        campus_fragment = new CampusFragment(this, this_user);
-        tab_adapter.addFragment(campus_fragment, "campus");
+        home_fragment = new HomeFragment(this, this_user);
+        tab_adapter.addFragment(home_fragment, "campus");
         tab_view_pager.setAdapter(tab_adapter);
         tab_view_pager.setOffscreenPageLimit(3);
         setUpBottomNavigationInteraction();

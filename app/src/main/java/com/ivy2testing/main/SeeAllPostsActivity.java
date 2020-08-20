@@ -16,11 +16,10 @@ import android.widget.TextView;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.home.FeedAdapter;
-import com.ivy2testing.home.ViewPostOrEventActivity;
+import com.ivy2testing.hometab.FeedAdapter;
+import com.ivy2testing.hometab.ViewPostOrEventActivity;
 import com.ivy2testing.userProfile.OrganizationProfileActivity;
 import com.ivy2testing.userProfile.StudentProfileActivity;
-import com.ivy2testing.util.Constant;
 
 
 /** @author Zahra Ghavasieh

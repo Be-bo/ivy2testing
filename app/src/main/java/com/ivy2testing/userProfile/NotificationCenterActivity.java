@@ -2,7 +2,6 @@ package com.ivy2testing.userProfile;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -15,9 +14,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Notification;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.home.ViewPostOrEventActivity;
+import com.ivy2testing.hometab.ViewPostOrEventActivity;
 import com.ivy2testing.main.MainActivity;
-import com.ivy2testing.util.Utils;
 
 public class NotificationCenterActivity extends AppCompatActivity implements NotificationCenterAdapter.NotificationListener{
 

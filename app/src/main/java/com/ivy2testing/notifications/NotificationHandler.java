@@ -13,14 +13,13 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
-import com.ivy2testing.home.ViewPostOrEventActivity;
+import com.ivy2testing.hometab.ViewPostOrEventActivity;
 import com.ivy2testing.userProfile.NotificationCenterActivity;
 import com.ivy2testing.util.Utils;
 import java.util.HashMap;

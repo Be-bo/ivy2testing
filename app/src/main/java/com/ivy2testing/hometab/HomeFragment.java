@@ -1,9 +1,7 @@
-package com.ivy2testing.bubbletabs;
+package com.ivy2testing.hometab;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -12,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,16 +23,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.home.FeedAdapter;
-import com.ivy2testing.home.ViewPostOrEventActivity;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.userProfile.OrganizationProfileActivity;
 import com.ivy2testing.userProfile.StudentProfileActivity;
-import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.Utils;
 
 
-public class CampusFragment extends Fragment implements FeedAdapter.FeedClickListener {
+public class HomeFragment extends Fragment implements FeedAdapter.FeedClickListener {
 
 
 
@@ -77,7 +71,7 @@ public class CampusFragment extends Fragment implements FeedAdapter.FeedClickLis
         return root_view;
     }
 
-    public CampusFragment(Context con, User thisUser) {
+    public HomeFragment(Context con, User thisUser) {
         context = con;
         if(thisUser != null) this_user = thisUser;
     }

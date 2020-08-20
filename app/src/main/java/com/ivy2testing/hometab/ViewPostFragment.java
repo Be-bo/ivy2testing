@@ -1,31 +1,22 @@
-package com.ivy2testing.home;
+package com.ivy2testing.hometab;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
-import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.main.SeeAllPostsActivity;
-import com.ivy2testing.util.Constant;
-import com.ivy2testing.util.ImageUtils;
-
-import java.util.HashMap;
 
 /** @author Zahra Ghavasieh
  * Overview: Post view fragment only includes text and pinned ID

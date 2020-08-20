@@ -27,12 +27,11 @@ import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.SeeAllPostsActivity;
 import com.ivy2testing.main.SeeAllUsersActivity;
-import com.ivy2testing.home.ViewPostOrEventActivity;
+import com.ivy2testing.hometab.ViewPostOrEventActivity;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.adapters.CircleUserAdapter;
-import com.ivy2testing.util.adapters.SquarePostAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +39,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class OrganizationProfileFragment extends Fragment implements SquarePostAdapter.OnPostListener, CircleUserAdapter.OnPersonListener {
+public class OrganizationProfileFragment extends Fragment implements ProfilePostAdapter.OnPostListener, CircleUserAdapter.OnPersonListener {
 
 
     // MARK: Variables and Constants
@@ -61,7 +60,7 @@ public class OrganizationProfileFragment extends Fragment implements SquarePostA
     private TextView no_posts_text;
     private ProgressBar progress_bar;
 
-    private SquarePostAdapter post_adapter;
+    private ProfilePostAdapter post_adapter;
     private CircleUserAdapter person_adapter;
     private RecyclerView post_recycler;
     private RecyclerView members_recycler;
@@ -174,7 +173,7 @@ public class OrganizationProfileFragment extends Fragment implements SquarePostA
         allViews.add(post_recycler);
         allViews.add(post_divider);
         allViews.add(post_title);
-        post_adapter = new SquarePostAdapter(this_user.getId(), this_user.getUni_domain(), Constant.PROFILE_POST_LIMIT_ORG, getContext(), this, allViews, no_posts_text, post_recycler, progress_bar);
+        post_adapter = new ProfilePostAdapter(this_user.getId(), this_user.getUni_domain(), Constant.PROFILE_POST_LIMIT_ORG, getContext(), this, allViews, no_posts_text, post_recycler, progress_bar);
         post_recycler.setLayoutManager(new GridLayoutManager(getContext(), Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {

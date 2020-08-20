@@ -1,4 +1,4 @@
-package com.ivy2testing.bubbletabs;
+package com.ivy2testing.eventstab;
 
 import android.view.View;
 import android.widget.ImageView;

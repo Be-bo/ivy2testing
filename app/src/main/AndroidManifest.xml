@@ -43,7 +43,7 @@
 
 
         <activity
-            android:name=".home.CreatePostActivity"
+            android:name=".hometab.CreatePostActivity"
             android:theme="@style/AppBarTheme"
             android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait"/>
@@ -67,7 +67,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".home.ViewPostOrEventActivity"
+            android:name=".hometab.ViewPostOrEventActivity"
             android:theme="@style/AppBarTheme"
             android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait"/>
@@ -108,7 +108,7 @@
             android:theme="@style/AppBarTheme"
             android:parentActivityName=".main.MainActivity"/>
 
-        <activity android:name=".bubbletabs.ExploreAllEventsActivity"
+        <activity android:name=".eventstab.ExploreAllEventsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppBarTheme"
             android:parentActivityName=".main.MainActivity"/>

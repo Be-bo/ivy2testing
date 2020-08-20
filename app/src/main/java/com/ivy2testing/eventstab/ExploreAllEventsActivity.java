@@ -1,4 +1,4 @@
-package com.ivy2testing.bubbletabs;
+package com.ivy2testing.eventstab;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.home.ViewPostOrEventActivity;
+import com.ivy2testing.hometab.ViewPostOrEventActivity;
 import com.ivy2testing.util.Utils;
 
 public class ExploreAllEventsActivity extends AppCompatActivity implements ExploreEventsAdapter.AllEventsItemClickListener {

@@ -1,4 +1,4 @@
-package com.ivy2testing.bubbletabs;
+package com.ivy2testing.eventstab;
 
 import android.content.Context;
 import android.view.LayoutInflater;

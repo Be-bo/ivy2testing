@@ -1,4 +1,4 @@
-package com.ivy2testing.home;
+package com.ivy2testing.hometab;
 
 import android.content.Context;
 import android.util.Log;
@@ -20,7 +20,6 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
-import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.Utils;

@@ -1,4 +1,4 @@
-package com.ivy2testing.bubbletabs;
+package com.ivy2testing.eventstab;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -18,10 +18,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
-import com.ivy2testing.entities.Post;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
-import com.ivy2testing.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;

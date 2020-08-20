@@ -1,4 +1,4 @@
-package com.ivy2testing.home;
+package com.ivy2testing.hometab;
 
 import android.app.Activity;
 import android.app.NotificationManager;
@@ -38,18 +38,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
-import com.ivy2testing.bubbletabs.CampusFragment;
-import com.ivy2testing.bubbletabs.EventsFragment;
 import com.ivy2testing.entities.Comment;
 import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.MainActivity;
-import com.ivy2testing.notifications.NotificationHandler;
 import com.ivy2testing.userProfile.OrganizationProfileActivity;
-import com.ivy2testing.userProfile.OrganizationProfileFragment;
 import com.ivy2testing.userProfile.StudentProfileActivity;
-import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.Utils;

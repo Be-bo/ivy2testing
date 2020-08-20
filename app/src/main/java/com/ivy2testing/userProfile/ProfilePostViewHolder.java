@@ -1,4 +1,4 @@
-package com.ivy2testing.util.adapters;
+package com.ivy2testing.userProfile;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -10,20 +10,21 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ivy2testing.R;
+import com.ivy2testing.userProfile.ProfilePostAdapter;
 
-public class SquareImgHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+public class ProfilePostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
     // Attributes
-    ImageView banner;
-    TextView banner_text;
-    TextView info_text;
-    ImageView image_view;
-    CardView card_view;
-    ConstraintLayout whole_layout;
-    SquarePostAdapter.OnPostListener post_listener;
+    public ImageView banner;
+    public TextView banner_text;
+    public TextView info_text;
+    public ImageView image_view;
+    public CardView card_view;
+    public ConstraintLayout whole_layout;
+    public ProfilePostAdapter.OnPostListener post_listener;
 
     // Methods
-    SquareImgHolder(@NonNull View itemView, final SquarePostAdapter.OnPostListener listener) {
+    ProfilePostViewHolder(@NonNull View itemView, final ProfilePostAdapter.OnPostListener listener) {
         super(itemView);
         banner = itemView.findViewById(R.id.grid_item_banner);
         image_view = itemView.findViewById(R.id.recyclerGridItem_img);

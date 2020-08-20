@@ -1,4 +1,4 @@
-package com.ivy2testing.home;
+package com.ivy2testing.hometab;
 
 import android.view.LayoutInflater;
 import android.view.View;

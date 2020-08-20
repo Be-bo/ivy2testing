@@ -24,11 +24,10 @@ import com.ivy2testing.R;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.SeeAllPostsActivity;
-import com.ivy2testing.home.ViewPostOrEventActivity;
+import com.ivy2testing.hometab.ViewPostOrEventActivity;
 import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
-import com.ivy2testing.util.adapters.SquarePostAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public class StudentProfileActivity extends AppCompatActivity {
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
     // Other Variables
-    private SquarePostAdapter adapter;
+    private ProfilePostAdapter adapter;
     private Uri profile_img_uri;
 
     // User Variables
@@ -131,7 +130,7 @@ public class StudentProfileActivity extends AppCompatActivity {
         List<View> allViews = new ArrayList<>();
         allViews.add(mRecyclerView);
         allViews.add(post_title);
-        adapter = new SquarePostAdapter(student_to_display.getId(), student_to_display.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, this, this::onPostClick, allViews, no_posts_text, mRecyclerView, progress_bar);
+        adapter = new ProfilePostAdapter(student_to_display.getId(), student_to_display.getUni_domain(), Constant.PROFILE_POST_LIMIT_STUDENT, this, this::onPostClick, allViews, no_posts_text, mRecyclerView, progress_bar);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, Constant.PROFILE_POST_GRID_ROW_COUNT, GridLayoutManager.VERTICAL, false){
             @Override
             public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {

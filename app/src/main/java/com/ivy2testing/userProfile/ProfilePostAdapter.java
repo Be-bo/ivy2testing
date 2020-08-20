@@ -1,7 +1,6 @@
-package com.ivy2testing.util.adapters;
+package com.ivy2testing.userProfile;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -31,7 +29,7 @@ import java.util.List;
  * Overview: an adapter that takes in a list of post ids and constructs square images per post
  * Used in: StudentProfile.Posts
  */
-public class SquarePostAdapter extends RecyclerView.Adapter<SquareImgHolder> {
+public class ProfilePostAdapter extends RecyclerView.Adapter<ProfilePostViewHolder> {
 
 
 
@@ -64,7 +62,7 @@ public class SquarePostAdapter extends RecyclerView.Adapter<SquareImgHolder> {
     private Context context;
     private ListenerRegistration list_reg;
 
-    public SquarePostAdapter(String id, String uniDomain, int limit, Context mrContext, OnPostListener listener, List<View> allElems, TextView emptyAdapterText, RecyclerView rec, ProgressBar progressBar) {
+    public ProfilePostAdapter(String id, String uniDomain, int limit, Context mrContext, OnPostListener listener, List<View> allElems, TextView emptyAdapterText, RecyclerView rec, ProgressBar progressBar) {
         this.recycler = rec;
         this.progress_bar = progressBar;
         this.uni_domain = uniDomain;
@@ -185,13 +183,13 @@ public class SquarePostAdapter extends RecyclerView.Adapter<SquareImgHolder> {
 
     @NonNull
     @Override
-    public SquareImgHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ProfilePostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post_grid, parent, false);
-        return new SquareImgHolder(view, post_listener);
+        return new ProfilePostViewHolder(view, post_listener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SquareImgHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull ProfilePostViewHolder holder, final int position) {
         Post current = posts.get(position);
 
         if (posts.get(position) instanceof Event) { // Banner
@@ -240,7 +238,7 @@ public class SquarePostAdapter extends RecyclerView.Adapter<SquareImgHolder> {
 
     // MARK: Other Methods
 
-    private void loadImage(@NonNull SquareImgHolder holder, Post currentPost) { // Load visual from storage
+    private void loadImage(@NonNull ProfilePostViewHolder holder, Post currentPost) { // Load visual from storage
         if (currentPost.getVisual() != null && !currentPost.getVisual().equals("nothing") && !currentPost.getVisual().equals(""))
             stor_ref.child(currentPost.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
                 if (task.isSuccessful() && task.getResult() != null)
