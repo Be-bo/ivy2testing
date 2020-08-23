@@ -24,6 +24,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -79,17 +80,17 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private TextView cantSeeComments;
     private Menu options_menu;
     private ProgressBar progress_bar;
-    private ScrollView scroll_view;
+    private NestedScrollView scroll_view;
 
     // Firebase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
     // Comments Recycler Variables
-    private List<Comment> comments = new ArrayList<>();
-    private CommentAdapter adapter = new CommentAdapter(comments);
+   // private List<Comment> comments = new ArrayList<>();
+    private CommentAdapter adapter;
     private LinearLayoutManager layout_man;
-    private final static int MIN_COMMENTS_LOADED = 15;
+    //private final static int MIN_COMMENTS_LOADED = 15;
     private DocumentSnapshot last_doc;                  // Snapshot of last comment loaded
     private boolean comment_list_updated;
 
@@ -249,17 +250,17 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
                 commentsTitle.setVisibility(View.VISIBLE);
                 cantSeeComments.setVisibility(View.GONE);
                 findViewById(R.id.viewPost_commentsLayout).setVisibility(View.VISIBLE);
-                setupWriteComment();
                 setCommentRecycler();
+                setupWriteComment();
             } else {
             //    mExpandComments.setVisibility(View.GONE);
                 commentsTitle.setVisibility(View.GONE);
                 cantSeeComments.setVisibility(View.GONE);
             }
 
-            if(this_user.getId().equals(post.getAuthor_id())){ //if the user is the author of this post -> show the edit button and allow them to edit
+            /*if(this_user.getId().equals(post.getAuthor_id())){ //if the user is the author of this post -> show the edit button and allow them to edit
                 options_menu.setGroupVisible(0, true);
-            }
+            }*/
         }else{
            // mExpandComments.setVisibility(View.GONE);
             commentsTitle.setVisibility(View.GONE);
@@ -284,12 +285,15 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
     // Set up comments recycler with manager and adapter
     private void setCommentRecycler() {
+        adapter = new CommentAdapter(getApplicationContext(), mCommentsRecycler, this_user.getUni_domain(), post.getId());
         adapter.setOnSelectionListener(this::onCommentAuthorClicked);
         layout_man = new LinearLayoutManager(this);
         mCommentsRecycler.setLayoutManager(layout_man);
         mCommentsRecycler.setAdapter(adapter);
         mCommentsRecycler.setNestedScrollingEnabled(true);
-        loadComments();
+        mCommentsRecycler.setVisibility(View.VISIBLE);// TODO
+
+       /* loadComments();
 
         // Scroll Listener used for pagination
         mCommentsRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -303,7 +307,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
                     }
                 }
             }
-        });
+        });*/
     }
 
     // Set up write comment functionality for a logged in user
@@ -384,7 +388,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     // Show different views if there are no comments
     private void viewComments() {
         // Put a no Comments available sign
-        if (comments.size() > 0) {
+        if (adapter.getItemCount() > 0) {
             mCommentsRecycler.setVisibility(View.VISIBLE);
             findViewById(R.id.viewPost_commentErrorMsg).setVisibility(View.GONE);
             // Scroll down a bit
@@ -433,7 +437,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
     // onClick for Comments
     private void onCommentAuthorClicked(int position) {
-        Comment clicked_comment = comments.get(position);
+        Comment clicked_comment = adapter.getComment(position);
         viewUserProfile(clicked_comment.getAuthor_id(),
                 clicked_comment.getUni_domain(),
                 clicked_comment.getAuthor_is_organization());
@@ -507,8 +511,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         }
         db.document(address).set(newComment).addOnCompleteListener(task1 -> {
             if (task1.isSuccessful()) {
-                comments.add(0, newComment);
-                adapter.notifyItemInserted(0);
+                adapter.newComment(newComment);
                 if (mCommentsRecycler.getVisibility() == View.GONE) viewComments();
                 mWriteComment.setText(null);
             } else {
@@ -589,7 +592,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     }
 
 
-    // Loads Comments from Firebase
+   /* // Loads Comments from Firebase
     private void loadComments() {
         String address = "universities/" + post.getUni_domain() + "/posts/" + post.getId() + "/comments";
         if (address.contains("null")) {
@@ -625,7 +628,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
             viewComments();
         });
-    }
+    }*/
 
     private void checkNotifications(String postID) {
         boolean found = false;
