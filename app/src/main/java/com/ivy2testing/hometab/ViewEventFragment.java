@@ -207,12 +207,14 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
             going_recycler.setVisibility(View.INVISIBLE);
             tv_seeAll.setVisibility(View.GONE);
         }
-        if(event.getGoing_ids().contains(this_user.getId())){
-            button_going.setImageResource(R.drawable.ic_going);
-            going_button_text.setText(getString(R.string.going));
-        }else{
-            button_going.setImageResource(R.drawable.ic_not_going);
-            going_button_text.setText(getString(R.string.not_going));
+        if(this_user!=null) {
+            if (event.getGoing_ids().contains(this_user.getId())) {
+                button_going.setImageResource(R.drawable.ic_going);
+                going_button_text.setText(getString(R.string.going));
+            } else {
+                button_going.setImageResource(R.drawable.ic_not_going);
+                going_button_text.setText(getString(R.string.not_going));
+            }
         }
     }
 

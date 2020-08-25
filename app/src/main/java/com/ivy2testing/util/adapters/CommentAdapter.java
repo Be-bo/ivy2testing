@@ -1,10 +1,12 @@
 package com.ivy2testing.util.adapters;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -39,6 +41,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     // Attributes
     private static final int BATCH_LIMIT = 15;
     private static final int NEW_BATCH_TOLERANCE = 4;
+    private int max_height;
     private ArrayList<Comment> comments;
     private Context context;
     OnSelectionListener listener;
@@ -57,12 +60,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
 
     // Constructors
-    public CommentAdapter(Context context, RecyclerView rec, String campus_domain, String post_id) {
+    public CommentAdapter(Context context, RecyclerView rec, String campus_domain, String post_id, int max_height) {
         comments = new ArrayList<>();
         this.context = context;
         this.recycler = rec;
         this.campus_domain = campus_domain;
         this.post_id = post_id;
+        this.max_height = max_height;
 
 
         default_query = db.collection("universities").document(campus_domain).collection("posts").document(post_id).collection("comments").limit(BATCH_LIMIT);
@@ -90,8 +94,29 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         holder.tv_username.setText(comments.get(position).getAuthor_name());
-        holder.tv_comment.setText(comments.get(position).getText());
         loadImage(holder, comments.get(position).getAuthor_id());
+
+        if(comments.get(position).getType() == 1){
+            holder.iv_comment_image.setImageURI(null);
+            holder.tv_comment.setText(comments.get(position).getText());
+            holder.iv_comment_image.setVisibility(View.GONE);
+            holder.tv_comment.setVisibility(View.VISIBLE);
+        }
+        else if (comments.get(position).getType() == 2){
+            holder.tv_comment.setText(null);
+            holder.iv_comment_image.setVisibility(View.VISIBLE);
+            holder.tv_comment.setVisibility(View.GONE);
+            loadCommentImage(holder, comments.get(position).getText());
+
+
+        }
+
+        //readjust recycler height so it doesn't infinitely pull from db
+        if(position==12){
+            ViewGroup.LayoutParams params = recycler.getLayoutParams();
+            params.height = max_height;
+            recycler.setLayoutParams(params);
+        }
 
         if(!load_in_progress && position >= (comments.size() - NEW_BATCH_TOLERANCE)){
             if(last_retrieved_document != null && !loaded_all_comments){
@@ -126,6 +151,16 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                         Picasso.get().load(task.getResult()).into(holder.circle_img);
                     else Log.w(TAG, "this user's image doesn't exist! user: " + user_id);
                 });
+    }
+
+    private void loadCommentImage(CommentViewHolder holder, String address){
+        firebase_storage.child(address).getDownloadUrl()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null)
+                        Picasso.get().load(task.getResult()).into(holder.iv_comment_image);
+                    else Log.w(TAG, "Something went wrong");
+                });
+
     }
 
     private void fetchCommentBatch(Query query) { //fetch all posts (events and standard posts) combined based on the input query
@@ -187,6 +222,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         CircleImageView circle_img;
         TextView tv_username;
         TextView tv_comment;
+        ImageView iv_comment_image;
 
 
         public CommentViewHolder(@NonNull View itemView, final OnSelectionListener listener) {
@@ -196,6 +232,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             circle_img = itemView.findViewById(R.id.comment_userImage);
             tv_username = itemView.findViewById(R.id.comment_userName);
             tv_comment = itemView.findViewById(R.id.comment_commentText);
+            iv_comment_image = itemView.findViewById(R.id.comment_imageView);
 
 
             // Set Listeners on user image and name only

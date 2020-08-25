@@ -18,6 +18,7 @@ public class Comment implements Parcelable {
     private String author_name;
     private boolean author_is_organization = false;
     private String text = "";
+    private int type; // 1 = text, 2 =  image
 
 
 /* Constructors
@@ -27,13 +28,14 @@ public class Comment implements Parcelable {
     public Comment(){}
 
     // Use for creating new comment in java code
-    public Comment(String id, String uni_domain, String author_id, String author_name, boolean author_is_organization, String text){
+    public Comment(String id, String uni_domain, String author_id, String author_name, boolean author_is_organization, String text, int type){
         this.id = id;
         this.uni_domain = uni_domain;
         this.author_id = author_id;
         this.author_name = author_name;
         this.author_is_organization = author_is_organization;
         this.text = text;
+        this.type = type;
     }
 
 
@@ -66,8 +68,8 @@ public class Comment implements Parcelable {
         return text;
     }
 
-
-/* Setters
+    public int getType() { return type; }
+    /* Setters
 ***************************************************************************************************/
 
     public void setText(String text) {
@@ -85,6 +87,7 @@ public class Comment implements Parcelable {
         author_name = in.readString();
         author_is_organization = in.readByte() != 0;
         text = in.readString();
+        type = in.readInt();
     }
 
     public static final Creator<Comment> CREATOR = new Creator<Comment>() {
@@ -112,6 +115,7 @@ public class Comment implements Parcelable {
         dest.writeString(author_name);
         dest.writeByte((byte) (author_is_organization ? 1 : 0));
         dest.writeString(text);
+        dest.writeInt(type);
     }
 
 }

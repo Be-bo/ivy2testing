@@ -4,14 +4,19 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -31,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.AutoTransition;
 import androidx.transition.TransitionManager;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -51,10 +57,13 @@ import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.Utils;
 import com.ivy2testing.util.adapters.CommentAdapter;
 import com.squareup.picasso.Picasso;
+import com.yalantis.ucrop.UCrop;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -73,21 +82,25 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private ImageView mAuthorImg;
     private TextView mAuthorName;
     private ImageButton mExpandComments;
+    private ImageButton postImageButton;
     private RecyclerView mCommentsRecycler;
     private EditText mWriteComment;
     private ImageButton mPostComment;
+    private ImageButton post_image_confirm;
+    private ImageButton post_image_cancel;
     private TextView commentsTitle;
     private TextView cantSeeComments;
     private Menu options_menu;
     private ProgressBar progress_bar;
     private NestedScrollView scroll_view;
+    private ImageView write_comment_image_view;
 
     // Firebase
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
     // Comments Recycler Variables
-   // private List<Comment> comments = new ArrayList<>();
+    // private List<Comment> comments = new ArrayList<>();
     private CommentAdapter adapter;
     private LinearLayoutManager layout_man;
     //private final static int MIN_COMMENTS_LOADED = 15;
@@ -113,8 +126,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
 
 
-/* Override Methods
-***************************************************************************************************/
+    /* Override Methods
+     ***************************************************************************************************/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,11 +151,10 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home && !isTaskRoot()) {
             goBackToParent(); // Tells parent if post was updated
             return true;
-        } else if(item.getItemId() == R.id.view_event_post_bar_edit_post){
+        } else if (item.getItemId() == R.id.view_event_post_bar_edit_post) {
             editPost();
             return true;
-        }
-        else return super.onOptionsItemSelected(item);
+        } else return super.onOptionsItemSelected(item);
     }
 
 
@@ -150,13 +162,32 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch(requestCode){
+        switch (requestCode) {
+            case Constant.PICK_IMAGE_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    if (data != null && data.getData() != null) {
+                        Uri destinationUri = Uri.fromFile(new File(this.getCacheDir(), "img_" + System.currentTimeMillis()));
+                        UCrop.of(data.getData(), destinationUri).withAspectRatio(1, 1).withMaxResultSize(ImageUtils.IMAGE_MAX_DIMEN, ImageUtils.IMAGE_MAX_DIMEN).start(this);
+                    }
+                    break;
+                }
+
+
+            case UCrop.REQUEST_CROP:
+                if (data != null) {
+                    final Uri resultUri = UCrop.getOutput(data);
+                    Glide.with(this).load(resultUri).into(write_comment_image_view);
+                    setPostImageView();
+                }
+                break;
+
+
             case Constant.USER_PROFILE_REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK && data != null) {
 
                     // Update author name if changed
                     String new_name = data.getStringExtra("user_name");
-                    if (new_name != null){
+                    if (new_name != null) {
                         post.setAuthor_name(new_name);
                         mAuthorName.setText(new_name);
                     }
@@ -167,9 +198,10 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
                 }
                 break;
             case Constant.EDIT_POST_REQUEST_CODE:
-                if(resultCode == RESULT_OK){ //not an ideal solution but good enough for now - if an event/post gets edited we refresh all fragments
+                if (resultCode == RESULT_OK) { //not an ideal solution but good enough for now - if an event/post gets edited we refresh all fragments
                     pullPost();
                 }
+
         }
     }
 
@@ -194,7 +226,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         mPostVisual = findViewById(R.id.viewPost_visual);
         mAuthorImg = findViewById(R.id.viewPost_userImage);
         mAuthorName = findViewById(R.id.viewPost_userName);
-       // mExpandComments = findViewById(R.id.viewPost_commentButton);
+        // mExpandComments = findViewById(R.id.viewPost_commentButton);
         mCommentsRecycler = findViewById(R.id.viewPost_commentRV);
         mWriteComment = findViewById(R.id.writeComment_commentText);
         mPostComment = findViewById(R.id.writeComment_commentButton);
@@ -202,6 +234,10 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         cantSeeComments = findViewById(R.id.viewPost_cantSeeComments);
         progress_bar = findViewById(R.id.viewPost_progress_bar);
         scroll_view = findViewById(R.id.viewPost_scrollView);
+        postImageButton = findViewById(R.id.writeComment_postImageButton);
+        write_comment_image_view = findViewById(R.id.writeComment_imageView);
+        post_image_confirm = findViewById(R.id.writeComment_postImageConfirm);
+        post_image_cancel = findViewById(R.id.writeComment_postImageCancel);
         setTitle(null);
     }
 
@@ -246,14 +282,14 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         // Can comment if logged in
         if (this_user != null) {
             if (this_user.getUni_domain().equals(post.getUni_domain())) { //from this uni -> can comment
-               // mExpandComments.setVisibility(View.VISIBLE);
+                // mExpandComments.setVisibility(View.VISIBLE);
                 commentsTitle.setVisibility(View.VISIBLE);
                 cantSeeComments.setVisibility(View.GONE);
                 findViewById(R.id.viewPost_commentsLayout).setVisibility(View.VISIBLE);
                 setCommentRecycler();
                 setupWriteComment();
             } else {
-            //    mExpandComments.setVisibility(View.GONE);
+                //    mExpandComments.setVisibility(View.GONE);
                 commentsTitle.setVisibility(View.GONE);
                 cantSeeComments.setVisibility(View.GONE);
             }
@@ -261,8 +297,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             /*if(this_user.getId().equals(post.getAuthor_id())){ //if the user is the author of this post -> show the edit button and allow them to edit
                 options_menu.setGroupVisible(0, true);
             }*/
-        }else{
-           // mExpandComments.setVisibility(View.GONE);
+        } else {
+            // mExpandComments.setVisibility(View.GONE);
             commentsTitle.setVisibility(View.GONE);
             cantSeeComments.setVisibility(View.VISIBLE);
         }
@@ -285,12 +321,20 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
     // Set up comments recycler with manager and adapter
     private void setCommentRecycler() {
-        adapter = new CommentAdapter(getApplicationContext(), mCommentsRecycler, this_user.getUni_domain(), post.getId());
+        // these need to be set so the recyclerview doesnt infinitely load comments, because max height is wrap content
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        adapter = new CommentAdapter(getApplicationContext(), mCommentsRecycler, this_user.getUni_domain(), post.getId(), displayMetrics.heightPixels);
+
+
         adapter.setOnSelectionListener(this::onCommentAuthorClicked);
         layout_man = new LinearLayoutManager(this);
         mCommentsRecycler.setLayoutManager(layout_man);
         mCommentsRecycler.setAdapter(adapter);
         mCommentsRecycler.setNestedScrollingEnabled(true);
+
+
         mCommentsRecycler.setVisibility(View.VISIBLE);// TODO
 
        /* loadComments();
@@ -320,9 +364,13 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mPostComment.setClickable(!mWriteComment.getText().toString().trim().isEmpty());
-                if (mPostComment.isClickable())
+                if (mPostComment.isClickable()) {
                     mPostComment.setColorFilter(getColor(R.color.interaction));
-                else mPostComment.setColorFilter(getColor(R.color.grey));
+                    postImageButton.setVisibility(View.GONE);
+                } else {
+                    mPostComment.setColorFilter(getColor(R.color.grey));
+                    postImageButton.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
@@ -466,7 +514,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         if (findViewById(R.id.viewPost_commentsLayout).getVisibility() == View.GONE) {
             TransitionManager.beginDelayedTransition(findViewById(R.id.viewPost_linearRootLayout), new AutoTransition());
             findViewById(R.id.viewPost_commentsLayout).setVisibility(View.VISIBLE);
-           // mExpandComments.setImageResource(R.drawable.ic_arrow_up);
+            // mExpandComments.setImageResource(R.drawable.ic_arrow_up);
 
             // Set up recycler with recycler manager and adapter if not done yet
             if (layout_man == null) setCommentRecycler();
@@ -478,7 +526,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         } else {
             TransitionManager.beginDelayedTransition(findViewById(R.id.viewPost_linearRootLayout), new AutoTransition());
             findViewById(R.id.viewPost_commentsLayout).setVisibility(View.GONE);
-          //  mExpandComments.setImageResource(R.drawable.ic_arrow_down);
+            //  mExpandComments.setImageResource(R.drawable.ic_arrow_down);
         }
     }
 
@@ -500,7 +548,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
                 this_user.getId(),
                 this_user.getName(),
                 this_user.getIs_organization(),
-                commentText);
+                commentText,
+                1);
 
         // Write to database
         String address = "universities/" + post.getUni_domain() + "/posts/" + post.getId() + "/comments/" + commentId;
@@ -522,12 +571,13 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         });
     }
 
-    private void editPost(){
+
+    private void editPost() {
         Intent intent = new Intent(this, CreatePostActivity.class);
         intent.putExtra("this_user", this_user);
         intent.putExtra("editing_mode", true);
         intent.putExtra("is_event", post.getIs_event());
-        if(post.getIs_event()) intent.putExtra("event", post);
+        if (post.getIs_event()) intent.putExtra("event", post);
         else intent.putExtra("post", post);
         startActivityForResult(intent, Constant.EDIT_POST_REQUEST_CODE);
     }
@@ -575,7 +625,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             scroll_view.setVisibility(View.VISIBLE);
             Log.e(TAG, "Either Post or its visual field is null!");
             return;
-        }else{
+        } else {
             mPostVisual.setVisibility(View.VISIBLE);
         }
 
@@ -656,5 +706,80 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
                 Utils.setNotif_list(notif_list);
             }
         }
+    }
+
+    public void pickImage(View view) {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        String[] mimeTypes = {"image/jpeg", "image/png"};
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        startActivityForResult(intent, Constant.PICK_IMAGE_REQUEST_CODE);
+    }
+
+    public void postImage(View view) {
+
+        startCommentLoading();
+
+        Bitmap bitmap = Bitmap.createBitmap(write_comment_image_view.getWidth(), write_comment_image_view.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        write_comment_image_view.draw(canvas);
+        String visualPath = "postfiles/" + post.getId() + "/comments/" + UUID.randomUUID().toString() + ".jpg";
+        base_storage_ref.child(visualPath).putBytes(ImageUtils.compressAndGetBytes(bitmap)).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+
+                String commentId = "" + System.currentTimeMillis();
+                String address = "universities/" + post.getUni_domain() + "/posts/" + post.getId() + "/comments/" + commentId;
+                Comment newComment = new Comment(
+                        commentId,
+                        post.getUni_domain(),
+                        this_user.getId(),
+                        this_user.getName(),
+                        this_user.getIs_organization(),
+                        visualPath,
+                        2);
+                db.document(address).set(newComment).addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        adapter.newComment(newComment);
+                        if (mCommentsRecycler.getVisibility() == View.GONE) viewComments();
+                        mWriteComment.setText(null);
+                    } else {
+                        Log.e(TAG, "Comment image not saved in database.", task1.getException());
+                        Toast.makeText(this, "Could not post comment with image", Toast.LENGTH_LONG).show();
+                    }
+                    stopCommentLoading();
+                });
+            }
+            else{
+                Log.e(TAG, "postImage: failed to post image",task.getException() );
+            }
+        });
+        setStandardCommentView();
+    }
+
+    public void cancelImage(View view) {
+        setStandardCommentView();
+    }
+
+    private void setPostImageView() {
+        write_comment_image_view.setVisibility(View.VISIBLE);
+        post_image_confirm.setVisibility(View.VISIBLE);
+        post_image_cancel.setVisibility(View.VISIBLE);
+        mPostComment.setVisibility(View.GONE);
+        postImageButton.setVisibility(View.GONE);
+        mWriteComment.setVisibility(View.GONE);
+    }
+
+    private void setStandardCommentView() {
+        write_comment_image_view.setImageURI(null);
+        write_comment_image_view.setVisibility(View.GONE);
+        write_comment_image_view.setVisibility(View.GONE);
+        post_image_confirm.setVisibility(View.GONE);
+        post_image_cancel.setVisibility(View.GONE);
+
+        mPostComment.setVisibility(View.VISIBLE);
+        postImageButton.setVisibility(View.VISIBLE);
+        mWriteComment.setVisibility(View.VISIBLE);
+        mWriteComment.setText(null);
+
     }
 }
