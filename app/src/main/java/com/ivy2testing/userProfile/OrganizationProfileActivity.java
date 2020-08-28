@@ -2,6 +2,7 @@ package com.ivy2testing.userProfile;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -148,8 +149,9 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Sq
             if(task.isSuccessful() && task.getResult() != null && task.getResult().exists()){
                 org_to_display = task.getResult().toObject(Organization.class);
                 if(org_to_display != null) populateUI();
-            }else{
+            } else {
                 Toast.makeText(this, "Couldn't load organization data. :-(", Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Couldn't load organization data... \n" + task.getException());
             }
         });
     }

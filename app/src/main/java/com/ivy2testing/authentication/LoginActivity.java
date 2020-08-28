@@ -263,6 +263,7 @@ public class LoginActivity extends AppCompatActivity {
                     transToMainLoggedIn();
                 }
                 else {
+                    auth.signOut();
                     toastMessage("Email not verified yet!");
                     showResendEmail();
                     allowInteraction();
