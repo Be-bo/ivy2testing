@@ -146,7 +146,7 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
         setUpGoingAdapter();
 
         // Hide button if user is not signed in
-        if (this_user == null || !this_user.getUni_domain().equals(event.getUni_domain())) { //either not logged in, or not from this uni -> can't say going // now updated to not show button tray
+        if (this_user == null || !this_user.getUni_domain().equals(event.getUni_domain())) { //either not logged in, or not from this uni, or is org -> can't say going // now updated to not show button tray
             button_tray.setVisibility(View.GONE);
         } else if (event.getGoing_ids().contains(this_user.getId())){
             button_going.setImageResource(R.drawable.ic_going);
@@ -207,7 +207,7 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
             going_recycler.setVisibility(View.INVISIBLE);
             tv_seeAll.setVisibility(View.GONE);
         }
-        if(this_user!=null) {
+        if(this_user!=null && !this_user.getIs_organization()) {
             if (event.getGoing_ids().contains(this_user.getId())) {
                 button_going.setImageResource(R.drawable.ic_going);
                 going_button_text.setText(getString(R.string.going));
@@ -215,6 +215,9 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
                 button_going.setImageResource(R.drawable.ic_not_going);
                 going_button_text.setText(getString(R.string.not_going));
             }
+        }else{ //if user null / is org -> hide the button
+            going_button_text.setVisibility(View.GONE);
+            button_going.setVisibility(View.GONE);
         }
     }
 
