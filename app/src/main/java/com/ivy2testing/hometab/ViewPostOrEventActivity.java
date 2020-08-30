@@ -541,7 +541,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         startCommentLoading();
 
         // Create Comment object
-        String commentId = "" + System.currentTimeMillis();
+        String commentId = UUID.randomUUID().toString();
         Comment newComment = new Comment(
                 commentId,
                 post.getUni_domain(),
@@ -558,7 +558,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             stopCommentLoading();
             return;
         }
-        db.document(address).set(newComment).addOnCompleteListener(task1 -> {
+        db.collection("universities").document(post.getUni_domain()).collection("posts").document(post.getId()).collection("comments").document(commentId).set(newComment).addOnCompleteListener(task1 -> {
             if (task1.isSuccessful()) {
                 adapter.newComment(newComment);
                 if (mCommentsRecycler.getVisibility() == View.GONE) viewComments();
@@ -727,7 +727,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         base_storage_ref.child(visualPath).putBytes(ImageUtils.compressAndGetBytes(bitmap)).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
 
-                String commentId = "" + System.currentTimeMillis();
+                String commentId = UUID.randomUUID().toString();
                 String address = "universities/" + post.getUni_domain() + "/posts/" + post.getId() + "/comments/" + commentId;
                 Comment newComment = new Comment(
                         commentId,

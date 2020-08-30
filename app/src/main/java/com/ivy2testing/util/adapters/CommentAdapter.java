@@ -1,7 +1,6 @@
 package com.ivy2testing.util.adapters;
 
 import android.content.Context;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,14 +18,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Comment;
-import com.ivy2testing.entities.Post;
 import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.OnSelectionListener;
+import com.ivy2testing.util.Utils;
 import com.squareup.picasso.Picasso;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -36,7 +33,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Used in: ViewPostOrEventActivity
  */
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
-    private static final String TAG = "CommentAdapter";
+    private static final String TAG = "CommentAdapterTag";
 
     // Attributes
     private static final int BATCH_LIMIT = 15;
@@ -69,7 +66,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         this.max_height = max_height;
 
 
-        default_query = db.collection("universities").document(campus_domain).collection("posts").document(post_id).collection("comments").limit(BATCH_LIMIT);
+        default_query = db.collection("universities").document(campus_domain).collection("posts").document(post_id).collection("comments").orderBy("creation_millis", Query.Direction.DESCENDING).limit(BATCH_LIMIT);
 
         fetchCommentBatch(default_query);
     }
@@ -93,22 +90,21 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
+        Comment currentComment = comments.get(position);
         holder.tv_username.setText(comments.get(position).getAuthor_name());
-        loadImage(holder, comments.get(position).getAuthor_id());
+        loadAthorImage(holder, currentComment.getAuthor_id());
 
-        if(comments.get(position).getType() == 1){
+        if(currentComment.getType() == 1){
             holder.iv_comment_image.setImageURI(null);
-            holder.tv_comment.setText(comments.get(position).getText());
+            holder.tv_comment.setText(currentComment.getText());
             holder.iv_comment_image.setVisibility(View.GONE);
             holder.tv_comment.setVisibility(View.VISIBLE);
         }
-        else if (comments.get(position).getType() == 2){
+        else if (currentComment.getType() == 2){
             holder.tv_comment.setText(null);
             holder.iv_comment_image.setVisibility(View.VISIBLE);
             holder.tv_comment.setVisibility(View.GONE);
-            loadCommentImage(holder, comments.get(position).getText());
-
-
+            loadCommentImage(holder, currentComment.getText());
         }
 
         //readjust recycler height so it doesn't infinitely pull from db
@@ -134,7 +130,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     /* Firebase Methods
      ***************************************************************************************************/
 
-    private void loadImage(CommentViewHolder holder, String user_id) {
+    private void loadAthorImage(CommentViewHolder holder, String user_id) {
         // Load a placeholder first in case something goes wrong
         holder.circle_img.setImageDrawable(context.getDrawable(R.drawable.ic_profile_selected));
 
@@ -154,13 +150,14 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     }
 
     private void loadCommentImage(CommentViewHolder holder, String address){
-        firebase_storage.child(address).getDownloadUrl()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null)
-                        Picasso.get().load(task.getResult()).into(holder.iv_comment_image);
-                    else Log.w(TAG, "Something went wrong");
-                });
-
+        if(address != null && address.contains("/")){
+            firebase_storage.child(address).getDownloadUrl()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult() != null)
+                            Picasso.get().load(task.getResult()).into(holder.iv_comment_image);
+                        else Log.w(TAG, "Something went wrong");
+                    });
+        }
     }
 
     private void fetchCommentBatch(Query query) { //fetch all posts (events and standard posts) combined based on the input query
@@ -171,8 +168,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                     for (int i = 0; i < querySnap.getResult().getDocuments().size(); i++) {
                         DocumentSnapshot newComment = querySnap.getResult().getDocuments().get(i);
                         Comment comment = newComment.toObject(Comment.class);
-                        if (comment != null );//&& !commentAlreadyAdded(comment.getId())) // TODO
+                        if (comment != null ) {
+                            comment.setId(newComment.getId());
                             comments.add(comment);
+                        }
+                        Log.d(TAG, "id " + comment.getId());
                         if (i >= querySnap.getResult().getDocuments().size() - 1)
                             last_retrieved_document = newComment;
                     }

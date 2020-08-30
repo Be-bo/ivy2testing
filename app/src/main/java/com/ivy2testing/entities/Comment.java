@@ -18,6 +18,7 @@ public class Comment implements Parcelable {
     private String author_name;
     private boolean author_is_organization = false;
     private String text = "";
+    private long creation_millis;
     private int type; // 1 = text, 2 =  image
 
 
@@ -36,14 +37,13 @@ public class Comment implements Parcelable {
         this.author_is_organization = author_is_organization;
         this.text = text;
         this.type = type;
+        this.creation_millis = System.currentTimeMillis();
     }
 
 
 /* Getters
 ***************************************************************************************************/
 
-    // Don't write ID in database! (redundant)
-    @Exclude
     public String getId() {
         return id;
     }
@@ -69,6 +69,11 @@ public class Comment implements Parcelable {
     }
 
     public int getType() { return type; }
+
+    public long getCreation_millis() {
+        return creation_millis;
+    }
+
     /* Setters
 ***************************************************************************************************/
 
@@ -76,8 +81,11 @@ public class Comment implements Parcelable {
         this.text = text;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
-/* Parcelable Override Methods
+    /* Parcelable Override Methods
 ***************************************************************************************************/
 
     protected Comment(Parcel in) {
@@ -88,6 +96,7 @@ public class Comment implements Parcelable {
         author_is_organization = in.readByte() != 0;
         text = in.readString();
         type = in.readInt();
+        creation_millis = in.readLong();
     }
 
     public static final Creator<Comment> CREATOR = new Creator<Comment>() {
@@ -116,6 +125,7 @@ public class Comment implements Parcelable {
         dest.writeByte((byte) (author_is_organization ? 1 : 0));
         dest.writeString(text);
         dest.writeInt(type);
+        dest.writeLong(creation_millis);
     }
 
 }

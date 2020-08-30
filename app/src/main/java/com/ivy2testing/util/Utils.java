@@ -110,4 +110,8 @@ public final class Utils {
     public static void setNotif_list(ArrayList<HashMap<String, Integer>> array){
         notif_list = array;
     }
+
+    public static String commentImagePath(String postId, String commentId){
+        return "postfiles/"+postId+"/comments/"+commentId+".jpg";
+    }
 }
