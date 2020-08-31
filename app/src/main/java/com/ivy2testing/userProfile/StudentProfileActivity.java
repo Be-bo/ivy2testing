@@ -242,7 +242,7 @@ public class StudentProfileActivity extends AppCompatActivity {
                 if (student_to_display != null){
 
                     if(student_to_display.isIs_private()) setPrivateDisplay();
-                    else{
+                    else {
                         student_to_display.setId(user_id);
                         setUpElements();
                     }
