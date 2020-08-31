@@ -45,6 +45,7 @@ import com.ivy2testing.R;
 import com.ivy2testing.eventstab.EventsFragment;
 import com.ivy2testing.hometab.HomeFragment;
 import com.ivy2testing.hometab.CreatePostActivity;
+import com.ivy2testing.notifications.NotificationSender;
 import com.ivy2testing.terms.TermsActivity;
 import com.ivy2testing.userProfile.NotificationCenterActivity;
 import com.ivy2testing.userProfile.OrganizationProfileFragment;
@@ -356,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bottom_navigation.getMenu().findItem(R.id.tab_bar_profile).setVisible(true);
         bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
         function_button.setImageResource(R.drawable.ic_create);
-        function_button.setOnClickListener(view -> transToCreatePost());
+        function_button.setOnClickListener(view -> transToCreatePost(0));
 
         if(event_fragment != null) event_fragment.refreshAdapters(); //if we're coming back from login events fragment already exists
         else{ //not coming back, starting the app already logged in
@@ -421,12 +422,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(this_user != null) {
             switch (tabId) {
                 case R.id.tab_bar_profile:
-                    function_button.setImageResource(R.drawable.ic_bell);
-                    function_button.setOnClickListener(view -> transToNotificationCenter());
+                    function_button.setVisibility(View.GONE);
                     break;
-                default:
+                case R.id.tab_bar_events:
+                    function_button.setVisibility(View.VISIBLE);
                     function_button.setImageResource(R.drawable.ic_create);
-                    function_button.setOnClickListener(view -> transToCreatePost());
+                    function_button.setOnClickListener(view -> transToCreatePost(1));
+                    break;
+                case R.id.tab_bar_home:
+                    function_button.setVisibility(View.VISIBLE);
+                    function_button.setImageResource(R.drawable.ic_create);
+                    function_button.setOnClickListener(view -> transToCreatePost(0));
                     break;
             }
         }
@@ -460,9 +466,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // MARK: Other Methods
 
-    private void transToCreatePost(){
+    private void transToCreatePost(int type){
         Intent intent = new Intent(getApplicationContext(), CreatePostActivity.class);
         intent.putExtra("this_user", this_user);
+        intent.putExtra("post_type", type);
         startActivityForResult(intent, Constant.CREATE_POST_REQUEST_CODE);
     }
 

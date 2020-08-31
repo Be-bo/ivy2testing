@@ -50,6 +50,7 @@ import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.MainActivity;
+import com.ivy2testing.notifications.NotificationSender;
 import com.ivy2testing.userProfile.OrganizationProfileActivity;
 import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.Constant;
@@ -110,6 +111,9 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     // Other Variables (Nullable)
     private Post post;
     private User this_user;     // Currently logged in user
+    private String postUni = "";
+    private String postId = "";
+    private NotificationSender notification_sender;
 
 
 
@@ -244,8 +248,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     // get post object and id of current user
     private void pullPost() {
         if (getIntent() != null) {
-            String postId = getIntent().getStringExtra("post_id"); //if it's a pinned event
-            String postUni = getIntent().getStringExtra("post_uni");
+            postId = getIntent().getStringExtra("post_id"); //if it's a pinned event
+            postUni = getIntent().getStringExtra("post_uni");
             this_user = getIntent().getParcelableExtra("this_user");
             if (postId != null && postUni != null) {
                 checkNotifications(postId);
@@ -563,6 +567,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
                 adapter.newComment(newComment);
                 if (mCommentsRecycler.getVisibility() == View.GONE) viewComments();
                 mWriteComment.setText(null);
+                sendCommentNotification(false);
             } else {
                 Log.e(TAG, "Comment not saved in database.", task1.getException());
                 Toast.makeText(this, "Could not post comment", Toast.LENGTH_LONG).show();
@@ -570,7 +575,6 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             stopCommentLoading();
         });
     }
-
 
     private void editPost() {
         Intent intent = new Intent(this, CreatePostActivity.class);
@@ -580,6 +584,40 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         if (post.getIs_event()) intent.putExtra("event", post);
         else intent.putExtra("post", post);
         startActivityForResult(intent, Constant.EDIT_POST_REQUEST_CODE);
+    }
+
+
+
+
+
+
+
+
+
+
+    private void sendCommentNotification(boolean isImageComment){
+        db.collection("universities").document(postUni).collection("posts").document(postId).get().addOnCompleteListener(task -> {
+            if(task.isSuccessful() && task.getResult() != null){
+                Post post = task.getResult().toObject(Post.class);
+                if(post != null && post.getAuthor_id() != null){
+                    db.collection("users").document(post.getAuthor_id()).get().addOnCompleteListener(task1 -> {
+                        if(task1.isSuccessful() && task1.getResult() != null){
+                            User user = task1.getResult().toObject(User.class);
+                            if(user != null && user.getMessaging_token() != null){
+                                if(post.getIs_event()){
+                                    if(isImageComment) notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" commented on your event.", this_user.getName() + " commented with an image.", "");
+                                    else notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" commented on your event.", this_user.getName() + " commented with an image.", "");
+                                }else{
+                                    if(isImageComment) notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" commented on your post.", this_user.getName() + " commented with an image.", "");
+                                    else notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" commented on your post.", this_user.getName() + " commented " + mWriteComment.getText().toString(), "");
+                                }
+                                notification_sender.sendNotification(this);
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
 
@@ -716,7 +754,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         startActivityForResult(intent, Constant.PICK_IMAGE_REQUEST_CODE);
     }
 
-    public void postImage(View view) {
+    public void postImageComment(View view) {
 
         startCommentLoading();
 
@@ -742,6 +780,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
                         adapter.newComment(newComment);
                         if (mCommentsRecycler.getVisibility() == View.GONE) viewComments();
                         mWriteComment.setText(null);
+                        sendCommentNotification(true);
                     } else {
                         Log.e(TAG, "Comment image not saved in database.", task1.getException());
                         Toast.makeText(this, "Could not post comment with image", Toast.LENGTH_LONG).show();
