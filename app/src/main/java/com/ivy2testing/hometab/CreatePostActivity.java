@@ -34,8 +34,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
+import com.ivy2testing.entities.Notification;
+import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
+import com.ivy2testing.notifications.NotificationSender;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.TimePickerDialog;
@@ -86,6 +89,9 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
     private Calendar temp_calendar = Calendar.getInstance();
     private List<String> pinnable_event_names = new ArrayList<>();
     private List<String> pinnable_event_ids = new ArrayList<>();
+    private NotificationSender notification_sender;
+    private int index = 0;
+    private int type; //0 is event, 1 is post
 
 
     // MARK: Override
@@ -108,9 +114,14 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
                 submit_button.setEnabled(true);
                 hideType();
             } else {
+                type = getIntent().getIntExtra("post_type", 0);
+                if(type == 1){ //event, otherwise leave default
+                    description_edit_text.setHint("Event Description");
+                    handleClick(type_event_button);
+                }
+                hideType();
                 initializePost();
             }
-
         }
     }
 
@@ -430,11 +441,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
                     String previewPath = "postfiles/" + id + "/previewimage.jpg";
                     stor.child(previewPath).putBytes(ImageUtils.compressAndGetPreviewBytes(bitmap)).addOnCompleteListener(task1 -> {
                         if (task1.isSuccessful()) {
-                            allowInteraction();
-                            setResult(RESULT_OK);
-                            if (editing_mode)
-                                Toast.makeText(this, "Your Feed and Profile will update after restart.", Toast.LENGTH_LONG).show();
-                            finish();
+                            sendNotification();
                         } else
                             Toast.makeText(this, "Failed to upload image.", Toast.LENGTH_LONG).show();
                     });
@@ -442,12 +449,59 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
             });
 
         } else { //we don't have an image
-            allowInteraction();
-            setResult(RESULT_OK);
-            if (editing_mode)
-                Toast.makeText(this, "Your Feed and Profile will update after restart.", Toast.LENGTH_LONG).show();
-            finish();
+            if(this_user.getIs_organization()){ //if they're an org we have to send notifs to members
+                sendNotification();
+            }else{
+                allowInteraction();
+                setResult(RESULT_OK);
+                if (editing_mode)
+                    Toast.makeText(this, "Your Feed and Profile will update after restart.", Toast.LENGTH_LONG).show();
+                finish();
+            }
         }
+    }
+
+    private void sendNotification(){
+        db.collection("users").document(this_user.getId()).get().addOnCompleteListener(task -> {
+            if(task.isSuccessful() && task.getResult() != null){
+                Organization thisOrg = task.getResult().toObject(Organization.class);
+                if(thisOrg != null && thisOrg.getMember_ids() != null){
+                    index = 0;
+                    for(String memberId: thisOrg.getMember_ids()){
+                        index++;
+                        db.collection("users").document(memberId).get().addOnCompleteListener(task1 -> {
+                            if(task1.isSuccessful() && task1.getResult() != null){
+                                User user = task1.getResult().toObject(User.class);
+                                if(user != null && user.getMessaging_token() != null){
+                                    if(this_post == null){ //posting event
+                                        if(editing_mode) {
+                                            notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" edited their event.", this_user.getName()+" edited: "+title_edit_text.getText().toString(), "");
+                                        }else{
+                                            notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" added a new event.", this_user.getName()+" added: "+title_edit_text.getText().toString(), "");
+                                        }
+                                        notification_sender.sendNotification(this);
+                                    }else{ //posting post
+                                        if(editing_mode){
+                                            notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" edited their post.", this_user.getName()+" edited: "+description_edit_text.getText().toString(), "");
+                                        }else{
+                                            notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" added a new post.", this_user.getName()+" posted: "+description_edit_text.getText().toString(), "");
+                                        }
+                                        notification_sender.sendNotification(this);
+                                    }
+                                }
+                            }
+                            if(index >= thisOrg.getMember_ids().size()){
+                                allowInteraction();
+                                setResult(RESULT_OK);
+                                if (editing_mode)
+                                    Toast.makeText(this, "Your Feed and Profile will update after restart.", Toast.LENGTH_LONG).show();
+                                finish();
+                            }
+                        });
+                    }
+                }
+            }
+        });
     }
 
 

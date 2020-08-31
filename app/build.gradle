@@ -69,6 +69,11 @@ dependencies {
 
     implementation 'com.fasterxml.jackson.core:jackson-core:2.5.3'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.5.3'
+    implementation 'com.mcxiaoke.volley:library:1.0.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.legacy:legacy-support-core-utils:1.0.0'
 }
 
 apply plugin: 'com.android.application'
