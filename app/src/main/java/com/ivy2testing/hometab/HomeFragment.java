@@ -118,6 +118,7 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedClickListe
     }
 
     public void refreshAdapter(){
+        if (campus_adapter == null) setUpRecycler();
         campus_adapter.refreshPosts();
     }
 

@@ -62,7 +62,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
     // Views
     private ImageView mImg;
     private EditText mName;
-    private Spinner mDegree;
+    //private Spinner mDegree;
     private DatePicker mBirthDay;
     private Button mSaveButton;
     private ProgressBar mProgressBar;
@@ -99,7 +99,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
         setTextWatcher();
         setFocusListener();
         setBirthDayChangeListener();
-        setDegreeChangeListener();
+        //setDegreeChangeListener();
     }
 
     @Override
@@ -150,7 +150,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
     private void declareViews(){
         mImg = findViewById(R.id.editStudent_img);
         mName = findViewById(R.id.editStudent_name);
-        mDegree = findViewById(R.id.editStudent_degree);
+        //mDegree = findViewById(R.id.editStudent_degree);
         mBirthDay = findViewById(R.id.editStudent_birthdayDatePicker);
         mSaveButton = findViewById(R.id.editStudent_saveButton);
         mProgressBar = findViewById(R.id.editStudent_progressBar);
@@ -161,7 +161,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
         SpinnerAdapter degree_adapter = new SpinnerAdapter(this, getResources().getStringArray(R.array.degree_list));
             ArrayAdapter.createFromResource(this, R.array.degree_list, android.R.layout.simple_spinner_item);
         degree_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mDegree.setAdapter(degree_adapter);
+        //mDegree.setAdapter(degree_adapter);
     }
 
     // Preset fields with current Student info
@@ -172,7 +172,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
         if(this_student.isIs_private()) privateSwitch.setChecked(true);
 
         int degreeIndex = findStringPosition(this_student.getDegree().trim(), getResources().getStringArray(R.array.degree_list)); // Spinner
-        if (degreeIndex != -1) mDegree.setSelection(degreeIndex);
+        //if (degreeIndex != -1) mDegree.setSelection(degreeIndex);
     }
 
     // Automatically enable button if name is not empty
@@ -207,6 +207,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
         }
     }
 
+    /*
     // Listener for degree change
     private void setDegreeChangeListener(){
         mDegree.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -219,6 +220,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) { }
         });
     }
+     */
 
 
 
@@ -234,11 +236,11 @@ public class EditStudentProfileActivity extends AppCompatActivity {
         if (getCurrentFocus() != null) getCurrentFocus().clearFocus();
 
         // Get field values
-        String degree = mDegree.getSelectedItem().toString().trim();
+        //String degree = mDegree.getSelectedItem().toString().trim();
 
         // Check if ok
         setInputErrors(mName, getString(R.string.error_invalidName), nameOk());
-        setInputErrors((TextView) mDegree.getSelectedView(), "", degreeOk());
+        //setInputErrors((TextView) mDegree.getSelectedView(), "", degreeOk());
 
         // Save to student
         if (nameOk() && degreeOk()) {
@@ -246,7 +248,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
             this_student.setName(mName.getText().toString().trim());
             this_student.setBirth_millis(datePickerToMillis(mBirthDay));
             this_student.setIs_private(privateSwitch.isChecked());
-            if (!degree.equals("Degree")) this_student.setDegree(degree);
+            //if (!degree.equals("Degree")) this_student.setDegree(degree);
             saveData(!old_name.equals(this_student.getName()));    // Save to database
         }
         else{
@@ -291,7 +293,8 @@ public class EditStudentProfileActivity extends AppCompatActivity {
 
     // Make sure Degree field is not chosen as "Degree"
     private boolean degreeOk() {
-        return !mDegree.getSelectedItem().toString().trim().equals("Degree");
+        //return !mDegree.getSelectedItem().toString().trim().equals("Degree");
+        return true;
     }
 
 

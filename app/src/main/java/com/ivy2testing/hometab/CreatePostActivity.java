@@ -116,6 +116,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
             } else {
                 type = getIntent().getIntExtra("post_type", 0);
                 if(type == 1){ //event, otherwise leave default
+                    setTitle("Create Event");
                     description_edit_text.setHint("Event Description");
                     handleClick(type_event_button);
                 }
