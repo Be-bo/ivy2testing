@@ -7,7 +7,7 @@
     android:layout_margin="8dp"
     app:cardCornerRadius="10dp"
     android:elevation="2dp"
-    app:cardBackgroundColor="@color/light_grey"
+    app:cardBackgroundColor="@color/background_grey"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent">
@@ -21,8 +21,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/comment_userImage"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:src="@drawable/empty_profile_image"
             android:contentDescription="@string/profile_pic"
             android:onClick="viewAuthorProfile"
@@ -38,6 +38,7 @@
             android:layout_marginStart="8dp"
             android:onClick="viewAuthorProfile"
             app:layout_constraintStart_toEndOf="@id/comment_userImage"
+            app:layout_constraintTop_toTopOf="@id/comment_userImage"
             app:layout_constraintBottom_toBottomOf="@id/comment_userImage"/>
 
 
