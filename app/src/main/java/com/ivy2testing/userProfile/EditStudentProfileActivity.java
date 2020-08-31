@@ -123,6 +123,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
                 case UCrop.REQUEST_CROP:
                     imgUri = UCrop.getOutput(data);
                     Picasso.get().load(imgUri).into(mImg);
+                    mSaveButton.setEnabled(true);
                     break;
             }
         } else if (resultCode != RESULT_CANCELED) {
@@ -168,11 +169,11 @@ public class EditStudentProfileActivity extends AppCompatActivity {
     private void setFields() {
         loadImage();                                                // Image
         mName.setText(this_student.getName());                           // Name
-        millisToDatePicker(mBirthDay, this_student.getBirth_millis());   // Calendar
-        if(this_student.isIs_private()) privateSwitch.setChecked(true);
-
-        int degreeIndex = findStringPosition(this_student.getDegree().trim(), getResources().getStringArray(R.array.degree_list)); // Spinner
-        if (degreeIndex != -1) mDegree.setSelection(degreeIndex);
+//        millisToDatePicker(mBirthDay, this_student.getBirth_millis());   // Calendar
+//        if(this_student.isIs_private()) privateSwitch.setChecked(true);
+//
+//        int degreeIndex = findStringPosition(this_student.getDegree().trim(), getResources().getStringArray(R.array.degree_list)); // Spinner
+//        if (degreeIndex != -1) mDegree.setSelection(degreeIndex);
     }
 
     // Automatically enable button if name is not empty
@@ -238,21 +239,30 @@ public class EditStudentProfileActivity extends AppCompatActivity {
 
         // Check if ok
         setInputErrors(mName, getString(R.string.error_invalidName), nameOk());
-        setInputErrors((TextView) mDegree.getSelectedView(), "", degreeOk());
+//        setInputErrors((TextView) mDegree.getSelectedView(), "", degreeOk());
 
-        // Save to student
-        if (nameOk() && degreeOk()) {
+        if(nameOk()){
             String old_name = this_student.getName();
-            this_student.setName(mName.getText().toString().trim());
-            this_student.setBirth_millis(datePickerToMillis(mBirthDay));
-            this_student.setIs_private(privateSwitch.isChecked());
-            if (!degree.equals("Degree")) this_student.setDegree(degree);
-            saveData(!old_name.equals(this_student.getName()));    // Save to database
-        }
-        else{
+            this_student.setName(mName.getText().toString());
+            saveData(!old_name.equals(this_student.getName()));
+        }else{
             Toast.makeText(this, "Name or degree aren't ok.", Toast.LENGTH_LONG).show();
             allowInteraction(); // There was an error. So try Again!
         }
+
+        // Save to student
+//        if (nameOk() && degreeOk()) {
+//            String old_name = this_student.getName();
+//            this_student.setName(mName.getText().toString().trim());
+//            this_student.setBirth_millis(datePickerToMillis(mBirthDay));
+//            this_student.setIs_private(privateSwitch.isChecked());
+//            if (!degree.equals("Degree")) this_student.setDegree(degree);
+//            saveData(!old_name.equals(this_student.getName()));    // Save to database
+//        }
+//        else{
+//            Toast.makeText(this, "Name or degree aren't ok.", Toast.LENGTH_LONG).show();
+//            allowInteraction(); // There was an error. So try Again!
+//        }
     }
 
     // OnClick for edit image (upload an image from gallery)
@@ -349,6 +359,7 @@ public class EditStudentProfileActivity extends AppCompatActivity {
             Log.e(TAG, "Student Address has null values.");
             return;
         }
+
 
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> updatMap = objectMapper.convertValue(this_student, Map.class);

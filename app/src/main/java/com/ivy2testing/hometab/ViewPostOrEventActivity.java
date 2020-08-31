@@ -113,6 +113,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private User this_user;     // Currently logged in user
     private String postUni = "";
     private String postId = "";
+    private String author_id = "";
     private NotificationSender notification_sender;
 
 
@@ -145,7 +146,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.view_event_post_bar_menu, menu);
         options_menu = menu;
-        options_menu.setGroupVisible(0, false);
+        if(author_id != null && !author_id.equals("") && author_id.equals(this_user.getId())) options_menu.setGroupVisible(0, true);
+        else  options_menu.setGroupVisible(0, false);
         return true;
     }
 
@@ -251,6 +253,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             postId = getIntent().getStringExtra("post_id"); //if it's a pinned event
             postUni = getIntent().getStringExtra("post_uni");
             this_user = getIntent().getParcelableExtra("this_user");
+            author_id = getIntent().getStringExtra("author_id");
             if (postId != null && postUni != null) {
                 checkNotifications(postId);
                 db.collection("universities").document(postUni).collection("posts").document(postId).get().addOnCompleteListener(task -> {
@@ -599,7 +602,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         db.collection("universities").document(postUni).collection("posts").document(postId).get().addOnCompleteListener(task -> {
             if(task.isSuccessful() && task.getResult() != null){
                 Post post = task.getResult().toObject(Post.class);
-                if(post != null && post.getAuthor_id() != null){
+                if(post != null && post.getAuthor_id() != null && !this_user.getId().equals(post.getAuthor_id())){
                     db.collection("users").document(post.getAuthor_id()).get().addOnCompleteListener(task1 -> {
                         if(task1.isSuccessful() && task1.getResult() != null){
                             User user = task1.getResult().toObject(User.class);
@@ -657,7 +660,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
     // Loads post visual (only image for now)
     private void loadPostVisual() {
-        if (post == null || post.getVisual() == null || post.getVisual().equals("") || post.getVisual().equals("nothing")) {
+        if (post == null || post.getVisual() == null || !post.getVisual().contains("/")) {
             mPostVisual.setVisibility(View.GONE);
             progress_bar.setVisibility(View.GONE);
             scroll_view.setVisibility(View.VISIBLE);
@@ -668,15 +671,17 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         }
 
         // Get Visual from storage and load into image view
-        base_storage_ref.child(post.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) Picasso.get().load(task.getResult()).into(mPostVisual);
-            else {
-                mPostVisual.setVisibility(View.GONE);
-                Log.e(TAG, "Could not get post Visual from storage.");
-            }
-            progress_bar.setVisibility(View.GONE);
-            scroll_view.setVisibility(View.VISIBLE);
-        });
+        if(post.getVisual() != null && post.getVisual().contains("/")){
+            base_storage_ref.child(post.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) Picasso.get().load(task.getResult()).into(mPostVisual);
+                else {
+                    mPostVisual.setVisibility(View.GONE);
+                    Log.e(TAG, "Could not get post Visual from storage.");
+                }
+                progress_bar.setVisibility(View.GONE);
+                scroll_view.setVisibility(View.VISIBLE);
+            });
+        }
     }
 
 

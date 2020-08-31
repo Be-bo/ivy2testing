@@ -109,26 +109,27 @@ public class SeeAllPostsActivity extends AppCompatActivity implements FeedAdapte
                 break;
 
             case R.id.item_feed_pinned_text:
-                viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id());
+                viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id(), clickedPost.getAuthor_id());
                 break;
 
             case R.id.item_feed_pin_icon:
-                viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id());
+                viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id(), clickedPost.getAuthor_id());
                 break;
 
             default:
-                viewPost(clickedPost.getUni_domain(), clickedPost.getId());
+                viewPost(clickedPost.getUni_domain(), clickedPost.getId(), clickedPost.getAuthor_id());
                 break;
         }
     }
 
     // Transition to a post/event
-    private void viewPost(String postUni, String postId) {
+    private void viewPost(String postUni, String postId, String authorId) {
         Log.d(TAG, "Launching ViewPostOrEventActivity...");
         Intent intent = new Intent(this, ViewPostOrEventActivity.class);
         intent.putExtra("this_user", this_user);
         intent.putExtra("post_id", postId);
         intent.putExtra("post_uni", postUni);
+        intent.putExtra("author_id", authorId);
         startActivity(intent);
     }
 

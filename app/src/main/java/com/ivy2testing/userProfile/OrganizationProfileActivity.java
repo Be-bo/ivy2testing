@@ -91,6 +91,7 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
         intent.putExtra("this_user", this_user);
         intent.putExtra("post_id", post_adapter.getItem(position).getId());
         intent.putExtra("post_uni", post_adapter.getItem(position).getUni_domain());
+        intent.putExtra("author_id", post_adapter.getItem(position).getAuthor_id());
         startActivity(intent);
     }
 

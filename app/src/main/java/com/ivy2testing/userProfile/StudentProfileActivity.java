@@ -161,6 +161,7 @@ public class StudentProfileActivity extends AppCompatActivity {
         intent.putExtra("this_user", this_user);
         intent.putExtra("post_uni", adapter.getItem(position).getUni_domain());
         intent.putExtra("post_id", adapter.getItem(position).getId());
+        intent.putExtra("author_id", adapter.getItem(position).getAuthor_id());
         startActivity(intent);
     }
 

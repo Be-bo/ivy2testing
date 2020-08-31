@@ -23,7 +23,7 @@ public class ChannelCreationApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        createNotificationChannels();
+//        createNotificationChannels();
 
 
     }

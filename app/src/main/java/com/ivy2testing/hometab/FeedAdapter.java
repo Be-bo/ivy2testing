@@ -115,7 +115,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             holder.pin_icon.setVisibility(View.GONE);
         }
 
-        if (thisPost.getVisual().contains("/")) {
+        if (thisPost.getVisual() != null && thisPost.getVisual().contains("/")) {
             holder.feed_image_view.setVisibility(View.VISIBLE);
             getPicFromDB(holder, thisPost);
         } else holder.feed_image_view.setVisibility(View.GONE);
@@ -232,8 +232,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
     public void getPicFromDB(FeedViewHolder holder, Post post) {
         String visualPath = post.getVisual();
-        db_storage.child(visualPath).getDownloadUrl().addOnCompleteListener(task -> {if(task.isSuccessful() && task.getResult() != null)Glide.with(context).load(task.getResult()).into(holder.feed_image_view);
-                else Glide.with(context).load(R.drawable.ivy_logo).into(holder.feed_image_view);});
+        if(visualPath != null && visualPath.contains("/")){
+            db_storage.child(visualPath).getDownloadUrl().addOnCompleteListener(task -> {if(task.isSuccessful() && task.getResult() != null)Glide.with(context).load(task.getResult()).into(holder.feed_image_view);
+            else Glide.with(context).load(R.drawable.ivy_logo).into(holder.feed_image_view);});
+        }
     }
 
     public ArrayList<Post> getPost_array_list() {

@@ -120,7 +120,7 @@ public class NotificationCenterAdapter extends RecyclerView.Adapter<Notification
                 holder.content_text_view.setText(header);
                 holder.time_text_view.setText(Utils.getHumanTimeFromMillis(notification.getTimestamp()));
                 holder.visual_card_view.setRadius(Utils.dpToPixel(context, 25));
-                if (notification.getVisual().contains("/")) {
+                if (notification.getVisual() != null && notification.getVisual().contains("/")) {
                     stor.child(notification.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
                         if(task.isSuccessful() && task.getResult()!=null) Glide.with(context).load(task.getResult()).circleCrop().into(holder.visual);
 
