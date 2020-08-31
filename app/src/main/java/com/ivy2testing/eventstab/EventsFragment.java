@@ -183,7 +183,7 @@ public class EventsFragment extends Fragment implements EventAdapter.EventClickL
                     db.collection("universities").document(Utils.getCampusUni(getContext())).collection("posts").document(featuredId).get().addOnCompleteListener(task1 -> {
                         if(task1.isSuccessful() && task1.getResult() != null){
                             Event featuredEvent = task1.getResult().toObject(Event.class);
-                            if(featuredEvent != null){
+                            if(featuredEvent != null && featuredEvent.getVisual() != null && featuredEvent.getVisual().contains("/")){
                                 stor.child(featuredEvent.getVisual()).getDownloadUrl().addOnCompleteListener(task2 -> {
                                     if(task2.isSuccessful() && task2.getResult() != null && getContext() != null){
                                         Glide.with(getContext()).load(task2.getResult()).into(featured_imageview);
@@ -266,6 +266,7 @@ public class EventsFragment extends Fragment implements EventAdapter.EventClickL
             intent.putExtra("this_user", this_user);
             intent.putExtra("post_id", event.getId());
             intent.putExtra("post_uni", event.getUni_domain());
+            intent.putExtra("author_id", event.getAuthor_id());
             startActivity(intent);
         }
     }

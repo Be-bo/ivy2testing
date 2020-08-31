@@ -334,6 +334,7 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
         Log.d(TAG, "Starting ViewPost Activity for event " + event.getId());
         intent.putExtra("post", event);
         intent.putExtra("this_user", this_user);
+        intent.putExtra("author_id", event.getAuthor_id());
         startActivityForResult(intent, Constant.VIEW_POST_REQUEST_CODE);
     }
 

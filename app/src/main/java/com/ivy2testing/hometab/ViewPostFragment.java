@@ -78,6 +78,7 @@ public class ViewPostFragment extends Fragment {
         intent.putExtra("this_user", this_user);
         intent.putExtra("post_id", post.getPinned_id());
         intent.putExtra("post_uni", post.getUni_domain());
+        intent.putExtra("author_id", post.getAuthor_id());
         startActivity(intent);
     }
 }

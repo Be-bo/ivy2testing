@@ -62,10 +62,10 @@ public class NotificationHandler extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
-        Log.d(TAG, "onMessageReceived: message received");
-        if (remoteMessage.getData().get("type_data") != null) {
-            grabPhoto(remoteMessage.getData().get("visual_data"), remoteMessage);
-        }
+//        Log.d(TAG, "onMessageReceived: message received");
+//        if (remoteMessage.getData().get("type_data") != null) {
+//            grabPhoto(remoteMessage.getData().get("visual_data"), remoteMessage);
+//        }
     }
 
     private void grabPhoto(String path, RemoteMessage remoteMessage) {

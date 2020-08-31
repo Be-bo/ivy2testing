@@ -200,7 +200,7 @@ public class ProfilePostAdapter extends RecyclerView.Adapter<ProfilePostViewHold
             holder.banner_text.setVisibility(View.GONE);
         }
 
-        if (current.getVisual() == null || current.getVisual().equals("nothing") || current.getVisual().equals("")) {
+        if (current.getVisual() == null || !current.getVisual().contains("/")) {
             holder.image_view.setVisibility(View.GONE);
             holder.info_text.setVisibility(View.VISIBLE);
             if (current.getIs_event()) holder.info_text.setText(((Event) current).getName());
@@ -239,7 +239,7 @@ public class ProfilePostAdapter extends RecyclerView.Adapter<ProfilePostViewHold
     // MARK: Other Methods
 
     private void loadImage(@NonNull ProfilePostViewHolder holder, Post currentPost) { // Load visual from storage
-        if (currentPost.getVisual() != null && !currentPost.getVisual().equals("nothing") && !currentPost.getVisual().equals(""))
+        if (currentPost.getVisual() != null && currentPost.getVisual().contains("/"))
             stor_ref.child(currentPost.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
                 if (task.isSuccessful() && task.getResult() != null)
                     Glide.with(context).load(task.getResult()).into(holder.image_view);

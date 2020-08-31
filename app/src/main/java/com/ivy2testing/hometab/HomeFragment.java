@@ -152,22 +152,23 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedClickListe
                 viewUserProfile(clickedPost.getAuthor_id(), clickedPost.getUni_domain(), clickedPost.getAuthor_is_organization());
                 break;
             case R.id.item_feed_pinned_text:
-                viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id()); //can only pin events to posts on that campus -> same uni
+                viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id(), clickedPost.getAuthor_id()); //can only pin events to posts on that campus -> same uni
                 break;
             case R.id.item_feed_pin_icon:
-                viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id()); //can only pin events to posts on that campus -> same uni
+                viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id(), clickedPost.getAuthor_id()); //can only pin events to posts on that campus -> same uni
                 break;
             default:
-                viewPost(clickedPost.getUni_domain(), clickedPost.getId());
+                viewPost(clickedPost.getUni_domain(), clickedPost.getId(), clickedPost.getAuthor_id());
                 break;
         }
     }
 
-    private void viewPost(String uni, String id) { // Transition to a post/event
+    private void viewPost(String uni, String id, String authorId) { // Transition to a post/event
         Intent intent = new Intent(getActivity(), ViewPostOrEventActivity.class);
         intent.putExtra("this_user", this_user);
         intent.putExtra("post_id", id);
         intent.putExtra("post_uni", uni);
+        intent.putExtra("author_id", authorId);
         startActivity(intent);
     }
 

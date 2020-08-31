@@ -184,7 +184,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         stor.child(authorPreviewImage).getDownloadUrl().addOnCompleteListener(task -> {
             if(task.isSuccessful() && task.getResult() != null) Glide.with(context).load(task.getResult()).into(holder.author_image);
         });
-        if(currentEvent.getVisual().contains("/")){
+        if(currentEvent.getVisual() != null && currentEvent.getVisual().contains("/")){
             stor.child(currentEvent.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
                 if(task.isSuccessful() && task.getResult() != null) Glide.with(context).load(task.getResult()).into(holder.event_image);
             });

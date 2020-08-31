@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.entities.User;
@@ -91,6 +93,14 @@ public class StudentProfileFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if(student != null){ //TODO: quick and dirty
+            getStudentPic();
+        }
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         if(adapter!=null && is_set_up) adapter.refreshAdapter(); //each time the user comes back we have to refresh the adapter in case they edited or posted a post
@@ -117,7 +127,7 @@ public class StudentProfileFragment extends Fragment {
             user_view_model.getThis_user().observe(getActivity(), (User updatedProfile) -> {
                 if (updatedProfile instanceof Student){
                     student = (Student) updatedProfile;   // Update student
-                    Log.d(TAG, "updated: "+student.isIs_private());
+                    Log.d(TAG, "PROFILE UPDATED: "+student.getName());
                     getStudentPic();            // Do Other setups
                 }
             });
@@ -201,6 +211,7 @@ public class StudentProfileFragment extends Fragment {
         intent.putExtra("this_user", student);
         intent.putExtra("post_uni", adapter.getItem(position).getUni_domain());
         intent.putExtra("post_id", adapter.getItem(position).getId());
+        intent.putExtra("author_id", adapter.getItem(position).getAuthor_id());
         startActivity(intent);
     }
 
@@ -214,10 +225,10 @@ public class StudentProfileFragment extends Fragment {
 
         base_storage_ref.child(ImageUtils.getUserImagePath(student.getId())).getDownloadUrl()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) profile_img_uri = task.getResult();
-                    else Log.w(TAG, task.getException());
-
-                    // Reload views
+                    if (getContext()!= null){
+                        if (task.isSuccessful() && task.getResult() != null) Glide.with(getContext()).load(task.getResult()).into(profile_image);
+                        else Toast.makeText(getContext(), "Failed to get profile image.", Toast.LENGTH_LONG).show();
+                    }
                     setUpViews();
                 });
     }

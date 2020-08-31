@@ -288,7 +288,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
                 Toast.makeText(this, "Couldn't transfer event data.", Toast.LENGTH_LONG).show();
                 finish();
             }
-            if (this_event.getVisual() != null && !this_event.getVisual().equals("nothing") && !this_event.getVisual().equals("")) { //the event has a visual
+            if (this_event.getVisual() != null && this_event.getVisual().contains("/")) { //the event has a visual
                 stor.child(this_event.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null)
                         Glide.with(this).load(task.getResult()).into(image_upload_view);
@@ -304,6 +304,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
             end_time_button.setText(getButtonDisplayTime());
             start_millis = this_event.getStart_millis();
             end_millis = this_event.getEnd_millis();
+            submit_button.setEnabled(true);
 
         } else { //the edited post is a standard post
             setTitle("Edit Post");
@@ -313,7 +314,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
                 Toast.makeText(this, "Couldn't transfer post data.", Toast.LENGTH_LONG).show();
                 finish();
             }
-            if (this_post.getVisual() != null && !this_post.getVisual().equals("nothing") && !this_post.getVisual().equals("")) { //the event has a visual
+            if (this_post.getVisual() != null && this_post.getVisual().contains("/")) { //the event has a visual
                 stor.child(this_post.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null)
                         Glide.with(this).load(task.getResult()).into(image_upload_view);
@@ -322,6 +323,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
             }
             description_edit_text.setText(this_post.getText());
             pinned_spinner.setSelection(pinnable_event_ids.indexOf(this_post.getPinned_id()));
+            submit_button.setEnabled(true);
         }
     }
 
@@ -373,6 +375,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
                     if (data != null) {
                         final Uri resultUri = UCrop.getOutput(data);
                         Glide.with(this).load(resultUri).into(image_upload_view);
+                        checkFields();
                     }
                     break;
             }
@@ -466,7 +469,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
         db.collection("users").document(this_user.getId()).get().addOnCompleteListener(task -> {
             if(task.isSuccessful() && task.getResult() != null){
                 Organization thisOrg = task.getResult().toObject(Organization.class);
-                if(thisOrg != null && thisOrg.getMember_ids() != null){
+                if(thisOrg != null && thisOrg.getMember_ids() != null && thisOrg.getMember_ids().size() > 0){
                     index = 0;
                     for(String memberId: thisOrg.getMember_ids()){
                         index++;
@@ -499,6 +502,14 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
                                 finish();
                             }
                         });
+                    }
+                }else{
+                    if(thisOrg != null && thisOrg.getMember_ids()!=null && index >= thisOrg.getMember_ids().size()){ //no members, have to duplicate this logic to prevent hanging
+                        allowInteraction();
+                        setResult(RESULT_OK);
+                        if (editing_mode)
+                            Toast.makeText(this, "Your Feed and Profile will update after restart.", Toast.LENGTH_LONG).show();
+                        finish();
                     }
                 }
             }
