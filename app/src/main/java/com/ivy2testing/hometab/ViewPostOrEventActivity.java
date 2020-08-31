@@ -38,6 +38,7 @@ import androidx.transition.TransitionManager;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -256,6 +257,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             author_id = getIntent().getStringExtra("author_id");
             if (postId != null && postUni != null) {
                 checkNotifications(postId);
+                addToViewIds();
                 db.collection("universities").document(postUni).collection("posts").document(postId).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
                         if (task.getResult().get("is_event") instanceof Boolean && (Boolean) task.getResult().get("is_event"))
@@ -386,6 +388,9 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
         });
     }
 
+    private void addToViewIds(){
+        db.collection("universities").document(postUni).collection("posts").document(postId).update("views_id", FieldValue.arrayUnion(this_user.getId()));
+    }
 
 
 

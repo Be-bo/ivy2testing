@@ -111,7 +111,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_margin="8dp"
                                     android:elevation="2dp"
-                                    app:cardBackgroundColor="@color/light_grey"
+                                    app:cardBackgroundColor="@color/background_grey"
                                     app:cardCornerRadius="10dp">
 
                                         <androidx.constraintlayout.widget.ConstraintLayout
@@ -162,7 +162,7 @@
                                                     app:layout_constraintBottom_toBottomOf="parent"
                                                     app:layout_constraintEnd_toStartOf="@+id/writeComment_commentButton"
                                                     app:layout_constraintTop_toTopOf="parent"
-                                                    app:srcCompat="@android:drawable/ic_menu_gallery" />
+                                                    android:src="@drawable/ic_baseline_photo_24" />
 
                                                 <ImageButton
                                                     android:id="@+id/writeComment_postImageConfirm"
