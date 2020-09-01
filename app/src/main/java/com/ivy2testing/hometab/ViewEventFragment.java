@@ -340,19 +340,23 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
 
     // OnClick for See All: Launch a new Activity to view users
     private void seeAllGoingUsers() {
-        Intent intent = new Intent(getContext(), SeeAllUsersActivity.class);
-        Log.d(TAG, "Starting SeeAll Activity to see all going users");
-        intent.putExtra("title", "Going Users");
-        intent.putExtra("this_user", this_user);
-        intent.putExtra("uni_domain", event.getUni_domain());
-        intent.putExtra("user_ids", (ArrayList<String>) event.getGoing_ids());
-        startActivityForResult(intent, Constant.SEEALL_USERS_REQUEST_CODE);
+        if(this_user != null){
+            Intent intent = new Intent(getContext(), SeeAllUsersActivity.class);
+            Log.d(TAG, "Starting SeeAll Activity to see all going users");
+            intent.putExtra("title", "Going Users");
+            intent.putExtra("this_user", this_user);
+            intent.putExtra("uni_domain", event.getUni_domain());
+            intent.putExtra("user_ids", (ArrayList<String>) event.getGoing_ids());
+            startActivityForResult(intent, Constant.SEEALL_USERS_REQUEST_CODE);
+        }else{
+            Toast.makeText(getContext(), "You have to log in.", Toast.LENGTH_LONG).show();
+        }
     }
 
     // View a user's profile
     @Override
     public void onPersonClicked(int position) {
-        if (getActivity() != null) {
+        if (getActivity() != null && this_user != null) {
 
             // We don't know if it is a student but StudentProfile will automatically
             // transition to OrganizationProfile if user is not a student.
@@ -362,7 +366,7 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
             intent.putExtra("student_to_display_uni", event.getUni_domain());
             intent.putExtra("this_user", this_user);
             startActivity(intent);
-        } else Log.e(TAG, "Parent Activity was null!");
+        } else Toast.makeText(getContext(), "You have to log in.", Toast.LENGTH_LONG).show();
     }
 
     // Add user to going list
