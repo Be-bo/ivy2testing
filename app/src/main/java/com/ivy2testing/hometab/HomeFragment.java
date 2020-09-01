@@ -149,7 +149,7 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedClickListe
         Post clickedPost = campus_adapter.getPost_array_list().get(position); //<- this is the clicked event/post
         switch (clicked_id) {
             case R.id.item_feed_author_preview_image:
-                viewUserProfile(clickedPost.getAuthor_id(), clickedPost.getUni_domain(), clickedPost.getAuthor_is_organization());
+                if (this_user != null) viewUserProfile(clickedPost.getAuthor_id(), clickedPost.getUni_domain(), clickedPost.getAuthor_is_organization());
                 break;
             case R.id.item_feed_pinned_text:
                 viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id(), clickedPost.getAuthor_id()); //can only pin events to posts on that campus -> same uni

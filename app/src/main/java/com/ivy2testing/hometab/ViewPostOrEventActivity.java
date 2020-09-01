@@ -147,8 +147,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.view_event_post_bar_menu, menu);
         options_menu = menu;
-        if (this_user != null && author_id != null && !author_id.equals("") && author_id.equals(this_user.getId()))
-            options_menu.setGroupVisible(0, true);
+        if(this_user != null && author_id != null && !author_id.equals("") && author_id.equals(this_user.getId())) options_menu.setGroupVisible(0, true);
         else  options_menu.setGroupVisible(0, false);
         return true;
     }
@@ -390,9 +389,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     }
 
     private void addToViewIds(){
-        if (this_user != null)
-        db.collection("universities").document(postUni).collection("posts").document(postId)
-                .update("views_id", FieldValue.arrayUnion(this_user.getId()));
+        if(postId != null && !postId.equals("") && postUni != null && !postUni.equals("") && this_user != null)
+        db.collection("universities").document(postUni).collection("posts").document(postId).update("views_id", FieldValue.arrayUnion(this_user.getId()));
     }
 
 
@@ -485,17 +483,19 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
     // Clicked on username or user pic -> go to author profile
     public void viewAuthorProfile(View view) {
-        if (post == null) {
-            Log.e(TAG, "Post object is null! Cannot view author's profile");
-            return;
-        } // author field wasn't define
+        if(this_user != null){
+            if (post == null) {
+                Log.e(TAG, "Post object is null! Cannot view author's profile");
+                return;
+            } // author field wasn't define
 
-        if (this_user != null && this_user.getId().equals(post.getAuthor_id())) {
-            Log.d(TAG, "Viewer is author. Doesn't make sense to view your own profile this way.");
-        } // Do nothing if viewer == author
+            if (this_user.getId().equals(post.getAuthor_id())) {
+                Log.d(TAG, "Viewer is author. Doesn't make sense to view your own profile this way.");
+            } // Do nothing if viewer == author
 
 
-        viewUserProfile(post.getAuthor_id(), post.getUni_domain(), post.getAuthor_is_organization());
+            viewUserProfile(post.getAuthor_id(), post.getUni_domain(), post.getAuthor_is_organization());
+        }
     }
 
     // onClick for Comments

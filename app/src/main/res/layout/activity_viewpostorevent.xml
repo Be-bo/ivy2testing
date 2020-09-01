@@ -79,7 +79,7 @@
 
                                 <TextView
                                     android:id="@+id/viewPost_commentsTitle"
-                                    style="@style/StandardClickableText"
+                                    style="@style/LargeText"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/comments" />
@@ -162,6 +162,7 @@
                                                     app:layout_constraintBottom_toBottomOf="parent"
                                                     app:layout_constraintEnd_toStartOf="@+id/writeComment_commentButton"
                                                     app:layout_constraintTop_toTopOf="parent"
+                                                    android:background="@color/background_grey"
                                                     android:src="@drawable/ic_baseline_photo_24" />
 
                                                 <ImageButton
