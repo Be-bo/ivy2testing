@@ -147,7 +147,8 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.view_event_post_bar_menu, menu);
         options_menu = menu;
-        if(author_id != null && !author_id.equals("") && author_id.equals(this_user.getId())) options_menu.setGroupVisible(0, true);
+        if (this_user != null && author_id != null && !author_id.equals("") && author_id.equals(this_user.getId()))
+            options_menu.setGroupVisible(0, true);
         else  options_menu.setGroupVisible(0, false);
         return true;
     }
@@ -389,7 +390,9 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     }
 
     private void addToViewIds(){
-        db.collection("universities").document(postUni).collection("posts").document(postId).update("views_id", FieldValue.arrayUnion(this_user.getId()));
+        if (this_user != null)
+        db.collection("universities").document(postUni).collection("posts").document(postId)
+                .update("views_id", FieldValue.arrayUnion(this_user.getId()));
     }
 
 
