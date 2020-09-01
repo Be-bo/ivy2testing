@@ -57,7 +57,6 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
     private TextView tv_pinned;
     private RecyclerView going_recycler;
     private TextView tv_seeAll;
-    private ImageButton button_going;
     private TextView nobody_going_text;
     private TextView link_button_text;
     private TextView going_button_text;
@@ -76,6 +75,7 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
     private ImageButton share_button;
     private ImageButton link_button;
     private ImageButton calendar_button;
+    private ImageButton button_going;
 
 
     // Constructor
@@ -145,9 +145,10 @@ public class ViewEventFragment extends Fragment implements CircleUserAdapter.OnP
         setGoingLayout();
         setUpGoingAdapter();
 
-        // Hide button if user is not signed in
-        if (this_user == null || !this_user.getUni_domain().equals(event.getUni_domain())) { //either not logged in, or not from this uni, or is org -> can't say going // now updated to not show button tray
-            button_tray.setVisibility(View.GONE);
+        // Hide going button if user is not signed in
+        if (this_user == null || !this_user.getUni_domain().equals(event.getUni_domain())) { //either not logged in, or not from this uni, or is org -> can't say going
+            button_going.setVisibility(View.GONE);
+            going_button_text.setVisibility(View.GONE);
         } else if (event.getGoing_ids().contains(this_user.getId())){
             button_going.setImageResource(R.drawable.ic_going);
             going_button_text.setText(getString(R.string.going));
