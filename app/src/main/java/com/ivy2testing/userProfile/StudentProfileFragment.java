@@ -227,7 +227,7 @@ public class StudentProfileFragment extends Fragment {
                 .addOnCompleteListener(task -> {
                     if (getContext()!= null){
                         if (task.isSuccessful() && task.getResult() != null) Glide.with(getContext()).load(task.getResult()).into(profile_image);
-                        else Toast.makeText(getContext(), "Failed to get profile image.", Toast.LENGTH_LONG).show();
+//                        else Toast.makeText(getContext(), "Failed to get profile image.", Toast.LENGTH_LONG).show();
                     }
                     setUpViews();
                 });

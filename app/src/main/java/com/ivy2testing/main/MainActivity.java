@@ -195,7 +195,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 else Toast.makeText(this, "You are not logged in...", Toast.LENGTH_LONG).show();
                 break;
             case R.id.drawer_change_campus_item:
-                openUniChangeDialog();
+                if(this_user != null){
+                    Toast.makeText(this, "Sorry, for now you have to be logged out to do that. :-(", Toast.LENGTH_SHORT).show();
+                }else{
+                    openUniChangeDialog();
+                }
                 break;
         }
         return false;
