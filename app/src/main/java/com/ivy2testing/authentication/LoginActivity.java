@@ -263,7 +263,7 @@ public class LoginActivity extends AppCompatActivity {
                     transToMainLoggedIn();
                 } else {
                     toastMessage("Email not verified yet!");
-                    showResendEmail();
+                    showResendEmail(user);
                     auth.signOut();
                     allowInteraction();
                 }
@@ -274,16 +274,19 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void showResendEmail(){
+    private void showResendEmail(FirebaseUser user){
         resend_email_textview.setVisibility(View.VISIBLE);
         resend_email_textview.setOnClickListener(view -> {
-            if(auth.getCurrentUser()!=null){
-                auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(task -> {
+            if(user!=null){
+                user.sendEmailVerification().addOnCompleteListener(task -> {
                    if(task.isSuccessful()){
                        toastMessage("Verification email sent!");
                        resend_email_textview.setVisibility(View.GONE);
                    }
-                   else toastMessage("Error sending verification email :-(. Try restarting the app.");
+                   else {
+                       toastMessage("Error sending verification email :-( Try restarting the app.");
+                       Log.e(TAG, "Error sending verification", task.getException());
+                   }
                 });
             }
         });
