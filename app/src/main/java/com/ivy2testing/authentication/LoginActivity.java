@@ -261,11 +261,10 @@ public class LoginActivity extends AppCompatActivity {
                     // Save uni domain for auto-logins and send off to MainActivity
                     barInteraction();
                     transToMainLoggedIn();
-                }
-                else {
-                    auth.signOut();
+                } else {
                     toastMessage("Email not verified yet!");
                     showResendEmail();
+                    auth.signOut();
                     allowInteraction();
                 }
             } else {
