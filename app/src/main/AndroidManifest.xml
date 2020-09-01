@@ -33,12 +33,12 @@
 
         <activity
             android:name=".authentication.StudentSignUpActivity"
-            android:windowSoftInputMode="adjustNothing"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"/>
 
         <activity
             android:name=".authentication.OrganizationSignUpActivity"
-            android:windowSoftInputMode="adjustNothing"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"/>
 
         <activity
