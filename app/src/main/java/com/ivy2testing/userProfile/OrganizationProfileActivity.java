@@ -98,9 +98,11 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
 
     @Override
     public void onPersonClicked(int position) {
+        Log.d(TAG, "TRYING TO GO TO PROFILE");
         Intent intent = new Intent(this, StudentProfileActivity.class);
         intent.putExtra("this_user", this_user);
         intent.putExtra("student_to_display_id", person_adapter.getItem(position));
+        intent.putExtra("student_to_display_uni", org_to_display.getUni_domain());
         startActivity(intent);
     }
 

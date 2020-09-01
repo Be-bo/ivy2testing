@@ -6,10 +6,10 @@
         android:icon="@drawable/ic_hat"
         android:title="Change Campus"/>
 
-    <item
-        android:id="@+id/drawer_contact_us_item"
-        android:icon="@drawable/ic_baseline_contact_support_placeholder"
-        android:title="Contact Us"/>
+<!--    <item-->
+<!--        android:id="@+id/drawer_contact_us_item"-->
+<!--        android:icon="@drawable/ic_baseline_contact_support_placeholder"-->
+<!--        android:title="Contact Us"/>-->
 
     <item
         android:id="@+id/drawer_terms_item"

@@ -184,9 +184,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case R.id.drawer_contact_us_item:
-                transToContactUs();
-                break;
+//            case R.id.drawer_contact_us_item:
+//                transToContactUs();
+//                break;
             case R.id.drawer_terms_item:
                 transToTerms();
                 break;

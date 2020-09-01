@@ -495,6 +495,12 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
 
 
             viewUserProfile(post.getAuthor_id(), post.getUni_domain(), post.getAuthor_is_organization());
+        }else{
+            if(post.getAuthor_is_organization()){
+                Toast.makeText(this, "Sign in to see this organizations' posts and events.", Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(this, "Sign in to see their profile.", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -616,7 +622,7 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
                             User user = task1.getResult().toObject(User.class);
                             if(user != null && user.getMessaging_token() != null){
                                 if(post.getIs_event()){
-                                    if(isImageComment) notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" commented on your event.", this_user.getName() + " commented with an image.", "");
+                                    if(isImageComment) notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" commented on your event.", this_user.getName() + " commented on.", "");
                                     else notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" commented on your event.", this_user.getName() + " commented with an image.", "");
                                 }else{
                                     if(isImageComment) notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" commented on your post.", this_user.getName() + " commented with an image.", "");

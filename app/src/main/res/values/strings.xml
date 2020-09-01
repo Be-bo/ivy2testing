@@ -68,7 +68,7 @@
     <string name="link_placeholder">Link</string>
     <string name="share">Share</string>
     <string name="whos_going">Who\'s Going:</string>
-    <string name="link_optional">Link (optional)</string>
+    <string name="link_optional">Link (optional, include the full url)</string>
 
 
     <!-- User Profile -->

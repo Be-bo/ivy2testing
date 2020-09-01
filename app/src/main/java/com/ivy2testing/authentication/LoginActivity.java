@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         declareViews();
-
+        setTitle("Login");
         // Continue with rest of sign up process
         allowInteraction();
         setTextWatcher();
@@ -280,7 +280,7 @@ public class LoginActivity extends AppCompatActivity {
             if(user!=null){
                 user.sendEmailVerification().addOnCompleteListener(task -> {
                    if(task.isSuccessful()){
-                       toastMessage("Verification email sent!");
+                       toastMessage("Verification email sent! It can take up to 24hrs.");
                        resend_email_textview.setVisibility(View.GONE);
                    }
                    else {

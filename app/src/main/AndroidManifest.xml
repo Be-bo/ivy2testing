@@ -42,6 +42,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:theme="@style/AppBarTheme"
             android:name=".authentication.LoginActivity"
             android:parentActivityName=".main.MainActivity"
             android:screenOrientation="portrait" />
