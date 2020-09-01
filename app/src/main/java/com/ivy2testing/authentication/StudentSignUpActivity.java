@@ -18,12 +18,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -37,6 +33,7 @@ import static com.ivy2testing.util.StaticDomainList.domain_list;
 import static com.ivy2testing.util.StaticDegreesList.degree_array;
 
 public class StudentSignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+    private static final String TAG = "StudentSignupActivity";
 
     private EditText email_editText;
     private EditText pass_editText;
@@ -88,30 +85,21 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         degree_spinner.setOnItemSelectedListener(this); // listeners set at onItemSelected & onNothingSelected
 
         // Focus Changed listeners
-        email_editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    emailCheck();
-                }
+        email_editText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                emailCheck();
             }
         });
 
-        pass_editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    passCheck();
-                }
+        pass_editText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                passCheck();
             }
         });
 
-        pass_confirm_editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    passConfirmCheck();
-                }
+        pass_confirm_editText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                passConfirmCheck();
             }
         });
 
@@ -121,26 +109,23 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         // On click it will check if the editTexts are correct (or else place an error + toast + become disabled)
         // Then check if the degree field is okay (or else place an error + toast + become disabled)
 
-        register_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO this line is causing the degree null -> degree selected issue  issue
-                if(getCurrentFocus()!=null){
-                    Objects.requireNonNull(getCurrentFocus()).clearFocus();
-                }
-                if (emailCheck() && passCheck() && passConfirmCheck()) {
-                    if (!degree.equals("Degree")) {
-                        barInteraction();
-                        createNewUser();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Please choose a degree.", Toast.LENGTH_LONG).show();
-                        ((TextView) degree_spinner.getSelectedView()).setError("Please choose a degree.");
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(), "One or more fields are incorrect. ", Toast.LENGTH_LONG).show();
-                }
-                register_button.setEnabled(false);
+        register_button.setOnClickListener(v -> {
+            //TODO this line is causing the degree null -> degree selected issue  issue
+            if(getCurrentFocus()!=null){
+                Objects.requireNonNull(getCurrentFocus()).clearFocus();
             }
+            if (emailCheck() && passCheck() && passConfirmCheck()) {
+                if (!degree.equals("Degree")) {
+                    barInteraction();
+                    createNewUser();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please choose a degree.", Toast.LENGTH_LONG).show();
+                    ((TextView) degree_spinner.getSelectedView()).setError("Please choose a degree.");
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "One or more fields are incorrect. ", Toast.LENGTH_LONG).show();
+            }
+            register_button.setEnabled(false);
         });
     }
 
@@ -251,27 +236,18 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
     // Else creates error toast
     private void createNewUser() {
         auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-
-                            if (auth.getCurrentUser() != null) {
-                                auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        registerInDB();
-                                    }
-                                });
-                            } else {
-                                allowInteraction();
-                                Toast.makeText(getApplicationContext(), "Registration Failed! We could not authenticate you.", Toast.LENGTH_LONG).show();
-                            }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        if (auth.getCurrentUser() != null) {
+                            registerInDB();
                         } else {
                             allowInteraction();
-                            email_editText.setError("Email already registered");
-                            Toast.makeText(getApplicationContext(), "Registration Failed! The email is already registered.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Registration Failed! We could not authenticate you.", Toast.LENGTH_LONG).show();
                         }
+                    } else {
+                        allowInteraction();
+                        email_editText.setError("Email already registered");
+                        Toast.makeText(getApplicationContext(), "Registration Failed! The email is already registered.", Toast.LENGTH_LONG).show();
                     }
                 });
     }
@@ -285,10 +261,17 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
                 if(task.isSuccessful() && task.getResult() != null){
                     this_student = new Student(id, degree, email);
                     this_student.setMessaging_token(task.getResult().getToken());
-                    Log.d("testudo", "token success, id: " + id);
-                    db_reference.collection("users").document(id).set(this_student).addOnSuccessListener(aVoid -> openDialogComplete()).addOnFailureListener(e -> {
-                        Toast.makeText(getApplicationContext(), "Profile creation failed. Please try again later.", Toast.LENGTH_LONG).show();
-                        returnToLogin();
+                    db_reference.collection("users").document(id).set(this_student).addOnCompleteListener(task1 -> {
+                        if (task1.isSuccessful()){
+                            openDialogComplete();
+                            if (auth.getCurrentUser() != null)
+                                auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(task2 -> Log.d(TAG,"Email verification sent."));
+                        }
+                        else {
+                            Toast.makeText(getApplicationContext(), "Profile creation failed. Please try again later.", Toast.LENGTH_LONG).show();
+                            returnToLogin();
+                        }
+                        auth.signOut();
                     });
                 }
             });
@@ -312,12 +295,9 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
         Button okButton = infoDialog.findViewById(R.id.positive_button);
         //TextView infoText = infoDialog.findViewById(R.id.Info_textview);
         //infoText.setText(info);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                infoDialog.cancel();
-                returnToLogin();
-            }
+        okButton.setOnClickListener(v -> {
+            infoDialog.cancel();
+            returnToLogin();
         });
         ColorDrawable transparentColor = new ColorDrawable(Color.TRANSPARENT);
         if (infoDialog.getWindow() != null)

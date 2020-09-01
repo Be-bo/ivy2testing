@@ -20,12 +20,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -286,25 +282,17 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         String email = email_editText.getText().toString().trim();
         String password = pass_editText.getText().toString();
 
-        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    if (auth.getCurrentUser() != null) {
-                        auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                registerInDB();
-                            }
-                        });
-                    } else {
-                        toastError("Registration Failed! We could not authenticate you");
-                        allowInteraction();
-                    }
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                if (auth.getCurrentUser() != null) {
+                    registerInDB();
                 } else {
-                    toastError("Registration Failed! The email is already registered");
+                    toastError("Registration Failed! We could not authenticate you");
                     allowInteraction();
                 }
+            } else {
+                toastError("Registration Failed! The email is already registered");
+                allowInteraction();
             }
         });
     }
@@ -321,11 +309,16 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
                     orgUser.setMessaging_token(task.getResult().getToken());
 
                     dbRef.collection("users").document(id).set(orgUser).addOnCompleteListener(task1 -> {
-                                if (task1.isSuccessful()) openDialogComplete();
+                                if (task1.isSuccessful()){
+                                    openDialogComplete();
+                                    if (auth.getCurrentUser() != null)
+                                        auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(task2 -> Log.d(TAG,"Email verification sent."));
+                                }
                                 else {
                                     Toast.makeText(getApplicationContext(), "Profile creation failed. Please try again later.", Toast.LENGTH_LONG).show();
                                     returnToLogin();
                                 }
+                                auth.signOut();
                             });
                 }
             });
@@ -378,12 +371,9 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
         final Dialog infoDialog = new Dialog(this);
         infoDialog.setContentView(R.layout.dialog_signup_success);
         Button okButton = infoDialog.findViewById(R.id.positive_button);
-        okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                infoDialog.cancel();
-                returnToLogin();
-            }
+        okButton.setOnClickListener(v -> {
+            infoDialog.cancel();
+            returnToLogin();
         });
         ColorDrawable transparentColor = new ColorDrawable(Color.TRANSPARENT);
         if (infoDialog.getWindow() != null)
