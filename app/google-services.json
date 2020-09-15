@@ -1,35 +1,42 @@
 {
   "project_info": {
-    "project_number": "679752248399",
-    "firebase_url": "https://ivy2testing.firebaseio.com",
-    "project_id": "ivy2testing",
-    "storage_bucket": "ivy2testing.appspot.com"
+    "project_number": "408928471838",
+    "firebase_url": "https://ivy2development.firebaseio.com",
+    "project_id": "ivy2development",
+    "storage_bucket": "ivy2development.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:679752248399:android:f0e9965e7e92180b7f8e3a",
+        "mobilesdk_app_id": "1:408928471838:android:9205a3a33ec6843666d70f",
         "android_client_info": {
           "package_name": "com.ivy2testing"
         }
       },
       "oauth_client": [
         {
-          "client_id": "679752248399-3s4iknuajpag16np8citv90c9n3bfjq7.apps.googleusercontent.com",
+          "client_id": "408928471838-rna72f34gu6a62fv3v6i6eq9k7u1etbc.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD-U6Ykh0sSwpGUNCr6gBTk1SeSkN4Mh7A"
+          "current_key": "AIzaSyD9bTZ7QBpEV26Kv8iuQQ3dT-FszLrp-EY"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "679752248399-3s4iknuajpag16np8citv90c9n3bfjq7.apps.googleusercontent.com",
+              "client_id": "408928471838-rna72f34gu6a62fv3v6i6eq9k7u1etbc.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "408928471838-frtsvd7msgsggrcjhi4r0l4bbosjma2v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ivythesocialnetwork.ivy"
+              }
             }
           ]
         }
