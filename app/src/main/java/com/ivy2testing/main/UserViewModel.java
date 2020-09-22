@@ -68,6 +68,6 @@ public class UserViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        listenerRegistration.remove();
+        if(listenerRegistration != null) listenerRegistration.remove();
     }
 }

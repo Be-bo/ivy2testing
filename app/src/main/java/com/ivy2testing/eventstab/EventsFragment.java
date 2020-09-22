@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -180,30 +181,34 @@ public class EventsFragment extends Fragment implements EventAdapter.EventClickL
             db.collection("universities").document(Utils.getCampusUni(getContext())).get().addOnCompleteListener(task -> {
                 if(task.isSuccessful() && task.getResult() != null){
                     String featuredId = String.valueOf(task.getResult().get("featured_id"));
-                    db.collection("universities").document(Utils.getCampusUni(getContext())).collection("posts").document(featuredId).get().addOnCompleteListener(task1 -> {
-                        if(task1.isSuccessful() && task1.getResult() != null){
-                            Event featuredEvent = task1.getResult().toObject(Event.class);
-                            if(featuredEvent != null && featuredEvent.getVisual() != null && featuredEvent.getVisual().contains("/")){
-                                stor.child(featuredEvent.getVisual()).getDownloadUrl().addOnCompleteListener(task2 -> {
-                                    if(task2.isSuccessful() && task2.getResult() != null && getContext() != null){
-                                        Glide.with(getContext()).load(task2.getResult()).into(featured_imageview);
-                                        featured_cardview.setOnClickListener(view -> viewEvent(featuredEvent));
-                                        featured_progress_bar.setVisibility(View.GONE);
-                                        featured_cardview.setVisibility(View.VISIBLE);
-                                    }
-                                });
-                            }else hideFeatured();
-                        }else hideFeatured();
-                    });
-                }else hideFeatured();
+                    if(!featuredId.equals("null") && !featuredId.equals("")){
+                        db.collection("universities").document(Utils.getCampusUni(getContext())).collection("posts").document(featuredId).get().addOnCompleteListener(task1 -> {
+                            if(task1.isSuccessful() && task1.getResult() != null){
+                                Event featuredEvent = task1.getResult().toObject(Event.class);
+                                if(featuredEvent != null && featuredEvent.getVisual() != null && featuredEvent.getVisual().contains("/")){
+                                    stor.child(featuredEvent.getVisual()).getDownloadUrl().addOnCompleteListener(task2 -> {
+                                        if(task2.isSuccessful() && task2.getResult() != null && getContext() != null){
+                                            Glide.with(getContext()).load(task2.getResult()).into(featured_imageview);
+                                            featured_cardview.setOnClickListener(view -> viewEvent(featuredEvent));
+                                            featured_progress_bar.setVisibility(View.GONE);
+                                            featured_cardview.setVisibility(View.VISIBLE);
+                                        }
+                                    });
+                                }else setFeaturedPlaceholder();
+                            }else setFeaturedPlaceholder();
+                        });
+                    } else setFeaturedPlaceholder();
+                }else setFeaturedPlaceholder();
             });
         }
     }
 
-    private void hideFeatured(){
-        featured_title.setVisibility(View.GONE);
-        featured_cardview.setVisibility(View.GONE);
+    private void setFeaturedPlaceholder(){
+        featured_title.setVisibility(View.VISIBLE);
+        featured_cardview.setVisibility(View.VISIBLE);
+        featured_cardview.setElevation(0f);
         featured_progress_bar.setVisibility(View.GONE);
+        featured_cardview.setOnClickListener(view -> Toast.makeText(getContext(), "Shoot us an email at theivysocialnetwork@gmail.com", Toast.LENGTH_LONG).show());
     }
 
     private void refreshLayoutSetup() {

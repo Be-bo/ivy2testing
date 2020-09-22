@@ -219,11 +219,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void signOut(){
         auth.addAuthStateListener(firebaseAuth -> {
             if(auth.getCurrentUser() == null){
-                Intent intent = new Intent(this, LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.putExtra("signed_out", true);
-                startActivity(intent);
-                finish();
+                finish(); //restart this activity
+                startActivity(getIntent());
             }
         });
         db.collection("users").document(this_user.getId()).update("messaging_token", "none").addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -276,14 +273,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void changeCampus(String newUni){
         Utils.setCampusUni(newUni, this);
         changeUniLogo();
-        home_fragment.changeUni();
-        if(event_fragment != null) event_fragment.changeUni();
-        updateTopLog();
+        finish();
+        startActivity(getIntent());
     }
 
-    private void updateTopLog(){
-
-    }
 
 
 

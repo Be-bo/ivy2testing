@@ -615,18 +615,21 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
     private void sendCommentNotification(boolean isImageComment){
         db.collection("universities").document(postUni).collection("posts").document(postId).get().addOnCompleteListener(task -> {
             if(task.isSuccessful() && task.getResult() != null){
-                Post post = task.getResult().toObject(Post.class);
+                Post post;
+                if(task.getResult().get("is_event") instanceof Boolean && (Boolean) task.getResult().get("is_event")) post = task.getResult().toObject(Event.class);
+                else post = task.getResult().toObject(Post.class);
+
                 if(post != null && post.getAuthor_id() != null && !this_user.getId().equals(post.getAuthor_id())){
                     db.collection("users").document(post.getAuthor_id()).get().addOnCompleteListener(task1 -> {
                         if(task1.isSuccessful() && task1.getResult() != null){
                             User user = task1.getResult().toObject(User.class);
                             if(user != null && user.getMessaging_token() != null){
                                 if(post.getIs_event()){
-                                    if(isImageComment) notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" commented on your event.", this_user.getName() + " commented on.", "");
-                                    else notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" commented on your event.", this_user.getName() + " commented with an image.", "");
+                                    if(!isImageComment) notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" commented on your event.", this_user.getName() + " commented on: " + ((Event)post).getName(), "");
+                                    else notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" commented on your event.", this_user.getName() + " commented with an image on: " + ((Event)post).getName(), "");
                                 }else{
-                                    if(isImageComment) notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" commented on your post.", this_user.getName() + " commented with an image.", "");
-                                    else notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" commented on your post.", this_user.getName() + " commented " + mWriteComment.getText().toString(), "");
+                                    if(isImageComment) notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" commented on your post.", this_user.getName() + " commented with an image on: "+post.getText(), "");
+                                    else notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" commented on your post.", this_user.getName() + " commented on: " + post.getText(), "");
                                 }
                                 notification_sender.sendNotification(this);
                             }
