@@ -137,7 +137,7 @@ public class ProfilePostAdapter extends RecyclerView.Adapter<ProfilePostViewHold
                         }
                     }
                     notifyDataSetChanged();
-                }else{
+                } else {
                     loaded_all_posts = true;
                 }
             }
