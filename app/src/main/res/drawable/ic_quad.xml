@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- selected state -->
+    <!-- unselected state (default) -->
+    <item android:state_pressed="false" android:state_selected="true" android:drawable="@drawable/ic_quad_selected" />
+    <item android:drawable="@drawable/ic_quad_unselected" />
+</selector>
