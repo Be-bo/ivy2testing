@@ -17,6 +17,12 @@
             />
 
         <item
+            android:id="@+id/tab_bar_quad"
+            android:title="@string/quad"
+            android:icon="@drawable/ic_quad"
+            />
+
+        <item
             android:id="@+id/tab_bar_profile"
             android:title="@string/profile"
             android:icon="@drawable/ic_profile"

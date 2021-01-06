@@ -29,6 +29,8 @@ public final class Constant {
     public static final int EVENT_ADAPTER_UPCOMING_LIMIT = 15;
     public static final int ALL_EVENTS_LOAD_LIMIT = 20;
 
+    public static final int USERS_LOAD_LIMIT = 10;
+
     public static final int FEED_ADAPTER_SEEALL = 1;
     public static final int FEED_ADAPTER_CAMPUS = 2;
     public static final int FEED_ADAPTER_EVENTS = 3;
