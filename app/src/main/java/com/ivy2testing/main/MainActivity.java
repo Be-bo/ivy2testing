@@ -40,12 +40,13 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.authentication.LoginActivity;
+import com.ivy2testing.chat.ChatFragment;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.R;
 import com.ivy2testing.eventstab.EventsFragment;
 import com.ivy2testing.hometab.HomeFragment;
 import com.ivy2testing.hometab.CreatePostActivity;
-import com.ivy2testing.notifications.NotificationSender;
+import com.ivy2testing.quad.QuadFragment;
 import com.ivy2testing.terms.TermsActivity;
 import com.ivy2testing.userProfile.NotificationCenterActivity;
 import com.ivy2testing.userProfile.OrganizationProfileFragment;
@@ -60,11 +61,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-
     // MARK: Variables and Constants
-
     private final static String TAG = "MainActivityTag";
-    private NavigationView drawer_nav_view;
     private DrawerLayout drawer;
     private BottomNavigationView bottom_navigation;
     private FrameLayout loading_layout;
@@ -76,12 +74,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private StorageReference stor = FirebaseStorage.getInstance().getReference();
     private FirebaseAuth auth = FirebaseAuth.getInstance();
-    private UserViewModel user_view_model;
     private User this_user;
 
     private SectionsPageAdapter tab_adapter = new SectionsPageAdapter(getSupportFragmentManager());
     private OrganizationProfileFragment org_fragment = new OrganizationProfileFragment();
     private StudentProfileFragment stud_fragment = new StudentProfileFragment();
+    private ChatFragment chat_fragment = new ChatFragment();
+    private QuadFragment quad_fragment = new QuadFragment();
     private NoSwipeViewPager tab_view_pager;
     private boolean login_setup = false;
 
@@ -150,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void setUpToolbar() {
         Toolbar main_toolbar = findViewById(R.id.main_toolbar_id);
-        drawer_nav_view = findViewById(R.id.main_nav_view);
+        NavigationView drawer_nav_view = findViewById(R.id.main_nav_view);
         setSupportActionBar(main_toolbar);
         drawer = findViewById(R.id.main_layout_drawer);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, main_toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -223,16 +222,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(getIntent());
             }
         });
-        db.collection("users").document(this_user.getId()).update("messaging_token", "none").addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Utils.deleteThis_user();
-                Utils.clearNotif_list();
-                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                assert notificationManager != null;
-                notificationManager.cancelAll();
-                auth.signOut();
-            }
+        db.collection("users").document(this_user.getId()).update("messaging_token", "none").addOnCompleteListener(task -> {
+            Utils.deleteThis_user();
+            Utils.clearNotif_list();
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            assert notificationManager != null;
+            notificationManager.cancelAll();
+            auth.signOut();
         });
 
         // Just in case? // TODO
@@ -296,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void attemptLogin(){
         startLoading();
-        user_view_model = new ViewModelProvider(this).get(UserViewModel.class);
+        UserViewModel user_view_model = new ViewModelProvider(this).get(UserViewModel.class);
         if(auth.getCurrentUser() != null && auth.getUid() != null){
             user_view_model.startListening(auth.getUid());
             user_view_model.getThis_user().observe(this, (User updatedUser) -> {
@@ -351,10 +347,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setUpLoggedInInteraction() { //this method will set up all the interactive elements the user has access to when logged in, by default they're hidden (tab bar + post btn)
-        bottom_navigation.getMenu().findItem(R.id.tab_bar_profile).setVisible(true);
+
+        // Set logged-in items visible
+        for (int id : new int[]{R.id.tab_bar_chat, R.id.tab_bar_profile, R.id.tab_bar_quad})
+            bottom_navigation.getMenu().findItem(id).setVisible(true);
+
         bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
         function_button.setImageResource(R.drawable.ic_create);
         function_button.setOnClickListener(view -> transToCreatePost(0));
+
+        // Add fragments in order (left to right
+        tab_adapter.addFragment(chat_fragment, "chat");
 
         if(event_fragment != null) event_fragment.refreshAdapters(); //if we're coming back from login events fragment already exists
         else{ //not coming back, starting the app already logged in
@@ -367,6 +370,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             tab_adapter.addFragment(home_fragment, "campus");
         }
 
+        tab_adapter.addFragment(quad_fragment, "quad");
+
         if (this_user.getIs_organization()) tab_adapter.addFragment(org_fragment, "organization");
         else tab_adapter.addFragment(stud_fragment, "student");
 
@@ -377,7 +382,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setUpNoLoginInteraction(){ //this will only set up home and events fragments (user not signed in they don't have access to anything else)
-        bottom_navigation.getMenu().findItem(R.id.tab_bar_profile).setVisible(false);
+
+        // Set logged-in items invisible
+        for (int id : new int[]{R.id.tab_bar_chat, R.id.tab_bar_profile, R.id.tab_bar_quad})
+            bottom_navigation.getMenu().findItem(id).setVisible(false);
+
         bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
         event_fragment = new EventsFragment(this, this_user);
         tab_adapter.addFragment(event_fragment, "event");
@@ -391,14 +400,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void setUpBottomNavigationInteraction(){ //this method sets up menu button clicks for the current bottom navigation bar
         bottom_navigation.setOnNavigationItemSelectedListener((menuItem) -> {
             switch (menuItem.getItemId()) {
+
                 case R.id.tab_bar_home:
                     setFunctionButton(R.id.tab_bar_home);
                     tab_view_pager.setCurrentItem(tab_adapter.getPosition("campus"));
                     return true;
+
                 case R.id.tab_bar_events:
                     setFunctionButton(R.id.tab_bar_events);
                     tab_view_pager.setCurrentItem(tab_adapter.getPosition("event"));
                     return true;
+
                 case R.id.tab_bar_profile:
                     setFunctionButton(R.id.tab_bar_profile);
                     if (this_user.getIs_organization()) {
@@ -408,6 +420,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         if (!stud_fragment.isIs_set_up()) stud_fragment.setUpProfile();
                         tab_view_pager.setCurrentItem(tab_adapter.getPosition("student"));
                     }
+                    return true;
+
+                case R.id.tab_bar_chat:
+                    setFunctionButton(R.id.tab_bar_chat);
+                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("chat"));
+                    return true;
+
+                case R.id.tab_bar_quad:
+                    setFunctionButton(R.id.tab_bar_quad);
+                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("quad"));
                     return true;
             }
             return false;
@@ -494,21 +516,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     private void initFCM(){
-        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-            @Override
-            public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                if (!task.isSuccessful()) {
-                    Log.w("TAG", "getInstanceId failed", task.getException());
-                    return;
-                }
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
+            if (!task.isSuccessful() || task.getResult() == null) {
+                Log.w("TAG", "getInstanceId failed", task.getException());
+                return;
+            }
 
-                // Get new Instance ID token
-                String token = task.getResult().getToken();
-                Utils.setThis_user(this_user);
-                if(!token.equals(this_user.getMessaging_token())){
-                    Utils.sendRegistrationToServer(token);
-                    this_user.setMessaging_token(token);
-                }
+            // Get new Instance ID token
+            String token = task.getResult().getToken();
+            Utils.setThis_user(this_user);
+            if(!token.equals(this_user.getMessaging_token())){
+                Utils.sendRegistrationToServer(token);
+                this_user.setMessaging_token(token);
             }
         });
         //sendRegistrationToServer(token);

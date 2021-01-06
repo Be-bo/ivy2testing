@@ -9,6 +9,6 @@
       />
   <path
       android:fillColor="@color/notification"
-      android:pathData="M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"
+      android:pathData="M12,8 A4,4 0 0,0 8,12 A4,4 0 0,0 12,16 A4,4 0 0,0 16,12 A4,4 0 0,0 12,8Z"
       />
 </vector>

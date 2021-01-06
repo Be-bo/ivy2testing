@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/ic_chat_selected"
-        android:state_pressed="false"
-        android:state_selected="true"/>
-
-    <item android:drawable="@drawable/ic_chat_unselected"/>
+    <!-- selected state -->
+    <!-- unselected state (default) -->
+    <item android:state_pressed="false" android:state_selected="true" android:drawable="@drawable/ic_chat_selected" />
+    <item android:drawable="@drawable/ic_chat_unselected" />
 
 </selector>

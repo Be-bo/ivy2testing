@@ -1,5 +1,6 @@
 package com.ivy2testing.main;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -17,7 +18,7 @@ public class SectionsPageAdapter extends FragmentPagerAdapter {
     private List<String> fragmentTitles = new ArrayList<>();
 
     SectionsPageAdapter(FragmentManager fm) {
-        super(fm);
+        super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
 
     void addFragment(Fragment fragment, String title){
@@ -36,6 +37,7 @@ public class SectionsPageAdapter extends FragmentPagerAdapter {
         else return 0;
     }
 
+    @NonNull
     @Override
     public Fragment getItem( int position) {
         return fragments.get(position);

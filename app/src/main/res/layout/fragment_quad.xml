@@ -7,7 +7,7 @@
 
     <TextView
         style="@style/LargeText"
-        android:text="CHAT"
+        android:text="QUAD"
         android:textAlignment="center"
         android:gravity="center"
         android:layout_width="wrap_content"

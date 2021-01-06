@@ -5,6 +5,12 @@
         android:checkableBehavior="single">
 
         <item
+            android:id="@+id/tab_bar_chat"
+            android:title="@string/events"
+            android:icon="@drawable/ic_chat"
+            />
+
+        <item
             android:id="@+id/tab_bar_events"
             android:title="@string/events"
             android:icon="@drawable/ic_calendar"
@@ -14,6 +20,12 @@
             android:id="@+id/tab_bar_home"
             android:title="@string/home"
             android:icon="@drawable/ic_home"
+            />
+
+        <item
+            android:id="@+id/tab_bar_quad"
+            android:title="@string/events"
+            android:icon="@drawable/ic_quad"
             />
 
         <item
