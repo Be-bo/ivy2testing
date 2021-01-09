@@ -32,11 +32,6 @@ import java.util.List;
 public class ProfilePostAdapter extends RecyclerView.Adapter<ProfilePostViewHolder> {
 
 
-
-
-
-
-
     // MARK: Base
 
     private static final int NEW_BATCH_TOLERANCE = 4;

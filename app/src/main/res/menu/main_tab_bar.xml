@@ -6,7 +6,7 @@
 
         <item
             android:id="@+id/tab_bar_chat"
-            android:title="@string/events"
+            android:title="@string/chat"
             android:icon="@drawable/ic_chat"
             />
 
@@ -24,7 +24,7 @@
 
         <item
             android:id="@+id/tab_bar_quad"
-            android:title="@string/events"
+            android:title="@string/quad"
             android:icon="@drawable/ic_quad"
             />
 

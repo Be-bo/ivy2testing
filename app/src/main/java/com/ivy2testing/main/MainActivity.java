@@ -29,14 +29,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.authentication.LoginActivity;
@@ -68,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FrameLayout loading_layout;
     private ImageButton function_button;
     private TextView ham_menu_uni_text;
-    private ImageView ham_memu_uni_image;
+    private ImageView ham_menu_uni_image;
     private ImageView toolbar_logo_image;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -166,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.getDrawerArrowDrawable().setColor(ContextCompat.getColor(this, R.color.interaction));
 
         View hView =  drawer_nav_view.getHeaderView(0);
-        ham_memu_uni_image = hView.findViewById(R.id.hamburger_menu_imageview);
+        ham_menu_uni_image = hView.findViewById(R.id.hamburger_menu_imageview);
         ham_menu_uni_text = hView.findViewById(R.id.hamburger_menu_bottomtext);
         changeUniLogo();
 
@@ -177,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ham_menu_uni_text.setText(Utils.getCampusUni(this));
         stor.child("unilogos/"+Utils.getCampusUni(this)+".png").getDownloadUrl().addOnCompleteListener(task -> {
             if(task.isSuccessful() && task.getResult() != null){
-                Glide.with(this).load(task.getResult()).into(ham_memu_uni_image);
+                Glide.with(this).load(task.getResult()).into(ham_menu_uni_image);
                 if(toolbar_logo_image != null) Glide.with(this).load(task.getResult()).into(toolbar_logo_image);
             }
         });
@@ -384,7 +381,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (this_user.getIs_organization()) tab_adapter.addFragment(org_fragment, "organization");
         else tab_adapter.addFragment(stud_fragment, "student");
 
-
         tab_view_pager.setAdapter(tab_adapter);
         tab_view_pager.setOffscreenPageLimit(4);
         setUpBottomNavigationInteraction();
@@ -407,6 +403,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setUpBottomNavigationInteraction();
     }
 
+    //Set up quad in bottom navigation
     private void setUpBottomNavigationInteraction(){ //this method sets up menu button clicks for the current bottom navigation bar
         bottom_navigation.setOnNavigationItemSelectedListener((menuItem) -> {
             switch (menuItem.getItemId()) {
@@ -419,6 +416,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 case R.id.tab_bar_events:
                     setFunctionButton(R.id.tab_bar_events);
                     tab_view_pager.setCurrentItem(tab_adapter.getPosition("event"));
+                    return true;
+
+                case R.id.tab_bar_quad:
+                    setFunctionButton(R.id.tab_bar_quad);
+                    if (!quad_fragment.isIs_set_up())
+                        quad_fragment.setUpQuad();
+                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("quad"));
                     return true;
 
                 case R.id.tab_bar_profile:
@@ -436,11 +440,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     setFunctionButton(R.id.tab_bar_chat);
                     tab_view_pager.setCurrentItem(tab_adapter.getPosition("chat"));
                     return true;
-
-                case R.id.tab_bar_quad:
-                    setFunctionButton(R.id.tab_bar_quad);
-                    tab_view_pager.setCurrentItem(tab_adapter.getPosition("quad"));
-                    return true;
             }
             return false;
         });
@@ -451,6 +450,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(this_user != null) {
             switch (tabId) {
                 case R.id.tab_bar_profile:
+                case R.id.tab_bar_quad:
                     function_button.setVisibility(View.GONE);
                     break;
                 case R.id.tab_bar_events:
