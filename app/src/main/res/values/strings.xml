@@ -140,7 +140,18 @@
     <string name="cant_view_comments">Log in to see the comments!</string>
 
 
-    <!-- There is a space before and after each item... using .trim in student signup -->
+    <!-- Chat -->
+    <string name="chatroom">Chatroom</string>
+    <string name="last_msg">Last Message</string>
+    <string name="delete">Delete</string>
+    <string name="delete_conversation">Delete Conversation</string>
+    <string name="error_noMessages">Be the first to chat!</string>
+    <string name="deleteRoom_title">Delete Conversation?</string>
+    <string name="deleteRoom_message">This conversation will be permanently deleted for you.</string>
+    <string name="deleteRoom">Conversation deleted</string>
+    <string name="error_deleteRoom">Failed to delete Conversation</string>
+
+    <!-- Degree List -->
     <string-array name="degree_list">
         <item>Accounting</item>
         <item>Actuarial Science</item>
@@ -255,6 +266,5 @@
         Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
         Praesent nulla orci, aliquam porttitor molestie at, tincidunt ut sapien. Sed pharetra lobortis elit quis iaculis.
     </string>
-
 
 </resources>

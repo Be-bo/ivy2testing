@@ -12,6 +12,8 @@
     <color name="transparent">#0000</color>
     <color name="android_default_bg">@color/background_grey</color>
 
+    <color name="red">#DB4D4D</color>
+
 <!--    TODO: replace in your code with the ones above please-->
     <color name="accent">#FF8C00</color>
     <color name="segmented_colour_bg">#EEEEEF</color>

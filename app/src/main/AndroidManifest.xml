@@ -125,6 +125,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppBarTheme"
             android:parentActivityName=".main.MainActivity"/>
+
+        <activity android:name=".chat.ChatroomActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBarTheme"
+            android:parentActivityName=".main.MainActivity"/>
+
         <service
             android:name=".notifications.NotificationHandler"
             android:exported="false">

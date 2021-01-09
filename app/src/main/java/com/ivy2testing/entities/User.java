@@ -25,6 +25,9 @@ public class User implements Parcelable {
     protected boolean is_club;
     protected boolean is_banned = false;
     protected boolean is_private = false;
+    protected List<String> messaging_users = new ArrayList<>(); // List of users currently holding a conversation with you
+    protected List<String> blocked_users = new ArrayList<>();   // List of users you have blocked
+    protected List<String> blockers = new ArrayList<>();        // List of users who have blocked you
     protected String registration_platform = "Android";
 
     /* Constructors
@@ -108,6 +111,21 @@ public class User implements Parcelable {
         return is_private;
     }
 
+    public List<String> getMessaging_users() {
+        if (messaging_users == null) return new ArrayList<>();
+        else return new ArrayList<>(messaging_users);          // Return copy
+    }
+
+    public List<String> getBlocked_users(){
+        if (blocked_users == null) return new ArrayList<>();
+        else return new ArrayList<>(blocked_users);          // Return copy
+    }
+
+    public List<String> getBlockers(){
+        if (blockers == null) return new ArrayList<>();
+        else return new ArrayList<>(blockers);          // Return copy
+    }
+
     /* Setters
 ***************************************************************************************************/
 
@@ -132,6 +150,31 @@ public class User implements Parcelable {
         this.is_private = is_private;
     }
 
+    public void addUserToMessagingList(String userId) {
+        if (userId != null && !userId.isEmpty()) messaging_users.add(userId);
+    }
+
+    public void deleteUserFromMessagingList(String userId) {
+        messaging_users.remove(userId);
+    }
+
+    public void addUserToBlockingList(String userId) {
+        if (userId != null && !userId.isEmpty()) blocked_users.add(userId);
+    }
+
+    public void deleteUserFromBockingList(String userId) {
+        blocked_users.remove(userId);
+    }
+
+    public void addUserToBlockerList(String userId) {
+        if (userId != null && !userId.isEmpty()) blockers.add(userId);
+    }
+
+    public void deleteUserFromBlockerList(String userId) {
+        blockers.remove(userId);
+    }
+
+
     /* Parcelable Methods
  ***************************************************************************************************/
 
@@ -146,6 +189,9 @@ public class User implements Parcelable {
         is_club = in.readByte() != 0;
         is_banned = in.readByte() != 0;
         is_private = in.readByte() != 0;
+        messaging_users = in.createStringArrayList();
+        blocked_users = in.createStringArrayList();
+        blockers = in.createStringArrayList();
         registration_platform = in.readString();
     }
 
@@ -178,6 +224,9 @@ public class User implements Parcelable {
         dest.writeByte((byte) (is_club ? 1 : 0));
         dest.writeByte((byte) (is_banned ? 1 : 0));
         dest.writeByte((byte) (is_private ? 1 : 0));
+        dest.writeStringList(messaging_users);
+        dest.writeStringList(blocked_users);
+        dest.writeStringList(blockers);
         dest.writeString(registration_platform);
     }
 }

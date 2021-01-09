@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private SectionsPageAdapter tab_adapter = new SectionsPageAdapter(getSupportFragmentManager());
     private OrganizationProfileFragment org_fragment = new OrganizationProfileFragment();
     private StudentProfileFragment stud_fragment = new StudentProfileFragment();
-    private ChatFragment chat_fragment = new ChatFragment();
+    private ChatFragment chat_fragment;
     private QuadFragment quad_fragment = new QuadFragment();
     private NoSwipeViewPager tab_view_pager;
     private boolean login_setup = false;
@@ -127,6 +127,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if(event_fragment != null) event_fragment.refreshAdapters();
                 }
                 break;
+            case Constant.NEWCHATROOM_REQUEST:
+                if (resultCode == RESULT_OK && chat_fragment != null)
+                    chat_fragment.refreshAdapter();
         }
     }
 

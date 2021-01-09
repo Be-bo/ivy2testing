@@ -19,6 +19,8 @@ public final class Constant {
     public static final int EDIT_ORGANIZATION_REQUEST_CODE = 108;
     public static final int CREATE_POST_REQUEST_CODE = 109;
     public static final int EDIT_POST_REQUEST_CODE = 110;
+    public static final int CHATROOM_REQUEST = 111;
+    public static final int NEWCHATROOM_REQUEST = 112;
 
 
     public static final int PROFILE_POST_GRID_ROW_COUNT = 3;
