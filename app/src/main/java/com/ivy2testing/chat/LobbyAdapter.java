@@ -34,8 +34,8 @@ public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHol
     }
 
 
-    /* Overridden Methods
-     ***************************************************************************************************/
+/* Overridden Methods
+***************************************************************************************************/
 
     @NonNull
     @Override
@@ -49,12 +49,14 @@ public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHol
     public void onBindViewHolder(@NonNull LobbyViewHolder holder, int position) {
         Chatroom this_chatroom = chatrooms.get(position);
 
-        // Set Chat Title
-        holder.tv_name.setText(this_chatroom.getMembers().get(0));
-        if (this_chatroom.getMembers().size() > 1 && this_username.equals(this_chatroom.getMembers().get(0)))
+        // Set Chat Title TODO
+        if (!this_chatroom.getMembers().isEmpty() && !this_username.equals(this_chatroom.getMembers().get(0)))
+            holder.tv_name.setText(this_chatroom.getMembers().get(0));
+        else if (this_chatroom.getMembers().size() > 1)
             holder.tv_name.setText(this_chatroom.getMembers().get(1));
+        else holder.tv_name.setText(R.string.chatroom);
 
-        // Set time_stamp
+        // Set time_stamp TODO
         if (this_chatroom.getLast_message_timestamp() != null) {
             holder.tv_lastMsg.setText(Utils.millisToDateTime(this_chatroom.getLast_message_timestamp()));
             holder.tv_lastMsg.setVisibility(View.VISIBLE);
@@ -67,8 +69,16 @@ public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHol
     }
 
 
-    /* View Holder subclass
-     ***************************************************************************************************/
+/* Firebase
+***************************************************************************************************/
+
+    //TODO get partner
+
+    // TODO set listener on last message
+
+
+/* View Holder subclass
+***************************************************************************************************/
 
     static class LobbyViewHolder extends RecyclerView.ViewHolder {
 
@@ -107,8 +117,8 @@ public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHol
     }
 
 
-    /* Item Click Interface (different methods for short and long(click and hold) clicks)
-     ***************************************************************************************************/
+/* Item Click Interface (different methods for short and long(click and hold) clicks)
+***************************************************************************************************/
 
     public interface OnChatroomClickListener {
         void onShortClick(int position);

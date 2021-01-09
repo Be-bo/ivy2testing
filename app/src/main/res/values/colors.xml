@@ -6,6 +6,7 @@
     <color name="light_grey">#d0d0d0</color>
     <color name="background_grey">#f7f7f7</color>
     <color name="white">#ffffff</color>
+    <color name="off_white">#FAFAFA</color>
     <color name="black">#000000</color>
     <color name="light_black">#404040</color>
     <color name="notification">#FE3C00</color>

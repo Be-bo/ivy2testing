@@ -103,8 +103,8 @@ public class ChatroomActivity extends AppCompatActivity {
 
     // Set main messaging fragment
     private void setFragment(){
-        //Fragment frag = new ChatRoomFragment(this_chatroom, this_user);
-        //getSupportFragmentManager().beginTransaction().replace(R.id.room_frameLayout, frag).commit();
+        Fragment frag = new MessagingFragment(this_chatroom, this_user);
+        getSupportFragmentManager().beginTransaction().replace(R.id.room_frameLayout, frag).commit();
     }
 
 
