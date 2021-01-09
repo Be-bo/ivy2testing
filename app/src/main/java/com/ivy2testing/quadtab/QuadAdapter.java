@@ -24,6 +24,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
+import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
@@ -34,17 +35,23 @@ import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.util.ImageUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ * @author Shanna Hollingworth
+ * Overview: an adapter that takes in a list of student ids and constructs constructs a set of cards for non blacklisted students in the user's university
+ * Used in: QuadFragment
+ */
 public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder> {
 
     // Shanna: Base
 
     private static final int NEW_BATCH_TOLERANCE = 4;
     private QuadAdapter.QuadClickListener quad_click_listener;
-    private static final String TAG = "SquareImageAdapterTag";
+    private static final String TAG = "QuadAdapterTag";
 
 
     private String uni_domain;
@@ -57,7 +64,6 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
     private Query query;
     private FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
     private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
-    private long last_pull_millis = 0;
     private int pull_limit = 0;
     DocumentSnapshot last_retrieved_student;
     private QuadClickListener quad_listener;
@@ -66,7 +72,6 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
     private boolean load_in_progress = false;
 
     private Context context;
-    private ListenerRegistration list_reg;
 
     public QuadAdapter(QuadAdapter.QuadClickListener quad_click_listener, int limit, String uniDomain, Context con, TextView emptyAdapterText, User currentUser, RecyclerView rec, ProgressBar progressBar) {
         this.quad_click_listener = quad_click_listener;
@@ -80,9 +85,8 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
         this.creation_millis = System.currentTimeMillis();
 
         query = db_ref.collection("users").whereEqualTo("uni_domain", uni_domain).whereEqualTo("is_club", false)
-                .whereEqualTo("is_organization", false);
-                //.whereNotEqualTo("email", currentUser.getEmail());
-        Log.d("Current User:", currentUser.getEmail());
+                .whereEqualTo("is_organization", false).whereNotEqualTo("id", currentUser.getId());
+        Log.d("Current User:", currentUser.getId());
         fetchStudents();
     }
 
@@ -124,9 +128,9 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
                             fetchStudents(); //next batch has to be loaded from where the previous one left off
                         }
                     }
+                    Collections.shuffle(students); //randomize user list
                     notifyDataSetChanged();
                 } else {
-                    Log.d("Quad Adapter", "loaded all students");
                     loaded_all_students = true;
                 }
             }
@@ -136,25 +140,23 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
         });
     }
 
-//    public void refreshAdapter() { //this gets triggered when the user comes back to the profile, we check if new posts have been added in the meantime and add them (have to be added to the beginning of the list, completely independent of how we're loading the rest)
-//        load_in_progress = true;
-//        db_ref.collection("universities/" + uni_domain + "/posts").whereEqualTo("author_id", author_id).whereGreaterThan("creation_millis", creation_millis).orderBy("creation_millis", Query.Direction.ASCENDING).get().addOnCompleteListener(querySnapTask -> {
-//            if(querySnapTask.isSuccessful() && querySnapTask.getResult() != null && !querySnapTask.getResult().isEmpty()){
-//                for(DocumentSnapshot docSnap: querySnapTask.getResult()){
-//                    if (docSnap.get("is_event") instanceof Boolean && (Boolean) docSnap.get("is_event")) {
-//                        Event event = docSnap.toObject(Event.class);
-//                        if (event != null && !postAlreadyAdded(event.getId())) posts.add(0, event);
-//                    } else {
-//                        Post post = docSnap.toObject(Post.class);
-//                        if (post != null && !postAlreadyAdded(post.getId())) posts.add(0, post);
-//                    }
-//                }
-//                notifyDataSetChanged();
-//                load_in_progress = false;
-//            }
-//            checkEmptyAdapter();
-//        });
-//    }
+    public void refreshAdapter() { //this gets triggered when the user comes back to the profile, we check if new users have been added in the meantime and add them (have to be added to the beginning of the list, completely independent of how we're loading the rest)
+        load_in_progress = true;
+        db_ref.collection("users").whereEqualTo("uni_domain", uni_domain).whereEqualTo("is_club", false)
+                .whereEqualTo("is_organization", false).whereNotEqualTo("id", current_user.getId()).get().addOnCompleteListener(querySnapTask -> {
+            if(querySnapTask.isSuccessful() && querySnapTask.getResult() != null && !querySnapTask.getResult().isEmpty()){
+                for(DocumentSnapshot docSnap: querySnapTask.getResult()){
+                    Student student = docSnap.toObject(Student.class);;
+                    if (student != null && !studentAlreadyAdded(student.getId())) students.add(0, student);
+                }
+                Collections.shuffle(students); //randomize user list
+                notifyDataSetChanged();
+                load_in_progress = false;
+            }
+            checkEmptyAdapter();
+        });
+    }
+
 
 
 
@@ -206,6 +208,12 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
                 });
     }
 
+    private boolean studentAlreadyAdded(String id) {
+        for (int i = 0; i < students.size(); i++) {
+            if (students.get(i).getId().equals(id)) return true;
+        }
+        return false;
+    }
 
     private void stopLoading(){
         if(progress_bar.getVisibility() == View.VISIBLE) progress_bar.setVisibility(View.GONE);

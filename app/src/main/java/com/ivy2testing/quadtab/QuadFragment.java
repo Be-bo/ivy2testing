@@ -30,6 +30,11 @@ import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.Utils;
 import com.squareup.picasso.Picasso;
 
+/**
+ * @author Shanna Hollingworth
+ * Overview: Quad view fragment
+ */
+
 public class QuadFragment extends Fragment implements QuadAdapter.QuadClickListener {
 
     //Constants
@@ -38,20 +43,14 @@ public class QuadFragment extends Fragment implements QuadAdapter.QuadClickListe
 
     //Views
     private RecyclerView card_recycler;
-    private ImageView profile_image;
     private TextView no_users_text;
-    private TextView name_text;
-    private TextView degree_text;
     private QuadAdapter quad_adapter;
-
-    private Context context;
 
     // Firestore
     private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
     // Other Variables
     private Student student;
-    private Uri profile_img_uri;
     private ProgressBar progressbar;
     private boolean is_set_up = false;
 
@@ -90,7 +89,7 @@ public class QuadFragment extends Fragment implements QuadAdapter.QuadClickListe
     @Override
     public void onStart() {
         super.onStart();
-//        if(quad_adapter!=null && is_set_up) quad_adapter.refreshAdapter(); //each time the user comes back we have to refresh the adapter in case they edited or posted a post
+        if(quad_adapter!=null && is_set_up) quad_adapter.refreshAdapter(); //each time the user comes back we have to refresh the adapter in case a new user has been added
     }
 
     /* Initialization Methods
@@ -119,9 +118,6 @@ public class QuadFragment extends Fragment implements QuadAdapter.QuadClickListe
     private void declareViews(View v) {
         card_recycler = v.findViewById(R.id.student_card_recyclerview);
         no_users_text = v.findViewById(R.id.quad_no_users_text);
-        profile_image = v.findViewById(R.id.quad_studentProfilePic);
-        name_text = v.findViewById(R.id.quad_studentName);
-        degree_text = v.findViewById(R.id.quad_studentDegree);
         progressbar = v.findViewById(R.id.student_card_progress_bar);
     }
 
@@ -141,22 +137,6 @@ public class QuadFragment extends Fragment implements QuadAdapter.QuadClickListe
 
     /* Firebase Methods
      ***************************************************************************************************/
-
-    // load picture from firebase storage
-    // Will throw an exception if file doesn't exist in storage but app continues to work fine
-//    private void getStudentPic() {
-//        if (student == null) return;
-//
-//        base_storage_ref.child(ImageUtils.getUserImagePath(student.getId())).getDownloadUrl()
-//                .addOnCompleteListener(task -> {
-//                    if (getContext() != null) {
-//                        if (task.isSuccessful() && task.getResult() != null)
-//                            Glide.with(getContext()).load(task.getResult()).into(profile_image);
-////                        else Toast.makeText(getContext(), "Failed to get profile image.", Toast.LENGTH_LONG).show();
-//                    }
-//                    setUpViews();
-//                });
-//    }
 
     @Override
     public void onQuadClick(int position, int clicked_id) {
