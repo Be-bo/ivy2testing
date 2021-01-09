@@ -38,7 +38,8 @@ public class UserViewModel extends ViewModel {
             if(documentSnapshot != null && documentSnapshot.exists() && documentSnapshot.getData() != null){
                 Map<String, Object> mashHap = documentSnapshot.getData();
                 User usr;
-                if(mashHap.get("is_organization") instanceof Boolean && (Boolean) mashHap.get("is_organization")) usr = documentSnapshot.toObject(Organization.class);
+                if(mashHap.get("is_organization") instanceof Boolean && (Boolean) mashHap.get("is_organization"))
+                    usr = documentSnapshot.toObject(Organization.class);
                 else usr = documentSnapshot.toObject(Student.class);
 
                 if(usr != null) usr.setId(thisUserId);

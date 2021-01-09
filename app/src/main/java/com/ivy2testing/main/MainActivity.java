@@ -359,24 +359,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         function_button.setImageResource(R.drawable.ic_create);
         function_button.setOnClickListener(view -> transToCreatePost(0));
 
-        // Add fragments in order (left to right
-        tab_adapter.addFragment(chat_fragment, "chat");
-
+        // Add fragments in order (left to right)
+        // CHAT
+        if(chat_fragment != null) chat_fragment.refreshAdapter(); //same for the campus fragment
+        else{
+            chat_fragment = new ChatFragment(this, this_user);
+            tab_adapter.addFragment(chat_fragment, "chat");
+        }
+        // EVENT
         if(event_fragment != null) event_fragment.refreshAdapters(); //if we're coming back from login events fragment already exists
         else{ //not coming back, starting the app already logged in
             event_fragment = new EventsFragment(this, this_user);
             tab_adapter.addFragment(event_fragment, "event");
         }
+        // HOME
         if(home_fragment != null) home_fragment.refreshAdapter(); //same for the campus fragment
         else{
             home_fragment = new HomeFragment(this, this_user);
             tab_adapter.addFragment(home_fragment, "campus");
         }
-
+        // QUAD
         tab_adapter.addFragment(quad_fragment, "quad");
-
+        // PROFILE
         if (this_user.getIs_organization()) tab_adapter.addFragment(org_fragment, "organization");
         else tab_adapter.addFragment(stud_fragment, "student");
+
 
         tab_view_pager.setAdapter(tab_adapter);
         tab_view_pager.setOffscreenPageLimit(4);
