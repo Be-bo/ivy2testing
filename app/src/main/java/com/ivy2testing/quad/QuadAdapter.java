@@ -131,7 +131,6 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
     }
 
     public void refreshAdapter() { //this gets triggered when the user comes back to the quad, we check if new users have been added in the meantime or if new users have been blocked and add/remove them (have to be added to the beginning of the list, completely independent of how we're loading the rest)
-        //Has a weird bug where when this is called the other profile pics change what the heckkkk
         load_in_progress = true;
         blacklist = current_user.getBlacklist();
         blacklist.add(current_user.getId());
@@ -176,7 +175,7 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
 
         holder.name_text.setText(current.getName());
         holder.degree_text.setText(current.getDegree());
-        loadImage(holder, students.get(position));
+        loadImage(holder, current);
 
         if (!load_in_progress && position >= (students.size() - NEW_BATCH_TOLERANCE)) { //new batch tolerance means within how many last items do we want to start loading the next batch (i.e. we have 20 items and tolerance 2 -> the next batch will start loading once the user scrolls to the position 18 or 19)
             if (last_retrieved_student != null && !loaded_all_students) {
@@ -203,8 +202,12 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
 
         stor_ref.child(ImageUtils.getUserImagePath(currentStudent.getId())).getDownloadUrl()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null)
-                       Glide.with(context).load(task.getResult()).into(holder.student_profile_picture);
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        Glide.with(context).load(task.getResult()).into(holder.student_profile_picture);
+                    }else{
+                        //Sets uninitialized profile images to stock empty image
+                        Glide.with(context).load(R.drawable.empty_profile_image).into(holder.student_profile_picture);
+                    }
                 });
     }
 
