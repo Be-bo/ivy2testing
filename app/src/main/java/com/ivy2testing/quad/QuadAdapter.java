@@ -26,6 +26,7 @@ import com.ivy2testing.util.ImageUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Shanna Hollingworth
@@ -43,6 +44,7 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
 
     private String uni_domain;
     private User current_user;
+    protected List<String> blacklist;
     private ArrayList<Student> students = new ArrayList<>();
     private long creation_millis;
     private RecyclerView recycler;
@@ -51,7 +53,7 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
     private Query query;
     private FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
     private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
-    private int pull_limit = 0;
+    private int pull_limit;
     DocumentSnapshot last_retrieved_student;
     private QuadClickListener quad_listener;
     private TextView empty_adapter_text;
@@ -70,9 +72,10 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
         this.context = con;
         this.empty_adapter_text = emptyAdapterText;
         this.creation_millis = System.currentTimeMillis();
-
+        blacklist = current_user.getBlacklist();
+        blacklist.add(current_user.getId());
         query = db_ref.collection("users").whereEqualTo("uni_domain", uni_domain).whereEqualTo("is_club", false)
-                .whereEqualTo("is_organization", false).whereNotEqualTo("id", currentUser.getId());
+                .whereEqualTo("is_organization", false).whereNotIn("id", blacklist);
         Log.d("Current User:", currentUser.getId());
         fetchStudents();
     }
@@ -127,14 +130,24 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
         });
     }
 
-    public void refreshAdapter() { //this gets triggered when the user comes back to the profile, we check if new users have been added in the meantime and add them (have to be added to the beginning of the list, completely independent of how we're loading the rest)
+    public void refreshAdapter() { //this gets triggered when the user comes back to the quad, we check if new users have been added in the meantime or if new users have been blocked and add/remove them (have to be added to the beginning of the list, completely independent of how we're loading the rest)
+        //Has a weird bug where when this is called the other profile pics change what the heckkkk
         load_in_progress = true;
+        blacklist = current_user.getBlacklist();
+        blacklist.add(current_user.getId());
+        Log.d(TAG,"refresh called");
         db_ref.collection("users").whereEqualTo("uni_domain", uni_domain).whereEqualTo("is_club", false)
-                .whereEqualTo("is_organization", false).whereNotEqualTo("id", current_user.getId()).get().addOnCompleteListener(querySnapTask -> {
+                .whereEqualTo("is_organization", false).whereNotIn("id", blacklist).get().addOnCompleteListener(querySnapTask -> {
             if(querySnapTask.isSuccessful() && querySnapTask.getResult() != null && !querySnapTask.getResult().isEmpty()){
                 for(DocumentSnapshot docSnap: querySnapTask.getResult()){
-                    Student student = docSnap.toObject(Student.class);;
+                    Student student = docSnap.toObject(Student.class);
                     if (student != null && !studentAlreadyAdded(student.getId())) students.add(0, student);
+                }
+                for(Student currStud : students) //Check if new users have been added to blacklist and remove them from students
+                {
+                    if(blacklist.contains(currStud.getId())) {
+                        students.remove(currStud);
+                    }
                 }
                 Collections.shuffle(students); //randomize user list
                 notifyDataSetChanged();
@@ -218,7 +231,7 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
         public ImageView chatButton;
         public ImageView student_profile_picture;
         public TextView name_text;
-        public TextView degree_text;;
+        public TextView degree_text;
 
 
         public QuadViewHolder(@NonNull View itemView, QuadAdapter.QuadClickListener quad_click_listener) {
