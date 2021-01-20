@@ -54,8 +54,8 @@ public class StudentProfileActivity extends AppCompatActivity {
     private ProgressBar progress_bar;
 
     // Firestore
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
 
     // Other Variables
     private ProfilePostAdapter adapter;

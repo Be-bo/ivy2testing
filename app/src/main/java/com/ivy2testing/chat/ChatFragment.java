@@ -37,7 +37,7 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
     private static final String TAG = "ChatFragment";
 
     // Views
-    private Context context;
+    private final Context context;
 
     // RecyclerView
     private RecyclerView rv_chat_rooms;
@@ -45,8 +45,8 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
     private ExtendedSortedList<Chatroom> chatrooms;
 
     // Firebase
-    private FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
-    private ArrayList<ListenerRegistration> list_regs = new ArrayList<>();
+    private final FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+    private final ArrayList<ListenerRegistration> list_regs = new ArrayList<>();
 
     // Other Values
     private User this_user;
@@ -118,7 +118,7 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
 ***************************************************************************************************/
 
     private void initRecycler() {
-        adapter = new LobbyAdapter(this_user.getId(), this);
+        adapter = new LobbyAdapter(this_user, this);
         chatrooms = getChatroomSortedList();
         adapter.setChatrooms(chatrooms);
         RecyclerView.LayoutManager manager = new LinearLayoutManager(context);
@@ -132,7 +132,7 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
 
     // Go to chatroom
     @Override
-    public void onShortClick(int position) {
+    public void onShortClick(int position, User partner) {
         if (position < 0) return;
         selected_chatroom_index = position;
         Intent intent;
@@ -140,6 +140,7 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
 
         intent.putExtra("chatroom", chatrooms.get(position));
         intent.putExtra("this_user", this_user);
+        intent.putExtra("partner", partner);
         startActivityForResult(intent, Constant.CHATROOM_REQUEST);
     }
 

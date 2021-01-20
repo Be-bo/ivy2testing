@@ -229,4 +229,11 @@ public class User implements Parcelable {
         dest.writeStringList(blockers);
         dest.writeString(registration_platform);
     }
+
+/* Firebase Path methods
+***************************************************************************************************/
+
+    public static String getPath(String id) {
+        return "users/" + id;
+    }
 }

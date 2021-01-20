@@ -62,20 +62,22 @@ public class MessagingFragment extends Fragment  {
     // Other Values
     private String chatroom_messages_address;
     private Chatroom this_chatroom;
-    private User this_user;
+    private final User this_user;
+    private final User partner;
 
 
     // Constructor
-    public MessagingFragment(Chatroom chatroom, User this_user){
+    public MessagingFragment(Chatroom chatroom, User this_user, User partner){
         this.this_chatroom = chatroom;
         this.this_user = this_user;
+        this.partner = partner;
         if (chatroom != null)
             chatroom_messages_address = "conversations/" + this_chatroom.getId() + "/messages";
     }
 
 
-    /* Overridden Methods
-     ***************************************************************************************************/
+/* Overridden Methods
+***************************************************************************************************/
 
     @Nullable
     @Override
@@ -145,7 +147,7 @@ public class MessagingFragment extends Fragment  {
 
     private void initRecycler(){
 
-        adapter = new RoomAdapter(messages, this_user.getId());
+        adapter = new RoomAdapter(messages, this_user, partner);
         layout_man = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,true);
         layout_man.setStackFromEnd(true);   // Always show bottom of recycler
         rv_messages.setLayoutManager(layout_man);
@@ -239,9 +241,9 @@ public class MessagingFragment extends Fragment  {
                 } Log.d(TAG, query_doc.size() + " messages were uploaded from database!");
 
                 // Skip rest if there weren't any messages
-                if (query_doc.isEmpty())
-                    displayMessages(false);
-
+                if (query_doc.isEmpty()) {
+                    if (messages.isEmpty()) displayMessages(false);
+                }
                 else { // Update pagination and add snapshot listener
                     DocumentSnapshot first = query_doc.getDocuments().get(0);
                     DocumentSnapshot last = query_doc.getDocuments().get(query_doc.size()-1);

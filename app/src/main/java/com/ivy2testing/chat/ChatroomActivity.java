@@ -41,6 +41,7 @@ public class ChatroomActivity extends AppCompatActivity {
     // Other Values
     private Chatroom this_chatroom;
     private User this_user;
+    private User partner;           // Could be null!!!
 
     /* Overridden Methods
      ***************************************************************************************************/
@@ -73,6 +74,7 @@ public class ChatroomActivity extends AppCompatActivity {
         if (getIntent() != null){
             this_user = getIntent().getParcelableExtra("this_user");
             this_chatroom = getIntent().getParcelableExtra("chatroom");
+            partner = getIntent().getParcelableExtra("partner");
         }
     }
 
@@ -81,10 +83,7 @@ public class ChatroomActivity extends AppCompatActivity {
         drawer = findViewById(R.id.room_drawerLayout);
 
         // Set Room Title
-        if (this_chatroom.getMembers().size() > 0 && !this_user.getId().equals(this_chatroom.getMembers().get(0)))
-            setTitle(this_chatroom.getMembers().get(0));
-        else if (this_chatroom.getMembers().size() > 1)
-            setTitle(this_chatroom.getMembers().get(1));
+        if (partner != null) setTitle(partner.getName());
         else setTitle("Chatroom"); // Shouldn't happen!
     }
 
@@ -103,7 +102,7 @@ public class ChatroomActivity extends AppCompatActivity {
 
     // Set main messaging fragment
     private void setFragment(){
-        Fragment frag = new MessagingFragment(this_chatroom, this_user);
+        Fragment frag = new MessagingFragment(this_chatroom, this_user, partner);
         getSupportFragmentManager().beginTransaction().replace(R.id.room_frameLayout, frag).commit();
     }
 

@@ -2,6 +2,7 @@ package com.ivy2testing.chat;
 
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,20 +13,28 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Chatroom;
+import com.ivy2testing.entities.Organization;
+import com.ivy2testing.entities.Student;
+import com.ivy2testing.entities.User;
 import com.ivy2testing.util.Utils;
 
 public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHolder> {
 
+    private static final String TAG = "LobbyAdapter";
+    private final FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+
     // Attributes
-    private String this_username;
+    private final User this_user;
     private SortedList<Chatroom> chatrooms;
     OnChatroomClickListener selection_listener;
 
     // Constructor
-    public LobbyAdapter(String this_username, OnChatroomClickListener listener) {
-        this.this_username = this_username;
+    public LobbyAdapter(User this_user, OnChatroomClickListener listener) {
+        this.this_user = this_user;
         this.selection_listener = listener;
     }
 
@@ -49,12 +58,14 @@ public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHol
     public void onBindViewHolder(@NonNull LobbyViewHolder holder, int position) {
         Chatroom this_chatroom = chatrooms.get(position);
 
-        // Set Chat Title TODO
-        if (!this_chatroom.getMembers().isEmpty() && !this_username.equals(this_chatroom.getMembers().get(0)))
-            holder.tv_name.setText(this_chatroom.getMembers().get(0));
-        else if (this_chatroom.getMembers().size() > 1)
-            holder.tv_name.setText(this_chatroom.getMembers().get(1));
-        else holder.tv_name.setText(R.string.chatroom);
+        // Set Chat Title
+        if (!this_chatroom.getMembers().isEmpty() && !this_user.getName().equals(this_chatroom.getMembers().get(0)))
+            loadPartner(holder, this_chatroom.getMembers().get(0));
+        else if (this_chatroom.getMembers().size() > 1) {
+            holder.partner = this_user;
+            holder.tv_name.setText(holder.partner.getName());
+        }
+        else holder.tv_name.setText(R.string.chatroom); //There's a problem if it gets here
 
         // Set time_stamp TODO
         if (this_chatroom.getLast_message_timestamp() != null) {
@@ -72,7 +83,21 @@ public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHol
 /* Firebase
 ***************************************************************************************************/
 
-    //TODO get partner
+    // Get Partner user
+    private void loadPartner(@NonNull LobbyViewHolder holder, String id) {
+        mFirestore.document(User.getPath(id)).get().addOnCompleteListener(task -> {
+            if(task.isSuccessful() && task.getResult() != null){
+                DocumentSnapshot doc = task.getResult();
+                if ((boolean) doc.get("is_organization"))
+                    holder.partner = task.getResult().toObject(Organization.class);
+                else holder.partner = task.getResult().toObject(Student.class);
+
+                if (holder.partner != null) holder.tv_name.setText(holder.partner.getName());
+                else Log.e(TAG, "user was null!");
+
+            } else Log.w(TAG, task.getException());
+        });
+    }
 
     // TODO set listener on last message
 
@@ -85,6 +110,7 @@ public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHol
         TextView tv_name;
         TextView tv_lastMsg;
         ConstraintLayout layout;
+        User partner;
 
 
         public LobbyViewHolder(@NonNull View itemView, final OnChatroomClickListener listener) {
@@ -100,7 +126,7 @@ public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHol
                 if (listener != null) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION)
-                        listener.onShortClick(position);
+                        listener.onShortClick(position, partner);
                 }
             });
 
@@ -121,7 +147,7 @@ public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHol
 ***************************************************************************************************/
 
     public interface OnChatroomClickListener {
-        void onShortClick(int position);
+        void onShortClick(int position, User partner);
         void onLongClick(int position, View v);
     }
 }

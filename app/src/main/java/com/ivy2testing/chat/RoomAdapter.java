@@ -1,6 +1,7 @@
 package com.ivy2testing.chat;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +13,13 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Message;
+import com.ivy2testing.entities.Organization;
+import com.ivy2testing.entities.Student;
+import com.ivy2testing.entities.User;
 import com.ivy2testing.util.Utils;
 
 import java.util.List;
@@ -21,16 +27,23 @@ import java.util.List;
 
 public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MessageViewHolder> {
 
+    // Firebase
+    private static final String TAG = "RoomAdapter";
+    private final FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+
+
     // Attributes
-    private String this_user_id;
+    private User this_user;
+    private User partner;
     private List<Message> messages;
     private Context context;
 
 
 
-    public RoomAdapter(List<Message> messages, String user_id) {
+    public RoomAdapter(List<Message> messages, User this_user, User partner) {
         this.messages = messages;
-        this_user_id = user_id;
+        this.this_user = this_user;
+        this.partner = partner;
     }
 
 
@@ -48,11 +61,21 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MessageViewHol
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message this_message = messages.get(position);
-        holder.tv_author.setText(this_message.getAuthor());
         holder.tv_message.setText(this_message.getText());
         holder.tv_timestamp.setText(Utils.millisToDateTime(this_message.getTime_stamp()));
-        setChatRowAppearance(this_message.getAuthor().equals(this_user_id), holder);
+
+        if (this_user.getId().equals(this_message.getAuthor())) {
+            holder.tv_author.setText(this_user.getName());
+            setChatRowAppearance(true, holder);
+        } else {
+            setChatRowAppearance(false, holder);
+            if (partner.getId().equals(this_message.getAuthor()))
+                holder.tv_author.setText(partner.getName());
+            else  // A partner who has deleted this chatroom
+                getPartner(this_message.getAuthor(), holder);
+        }
     }
+
 
     @Override
     public int getItemCount() {
@@ -85,6 +108,22 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MessageViewHol
     public void removeMessage(int position){
         messages.remove(position);
         notifyItemRemoved(position);
+    }
+
+
+    private void getPartner(String author, MessageViewHolder holder) {
+        mFirestore.document(User.getPath(author)).get().addOnCompleteListener(task -> {
+            if(task.isSuccessful() && task.getResult() != null){
+                DocumentSnapshot doc = task.getResult();
+                if ((boolean) doc.get("is_organization"))
+                    partner = task.getResult().toObject(Organization.class);
+                else partner = task.getResult().toObject(Student.class);
+
+                if (partner != null) holder.tv_author.setText(partner.getName());
+                else Log.e(TAG, "user was null!");
+
+            } else Log.w(TAG, task.getException());
+        });
     }
 
 
