@@ -6,7 +6,10 @@ import android.os.Parcelable;
 import com.google.firebase.firestore.Exclude;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /** @author Zahra Ghavasieh
  * Overview: Abstract Parent Class of Organization and Student 
@@ -28,6 +31,7 @@ public class User implements Parcelable {
     protected List<String> messaging_users = new ArrayList<>(); // List of users currently holding a conversation with you
     protected List<String> blocked_users = new ArrayList<>();   // List of users you have blocked
     protected List<String> blockers = new ArrayList<>();        // List of users who have blocked you
+    protected List<String> blacklist = new ArrayList<>();       // Combined blocked_users, messaging_users and blockers
     protected String registration_platform = "Android";
 
     /* Constructors
@@ -126,6 +130,11 @@ public class User implements Parcelable {
         else return new ArrayList<>(blockers);          // Return copy
     }
 
+    public List<String> getBlacklist() {
+        if (blacklist == null) return new ArrayList<>();
+        else return new ArrayList<>(blacklist);          // Return copy
+    }
+
     /* Setters
 ***************************************************************************************************/
 
@@ -192,6 +201,7 @@ public class User implements Parcelable {
         messaging_users = in.createStringArrayList();
         blocked_users = in.createStringArrayList();
         blockers = in.createStringArrayList();
+        blacklist = Stream.of(messaging_users, blocked_users, blockers).flatMap(Collection::stream).collect(Collectors.toList());
         registration_platform = in.readString();
     }
 
