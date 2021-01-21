@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent">
@@ -21,47 +21,69 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/quad_studentProfilePic"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:cropToPadding="true"
-                android:scaleType="centerCrop"
-                app:layout_constraintBottom_toTopOf="@+id/quad_studentName"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/empty_profile_image" />
-
-            <ImageButton
-                android:id="@+id/chatButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_marginBottom="15dp"
-                android:contentDescription="TODO"
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/quad_studentName"
-                app:srcCompat="@drawable/ic_chat_selected" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/quad_studentName"
+                <ImageView
+                    android:id="@+id/quad_studentProfilePic"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:cropToPadding="true"
+                    android:scaleType="centerCrop"
+                    app:srcCompat="@drawable/empty_profile_image_card"
+                    android:contentDescription="@string/profile_pic" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:cropToPadding="true"
+                    android:scaleType="centerCrop"
+                    android:layout_gravity="bottom"
+                    app:srcCompat="@drawable/gradient_white"
+                    android:contentDescription="@string/profile_pic" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/quad_nameLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_marginStart="30dp"
-                android:text="@string/name"
-                android:textColor="@color/interaction"
-                android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@id/quad_studentDegree"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent" >
+
+                <TextView
+                    android:id="@+id/quad_studentName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/StandardClickableText"
+                    android:text="@string/name"
+                    android:textSize="20sp"/>
+
+                <ImageButton
+                    android:id="@+id/chatButton"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="@dimen/standard_margin"
+                    android:contentDescription="@string/send_message"
+                    android:layout_gravity="center"
+                    app:srcCompat="@drawable/ic_chat_selected"
+                    android:background="@color/transparent"/>
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/quad_studentDegree"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
+                android:layout_marginBottom="30dp"
                 android:text="@string/degree"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"

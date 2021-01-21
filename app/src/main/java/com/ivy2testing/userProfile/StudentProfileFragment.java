@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -180,7 +179,7 @@ public class StudentProfileFragment extends Fragment {
 
     // Set up onClick Listeners
     private void setListeners(View v) {
-        v.findViewById(R.id.studentProfile_edit).setOnClickListener(v12 -> editProfile());
+        v.findViewById(R.id.studentProfile_action).setOnClickListener(v12 -> editProfile());
     }
 
 

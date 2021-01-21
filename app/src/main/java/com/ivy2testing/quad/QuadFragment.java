@@ -28,7 +28,7 @@ import com.ivy2testing.util.Constant;
  * Overview: Quad view fragment
  */
 
-public class QuadFragment extends Fragment implements QuadAdapter.QuadClickListener {
+public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickListener {
 
     //Constants
     private final static String TAG = "QuadFragmentTag";
@@ -128,11 +128,16 @@ public class QuadFragment extends Fragment implements QuadAdapter.QuadClickListe
         card_recycler.setAdapter(quad_adapter);
     }
 
-    /* Firebase Methods
-     ***************************************************************************************************/
+/* OnClick Methods
+***************************************************************************************************/
 
-    @Override
-    public void onQuadClick(int position, int clicked_id) {
+    // Make New Chatroom
+    public void onChatClick(int position, View v){
+        //TODO check out userProfile/StudentProfileActivity.newChatroom()
+    }
 
+    // View User Profile
+    public void onCardClick(int position, View v) {
+        // TODO check chat/ChatroomActivity.viewUserProfile()
     }
 }

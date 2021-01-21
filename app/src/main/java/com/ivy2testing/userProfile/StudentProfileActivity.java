@@ -114,7 +114,14 @@ public class StudentProfileActivity extends AppCompatActivity {
         private_text = findViewById(R.id.activity_student_profile_private_text);
         contents = findViewById(R.id.activity_student_profile_contents);
         progress_bar = findViewById(R.id.studentProfile_progress_bar);
-        findViewById(R.id.studentProfile_edit).setVisibility(View.GONE);
+
+        // Change to message icons and add onClickListeners
+        TextView tv_message = findViewById(R.id.studentProfile_action);
+        tv_message.setText(R.string.message);
+        tv_message.setOnClickListener(this::newChatroom);
+        ImageView ic_message = findViewById(R.id.studentProfile_action_icon);
+        ic_message.setImageResource(R.drawable.ic_chat);
+        ic_message.setOnClickListener(this::newChatroom);
     }
 
     private void setUpViews(){
@@ -163,6 +170,11 @@ public class StudentProfileActivity extends AppCompatActivity {
         intent.putExtra("post_id", adapter.getItem(position).getId());
         intent.putExtra("author_id", adapter.getItem(position).getAuthor_id());
         startActivity(intent);
+    }
+
+    // Open ChatroomActivity with new Chatroomm
+    public void newChatroom(View v) {
+        //TODO
     }
 
 

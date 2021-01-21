@@ -38,7 +38,7 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
     // Shanna: Base
 
     private static final int NEW_BATCH_TOLERANCE = 4;
-    private QuadAdapter.QuadClickListener quad_click_listener;
+    private QuadAdapter.OnQuadClickListener quad_click_listener;
     private static final String TAG = "QuadAdapterTag";
 
 
@@ -55,14 +55,14 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
     private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
     private int pull_limit;
     DocumentSnapshot last_retrieved_student;
-    private QuadClickListener quad_listener;
+    private OnQuadClickListener quad_listener;
     private TextView empty_adapter_text;
     private boolean loaded_all_students = false;
     private boolean load_in_progress = false;
 
     private Context context;
 
-    public QuadAdapter(QuadAdapter.QuadClickListener quad_click_listener, int limit, String uniDomain, Context con, TextView emptyAdapterText, User currentUser, RecyclerView rec, ProgressBar progressBar) {
+    public QuadAdapter(QuadAdapter.OnQuadClickListener quad_click_listener, int limit, String uniDomain, Context con, TextView emptyAdapterText, User currentUser, RecyclerView rec, ProgressBar progressBar) {
         this.quad_click_listener = quad_click_listener;
         this.recycler = rec;
         this.pull_limit = limit;
@@ -90,13 +90,8 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
         }
     }
 
-
-    public interface QuadClickListener {
-        void onQuadClick(int position, int clicked_id);
-    }
-
     // Shanna: Static Pulling Methods (loading old students) - all the students that were created before this adapter was created
-
+    // TODO include Organizations too! -> Use "User" parent class (it's abstract). check out chat/LobbyAdapter.loadPartner()
     private void fetchStudents() { //fetch all students
         load_in_progress = true;
         query.get().addOnCompleteListener(querySnap -> {
@@ -227,9 +222,8 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
 //Shanna: ViewHolder
 
 //------------------------------------------------------------------------------------------------------------------------------------
-    public static class QuadViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class QuadViewHolder extends RecyclerView.ViewHolder{
 
-        QuadAdapter.QuadClickListener quad_click_listener;
         public CardView layout;
         public ImageView chatButton;
         public ImageView student_profile_picture;
@@ -237,21 +231,49 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
         public TextView degree_text;
 
 
-        public QuadViewHolder(@NonNull View itemView, QuadAdapter.QuadClickListener quad_click_listener) {
+        public QuadViewHolder(@NonNull View itemView, QuadAdapter.OnQuadClickListener listener) {
             super(itemView);
             student_profile_picture = itemView.findViewById(R.id.quad_studentProfilePic);
             name_text = itemView.findViewById(R.id.quad_studentName);
             degree_text = itemView.findViewById(R.id.quad_studentDegree);
             student_profile_picture = itemView.findViewById(R.id.quad_studentProfilePic);
             chatButton = itemView.findViewById(R.id.chatButton);
+            layout = itemView.findViewById(R.id.cardView);
 
-            this.quad_click_listener = quad_click_listener;
-            chatButton.setOnClickListener(this);
-        }
+            // Chat button Click
+            chatButton.setOnClickListener(v -> {
+                if (listener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION)
+                        listener.onChatClick(position, v);
+                }
+            });
 
-        @Override
-        public void onClick(View v) {
-            quad_click_listener.onQuadClick(getAdapterPosition(), v.getId());
+            // Card Click
+            layout.setOnClickListener(v -> {
+                if (listener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION)
+                        listener.onCardClick(position, v);
+                }
+            });
+
+            name_text.setOnClickListener(v -> {
+                if (listener != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION)
+                        listener.onCardClick(position, v);
+                }
+            });
         }
+    }
+
+
+/* Item Click Interface (different methods for short and long(click and hold) clicks)
+***************************************************************************************************/
+
+    public interface OnQuadClickListener {
+        void onChatClick(int position, View v);
+        void onCardClick(int position, View v);
     }
 }
