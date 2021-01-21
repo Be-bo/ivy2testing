@@ -79,8 +79,10 @@ public class Chatroom implements Parcelable {
 
     protected Chatroom(Parcel in) {
         id = in.readString();
-        last_message_timestamp = in.readLong();
         members = in.createStringArrayList();
+        int indicator = in.readInt();
+        last_message_timestamp = in.readLong();
+        if (indicator == 0) last_message_timestamp = null;
     }
 
     public static final Creator<Chatroom> CREATOR = new Creator<Chatroom>() {
@@ -103,7 +105,8 @@ public class Chatroom implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
-        dest.writeLong(last_message_timestamp);
         dest.writeStringList(members);
+        dest.writeInt((last_message_timestamp == null) ? 0 : 1);
+        dest.writeLong((last_message_timestamp == null) ? 0 : last_message_timestamp);
     }
 }

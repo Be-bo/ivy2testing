@@ -21,9 +21,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
+import com.ivy2testing.chat.ChatroomActivity;
+import com.ivy2testing.entities.Chatroom;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.main.SeeAllPostsActivity;
 import com.ivy2testing.hometab.ViewPostOrEventActivity;
 import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.util.Constant;
@@ -152,16 +153,6 @@ public class StudentProfileActivity extends AppCompatActivity {
 /* OnClick Methods
 ***************************************************************************************************/
 
-    // See all posts
-    private void seeAllPosts(){
-        Intent intent = new Intent(this, SeeAllPostsActivity.class);
-        intent.putExtra("title", student_to_display.getName()+"'s Posts");
-        intent.putExtra("this_user", this_user);
-        intent.putExtra("uni_domain", student_to_display.getUni_domain());
-        intent.putExtra("author_id", student_to_display.getId());
-        startActivity(intent);
-    }
-
     // A post in recycler was selected
     public void onPostClick(int position) {
         Intent intent = new Intent(this, ViewPostOrEventActivity.class);
@@ -174,7 +165,11 @@ public class StudentProfileActivity extends AppCompatActivity {
 
     // Open ChatroomActivity with new Chatroomm
     public void newChatroom(View v) {
-        //TODO
+        Intent intent = new Intent(this, ChatroomActivity.class);
+        intent.putExtra("this_user", this_user);
+        intent.putExtra("partner", student_to_display);
+        intent.putExtra("chatroom", new Chatroom(this_user.getId(), student_to_display.getId()));
+        startActivity(intent);
     }
 
 
