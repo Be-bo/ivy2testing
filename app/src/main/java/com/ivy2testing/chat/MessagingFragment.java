@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
@@ -71,7 +72,7 @@ public class MessagingFragment extends Fragment  {
         this.this_chatroom = chatroom;
         this.this_user = this_user;
         this.partner = partner;
-        if (chatroom != null)
+        if (chatroom != null && chatroom.getId() != null)
             chatroom_messages_address = "conversations/" + this_chatroom.getId() + "/messages";
     }
 
@@ -85,7 +86,7 @@ public class MessagingFragment extends Fragment  {
         root_view = inflater.inflate(R.layout.fragment_messaging, container, false);
 
         // Initialization Methods
-        if (this_user != null && !chatroom_messages_address.contains("null")){
+        if (this_user != null){
             initViews();
             setListeners();
             initRecycler();
@@ -181,7 +182,10 @@ public class MessagingFragment extends Fragment  {
         messagePending(true);   // Disable sending message again
         Message newMessage = new Message(this_user.getId(), text);
         et_message.setText(null);
-        sendMessageToDB(newMessage);
+
+        // New Chatroom?
+        if (!messages.isEmpty()) sendMessageToDB(newMessage);
+        else createNewChatroom(newMessage);
     }
 
 /* Transition Methods
@@ -216,10 +220,11 @@ public class MessagingFragment extends Fragment  {
     /* Firebase related Methods
      ***************************************************************************************************/
 
-    // implements pagination + snapshot listeners = [big mess...]
     private void getMessagesFromDB() {
+        if (chatroom_messages_address == null || chatroom_messages_address.contains("null"))
+            return;
+
         // Build Query
-        Log.d(TAG, chatroom_messages_address);
         Query query = mFirestore.collection(chatroom_messages_address)
                 .orderBy("time_stamp", Query.Direction.DESCENDING)
                 .limit(PAGE_LIMIT);
@@ -310,10 +315,31 @@ public class MessagingFragment extends Fragment  {
 
     // Send a single message to database
     private void sendMessageToDB(Message newMessage) {
-        mFirestore.collection(chatroom_messages_address).add(newMessage).addOnCompleteListener(task -> {
-            if (!task.isSuccessful()) Log.e(TAG, "Couldn't send message!", task.getException());
-            else if (listener == null) getMessagesFromDB();
-            messagePending(false);
+        mFirestore.document(chatroom_messages_address + "/" + newMessage.getId())
+                .set(newMessage).addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) Log.e(TAG, "Couldn't send message!", task.getException());
+                    else if (listener == null) getMessagesFromDB();
+                    messagePending(false);
+                });
+    }
+
+    // Add User to  each others' MessagingLists
+    private void addUserToMessagingList() {
+        String user1_id = this_user.getId();
+        String user2_id = partner.getId();
+        mFirestore.document(User.getPath(user1_id)).update("messaging_users", FieldValue.arrayUnion(user2_id));
+        mFirestore.document(User.getPath(user2_id)).update("messaging_users", FieldValue.arrayUnion(user1_id));
+    }
+
+    // Upload new Chatroom
+    private void createNewChatroom(Message newMessage) {
+        mFirestore.document("conversations/"+ this_chatroom.getId()).set(this_chatroom).addOnCompleteListener(task -> {
+            if (!task.isSuccessful())
+                Log.e(TAG, "Couldn't create new Chatroom!", task.getException());
+            else {
+                addUserToMessagingList();
+                sendMessageToDB(newMessage);
+            }
         });
     }
 }

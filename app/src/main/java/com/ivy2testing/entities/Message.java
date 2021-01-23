@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import com.google.firebase.database.Exclude;
 
+import java.util.UUID;
+
 /**
  * Class for a message object
  * Features: Firestore Compatible, parcelable
@@ -20,6 +22,7 @@ public class Message implements Parcelable {
     public Message(){}
 
     public Message(String author, String text){
+        id = UUID.randomUUID().toString();
         this.author = author;
         this.text = text;
         this.time_stamp = System.currentTimeMillis();

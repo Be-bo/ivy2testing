@@ -59,13 +59,15 @@ public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHol
         Chatroom this_chatroom = chatrooms.get(position);
 
         // Set Chat Title
-        if (!this_chatroom.getMembers().isEmpty() && !this_user.getName().equals(this_chatroom.getMembers().get(0)))
+        if (!this_chatroom.getMembers().isEmpty() && !this_user.getId().equals(this_chatroom.getMembers().get(0)))
             loadPartner(holder, this_chatroom.getMembers().get(0));
-        else if (this_chatroom.getMembers().size() > 1) {
+        else if (this_chatroom.getMembers().size() > 1)
+            loadPartner(holder, this_chatroom.getMembers().get(1));
+        else {
             holder.partner = this_user;
             holder.tv_name.setText(holder.partner.getName());
         }
-        else holder.tv_name.setText(R.string.chatroom); //There's a problem if it gets here
+
 
         // Set time_stamp TODO
         if (this_chatroom.getLast_message_timestamp() != null) {

@@ -8,6 +8,7 @@ import com.google.firebase.database.Exclude;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Class for a 1on1 chatRoom object
@@ -19,7 +20,7 @@ public class Chatroom implements Parcelable {
     protected List<String> members = new ArrayList<>();
 
     // Not stored in Firebase
-    protected Long last_message_timestamp;
+    @Exclude protected Long last_message_timestamp;
 
 
     // Needed for Firebase
@@ -27,6 +28,7 @@ public class Chatroom implements Parcelable {
 
 
     public Chatroom(String user1, String user2){
+        id = UUID.randomUUID().toString();
         members.add(user1);
         members.add(user2);
     }
