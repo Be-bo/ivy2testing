@@ -150,6 +150,7 @@ public class StudentProfileFragment extends Fragment {
         post_title = v.findViewById(R.id.studentProfile_header);
         no_posts_text = v.findViewById(R.id.studentProfile_no_posts_text);
         progress_bar = v.findViewById(R.id.studentProfile_progress_bar);
+        v.findViewById(R.id.studentProfile_blockAction).setVisibility(View.GONE);
     }
 
     private void setUpViews(){

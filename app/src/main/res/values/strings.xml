@@ -107,6 +107,8 @@
     <string name="notification">Notificaion</string>
     <string name="time">time</string>
 
+    <string name="block">Block this user</string>
+
     <!-- Posts and Events -->
     <string name="post_visual">Post Visual</string>
     <string name="comments">Comments</string>
@@ -271,5 +273,4 @@
         Praesent nulla orci, aliquam porttitor molestie at, tincidunt ut sapien. Sed pharetra lobortis elit quis iaculis.
     </string>
     <string name="no_users">\No other users registered on your campus yet!\</string>
-
 </resources>

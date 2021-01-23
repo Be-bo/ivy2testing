@@ -25,8 +25,11 @@ import com.ivy2testing.entities.User;
 import com.ivy2testing.util.ImageUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Shanna Hollingworth
@@ -38,7 +41,6 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
     // Shanna: Base
 
     private static final int NEW_BATCH_TOLERANCE = 4;
-    private QuadAdapter.OnQuadClickListener quad_click_listener;
     private static final String TAG = "QuadAdapterTag";
 
 
@@ -63,7 +65,7 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
     private Context context;
 
     public QuadAdapter(QuadAdapter.OnQuadClickListener quad_click_listener, int limit, String uniDomain, Context con, TextView emptyAdapterText, User currentUser, RecyclerView rec, ProgressBar progressBar) {
-        this.quad_click_listener = quad_click_listener;
+        this.quad_listener = quad_click_listener;
         this.recycler = rec;
         this.pull_limit = limit;
         this.progress_bar = progressBar;
@@ -72,8 +74,10 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
         this.context = con;
         this.empty_adapter_text = emptyAdapterText;
         this.creation_millis = System.currentTimeMillis();
-        blacklist = current_user.getBlacklist();
-        blacklist.add(current_user.getId());
+        initBlacklist();
+        Log.d(TAG, String.valueOf(blacklist));
+        Log.d(TAG, "Blocked Users: " + String.valueOf(current_user.getBlocked_users()));
+        Log.d(TAG, "Messaging Users: " + String.valueOf(current_user.getMessaging_users()));
         query = db_ref.collection("users").whereEqualTo("uni_domain", uni_domain).whereEqualTo("is_club", false)
                 .whereEqualTo("is_organization", false).whereNotIn("id", blacklist);
         Log.d("Current User:", currentUser.getId());
@@ -84,10 +88,19 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
         if(empty_adapter_text != null){
             if(getItemCount() < 1){
                 empty_adapter_text.setVisibility(View.VISIBLE);
-                Log.d("Quad Adapter", "Empty Adapter");
+                Log.d(TAG, "Empty Adapter");
             }
             else empty_adapter_text.setVisibility(View.GONE);
         }
+    }
+
+    private void initBlacklist() {
+        this.blacklist = Stream.of(current_user.getBlocked_users(), current_user.getBlockers(), current_user.getMessaging_users()).flatMap(Collection::stream).collect(Collectors.toList());
+        blacklist.add(current_user.getId());
+    }
+
+    public Student getItem(int position){
+        return students.get(position);
     }
 
     // Shanna: Static Pulling Methods (loading old students) - all the students that were created before this adapter was created
@@ -96,10 +109,10 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
         load_in_progress = true;
         query.get().addOnCompleteListener(querySnap -> {
             if (querySnap.isSuccessful() && querySnap.getResult() != null) {
-                Log.d("Quad Adapter", "Query successful");
+                Log.d(TAG, "Query successful");
                 if(!querySnap.getResult().isEmpty()) {
                     for (int i = 0; i < querySnap.getResult().getDocuments().size(); i++) {
-                        Log.d("Quad Adapter", "added student");
+                        Log.d(TAG, "added student");
                         DocumentSnapshot newStudent = querySnap.getResult().getDocuments().get(i);
                         Student student = newStudent.toObject(Student.class);
                         students.add(student);
@@ -127,8 +140,7 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
 
     public void refreshAdapter() { //this gets triggered when the user comes back to the quad, we check if new users have been added in the meantime or if new users have been blocked and add/remove them (have to be added to the beginning of the list, completely independent of how we're loading the rest)
         load_in_progress = true;
-        blacklist = current_user.getBlacklist();
-        blacklist.add(current_user.getId());
+        initBlacklist();
         Log.d(TAG,"refresh called");
         db_ref.collection("users").whereEqualTo("uni_domain", uni_domain).whereEqualTo("is_club", false)
                 .whereEqualTo("is_organization", false).whereNotIn("id", blacklist).get().addOnCompleteListener(querySnapTask -> {
@@ -255,6 +267,8 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION)
                         listener.onCardClick(position, v);
+                } else {
+                    Log.d(TAG, "null listener");
                 }
             });
 

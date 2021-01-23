@@ -1,5 +1,6 @@
 package com.ivy2testing.quad;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,9 +19,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
+import com.ivy2testing.chat.ChatroomActivity;
+import com.ivy2testing.entities.Chatroom;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.UserViewModel;
+import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.Constant;
 
 /**
@@ -44,6 +48,7 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
 
     // Other Variables
     private Student student;
+    private User usr;
     private ProgressBar progressbar;
     private boolean is_set_up = false;
 
@@ -59,6 +64,7 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root_view = inflater.inflate(R.layout.fragment_quad, container, false);
         declareViews(root_view);
+//        setListeners(root_view);    // set up listeners
         return root_view;
     }
 
@@ -93,7 +99,7 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
 
             // Parent Final fields
             UserViewModel user_view_model = new ViewModelProvider(getActivity()).get(UserViewModel.class);
-            User usr = user_view_model.getThis_user().getValue();
+            usr = user_view_model.getThis_user().getValue();
             if (usr instanceof Student) {
                 student = (Student) usr; //grab the initial data
                 // Only start doing processes that depend on user profile
@@ -105,7 +111,6 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
     private void setUpElements(){
         Log.d(TAG, "Showing student: " + student.getId() + ", name: " + student.getName());
         setUpRecycler();            // set up posts recycler view
-        //setListeners(root_view);    // set up listeners
     }
 
     private void declareViews(View v) {
@@ -114,15 +119,13 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
         progressbar = v.findViewById(R.id.student_card_progress_bar);
     }
 
-
+//
 //    // Set up onClick Listeners
 //    private void setListeners(View v) {
-//        v.findViewById(R.id.chatButton).setOnClickListener(v12 -> editProfile());
-//    }
+//        v.findViewById(R.id.chatBu
 
     private void setUpRecycler() {
-        UserViewModel user_view_model = new ViewModelProvider(getActivity()).get(UserViewModel.class);
-        User usr = user_view_model.getThis_user().getValue();
+        Log.d(TAG, String.valueOf(usr.getId()));
         quad_adapter = new QuadAdapter(this, Constant.USERS_LOAD_LIMIT, student.getUni_domain(), getContext(), no_users_text, usr, card_recycler, progressbar);
         card_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
         card_recycler.setAdapter(quad_adapter);
@@ -133,11 +136,21 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
 
     // Make New Chatroom
     public void onChatClick(int position, View v){
-        //TODO check out userProfile/StudentProfileActivity.newChatroom()
+        Intent intent = new Intent(this.getContext(), ChatroomActivity.class);
+        intent.putExtra("this_user", usr);
+        intent.putExtra("partner", quad_adapter.getItem(position));
+        intent.putExtra("chatroom", new Chatroom(usr.getId(), quad_adapter.getItem(position).getId()));
+        startActivity(intent);
+
     }
 
     // View User Profile
     public void onCardClick(int position, View v) {
-        // TODO check chat/ChatroomActivity.viewUserProfile()
+        Log.d(TAG , quad_adapter.getItem(position).getId());
+        Intent intent = new Intent(this.getContext(), StudentProfileActivity.class);
+        intent.putExtra("this_user", usr);
+        intent.putExtra("student_to_display_id", quad_adapter.getItem(position).getId());
+        intent.putExtra("student_to_display_uni", quad_adapter.getItem(position).getUni_domain());
+        startActivity(intent);
     }
 }

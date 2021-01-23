@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +28,7 @@ import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.hometab.ViewPostOrEventActivity;
 import com.ivy2testing.main.MainActivity;
+import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
 import com.squareup.picasso.Picasso;
@@ -53,6 +55,8 @@ public class StudentProfileActivity extends AppCompatActivity {
     private TextView private_text;
     private View contents;
     private ProgressBar progress_bar;
+    private TextView block_button;
+    private boolean isBlocked = false;
 
     // Firestore
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -101,6 +105,7 @@ public class StudentProfileActivity extends AppCompatActivity {
     private void setUpElements(){
         setTitle("Profile");
         setUpViews();               // populate UI
+        setListeners();
         setUpRecycler();            // set up posts recycler view
         getStudentPic();            // Do Other setups
     }
@@ -115,7 +120,8 @@ public class StudentProfileActivity extends AppCompatActivity {
         private_text = findViewById(R.id.activity_student_profile_private_text);
         contents = findViewById(R.id.activity_student_profile_contents);
         progress_bar = findViewById(R.id.studentProfile_progress_bar);
-
+        block_button = findViewById(R.id.studentProfile_blockAction);
+        setBlockActionText();
         // Change to message icons and add onClickListeners
         TextView tv_message = findViewById(R.id.studentProfile_action);
         tv_message.setText(R.string.message);
@@ -149,9 +155,43 @@ public class StudentProfileActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(adapter);
     }
 
+    public void setListeners() {
+        block_button.setOnClickListener(v12 -> blockAction());
+        Log.d(TAG, "listener set");
+    }
 
-/* OnClick Methods
+    private void setBlockActionText() {
+//        if (!this_user.getBlocked_users().isEmpty()) {
+//            if(this_user.getBlocked_users().contains(student_to_display.getId())) {
+//                Log.d(TAG, "you have this user blocked");
+//                block_button.setText("Unblock this user");
+//                isBlocked = true;
+//            } else {
+//                Log.d(TAG, "you don't have this user blocked");
+//                block_button.setText("Block this user");
+//                isBlocked = false;
+//            }
+//        }
+    }
+
+    /* OnClick Methods
 ***************************************************************************************************/
+
+    //Block or unblock a user
+    private void blockAction(){
+        if (isBlocked) {
+            Log.d(TAG, "User blocked");
+
+            //Change to setBlockActionText();
+            block_button.setText("Unblock this user");
+            isBlocked = false;
+        } else {
+            Log.d(TAG, "User unblocked");
+            //Change to setBlockActionText();
+            block_button.setText("Block this user");
+            isBlocked = true;
+        }
+    }
 
     // A post in recycler was selected
     public void onPostClick(int position) {
