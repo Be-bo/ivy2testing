@@ -64,7 +64,6 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root_view = inflater.inflate(R.layout.fragment_quad, container, false);
         declareViews(root_view);
-//        setListeners(root_view);    // set up listeners
         return root_view;
     }
 
@@ -118,11 +117,6 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
         no_users_text = v.findViewById(R.id.quad_no_users_text);
         progressbar = v.findViewById(R.id.student_card_progress_bar);
     }
-
-//
-//    // Set up onClick Listeners
-//    private void setListeners(View v) {
-//        v.findViewById(R.id.chatBu
 
     private void setUpRecycler() {
         Log.d(TAG, String.valueOf(usr.getId()));

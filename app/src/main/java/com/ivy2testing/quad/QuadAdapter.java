@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 
 /**
  * @author Shanna Hollingworth
- * Overview: an adapter that takes in a list of student ids and constructs constructs a set of cards for non blacklisted students in the user's university
+ * Overview: an adapter that takes in a list of user ids and constructs constructs a set of cards for non blacklisted users in the user's university
  * Used in: QuadFragment
  */
 public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder> {
@@ -47,7 +47,7 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
     private String uni_domain;
     private User current_user;
     protected List<String> blacklist;
-    private ArrayList<Student> students = new ArrayList<>();
+    private ArrayList<User> users = new ArrayList<>();
     private long creation_millis;
     private RecyclerView recycler;
     private ProgressBar progress_bar;
@@ -56,10 +56,10 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
     private FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
     private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
     private int pull_limit;
-    DocumentSnapshot last_retrieved_student;
+    DocumentSnapshot last_retrieved_user;
     private OnQuadClickListener quad_listener;
     private TextView empty_adapter_text;
-    private boolean loaded_all_students = false;
+    private boolean loaded_all_users = false;
     private boolean load_in_progress = false;
 
     private Context context;
@@ -75,13 +75,10 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
         this.empty_adapter_text = emptyAdapterText;
         this.creation_millis = System.currentTimeMillis();
         initBlacklist();
-        Log.d(TAG, String.valueOf(blacklist));
-        Log.d(TAG, "Blocked Users: " + String.valueOf(current_user.getBlocked_users()));
-        Log.d(TAG, "Messaging Users: " + String.valueOf(current_user.getMessaging_users()));
-        query = db_ref.collection("users").whereEqualTo("uni_domain", uni_domain).whereEqualTo("is_club", false)
-                .whereEqualTo("is_organization", false).whereNotIn("id", blacklist);
+        query = db_ref.collection("users").whereEqualTo("uni_domain", uni_domain).whereNotIn("id", blacklist);
+        Log.d(TAG, String.valueOf(query));
         Log.d("Current User:", currentUser.getId());
-        fetchStudents();
+        fetchUsers();
     }
 
     private void checkEmptyAdapter(){
@@ -94,42 +91,50 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
         }
     }
 
+    //Initializes the blacklist; this must be done every time the adapter in case user has been added/removed
     private void initBlacklist() {
-        this.blacklist = Stream.of(current_user.getBlocked_users(), current_user.getBlockers(), current_user.getMessaging_users()).flatMap(Collection::stream).collect(Collectors.toList());
+        //blacklist = Stream.of(current_user.getBlocked_users(), current_user.getBlockers(), current_user.getMessaging_users()).flatMap(Collection::stream).collect(Collectors.toList());
+        blacklist = current_user.getBlockers();
         blacklist.add(current_user.getId());
     }
 
-    public Student getItem(int position){
-        return students.get(position);
+    public User getItem(int position){
+        return users.get(position);
     }
 
-    // Shanna: Static Pulling Methods (loading old students) - all the students that were created before this adapter was created
-    // TODO include Organizations too! -> Use "User" parent class (it's abstract). check out chat/LobbyAdapter.loadPartner()
-    private void fetchStudents() { //fetch all students
+    // Shanna: Static Pulling Methods (loading old users) - all the users that were created before this adapter was created
+    //Maybe need to define user or student when added into list
+    private void fetchUsers() { //fetch all users
         load_in_progress = true;
         query.get().addOnCompleteListener(querySnap -> {
             if (querySnap.isSuccessful() && querySnap.getResult() != null) {
                 Log.d(TAG, "Query successful");
                 if(!querySnap.getResult().isEmpty()) {
                     for (int i = 0; i < querySnap.getResult().getDocuments().size(); i++) {
-                        Log.d(TAG, "added student");
-                        DocumentSnapshot newStudent = querySnap.getResult().getDocuments().get(i);
-                        Student student = newStudent.toObject(Student.class);
-                        students.add(student);
-
-                        if (i >= querySnap.getResult().getDocuments().size() - 1) last_retrieved_student = newStudent;
+                        Log.d(TAG, "added user");
+                        DocumentSnapshot newUser = querySnap.getResult().getDocuments().get(i);
+                        //If user is student add as student
+                        if ((boolean)newUser.get("is_organization")==false){
+                            Student student = newUser.toObject(Student.class);
+                            users.add(student);
+                        } else {
+                            //else add as user
+                            User user = newUser.toObject(User.class);
+                            users.add(user);
+                        }
+                        if (i >= querySnap.getResult().getDocuments().size() - 1) last_retrieved_user = newUser;
                     }
 
-                    if (students.size() < 1) { //if the size is still 0 we need to check for the next batch (because if size 0 onBindViewHolder won't get called)
-                        if (last_retrieved_student != null && !loaded_all_students) {
-                            query = query.startAfter(last_retrieved_student);
-                            fetchStudents(); //next batch has to be loaded from where the previous one left off
+                    if (users.size() < 1) { //if the size is still 0 we need to check for the next batch (because if size 0 onBindViewHolder won't get called)
+                        if (last_retrieved_user != null && !loaded_all_users) {
+                            query = query.startAfter(last_retrieved_user);
+                            fetchUsers(); //next batch has to be loaded from where the previous one left off
                         }
                     }
-                    Collections.shuffle(students); //randomize user list
+                    Collections.shuffle(users); //randomize user list
                     notifyDataSetChanged();
                 } else {
-                    loaded_all_students = true;
+                    loaded_all_users = true;
                 }
             }
             stopLoading();
@@ -142,20 +147,29 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
         load_in_progress = true;
         initBlacklist();
         Log.d(TAG,"refresh called");
-        db_ref.collection("users").whereEqualTo("uni_domain", uni_domain).whereEqualTo("is_club", false)
-                .whereEqualTo("is_organization", false).whereNotIn("id", blacklist).get().addOnCompleteListener(querySnapTask -> {
+        db_ref.collection("users").whereEqualTo("uni_domain", uni_domain).whereNotIn("id", blacklist).get().addOnCompleteListener(querySnapTask -> {
             if(querySnapTask.isSuccessful() && querySnapTask.getResult() != null && !querySnapTask.getResult().isEmpty()){
                 for(DocumentSnapshot docSnap: querySnapTask.getResult()){
-                    Student student = docSnap.toObject(Student.class);
-                    if (student != null && !studentAlreadyAdded(student.getId())) students.add(0, student);
-                }
-                for(Student currStud : students) //Check if new users have been added to blacklist and remove them from students
-                {
-                    if(blacklist.contains(currStud.getId())) {
-                        students.remove(currStud);
+                    if (docSnap.getId() != null && !userAlreadyAdded(docSnap.getId())) {
+                        //Check that user is not null and not already in list
+                        if ((boolean) docSnap.get("is_organization") == false) {
+                            //If user is not an organization add as student
+                            Student student = docSnap.toObject(Student.class);
+                            users.add(0, student);
+                        } else {
+                            //else add as user
+                            User user = docSnap.toObject(User.class);
+                            users.add(0, user);
+                        }
                     }
                 }
-                Collections.shuffle(students); //randomize user list
+                for(User currUser : users) //Check if new users have been added to blacklist and remove them from users
+                {
+                    if(blacklist.contains(currUser.getId())) {
+                        users.remove(currUser);
+                    }
+                }
+                Collections.shuffle(users); //randomize user list
                 notifyDataSetChanged();
                 load_in_progress = false;
             }
@@ -178,23 +192,31 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull QuadViewHolder holder, final int position) {
-        Student current = students.get(position);
+        User current = users.get(position);
 
         holder.name_text.setText(current.getName());
-        holder.degree_text.setText(current.getDegree());
+        if (current instanceof Student) {
+            //If user is a student turn on degree text visible and set text
+            Student currStud = (Student) current;
+            holder.degree_text.setVisibility((View.VISIBLE));
+            holder.degree_text.setText(currStud.getDegree());
+        } else {
+            //else turn off degree text visibility
+            holder.degree_text.setVisibility(View.INVISIBLE);
+        }
         loadImage(holder, current);
 
-        if (!load_in_progress && position >= (students.size() - NEW_BATCH_TOLERANCE)) { //new batch tolerance means within how many last items do we want to start loading the next batch (i.e. we have 20 items and tolerance 2 -> the next batch will start loading once the user scrolls to the position 18 or 19)
-            if (last_retrieved_student != null && !loaded_all_students) {
-                query = query.startAfter(last_retrieved_student);
-                fetchStudents(); //next batch has to be loaded from where the previous one left off
+        if (!load_in_progress && position >= (users.size() - NEW_BATCH_TOLERANCE)) { //new batch tolerance means within how many last items do we want to start loading the next batch (i.e. we have 20 items and tolerance 2 -> the next batch will start loading once the user scrolls to the position 18 or 19)
+            if (last_retrieved_user != null && !loaded_all_users) {
+                query = query.startAfter(last_retrieved_user);
+                fetchUsers(); //next batch has to be loaded from where the previous one left off
             }
         }
     }
 
     @Override
     public int getItemCount() {
-        return students.size();
+        return users.size();
     }
 
 
@@ -204,23 +226,23 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
 
     // Shanna: Other Methods
 
-    private void loadImage(@NonNull QuadViewHolder holder, Student currentStudent) { // Load profile picture from storage
-        if (currentStudent == null) return;
+    private void loadImage(@NonNull QuadViewHolder holder, User currentUser) { // Load profile picture from storage
+        if (currentUser == null) return;
 
-        stor_ref.child(ImageUtils.getUserImagePath(currentStudent.getId())).getDownloadUrl()
+        stor_ref.child(ImageUtils.getUserImagePath(currentUser.getId())).getDownloadUrl()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
-                        Glide.with(context).load(task.getResult()).into(holder.student_profile_picture);
+                        Glide.with(context).load(task.getResult()).into(holder.user_profile_picture);
                     }else{
                         //Sets uninitialized profile images to stock empty image
-                        Glide.with(context).load(R.drawable.empty_profile_image).into(holder.student_profile_picture);
+                        Glide.with(context).load(R.drawable.empty_profile_image).into(holder.user_profile_picture);
                     }
                 });
     }
 
-    private boolean studentAlreadyAdded(String id) {
-        for (int i = 0; i < students.size(); i++) {
-            if (students.get(i).getId().equals(id)) return true;
+    private boolean userAlreadyAdded(String id) {
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getId().equals(id)) return true;
         }
         return false;
     }
@@ -238,17 +260,17 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
 
         public CardView layout;
         public ImageView chatButton;
-        public ImageView student_profile_picture;
+        public ImageView user_profile_picture;
         public TextView name_text;
         public TextView degree_text;
 
 
         public QuadViewHolder(@NonNull View itemView, QuadAdapter.OnQuadClickListener listener) {
             super(itemView);
-            student_profile_picture = itemView.findViewById(R.id.quad_studentProfilePic);
+            user_profile_picture = itemView.findViewById(R.id.quad_studentProfilePic);
             name_text = itemView.findViewById(R.id.quad_studentName);
             degree_text = itemView.findViewById(R.id.quad_studentDegree);
-            student_profile_picture = itemView.findViewById(R.id.quad_studentProfilePic);
+            user_profile_picture = itemView.findViewById(R.id.quad_studentProfilePic);
             chatButton = itemView.findViewById(R.id.chatButton);
             layout = itemView.findViewById(R.id.cardView);
 
