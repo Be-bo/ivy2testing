@@ -94,8 +94,7 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
 
     //Initializes the blacklist; this must be done every time the adapter in case user has been added/removed
     private void initBlacklist() {
-        //blacklist = Stream.of(current_user.getBlocked_users(), current_user.getBlockers(), current_user.getMessaging_users()).flatMap(Collection::stream).collect(Collectors.toList());
-        blacklist = current_user.getBlockers();
+        blacklist = Stream.of(current_user.getBlocked_users(), current_user.getBlockers(), current_user.getMessaging_users()).flatMap(Collection::stream).collect(Collectors.toList());
         blacklist.add(current_user.getId());
     }
 
