@@ -36,18 +36,13 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
 
     //Constants
     private final static String TAG = "QuadFragmentTag";
-    private View root_view;
 
     //Views
     private RecyclerView card_recycler;
     private TextView no_users_text;
     private QuadAdapter quad_adapter;
 
-    // Firestore
-    private StorageReference base_storage_ref = FirebaseStorage.getInstance().getReference();
-
     // Other Variables
-    private Student student;
     private User usr;
     private ProgressBar progressbar;
     private boolean is_set_up = false;
@@ -62,15 +57,15 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        root_view = inflater.inflate(R.layout.fragment_quad, container, false);
+        View root_view = inflater.inflate(R.layout.fragment_quad, container, false);
         declareViews(root_view);
         return root_view;
     }
 
     public void setUpQuad(){
         is_set_up = true;
-        if (student == null) getUserProfile();
-        else setUpElements();
+        if (usr == null) getUserProfile();
+        else setUpRecycler();
     }
 
     @Override
@@ -99,17 +94,8 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
             // Parent Final fields
             UserViewModel user_view_model = new ViewModelProvider(getActivity()).get(UserViewModel.class);
             usr = user_view_model.getThis_user().getValue();
-            if (usr instanceof Student) {
-                student = (Student) usr; //grab the initial data
-                // Only start doing processes that depend on user profile
-                setUpElements();
-            }
+            if (usr != null) setUpRecycler();
         }
-    }
-
-    private void setUpElements(){
-        Log.d(TAG, "Showing student: " + student.getId() + ", name: " + student.getName());
-        setUpRecycler();            // set up posts recycler view
     }
 
     private void declareViews(View v) {
@@ -120,7 +106,7 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
 
     private void setUpRecycler() {
         Log.d(TAG, String.valueOf(usr.getId()));
-        quad_adapter = new QuadAdapter(this, Constant.USERS_LOAD_LIMIT, student.getUni_domain(), getContext(), no_users_text, usr, card_recycler, progressbar);
+        quad_adapter = new QuadAdapter(this, Constant.USERS_LOAD_LIMIT, usr.getUni_domain(), getContext(), no_users_text, usr, card_recycler, progressbar);
         card_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
         card_recycler.setAdapter(quad_adapter);
     }
@@ -135,7 +121,6 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
         intent.putExtra("partner", quad_adapter.getItem(position));
         intent.putExtra("chatroom", new Chatroom(usr.getId(), quad_adapter.getItem(position).getId()));
         startActivity(intent);
-
     }
 
     // View User Profile

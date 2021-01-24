@@ -20,6 +20,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
+import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.util.ImageUtils;
@@ -44,8 +45,8 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
     private static final String TAG = "QuadAdapterTag";
 
 
-    private String uni_domain;
-    private User current_user;
+    private final String uni_domain;
+    private final User current_user;
     protected List<String> blacklist;
     private ArrayList<User> users = new ArrayList<>();
     private long creation_millis;
@@ -150,27 +151,19 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
         db_ref.collection("users").whereEqualTo("uni_domain", uni_domain).whereNotIn("id", blacklist).get().addOnCompleteListener(querySnapTask -> {
             if(querySnapTask.isSuccessful() && querySnapTask.getResult() != null && !querySnapTask.getResult().isEmpty()){
                 for(DocumentSnapshot docSnap: querySnapTask.getResult()){
-                    if (docSnap.getId() != null && !userAlreadyAdded(docSnap.getId())) {
+                    if (!userAlreadyAdded(docSnap.getId()) && !blacklist.contains(docSnap.getId())) {
                         //Check that user is not null and not already in list
-                        if ((boolean) docSnap.get("is_organization") == false) {
-                            //If user is not an organization add as student
-                            Student student = docSnap.toObject(Student.class);
-                            users.add(0, student);
-                        } else {
-                            //else add as user
-                            User user = docSnap.toObject(User.class);
-                            users.add(0, user);
-                        }
+                            User user;
+                        if ((boolean) docSnap.get("is_organization"))
+                            user = docSnap.toObject(Organization.class);
+                        else user = docSnap.toObject(Student.class);
+
+                        if (user != null) users.add(0, user);
+                        else Log.e(TAG, "user was null!");
                     }
                 }
-                for(User currUser : users) //Check if new users have been added to blacklist and remove them from users
-                {
-                    if(blacklist.contains(currUser.getId())) {
-                        users.remove(currUser);
-                    }
-                }
-                Collections.shuffle(users); //randomize user list
-                notifyDataSetChanged();
+                Collections.shuffle(users); //randomize user list //TODO not sure if we want this
+                notifyDataSetChanged(); // TODO
                 load_in_progress = false;
             }
             checkEmptyAdapter();

@@ -76,6 +76,10 @@ public class Chatroom implements Parcelable {
         members.remove(member);
     }
 
+    public static String getPath(String id) {
+        return "conversations/" + id;
+    }
+
     /* Parcel related Methods
      ***************************************************************************************************/
 

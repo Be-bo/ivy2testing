@@ -1,9 +1,12 @@
 package com.ivy2testing.userProfile;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,12 +15,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -28,9 +32,9 @@ import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.hometab.ViewPostOrEventActivity;
 import com.ivy2testing.main.MainActivity;
-import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.ImageUtils;
+import com.ivy2testing.util.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -55,7 +59,7 @@ public class StudentProfileActivity extends AppCompatActivity {
     private TextView private_text;
     private View contents;
     private ProgressBar progress_bar;
-    private TextView block_button;
+    private MenuItem block_button;
     private boolean isBlocked = false;
 
     // Firestore
@@ -84,13 +88,24 @@ public class StudentProfileActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.userprofile_options_button, menu);
+        block_button = menu.findItem(R.id.userprofile_block);
+        Utils.colorMenuItem(block_button, getColor(R.color.red));
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         // Handling up button for when another activity called it (it will simply go back to main otherwise)
-        if (item.getItemId() == android.R.id.home && !isTaskRoot()){
+        int id = item.getItemId();
+        if (id == android.R.id.home && !isTaskRoot()){
             goBackToParent();
             return true;
         }
-        else return super.onOptionsItemSelected(item);
+        else if (id == R.id.userprofile_block) blockAction();
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -105,7 +120,6 @@ public class StudentProfileActivity extends AppCompatActivity {
     private void setUpElements(){
         setTitle("Profile");
         setUpViews();               // populate UI
-        setListeners();
         setUpRecycler();            // set up posts recycler view
         getStudentPic();            // Do Other setups
     }
@@ -120,14 +134,13 @@ public class StudentProfileActivity extends AppCompatActivity {
         private_text = findViewById(R.id.activity_student_profile_private_text);
         contents = findViewById(R.id.activity_student_profile_contents);
         progress_bar = findViewById(R.id.studentProfile_progress_bar);
-        block_button = findViewById(R.id.studentProfile_blockAction);
-        setBlockActionText();
+
         // Change to message icons and add onClickListeners
         TextView tv_message = findViewById(R.id.studentProfile_action);
         tv_message.setText(R.string.message);
         tv_message.setOnClickListener(this::newChatroom);
         ImageView ic_message = findViewById(R.id.studentProfile_action_icon);
-        ic_message.setImageResource(R.drawable.ic_chat);
+        ic_message.setImageResource(R.drawable.ic_chat_selected);
         ic_message.setOnClickListener(this::newChatroom);
     }
 
@@ -136,6 +149,10 @@ public class StudentProfileActivity extends AppCompatActivity {
         mName.setText(student_to_display.getName());
         mDegree.setText(student_to_display.getDegree());
         if (profile_img_uri != null) Picasso.get().load(profile_img_uri).into(mProfileImg);
+
+        isBlocked = this_user.getBlocked_users().contains(student_to_display.getId());
+        if (isBlocked) block_button.setTitle(R.string.unblock);
+        else block_button.setTitle(R.string.block);
     }
 
     // Create adapter for recycler (adapter pulls posts from database)
@@ -155,42 +172,29 @@ public class StudentProfileActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(adapter);
     }
 
-    public void setListeners() {
-        block_button.setOnClickListener(v12 -> blockAction());
-        Log.d(TAG, "listener set");
-    }
-
-    private void setBlockActionText() {
-//        if (!this_user.getBlocked_users().isEmpty()) {
-//            if(this_user.getBlocked_users().contains(student_to_display.getId())) {
-//                Log.d(TAG, "you have this user blocked");
-//                block_button.setText("Unblock this user");
-//                isBlocked = true;
-//            } else {
-//                Log.d(TAG, "you don't have this user blocked");
-//                block_button.setText("Block this user");
-//                isBlocked = false;
-//            }
-//        }
-    }
 
     /* OnClick Methods
 ***************************************************************************************************/
 
     //Block or unblock a user
     private void blockAction(){
-        if (isBlocked) {
-            Log.d(TAG, "User blocked");
-
-            //Change to setBlockActionText();
-            block_button.setText("Unblock this user");
+        if (isBlocked){
+            block_button.setTitle(R.string.block);
+            unblockUser();
             isBlocked = false;
         } else {
-            Log.d(TAG, "User unblocked");
-            //Change to setBlockActionText();
-            block_button.setText("Block this user");
-            isBlocked = true;
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.block_alert_title)
+                    .setMessage(R.string.block_alert_message)
+                    .setPositiveButton(R.string.block, (dialog, which) -> {
+                        block_button.setTitle(R.string.unblock);
+                        blockUser();
+                        isBlocked = true;
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
         }
+        Log.e(TAG, "isBlocked?: " + isBlocked);
     }
 
     // A post in recycler was selected
@@ -325,5 +329,41 @@ public class StudentProfileActivity extends AppCompatActivity {
                     // Reload views
                     setUpViews();
                 });
+    }
+
+    // Add to blocked_users and blockers
+    private void blockUser() {
+        db.document(User.getPath(this_user.getId())).update("blocked_users", FieldValue.arrayUnion(student_to_display.getId()));
+        db.document(User.getPath(student_to_display.getId())).update("blockers", FieldValue.arrayUnion(this_user.getId()));
+        removeChatrooms();
+    }
+
+    // Remove from block_users and blockers
+    private void unblockUser() {
+        db.document(User.getPath(this_user.getId())).update("blocked_users", FieldValue.arrayRemove(student_to_display.getId()));
+        db.document(User.getPath(student_to_display.getId())).update("blockers", FieldValue.arrayRemove(this_user.getId()));
+    }
+
+    // If blocking, remove existing chatrooms
+    private void removeChatrooms() {
+        if (!this_user.getMessaging_users().contains(student_to_display.getId())) return;
+
+        // Remove from messaging Lists
+        db.document(User.getPath(this_user.getId())).update("messaging_users", FieldValue.arrayRemove(student_to_display.getId()));
+        db.document(User.getPath(student_to_display.getId())).update("messaging_users", FieldValue.arrayRemove(this_user.getId()));
+
+        // Remove Chatrooms (only one ArrayContains is allowed)
+        // Note: must remove messages manually
+        db.collection("conversations")
+                .whereArrayContains("members", this_user.getId())
+                .get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        for (DocumentSnapshot doc : task.getResult().getDocuments()) {
+                            Chatroom room = doc.toObject(Chatroom.class);
+                            if (room != null && room.getMembers().contains(student_to_display.getId()))
+                                db.document(Chatroom.getPath(doc.getId())).delete();
+                        }
+                    }
+        });
     }
 }

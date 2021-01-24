@@ -73,15 +73,31 @@
                 android:layout_marginBottom="@dimen/small_margin"
                 android:text="@string/join" />
 
-            <TextView
-                android:id="@+id/studentProfile_blockAction"
-                style="@style/StandardClickableText"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/block"
-                />
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/standard_margin">
 
+                <ImageView
+                    android:id="@+id/activity_orgprofile_msg_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    app:layout_constraintDimensionRatio="1"
+                    android:src="@drawable/ic_chat_selected"
+                    app:tint="@color/interaction"
+                    android:onClick="newChatroom"
+                    android:layout_marginEnd="@dimen/small_margin"/>
 
+                <TextView
+                    android:id="@+id/activity_orgprofile_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/StandardClickableText"
+                    android:onClick="newChatroom"
+                    android:text="@string/message"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">ivy2testing</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
-    <string name="empty_string"></string>
+    <string name="empty_string" />
     <string name="send">Send</string>
-    <string name="contact_us_hint">Feedback, suggestion,...</string>
+    <string name="contact_us_hint">Feedback, suggestion,…</string>
 
     <!--Authentication-->
     <string name="login">Log In</string>
@@ -90,6 +90,10 @@
     <string name="add_friend">Add Friend</string>
     <string name="message">Message</string>
 
+    <string name="no_users">\No other users registered on your campus yet!\</string>
+    <string name="accept_member_request">Accept Member Request</string>
+    <string name="reject_member_request">Reject Member Request</string>
+
     <string name="error_invalidName">Please enter a nonempty Name</string>
     <string name="error_noPosts">No Posts to Display</string>
     <string name="error_getPost">An error occurred while retrieving posts</string>
@@ -107,7 +111,10 @@
     <string name="notification">Notificaion</string>
     <string name="time">time</string>
 
-    <string name="block">Block this user</string>
+    <string name="block">Block</string>
+    <string name="unblock">Unblock</string>
+    <string name="block_alert_title">Block User?</string>
+    <string name="block_alert_message">You will not be able to message this user until you unblock them.</string>
 
     <!-- Posts and Events -->
     <string name="post_visual">Post Visual</string>
@@ -272,5 +279,4 @@
         Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
         Praesent nulla orci, aliquam porttitor molestie at, tincidunt ut sapien. Sed pharetra lobortis elit quis iaculis.
     </string>
-    <string name="no_users">\No other users registered on your campus yet!\</string>
 </resources>

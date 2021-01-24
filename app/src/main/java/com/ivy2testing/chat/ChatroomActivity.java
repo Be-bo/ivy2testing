@@ -1,6 +1,7 @@
 package com.ivy2testing.chat;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -22,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Chatroom;
 import com.ivy2testing.entities.User;
+import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.userProfile.OrganizationProfileActivity;
 import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.Utils;
@@ -69,6 +71,18 @@ public class ChatroomActivity extends AppCompatActivity {
         else super.onBackPressed();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        // Handling up button for when another activity called it (it will simply go back to main otherwise)
+        if (id == android.R.id.home && !isTaskRoot()){
+            goBackToParent();
+            return true;
+        }
+        else if (id == R.id.chatroom_open_nav) openOptions();
+        return super.onOptionsItemSelected(item);
+    }
+
     /* Initialization Methods
      ***************************************************************************************************/
 
@@ -114,18 +128,23 @@ public class ChatroomActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    // handle button activities
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.chatroom_open_nav)
-            openOptions();
-        return super.onOptionsItemSelected(item);
-    }
-
 
 /* OnClick Methods
 ***************************************************************************************************/
+
+    // Handle Up Button
+    private void goBackToParent(){
+        Log.d(TAG, "Returning to parent");
+        Intent intent;
+
+        // Try to go back to activity that called startActivityForResult()
+        if (getCallingActivity() != null)
+            intent = new Intent(this, getCallingActivity().getClass());
+        else intent = new Intent(this, MainActivity.class); // Go to main as default
+
+        setResult(RESULT_OK, intent);
+        finish();
+    }
 
     public void openOptions() {
         if (drawer.isDrawerOpen(GravityCompat.END))

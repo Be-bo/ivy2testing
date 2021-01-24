@@ -5,10 +5,10 @@
         android:title="@string/view_profile"/>
 
     <item android:id="@+id/userOptions_accept_member_request"
-        android:title="Accept Member Request"/>
+        android:title="@string/accept_member_request"/>
 
     <item android:id="@+id/userOptions_reject_member_request"
-        android:title="Reject Member Request"/>
+        android:title="@string/reject_member_request"/>
 
 <!--    <item android:id="@+id/userOptions_addFriend"-->
 <!--        android:title="@string/add_friend"/>-->

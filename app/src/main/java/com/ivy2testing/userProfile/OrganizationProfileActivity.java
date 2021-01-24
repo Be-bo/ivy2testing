@@ -3,30 +3,39 @@ package com.ivy2testing.userProfile;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
+import com.ivy2testing.chat.ChatroomActivity;
+import com.ivy2testing.entities.Chatroom;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.User;
-import com.ivy2testing.main.SeeAllPostsActivity;
+import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.main.SeeAllUsersActivity;
 import com.ivy2testing.hometab.ViewPostOrEventActivity;
 import com.ivy2testing.util.Constant;
+import com.ivy2testing.util.Utils;
 import com.ivy2testing.util.adapters.CircleUserAdapter;
 
 import java.util.ArrayList;
@@ -56,8 +65,8 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
     private TextView no_posts_text;
     private ProgressBar progress_bar;
 
-    private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
-    private FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
+    private final StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
+    private final FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
 
     private RecyclerView post_recycler;
     private RecyclerView members_recycler;
@@ -68,7 +77,7 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
     private String org_to_display_id;
     private Organization org_to_display;
 
-    private TextView block_button;
+    private MenuItem block_button;
     private boolean isBlocked = false;
 
 
@@ -88,6 +97,28 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.userprofile_options_button, menu);
+        block_button = menu.findItem(R.id.userprofile_block);
+        Utils.colorMenuItem(block_button, getColor(R.color.red));
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // Handling up button for when another activity called it (it will simply go back to main otherwise)
+        int id = item.getItemId();
+        if (id == android.R.id.home && !isTaskRoot()){
+            goBackToParent();
+            return true;
+        }
+        else if (id == R.id.userprofile_block) blockAction();
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
     public void onPostClick(int position) {
         Intent intent = new Intent(this, ViewPostOrEventActivity.class);
         intent.putExtra("this_user", this_user);
@@ -105,11 +136,6 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
         intent.putExtra("student_to_display_id", person_adapter.getItem(position));
         intent.putExtra("student_to_display_uni", org_to_display.getUni_domain());
         startActivity(intent);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 
 
@@ -139,9 +165,6 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
         member_divider = findViewById(R.id.activity_orgprofile_divider2);
         no_posts_text = findViewById(R.id.activity_orgprofile_no_posts);
         progress_bar = findViewById(R.id.activity_orgprofile_progress_bar);
-        block_button = findViewById(R.id.studentProfile_blockAction);
-        setListeners();
-        setBlockActionText();
     }
 
     private void getIncomingData(){
@@ -194,6 +217,10 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
         setUpRecyclers();
         setUpMembers();
         see_all_members_button.setOnClickListener(view -> transToMembers());
+
+        isBlocked = this_user.getBlocked_users().contains(org_to_display.getId());
+        if (isBlocked) block_button.setTitle(R.string.unblock);
+        else block_button.setTitle(R.string.block);
     }
 
     private void setUpRecyclers(){
@@ -244,49 +271,41 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
         }
     }
 
+    // Handle Up Button
+    private void goBackToParent(){
+        Log.d(TAG, "Returning to parent");
+        Intent intent;
 
+        // Try to go back to activity that called startActivityForResult()
+        if (getCallingActivity() != null)
+            intent = new Intent(this, getCallingActivity().getClass());
+        else intent = new Intent(this, MainActivity.class); // Go to main as default
 
-
-
-
-
-
-
-    // MARK: Interaction Functions
-
-    public void setListeners() {
-        block_button.setOnClickListener(v12 -> blockAction());
-        Log.d(TAG, "listener set");
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
-    private void setBlockActionText() {
-//        if (!this_user.getBlocked_users().isEmpty()) {
-//            if(this_user.getBlocked_users().contains(student_to_display.getId())) {
-//                Log.d(TAG, "you have this user blocked");
-//                block_button.setText("Unblock this user");
-//                isBlocked = true;
-//            } else {
-//                Log.d(TAG, "you don't have this user blocked");
-//                block_button.setText("Block this user");
-//                isBlocked = false;
-//            }
-//        }
-    }
+
 
     //Block or unblock a user
     private void blockAction(){
-        if (isBlocked) {
-            Log.d(TAG, "User blocked");
-
-            //Change to setBlockActionText();
-            block_button.setText("Unblock this user");
+        if (isBlocked){
+            block_button.setTitle(R.string.block);
+            unblockUser();
             isBlocked = false;
         } else {
-            Log.d(TAG, "User unblocked");
-            //Change to setBlockActionText();
-            block_button.setText("Block this user");
-            isBlocked = true;
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.block_alert_title)
+                    .setMessage(R.string.block_alert_message)
+                    .setPositiveButton(R.string.block, (dialog, which) -> {
+                        block_button.setTitle(R.string.unblock);
+                        blockUser();
+                        isBlocked = true;
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
         }
+        Log.e(TAG, "isBlocked?: " + isBlocked);
     }
 
     private void requestMembership(){
@@ -337,12 +356,49 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
         startActivity(intent);
     }
 
-    private void transToPosts(){
-        Intent intent = new Intent(this, SeeAllPostsActivity.class);
-        intent.putExtra("title", org_to_display.getName()+"'s Posts");
+    // Open ChatroomActivity with new Chatroomm
+    public void newChatroom(View v) {
+        Intent intent = new Intent(this, ChatroomActivity.class);
         intent.putExtra("this_user", this_user);
-        intent.putExtra("author_id", org_to_display_id);
-        intent.putExtra("uni_domain", org_to_display.getUni_domain());
+        intent.putExtra("partner", org_to_display);
+        intent.putExtra("chatroom", new Chatroom(this_user.getId(), org_to_display.getId()));
         startActivity(intent);
+    }
+
+
+    // Add to blocked_users and blockers
+    private void blockUser() {
+        db_ref.document(User.getPath(this_user.getId())).update("blocked_users", FieldValue.arrayUnion(org_to_display.getId()));
+        db_ref.document(User.getPath(org_to_display.getId())).update("blockers", FieldValue.arrayUnion(this_user.getId()));
+        removeChatrooms();
+    }
+
+    // Remove from block_users and blockers
+    private void unblockUser() {
+        db_ref.document(User.getPath(this_user.getId())).update("blocked_users", FieldValue.arrayRemove(org_to_display.getId()));
+        db_ref.document(User.getPath(org_to_display.getId())).update("blockers", FieldValue.arrayRemove(this_user.getId()));
+    }
+
+    // If blocking, remove existing chatrooms
+    private void removeChatrooms() {
+        if (!this_user.getMessaging_users().contains(org_to_display.getId())) return;
+
+        // Remove from messaging Lists
+        db_ref.document(User.getPath(this_user.getId())).update("messaging_users", FieldValue.arrayRemove(org_to_display.getId()));
+        db_ref.document(User.getPath(org_to_display.getId())).update("messaging_users", FieldValue.arrayRemove(this_user.getId()));
+
+        // Remove Chatrooms (only one ArrayContains is allowed)
+        // Note: must remove messages manually
+        db_ref.collection("conversations")
+                .whereArrayContains("members", this_user.getId())
+                .get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                for (DocumentSnapshot doc : task.getResult().getDocuments()) {
+                    Chatroom room = doc.toObject(Chatroom.class);
+                    if (room != null && room.getMembers().contains(org_to_display.getId()))
+                        db_ref.document(Chatroom.getPath(doc.getId())).delete();
+                }
+            }
+        });
     }
 }

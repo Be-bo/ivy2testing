@@ -176,7 +176,7 @@ public final class Utils {
 
     // Create a spannable string for a menuItem
     public static void colorMenuItem(MenuItem menuItem, int color_id){
-        SpannableString str = new SpannableString(menuItem.getTitle());
+        SpannableString str = new SpannableString(menuItem.getTitle().toString());
         str.setSpan(new ForegroundColorSpan(color_id), 0, str.length(), 0);
         menuItem.setTitle(str);
     }
