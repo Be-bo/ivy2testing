@@ -68,7 +68,8 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
     private String org_to_display_id;
     private Organization org_to_display;
 
-
+    private TextView block_button;
+    private boolean isBlocked = false;
 
 
 
@@ -138,6 +139,9 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
         member_divider = findViewById(R.id.activity_orgprofile_divider2);
         no_posts_text = findViewById(R.id.activity_orgprofile_no_posts);
         progress_bar = findViewById(R.id.activity_orgprofile_progress_bar);
+        block_button = findViewById(R.id.studentProfile_blockAction);
+        setListeners();
+        setBlockActionText();
     }
 
     private void getIncomingData(){
@@ -249,6 +253,41 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
 
 
     // MARK: Interaction Functions
+
+    public void setListeners() {
+        block_button.setOnClickListener(v12 -> blockAction());
+        Log.d(TAG, "listener set");
+    }
+
+    private void setBlockActionText() {
+//        if (!this_user.getBlocked_users().isEmpty()) {
+//            if(this_user.getBlocked_users().contains(student_to_display.getId())) {
+//                Log.d(TAG, "you have this user blocked");
+//                block_button.setText("Unblock this user");
+//                isBlocked = true;
+//            } else {
+//                Log.d(TAG, "you don't have this user blocked");
+//                block_button.setText("Block this user");
+//                isBlocked = false;
+//            }
+//        }
+    }
+
+    //Block or unblock a user
+    private void blockAction(){
+        if (isBlocked) {
+            Log.d(TAG, "User blocked");
+
+            //Change to setBlockActionText();
+            block_button.setText("Unblock this user");
+            isBlocked = false;
+        } else {
+            Log.d(TAG, "User unblocked");
+            //Change to setBlockActionText();
+            block_button.setText("Block this user");
+            isBlocked = true;
+        }
+    }
 
     private void requestMembership(){
         db_ref.collection("users").document(org_to_display_id).update("request_ids",FieldValue.arrayUnion(this_user.getId())).addOnCompleteListener(task -> {
