@@ -73,6 +73,15 @@
                 android:layout_marginBottom="@dimen/small_margin"
                 android:text="@string/join" />
 
+            <TextView
+                android:id="@+id/studentProfile_blockAction"
+                style="@style/StandardClickableText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/block"
+                />
+
+
 
         </LinearLayout>
 
