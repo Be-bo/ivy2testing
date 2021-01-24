@@ -98,6 +98,9 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (this_user.getId().equals(org_to_display_id))
+            return super.onCreateOptionsMenu(menu);
+
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.userprofile_options_button, menu);
         block_button = menu.findItem(R.id.userprofile_block);
@@ -218,9 +221,16 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
         setUpMembers();
         see_all_members_button.setOnClickListener(view -> transToMembers());
 
-        isBlocked = this_user.getBlocked_users().contains(org_to_display.getId());
-        if (isBlocked) block_button.setTitle(R.string.unblock);
-        else block_button.setTitle(R.string.block);
+        if (this_user.getId().equals(org_to_display.getId())){
+            findViewById(R.id.activity_orgprofile_msg).setVisibility(View.GONE);
+            findViewById(R.id.activity_orgprofile_msg_icon).setVisibility(View.GONE);
+            block_button.setVisible(false);
+        }
+        else if (block_button != null) {
+            isBlocked = this_user.getBlocked_users().contains(org_to_display.getId());
+            if (isBlocked) block_button.setTitle(R.string.unblock);
+            else block_button.setTitle(R.string.block);
+        }
     }
 
     private void setUpRecyclers(){

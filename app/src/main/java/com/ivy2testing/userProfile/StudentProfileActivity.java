@@ -89,6 +89,9 @@ public class StudentProfileActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (student_to_display != null && this_user.getId().equals(student_to_display.getId()))
+            return super.onCreateOptionsMenu(menu);
+
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.userprofile_options_button, menu);
         block_button = menu.findItem(R.id.userprofile_block);
@@ -150,9 +153,17 @@ public class StudentProfileActivity extends AppCompatActivity {
         mDegree.setText(student_to_display.getDegree());
         if (profile_img_uri != null) Picasso.get().load(profile_img_uri).into(mProfileImg);
 
-        isBlocked = this_user.getBlocked_users().contains(student_to_display.getId());
-        if (isBlocked) block_button.setTitle(R.string.unblock);
-        else block_button.setTitle(R.string.block);
+
+        if (this_user.getId().equals(student_to_display.getId())){
+            findViewById(R.id.studentProfile_action).setVisibility(View.GONE);
+            findViewById(R.id.studentProfile_action_icon).setVisibility(View.GONE);
+            if (block_button != null) block_button.setVisible(false);
+        }
+        else if (block_button != null) {
+            isBlocked = this_user.getBlocked_users().contains(student_to_display.getId());
+            if (isBlocked) block_button.setTitle(R.string.unblock);
+            else block_button.setTitle(R.string.block);
+        }
     }
 
     // Create adapter for recycler (adapter pulls posts from database)
