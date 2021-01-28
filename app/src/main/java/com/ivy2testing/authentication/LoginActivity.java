@@ -257,12 +257,12 @@ public class LoginActivity extends AppCompatActivity {
         auth.signInWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
             if (task.isSuccessful()){
                 FirebaseUser user = auth.getCurrentUser();
-                if(user!=null && user.isEmailVerified()){
+                if(user!=null /*&& user.isEmailVerified()*/){
                     // Save uni domain for auto-logins and send off to MainActivity
                     barInteraction();
                     transToMainLoggedIn();
                 } else {
-                    toastMessage("Email not verified yet!");
+                    toastMessage("User is null!");
                     showResendEmail(user);
                     auth.signOut();
                     allowInteraction();

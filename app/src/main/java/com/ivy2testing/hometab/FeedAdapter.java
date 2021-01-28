@@ -14,6 +14,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -233,7 +234,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     public void getPicFromDB(FeedViewHolder holder, Post post) {
         String visualPath = post.getVisual();
         if(visualPath != null && visualPath.contains("/")){
-            db_storage.child(visualPath).getDownloadUrl().addOnCompleteListener(task -> {if(task.isSuccessful() && task.getResult() != null)Glide.with(context).load(task.getResult()).into(holder.feed_image_view);
+            RequestOptions myOptions = new RequestOptions().override(300, 300);
+            db_storage.child(visualPath).getDownloadUrl().addOnCompleteListener(task -> {if(task.isSuccessful() && task.getResult() != null)Glide.with(context).applyDefaultRequestOptions(myOptions).load(task.getResult()).into(holder.feed_image_view);
             else Glide.with(context).load(R.drawable.ivy_logo).into(holder.feed_image_view);});
         }
     }
