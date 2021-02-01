@@ -417,15 +417,19 @@ public class EditStudentProfileActivity extends AppCompatActivity {
     // Load student profile picture
     // Will throw an exception if file doesn't exist in storage but app continues to work fine
     private void loadImage(){
-        base_storage_ref.child(ImageUtils.getUserImagePath(this_student.getId())).getDownloadUrl()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()){
-                        Uri path = task.getResult();
-                        Picasso.get().load(path).into(mImg);
-                    }
-                    else Log.w(TAG, "Couldn't retrieve image!");
-                    allowInteraction();
-                });
+        try {
+            base_storage_ref.child(ImageUtils.getUserImagePath(this_student.getId())).getDownloadUrl()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Uri path = task.getResult();
+                            Picasso.get().load(path).into(mImg);
+                        } else Log.w(TAG, "Couldn't retrieve image!");
+                        allowInteraction();
+                    });
+        } catch (Exception e) {
+            Log.w(TAG, "StorageException! No Preview Image for this user.");
+            allowInteraction();
+        }
     }
 
 

@@ -222,13 +222,17 @@ public class StudentProfileFragment extends Fragment {
     private void getStudentPic() {
         if (student == null) return;
 
-        base_storage_ref.child(ImageUtils.getUserImagePath(student.getId())).getDownloadUrl()
-                .addOnCompleteListener(task -> {
-                    if (getContext()!= null){
-                        if (task.isSuccessful() && task.getResult() != null) Glide.with(getContext()).load(task.getResult()).into(profile_image);
-//                        else Toast.makeText(getContext(), "Failed to get profile image.", Toast.LENGTH_LONG).show();
-                    }
-                    setUpViews();
-                });
+        try {
+            base_storage_ref.child(ImageUtils.getUserImagePath(student.getId())).getDownloadUrl()
+                    .addOnCompleteListener(task -> {
+                        if (getContext() != null) {
+                            if (task.isSuccessful() && task.getResult() != null)
+                                Glide.with(getContext()).load(task.getResult()).into(profile_image);
+                        }
+                        setUpViews();
+                    });
+        } catch (Exception e) {
+            Log.w(TAG, "StorageException! No Preview Image for this user.");
+        }
     }
 }

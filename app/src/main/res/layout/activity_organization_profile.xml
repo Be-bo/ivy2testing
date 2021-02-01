@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -130,20 +129,6 @@
             app:layout_constraintTop_toBottomOf="@id/activity_orgprofile_members_header" />
 
         <TextView
-            android:id="@+id/activity_orgprofile_no_posts"
-            style="@style/LargeText"
-            android:textAlignment="center"
-            android:gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/profile_no_posts"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/activity_orgprofile_members_header"/>
-
-        <TextView
             android:id="@+id/activity_orgprofile_members_see_all"
             style="@style/StandardClickableText"
             android:layout_width="wrap_content"
@@ -190,6 +175,21 @@
             app:layout_constraintBottom_toBottomOf="@id/activity_orgprofile_post_recycler"
             app:layout_constraintStart_toStartOf="@id/activity_orgprofile_post_recycler"
             app:layout_constraintEnd_toEndOf="@id/activity_orgprofile_post_recycler"/>
+
+        <TextView
+            android:id="@+id/activity_orgprofile_no_posts"
+            style="@style/LargeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:gravity="center"
+            android:text="@string/profile_no_posts"
+            android:textAlignment="center"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/activity_orgprofile_posts_header" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

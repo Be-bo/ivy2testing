@@ -216,7 +216,14 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
 
         name_text.setText(org_to_display.getName());
         String profPicPath = "userfiles/"+org_to_display_id+"/profileimage.jpg";
-        stor_ref.child(profPicPath).getDownloadUrl().addOnCompleteListener(task -> { if(task.isSuccessful() && task.getResult() != null) Glide.with(this).load(task.getResult()).into(profile_image);});
+        try {
+            stor_ref.child(profPicPath).getDownloadUrl().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null)
+                    Glide.with(this).load(task.getResult()).into(profile_image);
+            });
+        } catch (Exception e) {
+            Log.w(TAG, "StorageException! No Preview Image for this user.");
+        }
         setUpRecyclers();
         setUpMembers();
         see_all_members_button.setOnClickListener(view -> transToMembers());

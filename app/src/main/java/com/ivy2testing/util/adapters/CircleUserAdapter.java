@@ -1,6 +1,7 @@
 package com.ivy2testing.util.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,12 +26,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class CircleUserAdapter extends RecyclerView.Adapter<CircleUserAdapter.CircleImgHolder> {
 
+    private static final String TAG = "CircleUserAdapter";
     // Vars
-    private List<String> user_ids;
-    private Context context;
-    private OnPersonListener person_listener;
-    private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
-    private View recycler_layout;
+    private final List<String> user_ids;
+    private final Context context;
+    private final OnPersonListener person_listener;
+    private final StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
 
 
     public CircleUserAdapter(List<String> ids, Context con, OnPersonListener listener) {
@@ -72,7 +73,14 @@ public class CircleUserAdapter extends RecyclerView.Adapter<CircleUserAdapter.Ci
     @Override
     public void onBindViewHolder(@NonNull CircleImgHolder holder, int position) {
         String path = ImageUtils.getUserImagePreviewPath(user_ids.get(position));
-        stor_ref.child(path).getDownloadUrl().addOnCompleteListener(task -> { if(task.isSuccessful() && task.getResult() != null) Glide.with(context).load(task.getResult()).into(holder.circle_img); });
+        try {
+            stor_ref.child(path).getDownloadUrl().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null)
+                    Glide.with(context).load(task.getResult()).into(holder.circle_img);
+            });
+        } catch (Exception e) {
+            Log.w(TAG, "StorageException! No Preview Image for this user.");
+        }
     }
 
     @Override

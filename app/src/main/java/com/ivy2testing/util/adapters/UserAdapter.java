@@ -88,12 +88,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             return;
         }
 
-        firebase_storage.child(address).getDownloadUrl()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null)
-                        Picasso.get().load(task.getResult()).into(holder.circle_img);
-                    else Log.w(TAG, "this user's image doesn't exist! user: " + user.getId());
-                });
+        try {
+            firebase_storage.child(address).getDownloadUrl().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null)
+                    Picasso.get().load(task.getResult()).into(holder.circle_img);
+                else Log.w(TAG, "this user's image doesn't exist! user: " + user.getId());
+            });
+        } catch (Exception e) {
+            Log.w(TAG, "StorageException! No Preview Image for this user.");
+        }
     }
 
 

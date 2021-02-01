@@ -36,25 +36,25 @@ public class ProfilePostAdapter extends RecyclerView.Adapter<ProfilePostViewHold
 
     private static final int NEW_BATCH_TOLERANCE = 4;
     private static final String TAG = "SquareImageAdapterTag";
-    private String author_id;
-    private String uni_domain;
+    private final String author_id;
+    private final String uni_domain;
     private int pull_limit = 0;
-    private ArrayList<Post> posts = new ArrayList<>();
-    private List<View> all_layout_elements;
-    private long creation_millis;
-    private TextView empty_adapter_text;
-    private RecyclerView recycler;
-    private ProgressBar progress_bar;
+    private final ArrayList<Post> posts = new ArrayList<>();
+    private final List<View> all_layout_elements;
+    private final long creation_millis;
+    private final TextView empty_adapter_text;
+    private final RecyclerView recycler;
+    private final ProgressBar progress_bar;
 
     private Query query;
-    private FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
-    private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
-    private OnPostListener post_listener;
+    private final FirebaseFirestore db_ref = FirebaseFirestore.getInstance();
+    private final StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
+    private final OnPostListener post_listener;
     private boolean loaded_all_posts = false;
     private boolean load_in_progress = false;
     private DocumentSnapshot last_retrieved_document;
 
-    private Context context;
+    private final Context context;
     private ListenerRegistration list_reg;
 
     public ProfilePostAdapter(String id, String uniDomain, int limit, Context mrContext, OnPostListener listener, List<View> allElems, TextView emptyAdapterText, RecyclerView rec, ProgressBar progressBar) {
@@ -243,7 +243,7 @@ public class ProfilePostAdapter extends RecyclerView.Adapter<ProfilePostViewHold
 
     private void hideLayout() {
         for (View view : all_layout_elements) {
-            if (view != null) view.setVisibility(View.GONE);
+            if (view != null) view.setVisibility(View.INVISIBLE);
         }
     }
 

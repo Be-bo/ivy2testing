@@ -65,7 +65,7 @@ public class OrganizationProfileFragment extends Fragment implements ProfilePost
     private RecyclerView post_recycler;
     private RecyclerView members_recycler;
 
-    private StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
+    private final StorageReference stor_ref = FirebaseStorage.getInstance().getReference();
     private User this_user;
     private UserViewModel this_user_viewmodel;
     private boolean is_set_up = false;
@@ -153,7 +153,14 @@ public class OrganizationProfileFragment extends Fragment implements ProfilePost
         else member_number_text.setText(getString(R.string.organization_member_number, memberNumber));
         member_requests_button.setText(getString(R.string.organization_request_number, requestNumber));
         String profPicPath = ImageUtils.getUserImagePath(this_user.getId());
-        stor_ref.child(profPicPath).getDownloadUrl().addOnCompleteListener(task -> {if(task.isSuccessful() && getContext() != null) Glide.with(getContext()).load(task.getResult()).into(profile_image);});
+        try {
+            stor_ref.child(profPicPath).getDownloadUrl().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && getContext() != null)
+                    Glide.with(getContext()).load(task.getResult()).into(profile_image);
+            });
+        } catch (Exception e) {
+            Log.w(TAG, "StorageException! No Preview Image for this user.");
+        }
     }
 
     private void setInteractionListeners(){

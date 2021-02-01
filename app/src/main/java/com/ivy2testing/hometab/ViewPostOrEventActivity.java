@@ -667,11 +667,15 @@ public class ViewPostOrEventActivity extends AppCompatActivity {
             return;
         }
 
-        base_storage_ref.child(address).getDownloadUrl().addOnCompleteListener(task -> {
-            if (task.isSuccessful())
-                Picasso.get().load(task.getResult()).into(mAuthorImg);
-            else Log.e(TAG, "Could not get User Profile Image from storage.");
-        });
+        try {
+            base_storage_ref.child(address).getDownloadUrl().addOnCompleteListener(task -> {
+                if (task.isSuccessful())
+                    Picasso.get().load(task.getResult()).into(mAuthorImg);
+                else Log.e(TAG, "Could not get User Profile Image from storage.");
+            });
+        } catch (Exception e) {
+            Log.w(TAG, "StorageException! No Preview Image for this user.");
+        }
 
     }
 

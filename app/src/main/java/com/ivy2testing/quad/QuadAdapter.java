@@ -221,15 +221,16 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
     private void loadImage(@NonNull QuadViewHolder holder, User currentUser) { // Load profile picture from storage
         if (currentUser == null) return;
 
-        stor_ref.child(ImageUtils.getUserImagePath(currentUser.getId())).getDownloadUrl()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        Glide.with(context).load(task.getResult()).into(holder.user_profile_picture);
-                    }else{
-                        //Sets uninitialized profile images to stock empty image
-                        Glide.with(context).load(R.drawable.empty_profile_image).into(holder.user_profile_picture);
-                    }
-                });
+        try {
+            stor_ref.child(ImageUtils.getUserImagePath(currentUser.getId())).getDownloadUrl().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null)
+                    Glide.with(context).load(task.getResult()).into(holder.user_profile_picture);
+                else
+                    Glide.with(context).load(R.drawable.empty_profile_image).into(holder.user_profile_picture);
+            });
+        } catch (Exception e) {
+            Log.w(TAG, "StorageException! No Preview Image for this user.");
+        }
     }
 
     private boolean userAlreadyAdded(String id) {

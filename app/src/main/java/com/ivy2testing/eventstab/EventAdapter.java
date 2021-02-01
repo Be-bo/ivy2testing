@@ -1,6 +1,7 @@
 package com.ivy2testing.eventstab;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
@@ -26,23 +28,21 @@ import java.util.Calendar;
 import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
-
-
-
+    private static final String TAG = "EventAdapter";
 
 
     // MARK: Base
 
-    private List<Event> events;
-    private TextView title;
-    private RecyclerView recycler;
-    private ProgressBar progress_bar;
-    private int type;
-    private String campus_domain;
-    private Context context;
-    private EventClickListener event_listener;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private StorageReference stor = FirebaseStorage.getInstance().getReference();
+    private final List<Event> events;
+    private final TextView title;
+    private final RecyclerView recycler;
+    private final ProgressBar progress_bar;
+    private final int type;
+    private final String campus_domain;
+    private final Context context;
+    private final EventClickListener event_listener;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final StorageReference stor = FirebaseStorage.getInstance().getReference();
     private Query query;
 
     public EventAdapter(Context con, int typ, String domain, EventClickListener listener, RecyclerView rec, TextView titl, ProgressBar progressBar){
@@ -181,9 +181,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
         Event currentEvent = events.get(position);
         holder.event_name.setText(currentEvent.getName());
         String authorPreviewImage = ImageUtils.getUserImagePreviewPath(currentEvent.getAuthor_id());
-        stor.child(authorPreviewImage).getDownloadUrl().addOnCompleteListener(task -> {
-            if(task.isSuccessful() && task.getResult() != null) Glide.with(context).load(task.getResult()).into(holder.author_image);
-        });
+        try {
+            stor.child(authorPreviewImage).getDownloadUrl().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null)
+                    Glide.with(context).load(task.getResult()).into(holder.author_image);
+            });
+        } catch (Exception e) {
+            Log.w(TAG, "StorageException! No Preview Image for this user.");
+        }
         if(currentEvent.getVisual() != null && currentEvent.getVisual().contains("/")){
             stor.child(currentEvent.getVisual()).getDownloadUrl().addOnCompleteListener(task -> {
                 if(task.isSuccessful() && task.getResult() != null) Glide.with(context).load(task.getResult()).into(holder.event_image);

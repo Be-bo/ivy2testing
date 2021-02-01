@@ -38,6 +38,7 @@ import java.io.IOException;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EditOrganizationProfileActivity extends AppCompatActivity {
+    private static final String TAG = "EditOrganizationProfileActivity";
 
 
     // MARK: Variables
@@ -93,7 +94,14 @@ public class EditOrganizationProfileActivity extends AppCompatActivity {
                 public void afterTextChanged(Editable editable) { }
             });
             String profPicPath = "userfiles/"+this_user.getId()+"/profileimage.jpg";
-            base_storage_ref.child(profPicPath).getDownloadUrl().addOnCompleteListener(uriTask -> { if(uriTask.isSuccessful() && uriTask.getResult() != null) Glide.with(this).load(uriTask.getResult()).into(profile_image);});
+            try {
+                base_storage_ref.child(profPicPath).getDownloadUrl().addOnCompleteListener(uriTask -> {
+                    if (uriTask.isSuccessful() && uriTask.getResult() != null)
+                        Glide.with(this).load(uriTask.getResult()).into(profile_image);
+                });
+            } catch (Exception e) {
+                Log.w(TAG, "StorageException! No Preview Image for this user.");
+            }
             change_pic_button.setOnClickListener(view -> changeProfPic());
             bafe_sutton.setOnClickListener(view -> saveChanges());
         }

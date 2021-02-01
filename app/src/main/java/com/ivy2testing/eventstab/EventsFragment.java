@@ -46,8 +46,8 @@ public class EventsFragment extends Fragment implements EventAdapter.EventClickL
     private SwipeRefreshLayout refresh_layout;
     private User this_user;
     private UserViewModel this_user_vm;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private StorageReference stor = FirebaseStorage.getInstance().getReference();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final StorageReference stor = FirebaseStorage.getInstance().getReference();
 
     private RecyclerView for_you_recycler;
     private RecyclerView today_recycler;

@@ -16,12 +16,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.chat.ChatroomActivity;
 import com.ivy2testing.entities.Chatroom;
-import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.UserViewModel;
 import com.ivy2testing.userProfile.StudentProfileActivity;

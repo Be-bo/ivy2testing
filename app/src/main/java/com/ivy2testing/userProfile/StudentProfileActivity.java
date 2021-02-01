@@ -332,14 +332,19 @@ public class StudentProfileActivity extends AppCompatActivity {
     private void getStudentPic() {
         if (student_to_display == null) return;
 
-        base_storage_ref.child(ImageUtils.getUserImagePath(student_to_display.getId())).getDownloadUrl()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) profile_img_uri = task.getResult();
-                    else Log.w(TAG, task.getException());
+        try {
+            base_storage_ref.child(ImageUtils.getUserImagePath(student_to_display.getId())).getDownloadUrl()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult() != null)
+                            profile_img_uri = task.getResult();
+                        else Log.w(TAG, task.getException());
 
-                    // Reload views
-                    setUpViews();
-                });
+                        // Reload views
+                        setUpViews();
+                    });
+        } catch (Exception e) {
+            Log.w(TAG, "StorageException! No Preview Image for this user.");
+        }
     }
 
     // Add to blocked_users and blockers

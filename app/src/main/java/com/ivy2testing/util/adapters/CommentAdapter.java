@@ -141,12 +141,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             return;
         }
 
-        firebase_storage.child(address).getDownloadUrl()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null)
-                        Picasso.get().load(task.getResult()).into(holder.circle_img);
-                    else Log.w(TAG, "this user's image doesn't exist! user: " + user_id);
-                });
+        try {
+            firebase_storage.child(address).getDownloadUrl().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null)
+                    Picasso.get().load(task.getResult()).into(holder.circle_img);
+                else Log.w(TAG, "this user's image doesn't exist! user: " + user_id);
+            });
+        } catch (Exception e) {
+            Log.w(TAG, "StorageException! No Preview Image for this user.");
+        }
     }
 
     private void loadCommentImage(CommentViewHolder holder, String address){

@@ -125,10 +125,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         String previewImgPath = ImageUtils.getUserImagePreviewPath(thisPost.getAuthor_id());
 
         try {
-            db_storage.child(previewImgPath).getDownloadUrl().addOnCompleteListener(task -> {if(task.isSuccessful() && task.getResult() != null) Glide.with(context).load(task.getResult()).into(holder.author_preview_image);
-            else Glide.with(context).load(R.drawable.ic_profile_selected).into(holder.author_preview_image);});
-        }catch (Exception e){
-            Log.e(TAG, e.toString());
+            db_storage.child(previewImgPath).getDownloadUrl().addOnCompleteListener(task -> {
+                if(task.isSuccessful() && task.getResult() != null) Glide.with(context).load(task.getResult()).into(holder.author_preview_image);
+                else Glide.with(context).load(R.drawable.ic_profile_selected).into(holder.author_preview_image);
+            });
+        } catch (Exception e){
+            Log.w(TAG, "StorageException! No Preview Image for this user.");
         }
 
 
