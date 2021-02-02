@@ -163,6 +163,8 @@
     <string name="time_stamp">Time Stamp</string>
     <string name="write_message">Aa</string>
     <string name="send_message">Send Message</string>
+    <string name="no_conversations_available">No Conversations Available.</string>
+
 
     <!-- Degree List -->
     <string-array name="degree_list">

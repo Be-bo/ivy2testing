@@ -66,17 +66,6 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-
-    @Override
     public void onStart() {
         super.onStart();
         if(quad_adapter!=null && is_set_up) quad_adapter.refreshAdapter(); //each time the user comes back we have to refresh the adapter in case a new user has been added

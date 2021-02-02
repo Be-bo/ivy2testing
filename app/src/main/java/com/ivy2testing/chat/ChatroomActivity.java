@@ -22,6 +22,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Chatroom;
+import com.ivy2testing.entities.Message;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.MainActivity;
 import com.ivy2testing.userProfile.OrganizationProfileActivity;
@@ -39,7 +40,6 @@ public class ChatroomActivity extends AppCompatActivity {
 
     // Views
     private DrawerLayout drawer;
-    private MessagingFragment messagingFrag;
 
     // Firebase
     FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
@@ -117,7 +117,7 @@ public class ChatroomActivity extends AppCompatActivity {
 
     // Set main messaging fragment
     private void setFragment(){
-        messagingFrag = new MessagingFragment(this_chatroom, this_user, partner);
+        MessagingFragment messagingFrag = new MessagingFragment(this_chatroom, this_user, partner);
         getSupportFragmentManager().beginTransaction().replace(R.id.room_frameLayout, messagingFrag).commit();
     }
 
@@ -152,7 +152,7 @@ public class ChatroomActivity extends AppCompatActivity {
         else drawer.openDrawer(GravityCompat.END);
     }
 
-    public void returnToLobby(View view) {
+    public void returnToLobby(boolean deleted) {
         if (isTaskRoot()) { // Got here from a notification
             Intent intent = new Intent(this, ChatFragment.class);
             intent.putExtra("this_user", this_user);
@@ -160,22 +160,20 @@ public class ChatroomActivity extends AppCompatActivity {
         }
         else { // Got here from lobby
             Intent intent = new Intent();
-            setResult(Activity.RESULT_OK, intent);
+            if (deleted) setResult(Activity.RESULT_OK, intent);
+            else setResult(Activity.RESULT_CANCELED);
         }
         finish();
     }
 
     // OnClick listener for drawer navigation items
     private boolean onNavigationItemSelected(MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.roomNavOptions_profile:
-                viewUserProfile();
-                break;
 
-            case R.id.roomNavOptions_delete:
-                deleteChatRoom();
-                break;
-        }
+        if (menuItem.getItemId() == R.id.roomNavOptions_profile)
+            viewUserProfile();
+        else if (menuItem.getItemId() == R.id.roomNavOptions_delete)
+            deleteChatRoom();
+
         drawer.closeDrawer(GravityCompat.END);
         return true;
     }
@@ -236,17 +234,19 @@ public class ChatroomActivity extends AppCompatActivity {
                                     chatroomDoc.delete().addOnCompleteListener(task2 -> {
                                         if (task2.isSuccessful()) {
                                             Toast.makeText(this, getString(R.string.deleteRoom), Toast.LENGTH_SHORT).show();
-                                            returnToLobby(drawer);
+                                            returnToLobby(true);
                                         } else {
                                             Toast.makeText(this, getString(R.string.error_deleteRoom), Toast.LENGTH_SHORT).show();
                                             Log.e(TAG, getString(R.string.error_deleteRoom), task2.getException());
                                         }
                                     });
                                 } else {
+                                    // Send a user left message
+                                    Message msg = new Message(this_user.getId(), this_user.getName() + " left the Conversation.");
+                                    chatroomDoc.collection("messages").document(msg.getId()).set(msg);
                                     Toast.makeText(this, getString(R.string.deleteRoom), Toast.LENGTH_SHORT).show();
-                                    returnToLobby(drawer);
+                                    returnToLobby(true);
                                 }
-
                             } else {
                                 Toast.makeText(this, getString(R.string.error_deleteRoom), Toast.LENGTH_SHORT).show();
                                 Log.e(TAG, "Couldn't retrieve updated chatroom", task1.getException());

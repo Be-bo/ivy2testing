@@ -111,17 +111,13 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
                 Log.d(TAG, "Query successful");
                 if(!querySnap.getResult().isEmpty()) {
                     for (int i = 0; i < querySnap.getResult().getDocuments().size(); i++) {
-                        Log.d(TAG, "added user");
+
                         DocumentSnapshot newUser = querySnap.getResult().getDocuments().get(i);
-                        //If user is student add as student
-                        if ((boolean)newUser.get("is_organization")==false){
-                            Student student = newUser.toObject(Student.class);
-                            users.add(student);
-                        } else {
-                            //else add as user
-                            User user = newUser.toObject(User.class);
-                            users.add(user);
-                        }
+
+                        // Convert to org/student
+                        if ((boolean)newUser.get("is_organization")) users.add(newUser.toObject(Student.class));
+                        else users.add(newUser.toObject(Organization.class));
+
                         if (i >= querySnap.getResult().getDocuments().size() - 1) last_retrieved_user = newUser;
                     }
 

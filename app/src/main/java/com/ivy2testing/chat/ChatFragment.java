@@ -4,9 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,18 +22,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Chatroom;
+import com.ivy2testing.entities.Message;
 import com.ivy2testing.entities.User;
+import com.ivy2testing.userProfile.OrganizationProfileActivity;
+import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.Utils;
 
 import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
+
 
 /**
  * Chat Lobby -> View list of chatrooms
@@ -41,8 +52,10 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
 
     // RecyclerView
     private RecyclerView rv_chat_rooms;
+    private TextView tv_no_chat;
     private LobbyAdapter adapter;
     private ExtendedSortedList<Chatroom> chatrooms;
+    private Chatroom selectedRoom;
 
     // Firebase
     private final FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
@@ -50,7 +63,6 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
 
     // Other Values
     private User this_user;
-    private int selected_chatroom_index = -1;
 
     // Constructor
     public ChatFragment(Context con, User thisUser) {
@@ -69,6 +81,7 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
 
         if (this_user != null) {
             rv_chat_rooms = root_view.findViewById(R.id.lobby_recyclerview);
+            tv_no_chat = root_view.findViewById(R.id.lobby_noChatrooms);
             initRecycler();
         }
         else Log.e(TAG, "User parcel was null!");
@@ -86,39 +99,24 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
     public void onStop() {
         super.onStop();
         for (ListenerRegistration list_reg : list_regs)
-            list_reg.remove();  // No need to listen if you're not there //TODO remove?
+            list_reg.remove();  // No need to listen if you're not there
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK) {
-
-            // Coming back from ChatroomActivity
-            if (requestCode == Constant.CHATROOM_REQUEST) {
-                selected_chatroom_index = -1;
-            /*// Reorder Chatroom lists
-            Util.reorderItem(chatrooms, selected_chatroom_index, 0);
-            selected_chatroom_index = -1;
-
-            // Update Chatroom and adapter
-            adapter.notifyDataSetChanged();*/
-            }
-
-
-            // Go to chatroom after it is ADDED by listener
-            if (requestCode ==Constant.NEWCHATROOM_REQUEST)
-                selected_chatroom_index = chatrooms.size();
+        // Chatroom was deleted
+        if (resultCode == RESULT_OK && requestCode == Constant.CHATROOM_REQUEST) {
+            if (selectedRoom != null) removeChatroom(selectedRoom);
         }
     }
 
-
-/* Initialization Methods
+    /* Initialization Methods
 ***************************************************************************************************/
 
     private void initRecycler() {
-        adapter = new LobbyAdapter(this_user, this);
+        adapter = new LobbyAdapter(this_user, this, context);
         chatrooms = getChatroomSortedList();
         adapter.setChatrooms(chatrooms);
         RecyclerView.LayoutManager manager = new LinearLayoutManager(context);
@@ -133,62 +131,37 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
     // Go to chatroom
     @Override
     public void onShortClick(int position, User partner) {
-        if (position < 0) return;
-        selected_chatroom_index = position;
         Intent intent;
         intent = new Intent(context, ChatroomActivity.class);
+        selectedRoom = chatrooms.get(position);
 
-        intent.putExtra("chatroom", chatrooms.get(position));
+        intent.putExtra("chatroom", selectedRoom);
         intent.putExtra("this_user", this_user);
         intent.putExtra("partner", partner);
         startActivityForResult(intent, Constant.CHATROOM_REQUEST);
     }
 
 
-    // TODO: use popup window instead?
-    //  Remove altogether? Or change options...
     @Override
-    public void onLongClick(int position, View v) {
-        /*
-        if (!(chatrooms.get(position).getIs_groupChat())) return;
-        GroupChat selected_room = (GroupChat) chatrooms.get(position);
+    public void onLongClick(int position, User partner, View v) {
 
-        PopupMenu popup = new PopupMenu(this, v);
+        PopupMenu popup = new PopupMenu(context, v);
         popup.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.roomOptions_changeTitle:
-                    changeRoomTitle(selected_room);
-                    return true;
-
-                case R.id.roomOptions_delete:
-                    deleteChatroom(selected_room.getId());
-                    return true;
-
-                case R.id.roomOptions_leave:
-                    leaveChatroom(selected_room);
-                    return true;
-            }
-            return false;
+            if (item.getItemId() == R.id.roomNavOptions_profile)
+                viewUserProfile(partner);
+            else if (item.getItemId() == R.id.roomNavOptions_delete)
+                deleteChatRoom(partner, chatrooms.get(position));
+            else return false;
+            return true;
         });
-        popup.inflate(R.menu.chatroom_options);
+        popup.inflate(R.menu.chatroom_nav_options);
         popup.setGravity(Gravity.END);
 
         // Adjust view displays
         Menu menu = popup.getMenu();
-        Util.colorMenuItem(menu.findItem(R.id.roomOptions_delete), getColor(R.color.red));
-        if (!this_user.getUsername().equals(selected_room.getHost()))   // Only host can delete room
-            menu.findItem(R.id.roomOptions_delete).setVisible(false);
+        Utils.colorMenuItem(menu.findItem(R.id.roomNavOptions_delete), context.getColor(R.color.red));
 
-        popup.show();*/
-    }
-
-
-    /* Transition Methods
-     ***************************************************************************************************/
-
-    // TODO: some loading mechanism?
-    public void refreshAdapter(){
-        //TODO
+        popup.show();
     }
 
 
@@ -202,6 +175,8 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
                         .addSnapshotListener((queryDocumentSnapshots, e) -> {
                             if (e != null) Log.w(TAG, "Error in attaching listener.", e);
                             if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
+                                tv_no_chat.setVisibility(View.GONE);
+
                                 for (DocumentChange docChange : queryDocumentSnapshots.getDocumentChanges()) {
 
                                     // Get Chatroom object from results
@@ -214,13 +189,13 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
                                     else updateChatroom(chatroom); // MODIFIED
                                 } Log.d(TAG, queryDocumentSnapshots.size() + " rooms uploaded!");
                             }
+                            else if (queryDocumentSnapshots.isEmpty()) tv_no_chat.setVisibility(View.VISIBLE);
                         }));
     }
 
     // Sets a listener to latest message in a chatroom so time_stamp gets updated real time
     // Then, it adds the updated chatroom to the sorted list
     private void addNewChatroom(Chatroom chatroom) {
-        Log.d(TAG, "Document added: " + chatroom.getId());
         String address = "conversations/" + chatroom.getId() + "/messages";
 
         list_regs.add(
@@ -236,50 +211,128 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
                                 if (time_stamp != null) chatroom.setLast_message_timestamp(time_stamp);
                             }
                             // Update chatroom if already exists
-                            int position = chatrooms.indexOf(chatroom);
-                            if (position < 0) position = chatrooms.findIndexById(chatroom); // Try finding by ID if can't find it
-                            if (position >= 0) chatrooms.updateItemAt(position, chatroom);
-                            else chatrooms.add(chatroom);
-                            Log.d(TAG, chatroom.getId() + " ADDED CHATROOM POSITION: " + position);
+                            int position = findChatroomIndex(chatroom);
+                            if (position >= 0) {
+                                chatrooms.updateItemAt(position, chatroom);
+                                adapter.notifyDataSetChanged();
+                            } else adapter.notifyItemInserted(chatrooms.add(chatroom));
                         }));
     }
 
-    //TODO needs more testing
     private void updateChatroom(Chatroom chatroom) {
-        Log.d(TAG, "Document modified: " + chatroom.getId());
 
         // Get Existing Message position
-        int position = chatrooms.indexOf(chatroom);
-        if (position < 0) position = chatrooms.findIndexById(chatroom); // Try finding by ID if can't find it
-        if (position >= 0) chatrooms.updateItemAt(position, chatroom);
+        int position = findChatroomIndex(chatroom);
+        if (position >= 0) {
+            chatrooms.updateItemAt(position, chatroom);
+            adapter.notifyDataSetChanged();
+        }
         else Log.e(TAG, "Chatroom not found in list! " + chatroom.getId());
     }
 
-    // TODO needs testing
     private void removeChatroom(Chatroom chatroom) {
-        Log.d(TAG, "Document removed: " + chatroom.getId());
-        chatrooms.remove(chatroom);
+        // Get Existing Message position
+        int position = findChatroomIndex(chatroom);
+        if (position >= 0) {
+            chatrooms.removeItemAt(position);
+            adapter.notifyItemRemoved(position);
+
+            // Need full refresh of this fragment to update views
+            onStop();
+            onStart();
+
+        }
+        else Log.e(TAG, "Chatroom not found in list! " + chatroom.getId());
     }
 
+    // Util function for the above functions
+    private int findChatroomIndex(Chatroom chatroom) {
+        int position = chatrooms.indexOf(chatroom);
+        if (position < 0) position = chatrooms.findIndexById(chatroom); // Try finding by ID if can't find it
+        return position;
+    }
 
 
 
     /* Chatroom Option Methods (also used in ChatroomActivity)
      ***************************************************************************************************/
 
-    // Delete room entirely
-    private void deleteChatroom(String chatroom_id){
+    // View User Profile
+    private void viewUserProfile(User partner) {
+        Intent intent;
+        if (partner.getIs_organization()) {
+            Log.d(TAG, "Starting OrganizationProfile Activity for organization " + partner.getId());
+            intent = new Intent(context, OrganizationProfileActivity.class);
+            intent.putExtra("org_to_display_id",  partner.getId());
+            intent.putExtra("org_to_display_uni", partner.getUni_domain());
+        } else {
+            Log.d(TAG, "Starting StudentProfile Activity for student " +  partner.getId());
+            intent = new Intent(context, StudentProfileActivity.class);
+            intent.putExtra("student_to_display",  partner);
+        }
+        intent.putExtra("this_user", this_user);
+        startActivity(intent);
+    }
+
+    // Confirmation dialog
+    private void deleteChatRoom(User partner, Chatroom room) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(getString(R.string.deleteRoom_message))
-                .setPositiveButton("Confirm", (dialog, which) ->
-                        mFirestore.collection("conversations").document(chatroom_id)
-                                .delete().addOnCompleteListener(Utils.getSimpleOnCompleteListener(
-                                context,
-                                getString(R.string.deleteRoom),
-                                getString(R.string.error_deleteRoom))))
+        builder.setTitle(getString(R.string.deleteRoom_title))
+                .setMessage(getString(R.string.deleteRoom_message))
+                .setPositiveButton("Confirm", (dialog, which) -> deleteChatRoomFromDB(partner, room))
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .show();
     }
+
+
+    // Delete Chatroom completely and return to Lobby
+    private void deleteChatRoomFromDB(User partner, Chatroom room) {
+
+        // Remove from messaging list
+        mFirestore.document(User.getPath(this_user.getId()))
+                .update("messaging_users", FieldValue.arrayRemove(partner.getId()));
+
+        // Remove user from chatroom members. if empty list -> delete document
+        DocumentReference chatroomDoc = mFirestore.collection("conversations").document(room.getId());
+        chatroomDoc.update("members", FieldValue.arrayRemove(this_user.getId()))
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        chatroomDoc.get().addOnCompleteListener( task1 -> {
+                            if (task1.isSuccessful() && task1.getResult() != null) {
+
+                                // Make sure it's removed from adapter
+                                removeChatroom(room);
+
+                                // Delete if no members left, else do nothing
+                                Chatroom updatedRoom = task1.getResult().toObject(Chatroom.class);
+                                if (updatedRoom != null && updatedRoom.getMembers().isEmpty()) {
+                                    chatroomDoc.delete().addOnCompleteListener(task2 -> {
+                                        if (task2.isSuccessful()) {
+                                            Toast.makeText(context, getString(R.string.deleteRoom), Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(context, getString(R.string.error_deleteRoom), Toast.LENGTH_SHORT).show();
+                                            Log.e(TAG, getString(R.string.error_deleteRoom), task2.getException());
+                                        }
+                                    });
+                                } else {
+                                    // Send a user left message
+                                    Message msg = new Message(this_user.getId(), this_user.getName() + " left the Conversation.");
+                                    chatroomDoc.collection("messages").document(msg.getId()).set(msg);
+                                    Toast.makeText(context, getString(R.string.deleteRoom), Toast.LENGTH_SHORT).show();
+                                }
+
+                            } else {
+                                Toast.makeText(context, getString(R.string.error_deleteRoom), Toast.LENGTH_SHORT).show();
+                                Log.e(TAG, "Couldn't retrieve updated chatroom", task1.getException());
+                            }
+                        });
+                    } else {
+                        Toast.makeText(context, getString(R.string.error_deleteRoom), Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Couldn't remove member from chatroom.", task.getException());
+                    }
+                });
+    }
+
 
 
 
@@ -314,9 +367,6 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
                 if (areItemsTheSame(o1, o2)) result = 0;
                 else if (o1.getLast_message_timestamp() != null && o2.getLast_message_timestamp() != null)
                         result = o1.getLast_message_timestamp().compareTo(o2.getLast_message_timestamp());
-
-                Log.d(TAG, "o1: " + o1.getId() + ", o2: " + o2.getId() + ". RESULT: " + result);
-
                 return result;
             }
 

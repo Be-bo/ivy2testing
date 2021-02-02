@@ -22,7 +22,6 @@ public final class Constant {
     public static final int CHATROOM_REQUEST = 111;
     public static final int NEWCHATROOM_REQUEST = 112;
 
-
     public static final int PROFILE_POST_GRID_ROW_COUNT = 3;
     public static final int PEOPLE_PREVIEW_LIMIT = 5;
     public static final int PROFILE_POST_LIMIT_STUDENT = 9;

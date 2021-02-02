@@ -9,6 +9,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -68,16 +69,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ImageView ham_menu_uni_image;
     private ImageView toolbar_logo_image;
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private StorageReference stor = FirebaseStorage.getInstance().getReference();
-    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final StorageReference stor = FirebaseStorage.getInstance().getReference();
+    private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private User this_user;
 
-    private SectionsPageAdapter tab_adapter = new SectionsPageAdapter(getSupportFragmentManager());
-    private OrganizationProfileFragment org_fragment = new OrganizationProfileFragment();
-    private StudentProfileFragment stud_fragment = new StudentProfileFragment();
+    private final SectionsPageAdapter tab_adapter = new SectionsPageAdapter(getSupportFragmentManager());
+    private final OrganizationProfileFragment org_fragment = new OrganizationProfileFragment();
+    private final StudentProfileFragment stud_fragment = new StudentProfileFragment();
     private ChatFragment chat_fragment;
-    private QuadFragment quad_fragment = new QuadFragment();
+    private final QuadFragment quad_fragment = new QuadFragment();
     private NoSwipeViewPager tab_view_pager;
     private boolean login_setup = false;
 
@@ -124,9 +125,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if(event_fragment != null) event_fragment.refreshAdapters();
                 }
                 break;
-            case Constant.NEWCHATROOM_REQUEST:
-                if (resultCode == RESULT_OK && chat_fragment != null)
-                    chat_fragment.refreshAdapter();
         }
     }
 
@@ -180,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
@@ -248,8 +247,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         uniSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(i != 0) okButton.setEnabled(true);
-                else okButton.setEnabled(false);
+                okButton.setEnabled(i != 0);
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) { }
@@ -358,8 +356,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Add fragments in order (left to right)
         // CHAT
-        if(chat_fragment != null) chat_fragment.refreshAdapter(); //same for the campus fragment
-        else{
+        if (chat_fragment == null) {
             chat_fragment = new ChatFragment(this, this_user);
             tab_adapter.addFragment(chat_fragment, "chat");
         }
@@ -404,6 +401,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     //Set up quad in bottom navigation
+    @SuppressLint("NonConstantResourceId")
     private void setUpBottomNavigationInteraction(){ //this method sets up menu button clicks for the current bottom navigation bar
         bottom_navigation.setOnNavigationItemSelectedListener((menuItem) -> {
             switch (menuItem.getItemId()) {
@@ -446,13 +444,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tab_view_pager.setCurrentItem(tab_adapter.getPosition("campus"));
     }
 
+    @SuppressLint("NonConstantResourceId")
     private void setFunctionButton(int tabId){
         if(this_user != null) {
             switch (tabId) {
-                case R.id.tab_bar_profile:
-                case R.id.tab_bar_quad:
-                    function_button.setVisibility(View.GONE);
-                    break;
                 case R.id.tab_bar_events:
                     function_button.setVisibility(View.VISIBLE);
                     function_button.setImageResource(R.drawable.ic_create);
@@ -462,6 +457,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     function_button.setVisibility(View.VISIBLE);
                     function_button.setImageResource(R.drawable.ic_create);
                     function_button.setOnClickListener(view -> transToCreatePost(0));
+                    break;
+                default:
+                    function_button.setVisibility(View.GONE);
                     break;
             }
         }
