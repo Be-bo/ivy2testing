@@ -1,4 +1,4 @@
-package com.ivy2testing.util;
+package com.ivy2testing.main;
 
 import android.content.Context;
 
@@ -10,6 +10,7 @@ import com.ivy2testing.chat.ChatFragment;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.eventstab.EventsFragment;
 import com.ivy2testing.hometab.HomeFragment;
+import com.ivy2testing.quad.QuadFragment;
 
 /**
  * New way to create Fragments.

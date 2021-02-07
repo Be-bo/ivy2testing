@@ -17,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 
@@ -190,7 +189,8 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
                                     else updateChatroom(chatroom); // MODIFIED
                                 } Log.d(TAG, queryDocumentSnapshots.size() + " rooms uploaded!");
                             }
-                            else if (queryDocumentSnapshots.isEmpty()) tv_no_chat.setVisibility(View.VISIBLE);
+                            else if (queryDocumentSnapshots == null || queryDocumentSnapshots.isEmpty())
+                                tv_no_chat.setVisibility(View.VISIBLE);
                         }));
     }
 

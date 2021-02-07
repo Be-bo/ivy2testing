@@ -1,6 +1,0 @@
-//Android issues//
-
-QUAD:
-      9. when I unblock someone gotta restart the app to have them shown in the Quad (weird since if convo deleted it shows right away)
-      10. ppl don't disappear from Quad when messaged (fixed by a restart - make sure recyclerview updates)
-      11. blocking doesn't make ppl disappear from the Quad right away (fixed by a restart - make sure recyclerview updates)

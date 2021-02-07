@@ -19,10 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ivy2testing.R;
 import com.ivy2testing.chat.ChatroomActivity;
 import com.ivy2testing.entities.Chatroom;
+import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
 import com.ivy2testing.main.UserViewModel;
+import com.ivy2testing.userProfile.OrganizationProfileActivity;
 import com.ivy2testing.userProfile.StudentProfileActivity;
-import com.ivy2testing.util.Constant;
 
 /**
  * @author Shanna Hollingworth
@@ -65,12 +66,6 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
         else setUpRecycler();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if(quad_adapter!=null && is_set_up) quad_adapter.refreshAdapter(); //each time the user comes back we have to refresh the adapter in case a new user has been added
-    }
-
     /* Initialization Methods
      ***************************************************************************************************/
     // Get User Data - always stays update and doesn't require passing anything because ViewModel is connected to the Activity that manages the fragment
@@ -81,6 +76,12 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
             UserViewModel user_view_model = new ViewModelProvider(getActivity()).get(UserViewModel.class);
             usr = user_view_model.getThis_user().getValue();
             if (usr != null) setUpRecycler();
+
+            // listen to realtime user profile changes afterwards
+            user_view_model.getThis_user().observe(getActivity(), (User updatedProfile) -> {
+                usr = updatedProfile;   // Update user
+                if(quad_adapter != null && is_set_up) quad_adapter.refreshAdapter(usr);
+            });
         }
     }
 
@@ -92,7 +93,7 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
 
     private void setUpRecycler() {
         Log.d(TAG, String.valueOf(usr.getId()));
-        quad_adapter = new QuadAdapter(this, Constant.USERS_LOAD_LIMIT, usr.getUni_domain(), getContext(), no_users_text, usr, card_recycler, progressbar);
+        quad_adapter = new QuadAdapter(this, getContext(), no_users_text, usr, card_recycler, progressbar);
         card_recycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
         card_recycler.setAdapter(quad_adapter);
     }
@@ -111,11 +112,17 @@ public class QuadFragment extends Fragment implements QuadAdapter.OnQuadClickLis
 
     // View User Profile
     public void onCardClick(int position, View v) {
-        Log.d(TAG , quad_adapter.getItem(position).getId());
-        Intent intent = new Intent(this.getContext(), StudentProfileActivity.class);
+        User usr_to_display = quad_adapter.getItem(position);
+        Intent intent;
+        if (usr_to_display.getIs_organization()) {
+            intent = new Intent(getActivity(), OrganizationProfileActivity.class);
+            intent.putExtra("org_to_display_id", usr_to_display.getId());
+            intent.putExtra("org_to_display_uni", usr_to_display.getUni_domain());
+        } else {
+            intent = new Intent(this.getContext(), StudentProfileActivity.class);
+            intent.putExtra("student_to_display", usr_to_display);
+        }
         intent.putExtra("this_user", usr);
-        intent.putExtra("student_to_display_id", quad_adapter.getItem(position).getId());
-        intent.putExtra("student_to_display_uni", quad_adapter.getItem(position).getUni_domain());
         startActivity(intent);
     }
 }

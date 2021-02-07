@@ -50,7 +50,6 @@ import com.ivy2testing.userProfile.NotificationCenterActivity;
 import com.ivy2testing.userProfile.OrganizationProfileFragment;
 import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.Constant;
-import com.ivy2testing.util.MyFragmentFactory;
 import com.ivy2testing.util.SpinnerAdapter;
 import com.ivy2testing.util.Utils;
 
@@ -429,8 +428,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 case R.id.tab_bar_quad:
                     setFunctionButton(R.id.tab_bar_quad);
-                    if (!quad_fragment.isIs_set_up())
-                        quad_fragment.setUpQuad();
+                    if (!quad_fragment.isIs_set_up()) quad_fragment.setUpQuad();
                     tab_view_pager.setCurrentItem(tab_adapter.getPosition("quad"));
                     return true;
 

@@ -10,7 +10,6 @@ public final class Constant {
 
     // Request Codes
     public static final int PICK_IMAGE_REQUEST_CODE = 101;
-    public static final int EDIT_STUDENT_REQUEST_CODE = 102;
     public static final int LOGIN_REQUEST_CODE = 103;
     public static final int VIEW_POST_REQUEST_CODE = 104;
     public static final int USER_PROFILE_REQUEST_CODE = 105;
@@ -20,7 +19,6 @@ public final class Constant {
     public static final int CREATE_POST_REQUEST_CODE = 109;
     public static final int EDIT_POST_REQUEST_CODE = 110;
     public static final int CHATROOM_REQUEST = 111;
-    public static final int NEWCHATROOM_REQUEST = 112;
 
     public static final int PROFILE_POST_GRID_ROW_COUNT = 3;
     public static final int PEOPLE_PREVIEW_LIMIT = 5;
@@ -29,12 +27,6 @@ public final class Constant {
     public static final int NOTIFICATION_CENTER_LIMIT = 15;
     public static final int EVENT_ADAPTER_UPCOMING_LIMIT = 15;
     public static final int ALL_EVENTS_LOAD_LIMIT = 20;
-
-    public static final int USERS_LOAD_LIMIT = 10;
-
-    public static final int FEED_ADAPTER_SEEALL = 1;
-    public static final int FEED_ADAPTER_CAMPUS = 2;
-    public static final int FEED_ADAPTER_EVENTS = 3;
 
     public static final int EVENT_ADAPTER_FOR_YOU = 1;
     public static final int EVENT_ADAPTER_TODAY = 2;

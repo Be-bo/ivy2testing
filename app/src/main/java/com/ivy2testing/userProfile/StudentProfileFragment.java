@@ -126,7 +126,6 @@ public class StudentProfileFragment extends Fragment {
             user_view_model.getThis_user().observe(getActivity(), (User updatedProfile) -> {
                 if (updatedProfile instanceof Student){
                     student = (Student) updatedProfile;   // Update student
-                    Log.d(TAG, "PROFILE UPDATED: "+student.getName());
                     getStudentPic();            // Do Other setups
                 }
             });
