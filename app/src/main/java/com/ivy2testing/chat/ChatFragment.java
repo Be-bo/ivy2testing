@@ -35,6 +35,7 @@ import com.ivy2testing.userProfile.OrganizationProfileActivity;
 import com.ivy2testing.userProfile.StudentProfileActivity;
 import com.ivy2testing.util.Constant;
 import com.ivy2testing.util.Utils;
+import com.ivy2testing.util.adapters.WrapContentLinearLayoutManager;
 
 import java.util.ArrayList;
 
@@ -119,7 +120,7 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
         adapter = new LobbyAdapter(this_user, this, context);
         chatrooms = getChatroomSortedList();
         adapter.setChatrooms(chatrooms);
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(context);
+        RecyclerView.LayoutManager manager = new WrapContentLinearLayoutManager(context);
         rv_chat_rooms.setLayoutManager(manager);
         rv_chat_rooms.setAdapter(adapter);
     }

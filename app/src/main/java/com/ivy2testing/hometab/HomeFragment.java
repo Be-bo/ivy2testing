@@ -1,5 +1,6 @@
 package com.ivy2testing.hometab;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -46,19 +47,18 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedClickListe
     private ProgressBar progress_bar;
 
     private FeedAdapter campus_adapter;
-    private Context context;
+    private final Context context;
     private View root_view;
     private User this_user;
-    private UserViewModel this_user_vm;
-
-
-
-
-
-
 
 
     // MARK: Base
+
+    public HomeFragment(Context con, User thisUser) {
+        context = con;
+        if(thisUser != null) this_user = thisUser;
+    }
+
 
     @Nullable
     @Override
@@ -71,10 +71,7 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedClickListe
         return root_view;
     }
 
-    public HomeFragment(Context con, User thisUser) {
-        context = con;
-        if(thisUser != null) this_user = thisUser;
-    }
+
 
     private void declareHandles(){
         refresh_layout = root_view.findViewById(R.id.campus_refresh_layout);
@@ -86,7 +83,7 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedClickListe
 
     private void setUpViewModel(){
         if (getActivity() != null) {
-            this_user_vm = new ViewModelProvider(getActivity()).get(UserViewModel.class);
+            UserViewModel this_user_vm = new ViewModelProvider(getActivity()).get(UserViewModel.class);
             this_user = this_user_vm.getThis_user().getValue();
             this_user_vm.getThis_user().observe(getActivity(), (User updatedProfile) -> { //listen to realtime user profile changes
                 if(updatedProfile != null) this_user = updatedProfile;
@@ -105,15 +102,15 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedClickListe
     // MARK: Adapter Stuff
 
     private void setUpRecycler() {
-        campus_adapter = new FeedAdapter(this, Utils.getCampusUni(context), "", getContext(), no_posts_text, reached_bottom_text, feed_recycler_view, progress_bar);
-        feed_recycler_view.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
+        campus_adapter = new FeedAdapter(this, Utils.getCampusUni(context), context, no_posts_text, reached_bottom_text, feed_recycler_view, progress_bar);
+        feed_recycler_view.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
         feed_recycler_view.setAdapter(campus_adapter);
     }
 
     private void setUpRefreshing() { // this layout handles the swipe down to refresh mechanism
         refresh_layout.setOnRefreshListener(() -> {
             campus_adapter.refreshPosts();
-            new Handler().postDelayed(() -> { refresh_layout.setRefreshing(false); }, 2000);
+            new Handler().postDelayed(() -> refresh_layout.setRefreshing(false), 2000);
         });
     }
 
@@ -144,6 +141,7 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedClickListe
 
     // MARK: Post Interaction
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onFeedClick(int position, int clicked_id) { // Handles clicks on a post item
         Post clickedPost = campus_adapter.getPost_array_list().get(position); //<- this is the clicked event/post
@@ -152,8 +150,6 @@ public class HomeFragment extends Fragment implements FeedAdapter.FeedClickListe
                 if (this_user != null) viewUserProfile(clickedPost.getAuthor_id(), clickedPost.getUni_domain(), clickedPost.getAuthor_is_organization());
                 break;
             case R.id.item_feed_pinned_text:
-                viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id(), clickedPost.getAuthor_id()); //can only pin events to posts on that campus -> same uni
-                break;
             case R.id.item_feed_pin_icon:
                 viewPost(clickedPost.getUni_domain(), clickedPost.getPinned_id(), clickedPost.getAuthor_id()); //can only pin events to posts on that campus -> same uni
                 break;

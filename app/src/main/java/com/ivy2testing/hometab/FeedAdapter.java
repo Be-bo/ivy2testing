@@ -39,31 +39,29 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
 
     private static final int BATCH_LIMIT = 15;
     private static final int NEW_BATCH_TOLERANCE = 4;
-    private ArrayList<Post> post_array_list;
-    private FeedClickListener feed_click_listener;
+    private final ArrayList<Post> post_array_list;
+    private final FeedClickListener feed_click_listener;
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private StorageReference db_storage = FirebaseStorage.getInstance().getReference();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final StorageReference db_storage = FirebaseStorage.getInstance().getReference();
 
     private DocumentSnapshot last_retrieved_document;
     private boolean loaded_all_posts = false;
     private boolean load_in_progress = false;
-    private Query default_query;
-    private String campus_domain;
-    private String seeall_author_id = "";
+    private final Query default_query;
+    private final String campus_domain;
 
-    private Context context;
+    private final Context context;
     private long last_pull_millis = 0;
-    private TextView empty_adapter_text;
-    private TextView reached_bottom_text;
-    private ProgressBar progress_bar;
-    private RecyclerView recycler;
+    private final TextView empty_adapter_text;
+    private final TextView reached_bottom_text;
+    private final ProgressBar progress_bar;
+    private final RecyclerView recycler;
 
-    public FeedAdapter(FeedClickListener feed_click_listener, String campusDomain, String seeallAuthorId, Context con, TextView emptyAdapterText, TextView reachedBottomText, RecyclerView rec, ProgressBar progressBar) {
+    public FeedAdapter(FeedClickListener feed_click_listener, String campusDomain, Context con, TextView emptyAdapterText, TextView reachedBottomText, RecyclerView rec, ProgressBar progressBar) {
         this.post_array_list = new ArrayList<>();
         this.feed_click_listener = feed_click_listener;
         this.campus_domain = campusDomain;
-        this.seeall_author_id = seeallAuthorId;
         this.context = con;
         this.last_pull_millis = System.currentTimeMillis();
         this.empty_adapter_text = emptyAdapterText;
@@ -71,7 +69,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         this.progress_bar = progressBar;
         this.recycler = rec;
 
-        default_query = db.collection("universities").document(campus_domain).collection("posts").whereEqualTo("is_event", false).orderBy("creation_millis", Query.Direction.DESCENDING).limit(BATCH_LIMIT);
+        default_query = db.collection("universities").document(campus_domain).collection("posts")
+                .whereEqualTo("is_event", false)
+                .orderBy("creation_millis", Query.Direction.DESCENDING)
+                .limit(BATCH_LIMIT);
         fetchPostBatch(default_query);
     }
 
@@ -168,7 +169,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                     for (int i = 0; i < querySnap.getResult().getDocuments().size(); i++) {
                         DocumentSnapshot newPost = querySnap.getResult().getDocuments().get(i);
                         Post post = newPost.toObject(Post.class);
-                        if(post != null && !postAlreadyAdded(post.getId())) post_array_list.add(post);
+                        if(post != null && postNotAlreadyAdded(post.getId())) post_array_list.add(post);
                         if (i >= querySnap.getResult().getDocuments().size() - 1) last_retrieved_document = newPost;
                     }
 
@@ -182,40 +183,43 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             }
             stopLoading();
             checkEmptyAdapter();
+            last_pull_millis = System.currentTimeMillis();
             load_in_progress = false;
         });
     }
 
-    private boolean postAlreadyAdded(String postId){
+    private boolean postNotAlreadyAdded(String postId){
         for(Post current: post_array_list){
-            if(current.getId().equals(postId)) return true;
+            if(current.getId().equals(postId)) return false;
         }
-        return false;
+        return true;
     }
 
     public void refreshPosts() { //load everything the user has missed since they last pulled
-        refreshAdapter(db.collection("universities").document(campus_domain).collection("posts").whereEqualTo("is_event", false)
-                .whereGreaterThan("creation_millis", last_pull_millis).orderBy("creation_millis", Query.Direction.ASCENDING));
-    }
-
-    private void refreshAdapter(Query query){
         load_in_progress = true; //just in case
-        query.get().addOnCompleteListener(querySnap ->{
-            if (querySnap.isSuccessful() && querySnap.getResult() != null) {
-                if (!querySnap.getResult().isEmpty()) {
-                    for (int i = 0; i < querySnap.getResult().getDocuments().size(); i++) {
-                        DocumentSnapshot newPost = querySnap.getResult().getDocuments().get(i);//add all the missing posts to the top of the arraylist
-                        Post pst = newPost.toObject(Post.class);
-                        if(pst != null && !postAlreadyAdded(pst.getId())){
-                            post_array_list.add(0, pst);
+        db.collection("universities").document(campus_domain).collection("posts")
+                .whereEqualTo("is_event", false)
+                .whereGreaterThan("creation_millis", last_pull_millis)
+                .orderBy("creation_millis", Query.Direction.ASCENDING)
+                .get()
+                .addOnCompleteListener(querySnap ->
+                {
+                    if (querySnap.isSuccessful() && querySnap.getResult() != null) {
+                        if (!querySnap.getResult().isEmpty()) {
+                            for (int i = 0; i < querySnap.getResult().getDocuments().size(); i++) {
+                                DocumentSnapshot newPost = querySnap.getResult().getDocuments().get(i); // add all the missing posts to the top of the arraylist
+                                Post pst = newPost.toObject(Post.class);
+                                if(pst != null && postNotAlreadyAdded(pst.getId())){
+                                    post_array_list.add(0, pst);
+                                }
+                            }
+                            notifyDataSetChanged();
                         }
                     }
-                    notifyDataSetChanged();
-                }
-            }
-            checkEmptyAdapter();
-            load_in_progress = false;
-        });
+                    checkEmptyAdapter();
+                    last_pull_millis = System.currentTimeMillis();
+                    load_in_progress = false;
+                });
     }
 
 

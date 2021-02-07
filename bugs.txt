@@ -1,15 +1,5 @@
 //Android issues//
 
-CHAT:
-    7. when I already have a convo w/ someone (that they started) and I click "message" it creates a new convo (that only gets save when I send a message); you can actually leave if that's intended
-
-HOME:
-    4. posting doesn't show up right away (for home posts)
-
-PROFILE:
-    5. no posts yet even though I have some; across the whole app for all instances of the profile - it always thinks posts are empty no matter what
-    8. org profile trying to view oneself 3rd party - crash
-
 QUAD:
       9. when I unblock someone gotta restart the app to have them shown in the Quad (weird since if convo deleted it shows right away)
       10. ppl don't disappear from Quad when messaged (fixed by a restart - make sure recyclerview updates)

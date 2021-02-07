@@ -50,6 +50,7 @@ import com.ivy2testing.userProfile.NotificationCenterActivity;
 import com.ivy2testing.userProfile.OrganizationProfileFragment;
 import com.ivy2testing.userProfile.StudentProfileFragment;
 import com.ivy2testing.util.Constant;
+import com.ivy2testing.util.MyFragmentFactory;
 import com.ivy2testing.util.SpinnerAdapter;
 import com.ivy2testing.util.Utils;
 
@@ -73,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final StorageReference stor = FirebaseStorage.getInstance().getReference();
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private User this_user;
+
+    private MyFragmentFactory myFragmentFactory;
 
     private final SectionsPageAdapter tab_adapter = new SectionsPageAdapter(getSupportFragmentManager());
     private final OrganizationProfileFragment org_fragment = new OrganizationProfileFragment();
@@ -294,6 +297,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(auth.getCurrentUser() != null && auth.getUid() != null){
             user_view_model.startListening(auth.getUid());
             user_view_model.getThis_user().observe(this, (User updatedUser) -> {
+
+                myFragmentFactory = new MyFragmentFactory(this, updatedUser);
+                getSupportFragmentManager().setFragmentFactory(myFragmentFactory);
+
                 if(updatedUser != null){
                     this_user = updatedUser;
                     if(this_user.getIs_banned()){
@@ -308,7 +315,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 }
             });
-        }else{
+        } else {
+            myFragmentFactory = new MyFragmentFactory(this, this_user);
+            getSupportFragmentManager().setFragmentFactory(myFragmentFactory);
+
             setUpNoLoginInteraction();
             endLoading();
         }
@@ -357,19 +367,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Add fragments in order (left to right)
         // CHAT
         if (chat_fragment == null) {
-            chat_fragment = new ChatFragment(this, this_user);
+            chat_fragment = (ChatFragment) myFragmentFactory.instantiate(this.getClassLoader(), ChatFragment.class.getName());
             tab_adapter.addFragment(chat_fragment, "chat");
         }
         // EVENT
         if(event_fragment != null) event_fragment.refreshAdapters(); //if we're coming back from login events fragment already exists
         else{ //not coming back, starting the app already logged in
-            event_fragment = new EventsFragment(this, this_user);
+            event_fragment = (EventsFragment) myFragmentFactory.instantiate(this.getClassLoader(), EventsFragment.class.getName());
             tab_adapter.addFragment(event_fragment, "event");
         }
         // HOME
         if(home_fragment != null) home_fragment.refreshAdapter(); //same for the campus fragment
         else{
-            home_fragment = new HomeFragment(this, this_user);
+            home_fragment = (HomeFragment) myFragmentFactory.instantiate(this.getClassLoader(), HomeFragment.class.getName());
             tab_adapter.addFragment(home_fragment, "campus");
         }
         // QUAD
@@ -391,9 +401,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             bottom_navigation.getMenu().findItem(id).setVisible(false);
 
         bottom_navigation.setSelectedItemId(R.id.tab_bar_home);
-        event_fragment = new EventsFragment(this, this_user);
+        event_fragment = (EventsFragment) myFragmentFactory.instantiate(this.getClassLoader(), EventsFragment.class.getName());
         tab_adapter.addFragment(event_fragment, "event");
-        home_fragment = new HomeFragment(this, this_user);
+        home_fragment = (HomeFragment) myFragmentFactory.instantiate(this.getClassLoader(), HomeFragment.class.getName());
+        //home_fragment = new HomeFragment(this, this_user);
         tab_adapter.addFragment(home_fragment, "campus");
         tab_view_pager.setAdapter(tab_adapter);
         tab_view_pager.setOffscreenPageLimit(3);

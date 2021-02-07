@@ -1,6 +1,5 @@
 package com.ivy2testing.userProfile;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -60,6 +59,9 @@ public class StudentProfileActivity extends AppCompatActivity {
     private View contents;
     private ProgressBar progress_bar;
     private MenuItem block_button;
+    private TextView tv_message;
+    private ImageView ic_message;
+
     private boolean isBlocked = false;
 
     // Firestore
@@ -137,14 +139,8 @@ public class StudentProfileActivity extends AppCompatActivity {
         private_text = findViewById(R.id.activity_student_profile_private_text);
         contents = findViewById(R.id.activity_student_profile_contents);
         progress_bar = findViewById(R.id.studentProfile_progress_bar);
-
-        // Change to message icons and add onClickListeners
-        TextView tv_message = findViewById(R.id.studentProfile_action);
-        tv_message.setText(R.string.message);
-        tv_message.setOnClickListener(this::newChatroom);
-        ImageView ic_message = findViewById(R.id.studentProfile_action_icon);
-        ic_message.setImageResource(R.drawable.ic_chat_selected);
-        ic_message.setOnClickListener(this::newChatroom);
+        tv_message = findViewById(R.id.studentProfile_action);
+        ic_message = findViewById(R.id.studentProfile_action_icon);
     }
 
     private void setUpViews(){
@@ -153,7 +149,7 @@ public class StudentProfileActivity extends AppCompatActivity {
         mDegree.setText(student_to_display.getDegree());
         if (profile_img_uri != null) Picasso.get().load(profile_img_uri).into(mProfileImg);
 
-
+        // Block Button
         if (this_user.getId().equals(student_to_display.getId())){
             findViewById(R.id.studentProfile_action).setVisibility(View.GONE);
             findViewById(R.id.studentProfile_action_icon).setVisibility(View.GONE);
@@ -163,6 +159,18 @@ public class StudentProfileActivity extends AppCompatActivity {
             isBlocked = this_user.getBlocked_users().contains(student_to_display.getId());
             if (isBlocked) block_button.setTitle(R.string.unblock);
             else block_button.setTitle(R.string.block);
+        }
+
+        // Message Button
+        if (this_user.getMessaging_users().contains(student_to_display.getId())) {
+            tv_message.setVisibility(View.GONE);
+            ic_message.setVisibility(View.GONE);
+        } else {
+            // Change to message icons and add onClickListeners
+            tv_message.setText(R.string.message);
+            tv_message.setOnClickListener(this::newChatroom);
+            ic_message.setImageResource(R.drawable.ic_chat_selected);
+            ic_message.setOnClickListener(this::newChatroom);
         }
     }
 

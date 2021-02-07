@@ -34,7 +34,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
 import com.ivy2testing.entities.Event;
-import com.ivy2testing.entities.Notification;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Post;
 import com.ivy2testing.entities.User;
@@ -64,8 +63,8 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
     private long end_millis = 0;
     private boolean setting_start_millis = true; //used with date picker -> so that when know which var to update when TimeSet is called
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private StorageReference stor = FirebaseStorage.getInstance().getReference();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final StorageReference stor = FirebaseStorage.getInstance().getReference();
 
     private TextView type_title;
     private LinearLayout type_container;
@@ -86,12 +85,11 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
     private ProgressBar progress_bar;
     private EditText link_edit_text;
 
-    private Calendar temp_calendar = Calendar.getInstance();
-    private List<String> pinnable_event_names = new ArrayList<>();
-    private List<String> pinnable_event_ids = new ArrayList<>();
+    private final Calendar temp_calendar = Calendar.getInstance();
+    private final List<String> pinnable_event_names = new ArrayList<>();
+    private final List<String> pinnable_event_ids = new ArrayList<>();
     private NotificationSender notification_sender;
     private int index = 0;
-    private int type; //0 is event, 1 is post
 
 
     // MARK: Override
@@ -114,7 +112,8 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
                 submit_button.setEnabled(true);
                 hideType();
             } else {
-                type = getIntent().getIntExtra("post_type", 0);
+                //0 is event, 1 is post
+                int type = getIntent().getIntExtra("post_type", 0);
                 if(type == 1){ //event, otherwise leave default
                     setTitle("Create Event");
                     description_edit_text.setHint("Event Description");
@@ -226,14 +225,15 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
 
     private void checkFields() { //checks text input fields (description, title, location)
         if (!type_event_button.isEnabled()) { //the user is prepping an event
-            if (!location_edit_text.getText().toString().trim().isEmpty() && !title_edit_text.getText().toString().isEmpty() && !description_edit_text.getText().toString().trim().isEmpty()
-                    && start_millis != 0 && end_millis != 0 && start_millis < end_millis)
-                submit_button.setEnabled(true);
-            else submit_button.setEnabled(false);
+            submit_button.setEnabled(
+                    !location_edit_text.getText().toString().trim().isEmpty() &&
+                    !title_edit_text.getText().toString().isEmpty() &&
+                    !description_edit_text.getText().toString().trim().isEmpty() &&
+                    start_millis != 0 && end_millis != 0 &&
+                    start_millis < end_millis
+            );
         } else {
-            if (!description_edit_text.getText().toString().trim().isEmpty())
-                submit_button.setEnabled(true);
-            else submit_button.setEnabled(false);
+            submit_button.setEnabled(!description_edit_text.getText().toString().trim().isEmpty());
         }
     }
 
@@ -304,7 +304,6 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
             end_time_button.setText(getButtonDisplayTime());
             start_millis = this_event.getStart_millis();
             end_millis = this_event.getEnd_millis();
-            submit_button.setEnabled(true);
 
         } else { //the edited post is a standard post
             setTitle("Edit Post");
@@ -323,8 +322,8 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
             }
             description_edit_text.setText(this_post.getText());
             pinned_spinner.setSelection(pinnable_event_ids.indexOf(this_post.getPinned_id()));
-            submit_button.setEnabled(true);
         }
+        submit_button.setEnabled(true);
     }
 
 
@@ -341,7 +340,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
                             pinnable_event_names.add(String.valueOf(doc.get("name")));
                         }
 
-                        ArrayAdapter<String> pinned_adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, pinnable_event_names); // create and set adapter
+                        ArrayAdapter<String> pinned_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, pinnable_event_names); // create and set adapter
                         pinned_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         pinned_spinner.setAdapter(pinned_adapter);
                         if (editing_mode) setFields(); //have to wait for the spinner to load...
@@ -407,10 +406,11 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
                 this_event.setVisual(visualPath);
             } else this_event.setVisual("");
 
-            db.collection("universities").document(this_user.getUni_domain()).collection("posts").document(this_event.getId()).set(this_event).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) visualStorageUpload(this_event.getId());
-                else Toast.makeText(this, "Failed to upload event.", Toast.LENGTH_LONG).show();
-            });
+            db.collection("universities").document(this_user.getUni_domain()).collection("posts").document(this_event.getId())
+                    .set(this_event).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) visualStorageUpload(this_event.getId());
+                        else Toast.makeText(this, "Failed to upload event.", Toast.LENGTH_LONG).show();
+                    });
 
         } else { //if we're uploading a post
             this_post.setText(description_edit_text.getText().toString());
@@ -427,10 +427,11 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
                 this_post.setVisual(visualPath);
             } else this_post.setVisual("");
 
-            db.collection("universities").document(this_user.getUni_domain()).collection("posts").document(this_post.getId()).set(this_post).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) visualStorageUpload(this_post.getId());
-                else Toast.makeText(this, "Failed to upload post.", Toast.LENGTH_LONG).show();
-            });
+            db.collection("universities").document(this_user.getUni_domain()).collection("posts").document(this_post.getId())
+                    .set(this_post).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) visualStorageUpload(this_post.getId());
+                        else Toast.makeText(this, "Failed to upload post.", Toast.LENGTH_LONG).show();
+                    });
         }
     }
 
@@ -455,7 +456,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
         } else { //we don't have an image
             if(this_user.getIs_organization()){ //if they're an org we have to send notifs to members
                 sendNotification();
-            }else{
+            } else {
                 allowInteraction();
                 setResult(RESULT_OK);
                 if (editing_mode)
@@ -483,15 +484,14 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
                                         }else{
                                             notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" added a new event.", this_user.getName()+" added: "+title_edit_text.getText().toString(), "");
                                         }
-                                        notification_sender.sendNotification(this);
                                     }else{ //posting post
                                         if(editing_mode){
                                             notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" edited their post.", this_user.getName()+" edited: "+description_edit_text.getText().toString(), "");
                                         }else{
                                             notification_sender = new NotificationSender(user.getMessaging_token(), this_user.getName()+" added a new post.", this_user.getName()+" posted: "+description_edit_text.getText().toString(), "");
                                         }
-                                        notification_sender.sendNotification(this);
                                     }
+                                    notification_sender.sendNotification(this);
                                 }
                             }
                             if(index >= thisOrg.getMember_ids().size()){
@@ -542,7 +542,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
 
     private String getButtonDisplayTime() { //formatting time for displaying in within the start and end time buttons
         String amPm = "am";
-        String hour = "";
+        String hour;
         if (temp_calendar.get(Calendar.HOUR) == 0) hour = "12";
         else hour = String.valueOf(temp_calendar.get(Calendar.HOUR));
         if (temp_calendar.get(Calendar.HOUR_OF_DAY) > 11) amPm = "pm";
