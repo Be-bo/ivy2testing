@@ -368,7 +368,7 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
                 int result = -1;
                 if (areItemsTheSame(o1, o2)) result = 0;
                 else if (o1.getLast_message_timestamp() != null && o2.getLast_message_timestamp() != null)
-                        result = o1.getLast_message_timestamp().compareTo(o2.getLast_message_timestamp());
+                        result = o2.getLast_message_timestamp().compareTo(o1.getLast_message_timestamp());
                 return result;
             }
 
