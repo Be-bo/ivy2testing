@@ -129,6 +129,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventViewHolder> {
                }
                notifyDataSetChanged();
                stopLoading();
+               if(events.size() < 1) hideElems();
            }else hideElems();
         });
     }

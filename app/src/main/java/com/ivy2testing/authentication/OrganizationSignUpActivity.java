@@ -311,8 +311,7 @@ public class OrganizationSignUpActivity extends AppCompatActivity {
                     dbRef.collection("users").document(id).set(orgUser).addOnCompleteListener(task1 -> {
                                 if (task1.isSuccessful()){
                                     openDialogComplete();
-                                    if (auth.getCurrentUser() != null)
-                                        auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(task2 -> Log.d(TAG,"Email verification sent."));
+//                                    if (auth.getCurrentUser() != null) auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(task2 -> Log.d(TAG,"Email verification sent."));
                                 }
                                 else {
                                     Toast.makeText(getApplicationContext(), "Profile creation failed. Please try again later.", Toast.LENGTH_LONG).show();

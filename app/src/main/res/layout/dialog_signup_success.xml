@@ -27,7 +27,7 @@
             android:layout_marginTop="50dp"
             android:layout_marginBottom="16dp"
             android:gravity="center_horizontal"
-            android:text="Welcome to Ivy! We've sent you a confirmation email."
+            android:text="Welcome to Ivy!"
             />
 
         <Button
