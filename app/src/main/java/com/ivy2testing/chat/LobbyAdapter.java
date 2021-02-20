@@ -75,6 +75,7 @@ public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHol
         else {
             holder.partner = this_user;
             holder.tv_name.setText(holder.partner.getName());
+            loadPartnerPic(holder, this_user.getId());
         }
 
         // Set time_stamp
