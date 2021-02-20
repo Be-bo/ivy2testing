@@ -187,6 +187,7 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
                                     if (docChange.getType() == DocumentChange.Type.ADDED) addNewChatroom(chatroom);
                                     else if (docChange.getType() == DocumentChange.Type.REMOVED) removeChatroom(chatroom);
                                     else updateChatroom(chatroom); // MODIFIED
+
                                 } Log.d(TAG, queryDocumentSnapshots.size() + " rooms uploaded!");
                             }
                             else if (queryDocumentSnapshots == null || queryDocumentSnapshots.isEmpty())

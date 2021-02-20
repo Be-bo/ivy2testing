@@ -264,8 +264,7 @@ public class StudentSignUpActivity extends AppCompatActivity implements AdapterV
                     db_reference.collection("users").document(id).set(this_student).addOnCompleteListener(task1 -> {
                         if (task1.isSuccessful()){
                             openDialogComplete();
-                            if (auth.getCurrentUser() != null)
-                                auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(task2 -> Log.d(TAG,"Email verification sent."));
+//                            if (auth.getCurrentUser() != null) auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(task2 -> Log.d(TAG,"Email verification sent."));
                         }
                         else {
                             Toast.makeText(getApplicationContext(), "Profile creation failed. Please try again later.", Toast.LENGTH_LONG).show();

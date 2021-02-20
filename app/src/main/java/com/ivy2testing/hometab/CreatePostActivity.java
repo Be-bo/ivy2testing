@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -108,6 +109,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
             prepSpinner();
 
             editing_mode = getIntent().getBooleanExtra("editing_mode", false);
+            Log.d(TAG, "editing mode: "+editing_mode);
             if (editing_mode) {
                 submit_button.setEnabled(true);
                 hideType();
@@ -279,6 +281,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
 
     private void setFields() { //this method is for when the user is editing their post (it'll set the appropriate post/event object values to the ui)
         boolean isEvent = getIntent().getBooleanExtra("is_event", false);
+        Log.d(TAG, "setting fields");
 
         if (isEvent) { //the edited post is an event
             setTitle("Edit Event");
@@ -306,6 +309,7 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
             end_millis = this_event.getEnd_millis();
 
         } else { //the edited post is a standard post
+            Log.d(TAG, "INSIDE");
             setTitle("Edit Post");
             handleClick(type_post_button);
             this_post = getIntent().getParcelableExtra("post");
@@ -343,8 +347,8 @@ public class CreatePostActivity extends AppCompatActivity implements DatePickerD
                         ArrayAdapter<String> pinned_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, pinnable_event_names); // create and set adapter
                         pinned_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         pinned_spinner.setAdapter(pinned_adapter);
-                        if (editing_mode) setFields(); //have to wait for the spinner to load...
                     }
+                    if (editing_mode) setFields(); //have to wait for the spinner to load...
                 });
     }
 

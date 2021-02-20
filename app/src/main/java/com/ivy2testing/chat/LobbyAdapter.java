@@ -69,12 +69,13 @@ public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHol
 
         // Set Chat Title
         if (!this_chatroom.getMembers().isEmpty() && !this_user.getId().equals(this_chatroom.getMembers().get(0)))
-            loadPartner(holder, this_chatroom.getMembers().get(0));
+            loadPartner(holder, this_chatroom.getMembers().get(0)); //partner is the first member
         else if (this_chatroom.getMembers().size() > 1)
-            loadPartner(holder, this_chatroom.getMembers().get(1));
-        else {
+            loadPartner(holder, this_chatroom.getMembers().get(1)); //partner is the second member
+        else { //partner deleted convo
             holder.partner = this_user;
             holder.tv_name.setText(holder.partner.getName());
+            Glide.with(context).load(R.drawable.ic_profile_selected).into(holder.iv_userImg);
         }
 
         // Set time_stamp
@@ -98,7 +99,7 @@ public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHol
         mFirestore.document(User.getPath(id)).get().addOnCompleteListener(task -> {
             if(task.isSuccessful() && task.getResult() != null){
                 DocumentSnapshot doc = task.getResult();
-                if ((boolean) doc.get("is_organization"))
+                if (doc.get("is_organization") != null && (boolean) doc.get("is_organization"))
                     holder.partner = task.getResult().toObject(Organization.class);
                 else holder.partner = task.getResult().toObject(Student.class);
 
