@@ -216,8 +216,7 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
                             int position = findChatroomIndex(chatroom);
                             if (position >= 0) {
                                 chatrooms.updateItemAt(position, chatroom);
-                                adapter.notifyDataSetChanged();
-                            } else adapter.notifyItemInserted(chatrooms.add(chatroom));
+                            } else chatrooms.add(chatroom);
                         }));
     }
 
@@ -227,7 +226,6 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
         int position = findChatroomIndex(chatroom);
         if (position >= 0) {
             chatrooms.updateItemAt(position, chatroom);
-            adapter.notifyDataSetChanged();
         }
         else Log.e(TAG, "Chatroom not found in list! " + chatroom.getId());
     }
@@ -237,7 +235,6 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
         int position = findChatroomIndex(chatroom);
         if (position >= 0) {
             chatrooms.removeItemAt(position);
-            adapter.notifyItemRemoved(position);
 
             // Need full refresh of this fragment to update views
             onStop();
@@ -365,20 +362,21 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
 
             @Override
             public int compare(Chatroom o1, Chatroom o2) {
-                int result = -1;
+                int result;
                 if (areItemsTheSame(o1, o2)) result = 0;
                 else if (o1.getLast_message_timestamp() != null && o2.getLast_message_timestamp() != null)
                         result = o2.getLast_message_timestamp().compareTo(o1.getLast_message_timestamp());
+                else result = o2.getId().compareTo(o1.getId());
                 return result;
             }
 
             @Override
             public boolean areContentsTheSame(Chatroom oldItem, Chatroom newItem) {
-                boolean same_timestamp = true;
+                boolean same_contents = oldItem.getMembers().containsAll(newItem.getMembers());
                 if (newItem.getLast_message_timestamp() != null)
-                    same_timestamp = newItem.getLast_message_timestamp().equals(oldItem.getLast_message_timestamp());
+                    same_contents = same_contents && newItem.getLast_message_timestamp().equals(oldItem.getLast_message_timestamp());
 
-                return same_timestamp;
+                return same_contents;
             }
 
             @Override

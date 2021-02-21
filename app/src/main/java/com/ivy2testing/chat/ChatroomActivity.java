@@ -119,6 +119,7 @@ public class ChatroomActivity extends AppCompatActivity {
     private void setFragment(){
         MessagingFragment messagingFrag = new MessagingFragment(this_chatroom, this_user, partner);
         getSupportFragmentManager().beginTransaction().replace(R.id.room_frameLayout, messagingFrag).commit();
+        Log.e(TAG, "CHATROOM: " + this_chatroom.getId() + ", PARTNER: " + partner.getName()); //TODO
     }
 
     // create an action bar button

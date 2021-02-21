@@ -27,6 +27,8 @@ import com.ivy2testing.entities.User;
 import com.ivy2testing.util.ImageUtils;
 import com.ivy2testing.util.Utils;
 
+import java.util.ArrayList;
+
 public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHolder> {
 
     private static final String TAG = "LobbyAdapter";
@@ -36,7 +38,7 @@ public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHol
 
     // Attributes
     private final User this_user;
-    private SortedList<Chatroom> chatrooms;
+    private ExtendedSortedList<Chatroom> chatrooms;
     OnChatroomClickListener selection_listener;
     private final Context context;
 
@@ -47,7 +49,7 @@ public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHol
         this.context = context;
     }
 
-    public void setChatrooms(SortedList<Chatroom> chatrooms) {
+    public void setChatrooms(ExtendedSortedList<Chatroom> chatrooms) {
         this.chatrooms = chatrooms;
     }
 
@@ -83,6 +85,8 @@ public class LobbyAdapter extends RecyclerView.Adapter<LobbyAdapter.LobbyViewHol
             holder.tv_lastMsg.setText(Utils.millisToDateTime(this_chatroom.getLast_message_timestamp()));
             holder.tv_lastMsg.setVisibility(View.VISIBLE);
         } else holder.tv_lastMsg.setVisibility(View.INVISIBLE);
+
+
     }
 
     @Override
