@@ -296,6 +296,9 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
         mFirestore.document(User.getPath(this_user.getId()))
                 .update("messaging_users", FieldValue.arrayRemove(partner.getId()));
 
+        mFirestore.document(User.getPath(partner.getId()))
+                .update("messaging_users", FieldValue.arrayRemove(this_user.getId()));
+
         // Remove user from chatroom members. if empty list -> delete document
         DocumentReference chatroomDoc = mFirestore.collection("conversations").document(room.getId());
         chatroomDoc.update("members", FieldValue.arrayRemove(this_user.getId()))
