@@ -45,7 +45,7 @@ import static android.app.Activity.RESULT_OK;
  * Chat Lobby -> View list of chatrooms
  */
 public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomClickListener{
-    private static final String TAG = "ChatFragment";
+    private static final String TAG = "ChatFragmentTag";
 
     // Views
     private final Context context;
@@ -63,6 +63,7 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
 
     // Other Values
     private User this_user;
+    private boolean listening = false;
 
     // Constructor
     public ChatFragment(Context con, User thisUser) {
@@ -92,12 +93,16 @@ public class ChatFragment extends Fragment implements LobbyAdapter.OnChatroomCli
     @Override
     public void onStart() {
         super.onStart();
+        listening = true;
+        Log.d(TAG, "ON STRAT");
         setChatroomListener();
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        Log.d(TAG, "ON SPOT");
+        listening = false;
         for (ListenerRegistration list_reg : list_regs)
             list_reg.remove();  // No need to listen if you're not there
     }

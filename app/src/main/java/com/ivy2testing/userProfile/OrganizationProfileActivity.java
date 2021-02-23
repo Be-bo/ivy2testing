@@ -387,13 +387,19 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
         intent.putExtra("partner", org_to_display);
         intent.putExtra("chatroom", new Chatroom(this_user.getId(), org_to_display.getId()));
         startActivity(intent);
+        findViewById(R.id.activity_orgprofile_msg_icon).setVisibility(View.GONE); //make the messaging btn invisible in this activity instance
+        findViewById(R.id.activity_orgprofile_msg).setVisibility(View.GONE);      //(so the user can't create another room when just pressing the back button)
+        block_button.setVisible(false);
     }
 
 
     // Add to blocked_users and blockers
     private void blockUser() {
         db_ref.document(User.getPath(this_user.getId())).update("blocked_users", FieldValue.arrayUnion(org_to_display.getId()));
-        db_ref.document(User.getPath(org_to_display.getId())).update("blockers", FieldValue.arrayUnion(this_user.getId()));
+        db_ref.document(User.getPath(org_to_display.getId())).update("blockers", FieldValue.arrayUnion(this_user.getId())).addOnCompleteListener(task -> {
+            if(task.isSuccessful()) Toast.makeText(this, "Any conversations with this person will be removed after restart.", Toast.LENGTH_LONG).show();
+            else Toast.makeText(this, "Failed to block person.", Toast.LENGTH_LONG).show();
+        });
         removeChatrooms();
     }
 

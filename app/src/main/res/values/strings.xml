@@ -108,13 +108,13 @@
     <string name="profile_private">This profile is private.</string>
     <string name="switch_private_profile">Private Profile</string>
 
-    <string name="notification">Notificaion</string>
+    <string name="notification">Notification</string>
     <string name="time">time</string>
 
     <string name="block">Block</string>
     <string name="unblock">Unblock</string>
     <string name="block_alert_title">Block User?</string>
-    <string name="block_alert_message">You will not be able to message this user until you unblock them.</string>
+    <string name="block_alert_message">They won\'t be able to message you until you unblock them.</string>
 
     <!-- Posts and Events -->
     <string name="post_visual">Post Visual</string>

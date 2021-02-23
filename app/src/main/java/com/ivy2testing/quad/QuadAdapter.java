@@ -20,6 +20,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.ivy2testing.R;
+import com.ivy2testing.entities.Event;
 import com.ivy2testing.entities.Organization;
 import com.ivy2testing.entities.Student;
 import com.ivy2testing.entities.User;
@@ -40,8 +41,8 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
 
     // Shanna: Base
 
-    private static final int BATCH_LIMIT = 10;
-    private static final int NEW_BATCH_TOLERANCE = 4;
+    private static final int BATCH_LIMIT = 7;
+    private static final int NEW_BATCH_TOLERANCE = 2;
     private static final String TAG = "QuadAdapterTag";
 
 
@@ -75,7 +76,7 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
         initBlacklist(currentUser);
 
         default_query = db_ref.collection("users")
-                .whereNotIn("id", blacklist)
+//                .whereNotIn("id", blacklist)
                 .limit(BATCH_LIMIT);
         fetchUsers(default_query);
     }
@@ -114,16 +115,24 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
                     for (int i = 0; i < querySnap.getResult().getDocuments().size(); i++) {
 
                         DocumentSnapshot newUser = querySnap.getResult().getDocuments().get(i);
+                        Log.d(TAG, "loaded "+newUser.get("name"));
+                        if(newUser == last_retrieved_user) loaded_all_users = true;
 
-                        // Convert to org/student
-                        if ((boolean)newUser.get("is_organization")) users.add(newUser.toObject(Organization.class));
-                        else users.add(newUser.toObject(Student.class));
+                        if(!blacklist.contains(newUser.getId()) && !userAlreadyAdded(newUser.getId())){ //have to do this instead of "whereNotIn" cuz that only supports up to 10 users
+                                                                  //yes, it does pull everyone again
+                            Log.d(TAG, "ADDED "+newUser.get("name"));
+                            // Convert to org/student
+                            if ((boolean)newUser.get("is_organization")) users.add(newUser.toObject(Organization.class));
+                            else users.add(newUser.toObject(Student.class));
+                        }
 
+                        if(last_retrieved_user != null && newUser.getId().equals(last_retrieved_user.getId())) loaded_all_users = true;
                         if (i >= querySnap.getResult().getDocuments().size() - 1) last_retrieved_user = newUser;
                     }
 
                     if (users.size() < 1) { //if the size is still 0 we need to check for the next batch (because if size 0 onBindViewHolder won't get called)
                         if (last_retrieved_user != null && !loaded_all_users)
+
                             fetchUsers(default_query.startAfter(last_retrieved_user)); //next batch has to be loaded from where the previous one left off
                     }
                     //Collections.shuffle(users); //randomize user list
@@ -136,13 +145,24 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
         });
     }
 
+    private boolean userAlreadyAdded(String eventId){
+        for(User current: users){
+            if(current.getId().equals(eventId)) return true;
+        }
+        return false;
+    }
+
     // this gets triggered when the user comes back to the quad
     // In case blacklist was changed
     public void refreshAdapter(User usr) {
+        Log.d(TAG, "calling refresh");
         // Reset values
+        loaded_all_users = false;
+        last_retrieved_user = null;
         initBlacklist(usr);
         default_query = db_ref.collection("users")
-                .whereNotIn("id", blacklist)
+//                .whereNotIn("id", blacklist)
+                //TODO: notIn only supports up to 10 values, meaning it's an instant crash for anyone messaging more than 10 ppl
                 .limit(BATCH_LIMIT);
 
         if (load_in_progress) return;   // no need to pull again if we're currently doing it

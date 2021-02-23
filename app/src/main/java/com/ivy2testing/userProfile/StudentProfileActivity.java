@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -233,6 +234,9 @@ public class StudentProfileActivity extends AppCompatActivity {
         intent.putExtra("partner", student_to_display);
         intent.putExtra("chatroom", new Chatroom(this_user.getId(), student_to_display.getId()));
         startActivity(intent);
+        tv_message.setVisibility(View.GONE); //prevent the user from being able to click the button again
+        ic_message.setVisibility(View.GONE); //if they click the back button from the convo
+        block_button.setVisible(false); //also hide the block button because if they message & block right away it won't delete the convo
     }
 
 
@@ -358,7 +362,10 @@ public class StudentProfileActivity extends AppCompatActivity {
     // Add to blocked_users and blockers
     private void blockUser() {
         db.document(User.getPath(this_user.getId())).update("blocked_users", FieldValue.arrayUnion(student_to_display.getId()));
-        db.document(User.getPath(student_to_display.getId())).update("blockers", FieldValue.arrayUnion(this_user.getId()));
+        db.document(User.getPath(student_to_display.getId())).update("blockers", FieldValue.arrayUnion(this_user.getId())).addOnCompleteListener(task -> {
+            if(task.isSuccessful()) Toast.makeText(this, "Any conversations with this person will be removed after restart.", Toast.LENGTH_LONG).show();
+            else Toast.makeText(this, "Failed to block person.", Toast.LENGTH_LONG).show();
+        });
         removeChatrooms();
     }
 
