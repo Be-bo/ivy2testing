@@ -116,7 +116,6 @@ public class QuadAdapter extends RecyclerView.Adapter<QuadAdapter.QuadViewHolder
 
                         DocumentSnapshot newUser = querySnap.getResult().getDocuments().get(i);
                         Log.d(TAG, "loaded "+newUser.get("name"));
-                        if(newUser == last_retrieved_user) loaded_all_users = true;
 
                         if(!blacklist.contains(newUser.getId()) && !userAlreadyAdded(newUser.getId())){ //have to do this instead of "whereNotIn" cuz that only supports up to 10 users
                                                                   //yes, it does pull everyone again
