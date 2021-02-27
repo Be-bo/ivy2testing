@@ -79,6 +79,7 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
 
     private MenuItem block_button;
     private boolean isBlocked = false;
+    private boolean isMessaging = false;
 
 
 
@@ -173,6 +174,11 @@ public class OrganizationProfileActivity extends AppCompatActivity implements Pr
     private void getIncomingData(){
         this_user = getIntent().getParcelableExtra("this_user");
         org_to_display_id = getIntent().getStringExtra("org_to_display_id");
+        isMessaging = getIntent().getBooleanExtra("is_messaging", false);
+        if(isMessaging){
+            findViewById(R.id.activity_orgprofile_msg_icon).setVisibility(View.GONE);
+            findViewById(R.id.activity_orgprofile_msg).setVisibility(View.GONE);
+        }
         if(org_to_display_id == null) finish();
     }
 
