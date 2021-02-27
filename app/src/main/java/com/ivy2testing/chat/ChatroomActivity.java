@@ -193,10 +193,12 @@ public class ChatroomActivity extends AppCompatActivity {
             intent = new Intent(this, OrganizationProfileActivity.class);
             intent.putExtra("org_to_display_id",  partner.getId());
             intent.putExtra("org_to_display_uni", partner.getUni_domain());
+            intent.putExtra("is_messaging", true);
         } else {
             Log.d(TAG, "Starting StudentProfile Activity for student " +  partner.getId());
             intent = new Intent(this, StudentProfileActivity.class);
             intent.putExtra("student_to_display",  partner);
+            intent.putExtra("is_messaging", true);
         }
         intent.putExtra("this_user", this_user);
         startActivity(intent);

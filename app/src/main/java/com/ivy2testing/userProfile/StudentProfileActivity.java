@@ -64,6 +64,7 @@ public class StudentProfileActivity extends AppCompatActivity {
     private ImageView ic_message;
 
     private boolean isBlocked = false;
+    private boolean isMessaging = false;
 
     // Firestore
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -249,6 +250,11 @@ public class StudentProfileActivity extends AppCompatActivity {
 
             this_user = getIntent().getParcelableExtra("this_user");
             student_to_display = getIntent().getParcelableExtra("student_to_display");
+            isMessaging = getIntent().getBooleanExtra("is_messaging", false);
+            if(isMessaging){
+                tv_message.setVisibility(View.GONE);
+                ic_message.setVisibility(View.GONE);
+            }
 
             if (student_to_display == null) {
                 String student_id = getIntent().getStringExtra("student_to_display_id");
