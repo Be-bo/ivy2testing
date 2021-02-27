@@ -217,10 +217,9 @@ public class ChatroomActivity extends AppCompatActivity {
     // Delete Chatroom completely and return to Lobby
     private void deleteChatRoomFromDB() {
 
-        // Remove from messaging list
+        // Remove from messaging lists
         mFirestore.document(User.getPath(this_user.getId()))
             .update("messaging_users", FieldValue.arrayRemove(partner.getId()));
-
         mFirestore.document(User.getPath(partner.getId()))
                 .update("messaging_users", FieldValue.arrayRemove(this_user.getId()));
 
